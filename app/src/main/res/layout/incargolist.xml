@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+
+    android:layout_height="120dp"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="#FFFFFFFF"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="5dp"
+            app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+
+                            android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/incargo_working"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.1"
+                                    android:gravity="center"
+                                    android:hint="작업상황"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_date"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.1"
+                                    android:gravity="center"
+                                    android:hint="반입일"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_consignee"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1.1"
+                                    android:gravity="center"
+                                    android:hint="화주명"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_des"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:ems="10"
+                                    android:gravity="center"
+                                    android:hint="품명"
+                                    android:inputType="textPersonName"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_container"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="bottom"
+                                                                       android:layout_weight="0.9"
+                                    android:gravity="center"
+                                    android:hint="컨테이너번호"
+                                    android:textSize="12sp"
+                                    android:background="@color/purple_200"
+                                    android:textStyle="bold|italic" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/incargo_cargotype"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.9"
+                                    android:gravity="center"
+                                    android:hint="LCLcargo"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_incargo"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.85"
+                                    android:gravity="center"
+                                    android:text="TextView" />
+
+                                <TextView
+                                    android:id="@+id/incargo_bl"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.8"
+                                    android:gravity="center"
+                                    android:hint="bl"
+                                    android:textSize="10sp"
+                                    android:textStyle="bold|italic" />
+
+                                <TextView
+                                    android:id="@+id/incargo_remark"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.5"
+                                    android:gravity="center"
+                                    android:hint="비고란"
+                                    android:textColor="#FF0000"
+                                    android:textSize="12sp"
+                                    android:textStyle="bold|italic" />
+                        </LinearLayout>
+
+                </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+</LinearLayout>

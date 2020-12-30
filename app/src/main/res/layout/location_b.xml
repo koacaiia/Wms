@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:backgroundTint="#009688"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Location">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:orientation="vertical">
+
+            <CheckBox
+                android:id="@+id/b_f4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_F4"
+                android:textSize="12sp"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+                android:id="@+id/b_f3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_F3"
+                android:textSize="12sp"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_ef4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_EF4"
+                android:textStyle="bold" />
+
+            <CheckBox
+
+                android:id="@+id/b_ef3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_EF3"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_e4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_E4"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+
+                android:id="@+id/b_e3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_E3"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_d4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_D4"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+
+                android:id="@+id/b_d3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_D3"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_cd4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_CD4"
+                android:textStyle="bold" />
+
+            <CheckBox
+
+                android:id="@+id/b_cd3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_CD3"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_c4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_C4"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+
+                android:id="@+id/b_c3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_C3"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:backgroundTint="#78BBF1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_b4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_B4"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+
+                android:id="@+id/b_b3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_B3"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <CheckBox
+
+                android:id="@+id/b_ab4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_AB4"
+                android:textStyle="bold" />
+
+            <CheckBox
+
+                android:id="@+id/b_ab3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_AB3"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#78BBF1"
+            android:orientation="vertical">
+
+
+            <CheckBox
+                android:id="@+id/b_a4"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_A4"
+                android:textStyle="bold|italic" />
+
+            <CheckBox
+                android:id="@+id/b_a3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="B_A3"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.2"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/b_a2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:buttonTint="#FF0000"
+            android:gravity="center"
+            android:text="B_평치"
+            android:textSize="36sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/b_f1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_F1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_ef1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:buttonTint="#FF0000"
+            android:text="B_EF1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_e1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_F1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_d1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_D1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_cd1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:buttonTint="#FF0000"
+            android:text="B_CD1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_c1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_C1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_b1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_B1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_ab1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:buttonTint="#FF0000"
+            android:text="B_AB1"
+            android:textStyle="bold|italic" />
+
+        <CheckBox
+            android:id="@+id/b_a1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:backgroundTint="#78BBF1"
+            android:buttonTint="#FF0000"
+            android:text="B_A1"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+</LinearLayout>

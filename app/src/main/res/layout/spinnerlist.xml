@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="65dp"
+    android:orientation="vertical">
+
+    <Spinner
+        android:id="@+id/incargo_spinner_listconsignee1"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@drawable/border"
+        android:defaultFocusHighlightEnabled="true"
+        android:foregroundGravity="center"
+        android:gravity="center" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="32dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dia_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:text="기간"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/dia_consignee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:gravity="center"
+            android:text="화주명"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
+
+</LinearLayout>
