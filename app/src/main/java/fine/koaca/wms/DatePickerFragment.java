@@ -30,10 +30,10 @@ String a;
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
        if(a.equals("a")){
-        fine.koaca.wms.MainActivity activity=(fine.koaca.wms.MainActivity)getActivity();
+        MainActivity activity=(MainActivity)getActivity();
         activity.processDatePickerResult(year,month,dayOfMonth);}
        else{
-           fine.koaca.wms.Incargo incargo=(fine.koaca.wms.Incargo)getActivity();
+           Incargo incargo=(Incargo)getActivity();
            incargo.processDatePickerResult(year,month,dayOfMonth);
        }
 

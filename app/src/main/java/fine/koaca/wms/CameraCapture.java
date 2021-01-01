@@ -45,9 +45,11 @@ public class CameraCapture extends AppCompatActivity {
     FloatingActionButton btn_capture;
 
     CaptureProcess captureProcess;
-    private StorageReference mStorageRef;
-    fine.koaca.wms.CalendarPick calendarPick=new fine.koaca.wms.CalendarPick();
+
+    CalendarPick calendarPick=new CalendarPick();
     String date_today;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,6 @@ public class CameraCapture extends AppCompatActivity {
         intentGetItems();
         calendarPick.CalendarCall();
         date_today=calendarPick.date_today;
-
 
 
         btn_capture=findViewById(R.id.btn_capture);
@@ -99,7 +100,6 @@ public class CameraCapture extends AppCompatActivity {
                 return true;
             }
         });
-
 
 
     }

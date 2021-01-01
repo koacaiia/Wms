@@ -11,7 +11,7 @@
         android:tooltipText="사용자등록"
         app:showAsAction="always" />
     <item
-        android:id="@+id/action_account1"
+        android:id="@+id/action_account_down"
         android:icon="@android:drawable/arrow_down_float"
         android:title="Account"
         android:tooltipText="다운로드"

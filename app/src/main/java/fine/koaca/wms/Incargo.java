@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -83,6 +84,8 @@ public class Incargo extends AppCompatActivity implements Serializable {
     FloatingActionButton fltBtn_Search;
     String searchContents;
 
+    String downLoadingMark="";
+
     public Incargo(ArrayList<Fine2IncargoList> listItems) {
         this.listItems=listItems;
     }
@@ -103,11 +106,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
             sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
             depotName=sharedPref.getString("depotName",null);
         }
-        Log.i("depotInit",depotName);
-
-
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-
 
         incargo_incargo=findViewById(R.id.incargo_incargo);
         incargo_contents_date=findViewById(R.id.incargo_contents_date);
@@ -226,8 +225,6 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 String sortContents=editText.getText().toString();
                 searchContents="container";
                 searchFirebaseDatabaseToArray(sortContents);
-
-
             }
         });
         searchBuilder.setNeutralButton("cancel", new DialogInterface.OnClickListener() {
@@ -237,14 +234,9 @@ public class Incargo extends AppCompatActivity implements Serializable {
             }
         });
         searchBuilder.show();
-
-
-
     }
-
     private void sortGetFirebaseIncargoDatabase(String filterItemName,String sortItemName) {
         ValueEventListener sortItemsListener=new ValueEventListener() {
-
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listItems.clear();
@@ -432,36 +424,28 @@ public class Incargo extends AppCompatActivity implements Serializable {
                          str_sort="sort";
                          sort_dialog="dialogsort";
                         getFirebaseIncargoDatabase();
-
-
-
                         break;
                     case 1:
                         String a="b";
                         str_sort_date="fixed1";
                         str_sort="sort";
-
                         DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                         datePickerFragment.show(getSupportFragmentManager(),"datePicker");
 
                     break;
                     case 2:
-
                         str_sort_date="fixed2";
                         str_sort="sort";
                        day_start=calendarPick.date_mon;
                        day_end=calendarPick.date_sat;
                        dia_dateInit=day_start+"~"+day_end;
-
                         break;
                     case 3:
-
                         str_sort_date="fixed2";
                         str_sort="sort";
                         day_start=calendarPick.date_Nmon;
                         day_end=calendarPick.date_Nsat;
                         dia_dateInit=day_start+"~"+day_end;
-
                                              break;
                     case 4:
                         str_sort="sort";
@@ -493,14 +477,11 @@ public class Incargo extends AppCompatActivity implements Serializable {
                                 "조회 합니다.",
                         Toast.LENGTH_LONG).show();
                 getFirebaseIncargoDatabase();
-
-
             }
         });
         builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
             }
         });
         builder.setTitle("조건별 화물 조회");
@@ -516,10 +497,14 @@ public class Incargo extends AppCompatActivity implements Serializable {
            day_string=Integer.toString(dayOfMonth);
         }
         String year_string=Integer.toString(year);
-        dataMessage=(year_string+"-"+month_string+"-"+day_string);
-        dia_date.setText(dataMessage);
-        dia_dateInit=dataMessage;
 
+        if(downLoadingMark.equals("DownLoadingOk")){
+            dataMessage=(year_string+"년"+month_string+"월"+day_string+"일");
+            downLoadDialogMessage(dataMessage);
+        }else{
+            dataMessage=(year_string+"-"+month_string+"-"+day_string);
+        dia_date.setText(dataMessage);
+        dia_dateInit=dataMessage;}
     }
 
 
@@ -596,7 +581,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
                         editor.putString("depotName",depotName);
                         Log.i("depo2",depotName);
                         editor.apply();
-                        Intent intent=new Intent(fine.koaca.wms.Incargo.this, fine.koaca.wms.Incargo.class);
+                        Intent intent=new Intent(Incargo.this,Incargo.class);
                         startActivity(intent);
                     }
                 });
@@ -611,7 +596,11 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
             case R.id.action_account_search:
                 searchSort();
-
+            case R.id.action_account_down:
+                downLoadingMark="DownLoadingOk";
+                String a="b";
+                DatePickerFragment datePickerFragment=new DatePickerFragment(a);
+                datePickerFragment.show(getSupportFragmentManager(),"datePicker");
         }
         return true;
 
@@ -647,21 +636,46 @@ public class Incargo extends AppCompatActivity implements Serializable {
                                   listItems.add(data);
                           }else{
                           }}else{}
-
                           break;
                   }
-
                 }
-
                 adapter.notifyDataSetChanged();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         };
         databaseReference.addListenerForSingleValueEvent(listener);
+    }
+
+    public void downLoadDialogMessage(String dataMessage){
+        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+        builder.setTitle("서버 저장사진 다운로드");
+        builder.setMessage(dataMessage +"_목록을 지정하였습니다."+"\n"+"하단 세부항목 버튼을 클릭하여 다운로드 진행 합니다.");
+        CaptureProcess captureProcess=new CaptureProcess();
+
+        builder.setPositiveButton("입고사진 다운로드", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String downLoadingItems="InCargo";
+                captureProcess.listAllFiles(dataMessage,downLoadingItems);
+            }
+        });
+        builder.setNegativeButton("출고사진 다운로드", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String downLoadingItems="OutCargo";
+                captureProcess.listAllFiles(dataMessage,downLoadingItems);
+            }
+        });
+        builder.setNeutralButton("기타사진 다운로드", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String downLoadingItems="Etc";
+                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
+            }
+        });
+        builder.show();
     }
 
 
