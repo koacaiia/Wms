@@ -23,7 +23,8 @@ public class CalendarPick {
 
     String year;
     String month;
-    String day;
+    String tomorrow;
+    String today;
 
 
     public void CalendarCall(){
@@ -64,10 +65,22 @@ public class CalendarPick {
 
 
         year=String.valueOf(cal.get(Calendar.YEAR));
-        month=String.valueOf(cal.get(Calendar.MONTH)+1);
-        day=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
-        date_tomorrow=year+"-"+month+"-"+day;
-        date_today=year+"년"+month+"월"+String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+"일");
+
+        if(cal.get(Calendar.MONTH)+1<10){
+            month="0"+String.valueOf(cal.get(Calendar.MONTH)+1);
+        }else{
+            month=String.valueOf(cal.get(Calendar.MONTH)+1);
+        }
+
+        if(cal.get(Calendar.DAY_OF_MONTH)<10){
+            today="0"+ cal.get(Calendar.DAY_OF_MONTH);
+        }else{
+            today=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
+        }
+        tomorrow=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
+
+        date_tomorrow=year+"-"+month+"-"+tomorrow;
+        date_today=year+"년"+month+"월"+today+"일";
 
 
     }

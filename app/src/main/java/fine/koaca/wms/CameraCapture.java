@@ -20,7 +20,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,7 +60,7 @@ public class CameraCapture extends AppCompatActivity {
         date_today=calendarPick.date_today;
 
 
-        btn_capture=findViewById(R.id.btn_capture);
+        btn_capture=findViewById(R.id.btn_textureView_Capture);
         captureProcess=new CaptureProcess(this);
         btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override

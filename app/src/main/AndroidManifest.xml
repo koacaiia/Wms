@@ -3,22 +3,29 @@
     package="fine.koaca.wms">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
-
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:name="fine.koaca.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name="fine.koaca.MyApplication"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".Activity_Exercise">
+        <activity android:name=".WorkingMessageData"></activity>
+        <activity android:name=".FcmSendMessage" />
 
-        </activity>
+        <service android:name=".FCMService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity android:name=".FcmProject" />
+        <activity android:name=".CameraCaptureTextureView" />
+        <activity android:name=".Activity_Exercise" />
         <activity
             android:name=".Incargo"
             android:label="Incargo_List">
@@ -37,14 +44,15 @@
         <activity
             android:name=".MainActivity"
             android:label="엠엔에프 로케이션 관리" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="fine.koaca.wms.provider"
             android:exported="false"
             android:grantUriPermissions="true"
+            android:permission="true"
             android:readPermission="true"
-            android:writePermission="true"
-            android:permission="true">
+            android:writePermission="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/external" />

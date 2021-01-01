@@ -164,7 +164,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         incargo_mnf.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(fine.koaca.wms.Incargo.this,MainActivity.class);
+                Intent intent=new Intent(Incargo.this,MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -172,7 +172,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         incargo_mnf.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent=new Intent(fine.koaca.wms.Incargo.this, fine.koaca.wms.Activity_Exercise.class);
+                Intent intent=new Intent(Incargo.this,Activity_Exercise.class);
                 startActivity(intent);
                 return true;
             }
@@ -191,11 +191,28 @@ public class Incargo extends AppCompatActivity implements Serializable {
               startActivity(intent);
           }
       });
+
+      fltBtn_Capture.setOnLongClickListener(new View.OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+              Intent intent=new Intent(Incargo.this,CameraCaptureTextureView.class);
+              startActivity(intent);
+              return true;
+          }
+      });
       fltBtn_Search=findViewById(R.id.incargo_floatBtn_search);
       fltBtn_Search.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            searchSort();
+              fcmSelected();
+//            searchSort();
+          }
+      });
+      fltBtn_Search.setOnLongClickListener(new View.OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+
+              return true;
           }
       });
 
@@ -489,7 +506,12 @@ public class Incargo extends AppCompatActivity implements Serializable {
     }
 
     public void processDatePickerResult(int year, int month, int dayOfMonth) {
-        String month_string=Integer.toString(month+1);
+        String month_string;
+        if(month<10){
+            month_string="0"+Integer.toString(month+1);
+        }else{
+            month_string=Integer.toString(month+1);
+        }
         String day_string;
         if(dayOfMonth<10){
              day_string="0"+Integer.toString(dayOfMonth);
@@ -497,6 +519,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
            day_string=Integer.toString(dayOfMonth);
         }
         String year_string=Integer.toString(year);
+
 
         if(downLoadingMark.equals("DownLoadingOk")){
             dataMessage=(year_string+"년"+month_string+"월"+day_string+"일");
@@ -658,14 +681,14 @@ public class Incargo extends AppCompatActivity implements Serializable {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String downLoadingItems="InCargo";
-                captureProcess.listAllFiles(dataMessage,downLoadingItems);
+                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
             }
         });
         builder.setNegativeButton("출고사진 다운로드", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String downLoadingItems="OutCargo";
-                captureProcess.listAllFiles(dataMessage,downLoadingItems);
+                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
             }
         });
         builder.setNeutralButton("기타사진 다운로드", new DialogInterface.OnClickListener() {
@@ -673,6 +696,29 @@ public class Incargo extends AppCompatActivity implements Serializable {
             public void onClick(DialogInterface dialog, int which) {
                 String downLoadingItems="Etc";
                 captureProcess.downLoadingUri(dataMessage,downLoadingItems);
+            }
+        });
+        builder.show();
+    }
+
+    public void fcmSelected(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+        builder.setTitle("FCM 선택");
+        builder.setPositiveButton("보내기", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent=new Intent(Incargo.this,FcmSendMessage.class);
+                Log.i("koacaiia",intent+"__changed");
+                startActivity(intent);
+
+            }
+        });
+        builder.setNegativeButton("받기", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent=new Intent(Incargo.this,FcmProject.class);
+
+                startActivity(intent);
             }
         });
         builder.show();

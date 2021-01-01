@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -34,6 +36,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import fine.koaca.MyApplication;
 
@@ -44,10 +48,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private StorageReference recvRef;
+    private FirebaseDatabase database;
+    private DatabaseReference databaseReference;
     ContentResolver contentResolver;
     ContentValues contentValues;
     CalendarPick calendarPick;
     String captureItem = "";
+    WorkingMessageData messageData=new WorkingMessageData();
 
     public CaptureProcess(CameraCapture mainActivity) {
         this.mainActivity = mainActivity;
@@ -96,6 +103,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
                 builder.setMessage("선택된 사진 유형은 버튼클릭시 서버에 업로드 됩니다.");
                 builder.setTitle("사진 유형 선택");
+                String workingMessage="입고 사진 촬영";
+                messageData.workingMessageList(workingMessage);
 
 
                 builder.setPositiveButton("입고사진 업로드", new DialogInterface.OnClickListener() {
@@ -289,25 +298,18 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     }
 
 
-    public void bitmapReturn(String itemName) {
+    public void bitmapReturn(File fileName, String itemName) {
 
         OutputStream fos = null;
         File tempFile=null;
-        try {
-            tempFile.createTempFile("koaca",".jpg");
-            Log.i("koacaiia",tempFile+"__cratedFile");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(tempFile));
-        contentResolver = mainActivity.getContentResolver();
-        contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, itemName + ".jpg");
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
-        contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/DownLoad");
-        Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-        Log.i("fileName3?", itemName);
 
+        Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(fileName));
+        contentResolver = MyApplication.getAppContext().getContentResolver();
+        contentValues = new ContentValues();
+        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME,itemName);
+        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
+        contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
+        Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         try {
             fos = contentResolver.openOutputStream(imageUri);
         } catch (FileNotFoundException e) {
@@ -326,10 +328,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 //
 //        File file=new File(filePath,itemName+".jpg");
 //        String filePath2=file.getPath();
-        if(tempFile.exists()){
-            tempFile.delete();
-            Log.i("koacaiia",tempFile+"__deleted");
-        }
+
     }
 
     public void downLoadingUri(String dataMessage,String downLoadingItems){
@@ -337,12 +336,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         StorageReference listRef = storage.getReference().child("/images/" + dataMessage + "/" + downLoadingItems+"/");
         listRef.listAll()
                 .addOnSuccessListener(new OnSuccessListener<ListResult>() {
-
-
                     @Override
                     public void onSuccess(ListResult listResult) {
                         for(StorageReference item:listResult.getItems()) {
-
                             String itemName=item.getName();
                             StorageReference itemRef = storage.getReference().child("/images/" + dataMessage + "/" + downLoadingItems + "/" + itemName);
 
@@ -360,41 +356,51 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                             }
                             Log.i("koacaiia",tempFile+"__cratedFile");
 
-
                             File finalTempFile = tempFile;
-                            itemRef.getFile(tempFile)
+                                File finalTempFile1 = tempFile;
+                                itemRef.getFile(tempFile)
                                     .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                                         @Override
                                         public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                                            OutputStream fos = null;
-                                            Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(finalTempFile));
-                                            contentResolver= MyApplication.getAppContext().getContentResolver();
-                                            ContentValues contentValues = new ContentValues();
-                                            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, itemName );
-                                            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "images/*");
-                                            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
-                                            Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-                                                    , contentValues);
-                                            Cursor cursor = MyApplication.getAppContext().getContentResolver().query(imageUri, null, null,
-                                                    null, null );
-                                            assert cursor != null;
-                                            cursor.moveToNext();
-                                            String imageFilePath = cursor.getString( cursor.getColumnIndex( "_data" ) );
-                                            Log.i("koacaiia",imageFilePath+"__uriTofile");
-                                            cursor.close();
-                                            try {
-                                                fos = contentResolver.openOutputStream(imageUri);
-                                            } catch (FileNotFoundException e) {
-                                                e.printStackTrace();
-                                            }
-                                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
-                                            Log.i("koacaiia",imageUri+"__downloading successed");
+//                                            OutputStream fos = null;
+
+                                            bitmapReturn(finalTempFile1,itemName);
+//                                            Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(finalTempFile));
+//                                            contentResolver= MyApplication.getAppContext().getContentResolver();
+//                                            ContentValues contentValues = new ContentValues();
+//                                            contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, itemName );
+//                                            contentValues.put(MediaStore.Images.Media.MIME_TYPE, "images/*");
+//                                            contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
+//                                            Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+//                                                    , contentValues);
+//                                            Cursor cursor = MyApplication.getAppContext().getContentResolver().query(imageUri, null, null,
+//                                                    null, null );
+//                                            assert cursor != null;
+//                                            cursor.moveToNext();
+//                                            String imageFilePath = cursor.getString( cursor.getColumnIndex( "_data" ) );
+//                                            Log.i("koacaiia",imageFilePath+"__uriTofile");
+//                                            cursor.close();
+//                                            try {
+//                                                fos = contentResolver.openOutputStream(imageUri);
+//                                            } catch (FileNotFoundException e) {
+//                                                e.printStackTrace();
+//                                            }
+//                                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
+                                            Log.i("koacaiia",itemName+"__downloading successed");
+                                            Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
+                                                            "DownLoad에 " +
+                                                            "성공하였습니다.",
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                                     })
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
                                             Log.i("koacaiia","__downloading failed");
+                                            Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
+                                                            "DownLoad에 " +
+                                                            "실패하였습니다.",
+                                                    Toast.LENGTH_SHORT).show();
                                         }
                                     });
                             if(tempFile.exists()){
@@ -413,9 +419,64 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 });
     }
 
+    public void downLoadingUriBaseFile(String dataMessage,String downLoadingItems){
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
+        StorageReference listRef=storage.getReference().child("/images/"+dataMessage+"/"+downLoadingItems+"/");
+            Log.i("koacaiia1",listRef+"__executed");
+        listRef.listAll()
+                .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                    @Override
+                    public void onSuccess(ListResult listResult) {
+                        Log.i("koacaiia2",listRef+"__before For 문 ListAll succeessed");
+                        for(StorageReference item:listResult.getItems()){
+                            String itemName=item.getName();
+                            String dirPath="/storage/emulated/0/"+Environment.DIRECTORY_PICTURES+"/Fine/koaca";
+                            File fileName=new File(dirPath,itemName);
+                            if(fileName.exists()){
+                                Log.i("koacaiia3",fileName+"__existed,Don't DownLoading");
+                            }else{
+                                fileDownLoading(dataMessage,downLoadingItems,itemName,fileName);
+                                Log.i("koacaiia4",fileName+"__is Not Exists DownLoading Init");
+                            }
+                        }
+
+                    }
+                }).
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.i("koacaiia5",listRef+"__ListAll 문 Failed");                  }
+                });
+
+    }
+
+    private void fileDownLoading(String dataMessage, String downLoadingItems, String itemName, File fileName) {
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
+        StorageReference itemRef=storage.getReference().child("/images/"+dataMessage+"/"+downLoadingItems+"/"+itemName);
+Log.i("koacaiia6",itemRef+"__fileDownLoading Init");
+        itemRef.getFile(fileName)
+                .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                        Log.i("koacaiia7",fileName+"+__after fileDownLoading Init downloading successed ");
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("koacaiia8",fileName+"__after fileDownLoading Init downloading Failed");
+
+            }
+        });
+    }
 
 
-}
+
+
+    }
+
+
+
 
 
 
