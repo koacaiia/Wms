@@ -204,8 +204,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
       fltBtn_Search.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              fcmSelected();
+//              fcmSelected();
 //            searchSort();
+            Intent intent=new Intent(Incargo.this,WorkingMessageData.class);
+            startActivity(intent);
           }
       });
       fltBtn_Search.setOnLongClickListener(new View.OnLongClickListener() {

@@ -1,5 +1,6 @@
 package fine.koaca.wms;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +14,12 @@ import java.util.ArrayList;
 public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.ListViewHolder>{
     ArrayList<WorkingMessageList> messageLists;
     String myNickname;
+    Context context;
 
-    public WorkMessageAdapter(ArrayList<WorkingMessageList> messageLists,String myNickname) {
+    public WorkMessageAdapter(ArrayList<WorkingMessageList> messageLists, Context context, String myNickname) {
         this.messageLists = messageLists;
         this.myNickname=myNickname;
+        this.context=context;
     }
 
     @NonNull
@@ -58,5 +61,10 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
             this.nickName=itemView.findViewById(R.id.txt_work_nickName);
 
         }
+    }
+
+    public void addWorkingMessage(WorkingMessageList messageData){
+        messageLists.add(messageData);
+        notifyItemInserted(messageLists.size()-1);
     }
 }

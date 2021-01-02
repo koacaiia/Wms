@@ -104,7 +104,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 builder.setMessage("선택된 사진 유형은 버튼클릭시 서버에 업로드 됩니다.");
                 builder.setTitle("사진 유형 선택");
                 String workingMessage="입고 사진 촬영";
-                messageData.workingMessageList(workingMessage);
+//                messageData.workingMessageList(workingMessage);
 
 
                 builder.setPositiveButton("입고사진 업로드", new DialogInterface.OnClickListener() {

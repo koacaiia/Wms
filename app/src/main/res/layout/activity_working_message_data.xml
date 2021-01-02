@@ -21,19 +21,29 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="vertical"
+        android:layout_height="80dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
-
-        <TextView
-            android:id="@+id/textView6"
+      <EditText
+            android:id="@+id/edit_workingMessageData"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="TextView" />
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            android:hint="Put Message" />
+
+        <Button
+            android:id="@+id/button_workignMessageData"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            android:layout_weight="3"
+            android:text="전송" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
