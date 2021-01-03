@@ -75,6 +75,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
     String dia_dateInit="";
 
     String depotName;
+    String nickName;
 
     static private String SHARE_NAME="SHARE_DEPOT";
     static SharedPreferences sharedPref;
@@ -99,13 +100,13 @@ public class Incargo extends AppCompatActivity implements Serializable {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
 
-//        sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
+        sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
         if(sharedPref==null){
             depotName="2물류(02010027)";
         }else{
-            sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
-            depotName=sharedPref.getString("depotName",null);
+            depotName=sharedPref.getString("depotName","koaca");
         }
+        nickName=sharedPref.getString("nickName","koaca");
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
         incargo_incargo=findViewById(R.id.incargo_incargo);
@@ -118,6 +119,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         listItems=new ArrayList<>();
 
         database=FirebaseDatabase.getInstance();
+        if(depotName !=null){
         switch(depotName){
             case "2물류(02010027)":
                 databaseReference=database.getReference("Incargo");
@@ -130,6 +132,9 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 databaseReference=database.getReference("Incargo");
                 Log.i("depotSort2","사업부 화물조회는 아직 미구현 입니다.");
                 break;
+        }}else{
+            Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
+            databaseReference=database.getReference("Incargo");
         }
         adapter=new fine.koaca.wms.IncargoListAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
@@ -207,6 +212,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
 //              fcmSelected();
 //            searchSort();
             Intent intent=new Intent(Incargo.this,WorkingMessageData.class);
+            intent.putExtra("nickName",nickName);
             startActivity(intent);
           }
       });
@@ -399,7 +405,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         this.consignee_list2=consignee_list2;
 
         String[] dateList=dateSelected.toArray(new String[dateSelected.size()]);
-        AlertDialog.Builder builder=new AlertDialog.Builder(fine.koaca.wms.Incargo.this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
         View view=getLayoutInflater().inflate(R.layout.spinnerlist,null);
         Spinner sp=view.findViewById(R.id.incargo_spinner_listconsignee1);
         dia_date=view.findViewById(R.id.dia_date);
@@ -589,23 +595,41 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 int defaultItem=0;
                 selectedItems.add(defaultItem);
 
-                fine.koaca.wms.Activity_Exercise exercise=new fine.koaca.wms.Activity_Exercise();
-
                 String[] depotSortList=depotSort.toArray(new String[depotSort.size()]);
                 AlertDialog.Builder sortBuilder=new AlertDialog.Builder(fine.koaca.wms.Incargo.this);
+                View view=getLayoutInflater().inflate(R.layout.user_reg,null);
+                EditText reg_edit=view.findViewById(R.id.user_reg_Edit);
+
+                Button reg_button=view.findViewById(R.id.user_reg_button);
+                TextView reg_depot=view.findViewById(R.id.user_reg_depot);
+
+                reg_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                       nickName=reg_edit.getText().toString();
+                       reg_depot.setText(depotName+"_"+nickName+"으로 사용자 등록을"+"\n"+" 진행할려면 하단 confirm 버튼 클릭 바랍니다.");
+
+                    }
+                });
+
+                sortBuilder.setView(view);
                 sortBuilder.setSingleChoiceItems(depotSortList,defaultItem,new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         depotName=depotSortList[which];
                         Log.i("depo1",depotName);
+                        reg_depot.setText("부서명_"+depotName+"로 확인");
+
                     }
                 });
                 sortBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         editor.putString("depotName",depotName);
+                        editor.putString("nickName",nickName);
                         Log.i("depo2",depotName);
                         editor.apply();
+                        Toast.makeText(Incargo.this, depotName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
                         Intent intent=new Intent(Incargo.this,Incargo.class);
                         startActivity(intent);
                     }

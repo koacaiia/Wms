@@ -3,6 +3,7 @@ package fine.koaca.wms;
 public class WorkingMessageList {
     String msg;
     String nickName;
+    String time;
 
     public String getMsg(){
         return msg;
@@ -15,5 +16,11 @@ public class WorkingMessageList {
     }
     public void setNickName(String nickName){
         this.nickName=nickName;
+    }
+    public String getTime(){
+        return time;
+    }
+    public void setTime(String time){
+        this.time=time;
     }
 }

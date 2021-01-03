@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +29,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -411,6 +414,9 @@ if(add){
                 }
                 postFirebaseDatabase(true);
                 getFirebaseDatabase();
+                String msg=count+"_"+description+"_"+"["+location+"]"+"등록 합니다..";
+
+                putMessage(msg);
                 break;
             case R.id.textView_date:
                 a="a";
@@ -427,6 +433,22 @@ if(add){
                 break;
         }
     }
+
+    private void putMessage(String msg) {
+        String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        String nick=sharedPreferences.getString("nickName","koaca");
+        WorkingMessageList messageList=new WorkingMessageList();
+        messageList.setNickName(nick);
+        messageList.setTime(timeStamp);
+        messageList.setMsg(msg);
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+        databaseReference.push().setValue(messageList);
+
+
+    }
+
     public void processDatePickerResult(int year, int month, int dayOfMonth) {
         String month_string=Integer.toString(month+1);
         String day_string=Integer.toString(dayOfMonth);

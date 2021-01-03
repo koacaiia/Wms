@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -41,6 +42,8 @@ import java.util.Date;
 
 import fine.koaca.MyApplication;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class CaptureProcess implements SurfaceHolder.Callback {
     Camera camera;
     CameraCapture mainActivity;
@@ -48,13 +51,12 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     private FirebaseStorage storage;
     private StorageReference storageReference;
     private StorageReference recvRef;
-    private FirebaseDatabase database;
-    private DatabaseReference databaseReference;
     ContentResolver contentResolver;
     ContentValues contentValues;
     CalendarPick calendarPick;
     String captureItem = "";
-    WorkingMessageData messageData=new WorkingMessageData();
+    WorkingMessageData messageData;
+    Context context;
 
     public CaptureProcess(CameraCapture mainActivity) {
         this.mainActivity = mainActivity;
@@ -103,15 +105,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
                 builder.setMessage("선택된 사진 유형은 버튼클릭시 서버에 업로드 됩니다.");
                 builder.setTitle("사진 유형 선택");
-                String workingMessage="입고 사진 촬영";
-//                messageData.workingMessageList(workingMessage);
-
 
                 builder.setPositiveButton("입고사진 업로드", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         captureItem = "InCargo";
                         firebaseCameraUpLoad(imageUri, date_today, captureItem);
+                        Log.i("koacaiia",captureItem+"__capture uploading");
 
                     }
                 });
@@ -134,6 +134,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     }
                 });
                 builder.show();
+
                 camera.startPreview();
             }
         };
@@ -174,14 +175,21 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 성공적으로 UpLoad 되었습니다.", Toast.LENGTH_SHORT).show();
+                        String msg=captureItem+"_사진 서버에 업로드 성공";
+                        putMessage(msg);
+
                     }
                 }).
                 addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(mainActivity, "failure Server Uploading", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 성공적으로 UpLoad 되었습니다.", Toast.LENGTH_SHORT).show();
+                        String msg=captureItem+"_사진 서버에 업로드 실패";
+                        putMessage(msg);
                     }
                 });
+
+
     }
 
     public void listAllFiles(String dataMessage, String downLoadingItems) {
@@ -468,6 +476,23 @@ Log.i("koacaiia6",itemRef+"__fileDownLoading Init");
 
             }
         });
+    }
+
+    public void putMessage(String msg){
+        String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        SharedPreferences sharedPreferences;
+        sharedPreferences=mainActivity.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        String nick;
+        nick=sharedPreferences.getString("nickName","koaca");
+        WorkingMessageList messageList=new WorkingMessageList();
+        messageList.setNickName(nick);
+        Log.i("koacaiia",nick+"___Log nickName");
+        messageList.setTime(timeStamp);
+        messageList.setMsg(msg);
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("WorkingMessage");
+        databaseReference.push().setValue(messageList);
     }
 
 
