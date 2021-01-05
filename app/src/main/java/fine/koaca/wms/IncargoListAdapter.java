@@ -46,7 +46,7 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
 
     @NonNull
     @Override
-    public fine.koaca.wms.IncargoListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public IncargoListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.incargolist,parent,false);
                 return new ListViewHolder(view);
     }

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -73,8 +74,7 @@ public class CameraCapture extends AppCompatActivity {
         btn_capture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                 captureProcess.getImageDown_temp();
-//                captureProcess.listAllFiles();
+                captureProcess.downLoadingOnlyImage();
 
                 return true;
             }
@@ -90,8 +90,16 @@ public class CameraCapture extends AppCompatActivity {
         camera_des=findViewById(R.id.camera_textView_des);
         camera_des.setText(intent_camera_des);
 
+        getWindow().setFormat(PixelFormat.UNKNOWN);
         surfaceView=findViewById(R.id.surfaceView);
         surfaceHolder=surfaceView.getHolder();
+        surfaceView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureProcess.setmAutoFocus();
+
+            }
+        });
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

@@ -70,6 +70,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         windowDegree = new WindowDegree(mainActivity);
         int degree = windowDegree.getDegree();
         camera.setDisplayOrientation(degree);
+
         try {
             camera.setPreviewDisplay(mainActivity.surfaceHolder);
         } catch (IOException e) {
@@ -139,6 +140,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             }
         };
         camera.takePicture(null, null, callback);
+        setmAutoFocus();
 
     }
 
@@ -156,12 +158,16 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
-
+        preViewProcess();
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-
+        if(camera!=null){
+            camera.stopPreview();
+            camera.release();
+            camera=null;
+        }
     }
 
     public void firebaseCameraUpLoad(Uri imageUri, String date_today, String captureItem) {
@@ -486,19 +492,31 @@ Log.i("koacaiia6",itemRef+"__fileDownLoading Init");
         nick=sharedPreferences.getString("nickName","koaca");
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
-        Log.i("koacaiia",nick+"___Log nickName");
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("WorkingMessage");
-        databaseReference.push().setValue(messageList);
+        DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
+        databaseReference.setValue(messageList);
     }
 
-
-
+    public void setmAutoFocus(){
+        camera.autoFocus(mAutoFocus);
 
     }
+
+    Camera.AutoFocusCallback mAutoFocus=new Camera.AutoFocusCallback() {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            Toast.makeText(mainActivity, "fosusing successed", Toast.LENGTH_SHORT).show();
+
+        }
+    };
+
+
+    public void downLoadingOnlyImage() {
+    }
+}
 
 
 

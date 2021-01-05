@@ -77,7 +77,12 @@ public class CalendarPick {
         }else{
             today=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
         }
-        tomorrow=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
+        if(cal.get(Calendar.DAY_OF_MONTH)<9){
+            tomorrow="0"+cal.get(Calendar.DAY_OF_MONTH)+1;
+        }else{
+            tomorrow=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
+        }
+
 
         date_tomorrow=year+"-"+month+"-"+tomorrow;
         date_today=year+"년"+month+"월"+today+"일";

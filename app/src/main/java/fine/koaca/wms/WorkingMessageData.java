@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -49,23 +50,19 @@ public class WorkingMessageData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_working_message_data);
 
-
-
         recyclerView = findViewById(R.id.recyclerView_workingMessageData);
         messageEdit=findViewById(R.id.edit_workingMessageData);
-
+        InputMethodManager imm= (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
         database = FirebaseDatabase.getInstance();
-        databaseReference = database.getReference("WorkingMessage");
-
-
         btn_send=findViewById(R.id.button_workignMessageData);
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                message=messageEdit.getText().toString();
+                message=String.valueOf(messageEdit.getText().toString());
                 putWorkingMessageList(message);
-
+                messageEdit.setText("");
+                imm.hideSoftInputFromWindow(messageEdit.getWindowToken(),0);
             }
         });
 
@@ -76,15 +73,15 @@ public class WorkingMessageData extends AppCompatActivity {
         adapter=new WorkMessageAdapter(dataList,WorkingMessageData.this,nick);
         recyclerView.setAdapter(adapter);
 
+
         getWorkingMessageList();
-
-
     }
 
     public void getWorkingMessageList() {
 
 
 //        databaseReference.setValue(timeStamp1 + timeStamp2 + workingMessage);
+        databaseReference = database.getReference("WorkingMessage");
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -118,10 +115,10 @@ public class WorkingMessageData extends AppCompatActivity {
         nick=sharedPreferences.getString("nickName","koaca");
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
-        Log.i("koacaiia",nick+"___Log nickName");
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
-        databaseReference.push().setValue(messageList);
+        databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
+        databaseReference.setValue(messageList);
 
 
    }

@@ -49,7 +49,7 @@ public class CameraCaptureTextureView extends AppCompatActivity {
         WindowDegree windowDegree=new WindowDegree(this);
         int degree=windowDegree.getDegree1();
         camera.setDisplayOrientation(degree);
-        Log.i("koacaiia",degree+"__");
+
         try {
             camera.setPreviewTexture(textureView.getSurfaceTexture());
         } catch (IOException e) {

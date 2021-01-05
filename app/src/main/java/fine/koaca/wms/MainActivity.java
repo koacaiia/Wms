@@ -443,7 +443,7 @@ if(add){
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.push().setValue(messageList);
 
 
@@ -517,7 +517,7 @@ if(add){
                            .setNeutralButton("화물조회", new DialogInterface.OnClickListener() {
                                @Override
                                public void onClick(DialogInterface dialog, int which) {
-                                   Intent intent=new Intent(fine.koaca.wms.MainActivity.this,WebList.class);
+                                   Intent intent=new Intent(MainActivity.this,WebList.class);
                                    String data_bl=textView_bl.getText().toString();
                                    intent.putExtra("bl",data_bl);
                                    startActivity(intent);

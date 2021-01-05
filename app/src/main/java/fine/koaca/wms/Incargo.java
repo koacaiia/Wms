@@ -1,7 +1,7 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,7 +41,7 @@ import java.util.Collections;
 
 public class Incargo extends AppCompatActivity implements Serializable {
     ArrayList<Fine2IncargoList> listItems;
-    fine.koaca.wms.IncargoListAdapter adapter;
+    IncargoListAdapter adapter;
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     RecyclerView recyclerView;
@@ -76,8 +76,9 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
     String depotName;
     String nickName;
+    String bl;
 
-    static private String SHARE_NAME="SHARE_DEPOT";
+    static private final String SHARE_NAME="SHARE_DEPOT";
     static SharedPreferences sharedPref;
     static SharedPreferences.Editor editor;
 
@@ -86,7 +87,6 @@ public class Incargo extends AppCompatActivity implements Serializable {
     String searchContents;
 
     String downLoadingMark="";
-
     public Incargo(ArrayList<Fine2IncargoList> listItems) {
         this.listItems=listItems;
     }
@@ -103,10 +103,12 @@ public class Incargo extends AppCompatActivity implements Serializable {
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
         if(sharedPref==null){
             depotName="2물류(02010027)";
+            nickName="Guest";
         }else{
-            depotName=sharedPref.getString("depotName","koaca");
+            depotName=sharedPref.getString("depotName",null);
+            nickName=sharedPref.getString("nickName",null);
         }
-        nickName=sharedPref.getString("nickName","koaca");
+
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
         incargo_incargo=findViewById(R.id.incargo_incargo);
@@ -136,7 +138,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
             Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
             databaseReference=database.getReference("Incargo");
         }
-        adapter=new fine.koaca.wms.IncargoListAdapter(listItems,this);
+        adapter=new IncargoListAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
         adapter.setAdapterClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterClickListener() {
             @Override
@@ -144,6 +146,8 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 String sortItemName=listItems.get(pos).getContainer();
                 String filterItemName="container";
                 sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
+                bl=listItems.get(pos).getBl();
+
             }
         });
         adapter.setAdaptLongClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterLongClickListener() {
@@ -157,6 +161,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
         incargo_location=findViewById(R.id.incargo_reset);
         incargo_location.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("SimpleDateFormat")
             @Override
             public void onClick(View v) {
                 sort_dialog="dialogsort";
@@ -578,6 +583,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         inflater.inflate(R.menu.main_menu,menu);
         return super.onCreateOptionsMenu(menu);
     }
+   @SuppressLint("NonConstantResourceId")
    @Override
     public boolean onOptionsItemSelected(MenuItem item){
        sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
@@ -642,12 +648,15 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 break;
 
             case R.id.action_account_search:
-                searchSort();
+                webView(bl);
+                break;
+
             case R.id.action_account_down:
                 downLoadingMark="DownLoadingOk";
                 String a="b";
                 DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                 datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+                break;
         }
         return true;
 
@@ -746,6 +755,12 @@ public class Incargo extends AppCompatActivity implements Serializable {
             }
         });
         builder.show();
+    }
+
+    public void webView(String bl){
+        Intent intent=new Intent(Incargo.this,WebList.class);
+        intent.putExtra("bl",bl);
+        startActivity(intent);
     }
 
 
