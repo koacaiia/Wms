@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +22,10 @@ import java.util.Set;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.ListViewHolder>{
+public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.ListViewHolder>
+implements OnListImageClickListener{
     ArrayList<WorkingMessageList> messageLists;
+    OnListImageClickListener listener;
     String myNickname;
     Context context;
     SharedPreferences sharedPreferences;
@@ -63,16 +66,27 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
             holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
         }
-
-
-
     }
 
     @Override
     public int getItemCount() {
         return messageLists.size();
+    }
+
+    public void setOnListImageClickListener(OnListImageClickListener listener){
+        this.listener=listener;
+    }
+
+
+
+    @Override
+    public void onItemClickImage(WorkMessageAdapter.ListViewHolder holder, View view, int position) {
+       if(listener!=null){
+           listener.onItemClickImage(holder,view,position);
+       }
+
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
@@ -86,6 +100,18 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
             this.nickName=itemView.findViewById(R.id.txt_work_nickName);
             this.time=itemView.findViewById(R.id.txt_work_time);
             this.imageview=itemView.findViewById(R.id.image_work_image);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    int pos=getAdapterPosition();
+                    if(listener !=null){
+                        listener.onItemClickImage(ListViewHolder.this,v,pos);
+                    }
+
+                }
+            });
 
 
         }

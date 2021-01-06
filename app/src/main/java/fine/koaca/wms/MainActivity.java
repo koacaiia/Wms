@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         adapter.setOnItemClicklistener(new OnListItemClickListener() {
             @Override
-            public void onItemClick(fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
+            public void onItemClick(Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
                 String bl=listItems.get(position).getBl();
                 String des=listItems.get(position).getDescription();
                 String loc=listItems.get(position).getLocation();
@@ -208,9 +208,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                            }
 
         });
-        adapter.setLongClickListener(new fine.koaca.wms.OnItemLongClickListener() {
+        adapter.setLongClickListener(new OnItemLongClickListener() {
             @Override
-            public void onLongItemClick(fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+            public void onLongItemClick(Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
             databaseRegLongClick();
             }
         });

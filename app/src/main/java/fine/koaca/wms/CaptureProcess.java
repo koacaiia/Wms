@@ -81,6 +81,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             public void onPictureTaken(byte[] data, Camera camera) {
                 OutputStream fos = null;
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+
                 windowDegree = new WindowDegree(mainActivity);
                 int degree = windowDegree.getDegree();
                 bitmap = rotate(bitmap, degree);
@@ -99,6 +100,11 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     e.printStackTrace();
                 }
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 AlertDialog.Builder builder = new AlertDialog.Builder(mainActivity);
                 builder.setMessage("선택된 사진 유형은 버튼클릭시 서버에 업로드 됩니다.");
                 builder.setTitle("사진 유형 선택");
@@ -336,6 +342,12 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             e.printStackTrace();
         }
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+        try {
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        imageUri= Uri.parse(String.valueOf(imageUri));
 //        Cursor cursor = mainActivity.getContentResolver().query(imageUri, null, null, null, null );
 //        assert cursor != null;
@@ -364,9 +376,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                             String dirPath = "/storage/emulated/0/" + Environment.DIRECTORY_PICTURES + "/Fine/입,출고";
                             File fileName=new File(dirPath,itemName);
-                            Log.i("koacaiia",fileName+"___?");
+
                             if(fileName.exists()){
-                                Log.i("koacaiia",fileName+"___exists");
+
                             }else{
                             File tempFile= null;
                             try {
@@ -374,7 +386,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            Log.i("koacaiia",tempFile+"__cratedFile");
 
                             File finalTempFile = tempFile;
                                 File finalTempFile1 = tempFile;

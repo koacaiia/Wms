@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.RED;
 
-public class Fine2IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder> implements    OnListItemClickListener, fine.koaca.wms.OnItemLongClickListener {
+public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoListAdapter.ListViewHolder> implements    OnListItemClickListener,OnItemLongClickListener {
 
     ArrayList<Fine2IncargoList> fine2IncargoLists;
     OnListItemClickListener listener;
-    fine.koaca.wms.OnItemLongClickListener longClickListener;
+    OnItemLongClickListener longClickListener;
 
     private SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
 

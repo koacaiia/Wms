@@ -78,7 +78,7 @@ public class CalendarPick {
             today=String.valueOf(cal.get(Calendar.DAY_OF_MONTH));
         }
         if(cal.get(Calendar.DAY_OF_MONTH)<9){
-            tomorrow="0"+cal.get(Calendar.DAY_OF_MONTH)+1;
+            tomorrow="0"+String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
         }else{
             tomorrow=String.valueOf(cal.get(Calendar.DAY_OF_MONTH)+1);
         }

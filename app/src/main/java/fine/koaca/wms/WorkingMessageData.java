@@ -35,7 +35,7 @@ public class WorkingMessageData extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     RecyclerView recyclerView;
-    RecyclerView.Adapter adapter;
+    WorkMessageAdapter adapter;
     ArrayList<WorkingMessageList> dataList;
     private String nick;
     EditText messageEdit;
@@ -73,8 +73,17 @@ public class WorkingMessageData extends AppCompatActivity {
         adapter=new WorkMessageAdapter(dataList,WorkingMessageData.this,nick);
         recyclerView.setAdapter(adapter);
 
+        adapter.setOnListImageClickListener(new OnListImageClickListener() {
+          @Override
+            public void onItemClickImage(WorkMessageAdapter.ListViewHolder holder, View view, int position) {
+              String uri=dataList.get(position).getUri();
+              Log.i("koacaiia",uri+"___UriToString");
+               intentImageView(uri);
+                   }
+                });
 
-        getWorkingMessageList();
+
+                getWorkingMessageList();
     }
 
     public void getWorkingMessageList() {
@@ -121,6 +130,13 @@ public class WorkingMessageData extends AppCompatActivity {
         databaseReference.setValue(messageList);
 
 
+
+   }
+   public void intentImageView(String uri){
+        Intent intent=new Intent(WorkingMessageData.this,ImageViewActivity.class);
+        intent.putExtra("uri",uri);
+        Log.i("koacaiia",uri+"___UriToString");
+        startActivity(intent);
    }
 
 }
