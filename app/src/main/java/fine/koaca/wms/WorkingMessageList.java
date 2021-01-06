@@ -2,6 +2,7 @@ package fine.koaca.wms;
 
 public class WorkingMessageList {
     String msg;
+    String Uri;
     String nickName;
     String time;
 
@@ -23,4 +24,13 @@ public class WorkingMessageList {
     public void setTime(String time){
         this.time=time;
     }
+
+    public String getUri() {
+        return Uri;
+    }
+
+    public void setUri(String uri) {
+        Uri = uri;
+    }
 }
+

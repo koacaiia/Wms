@@ -1,15 +1,11 @@
 package fine.koaca.wms;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -182,16 +178,26 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 성공적으로 UpLoad 되었습니다.", Toast.LENGTH_SHORT).show();
                         String msg=captureItem+"_사진 서버에 업로드 성공";
-                        putMessage(msg);
 
-                    }
+                        recvRef.getDownloadUrl().
+                                addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                        String imageUri=String.valueOf(uri);
+                                        putMessage(msg,imageUri);
+
+                                    }
+                                });
+                        }
+
+
                 }).
                 addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 성공적으로 UpLoad 되었습니다.", Toast.LENGTH_SHORT).show();
                         String msg=captureItem+"_사진 서버에 업로드 실패";
-                        putMessage(msg);
+                        putMessage(msg, "");
                     }
                 });
 
@@ -400,7 +406,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 //                                                e.printStackTrace();
 //                                            }
 //                                            bitmap.compress(Bitmap.CompressFormat.JPEG,100,fos);
-                                            Log.i("koacaiia",itemName+"__downloading successed");
                                             Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
                                                             "DownLoad에 " +
                                                             "성공하였습니다.",
@@ -410,7 +415,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                     .addOnFailureListener(new OnFailureListener() {
                                         @Override
                                         public void onFailure(@NonNull Exception e) {
-                                            Log.i("koacaiia","__downloading failed");
                                             Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
                                                             "DownLoad에 " +
                                                             "실패하였습니다.",
@@ -467,24 +471,22 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     private void fileDownLoading(String dataMessage, String downLoadingItems, String itemName, File fileName) {
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
         StorageReference itemRef=storage.getReference().child("/images/"+dataMessage+"/"+downLoadingItems+"/"+itemName);
-Log.i("koacaiia6",itemRef+"__fileDownLoading Init");
+
         itemRef.getFile(fileName)
                 .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                        Log.i("koacaiia7",fileName+"+__after fileDownLoading Init downloading successed ");
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.i("koacaiia8",fileName+"__after fileDownLoading Init downloading Failed");
 
             }
         });
     }
 
-    public void putMessage(String msg){
+    public void putMessage(String msg, String imageUri){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         SharedPreferences sharedPreferences;
         sharedPreferences=mainActivity.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
@@ -494,6 +496,7 @@ Log.i("koacaiia6",itemRef+"__fileDownLoading Init");
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
+        messageList.setUri(imageUri);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);

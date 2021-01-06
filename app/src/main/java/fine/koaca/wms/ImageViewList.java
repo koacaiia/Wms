@@ -4,17 +4,17 @@ import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 public class ImageViewList {
-    ImageView imageview;
+    Bitmap imageview;
 
-    public ImageViewList(ImageView imageview) {
+    public ImageViewList(Bitmap imageview) {
         this.imageview = imageview;
     }
 
-    public ImageView getImageview() {
+    public Bitmap getImageview() {
         return imageview;
     }
 
-    public void setImageview(ImageView imageview) {
+    public void setImageview(Bitmap imageview) {
         this.imageview = imageview;
     }
 }

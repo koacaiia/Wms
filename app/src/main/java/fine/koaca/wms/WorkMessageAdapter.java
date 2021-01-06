@@ -6,11 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -42,6 +45,9 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
         holder.msg.setText(messageLists.get(position).getMsg());
         holder.nickName.setText(messageLists.get(position).getNickName());
         holder.time.setText(messageLists.get(position).getTime());
+        Glide.with(holder.itemView)
+                .load(messageLists.get(position).getUri())
+                .into(holder.imageview);
         sharedPreferences=context.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nickName=sharedPreferences.getString("nickName",null);
         Log.i("koacaiia",nickName+"__onBindViewHolder Log");
@@ -51,11 +57,13 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
             holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
             holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
 
         }else{
             holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
             holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
         }
 
 
@@ -71,11 +79,14 @@ public class WorkMessageAdapter extends RecyclerView.Adapter<WorkMessageAdapter.
         TextView msg;
         TextView nickName;
         TextView time;
+        ImageView imageview;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.msg=itemView.findViewById(R.id.txt_work_msg);
             this.nickName=itemView.findViewById(R.id.txt_work_nickName);
             this.time=itemView.findViewById(R.id.txt_work_time);
+            this.imageview=itemView.findViewById(R.id.image_work_image);
+
 
         }
     }
