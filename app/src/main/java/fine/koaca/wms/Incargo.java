@@ -87,6 +87,8 @@ public class Incargo extends AppCompatActivity implements Serializable {
     String searchContents;
 
     String downLoadingMark="";
+
+    public static String[] consignee_lists;
     public Incargo(ArrayList<Fine2IncargoList> listItems) {
         this.listItems=listItems;
     }
@@ -94,6 +96,11 @@ public class Incargo extends AppCompatActivity implements Serializable {
     public Incargo(){
 
     }
+
+    public Incargo(String[] consignee_list) {
+        this.consignee_list2=consignee_list;
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,16 +189,17 @@ public class Incargo extends AppCompatActivity implements Serializable {
         incargo_mnf.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent=new Intent(Incargo.this,Activity_Exercise.class);
-                startActivity(intent);
+
                 return true;
             }
         });
         dia_dateInit=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         getFirebaseIncargoDatabase();
+
         incargo_consignee="전 화물";
         incargo_contents_date.setText(dia_dateInit);
         incargo_contents_consignee.setText(incargo_consignee+"_"+"입고현황");
+        Log.i("koacaiia","consigneeList"+consignee_list2);
 
       fltBtn_Capture=findViewById(R.id.incargo_floatBtn_Capture);
       fltBtn_Capture.setOnClickListener(new View.OnClickListener() {
@@ -410,10 +418,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
         String[] dateList=dateSelected.toArray(new String[dateSelected.size()]);
         AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
         View view=getLayoutInflater().inflate(R.layout.spinnerlist,null);
-        Spinner sp=view.findViewById(R.id.incargo_spinner_listconsignee1);
+        Spinner sp=view.findViewById(R.id.spinner_consignee);
         dia_date=view.findViewById(R.id.dia_date);
         dia_date.setText(dia_dateInit);
-        dia_consignee=view.findViewById(R.id.dia_consignee);
+        dia_consignee=view.findViewById(R.id.spinner_result);
         ArrayAdapter<String> consigneelistAdapter=new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item, fine.koaca.wms.Incargo.this.consignee_list2);
         consigneelistAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -734,28 +742,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         builder.show();
     }
 
-    public void fcmSelected(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
-        builder.setTitle("FCM 선택");
-        builder.setPositiveButton("보내기", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent=new Intent(Incargo.this,FcmSendMessage.class);
-                Log.i("koacaiia",intent+"__changed");
-                startActivity(intent);
 
-            }
-        });
-        builder.setNegativeButton("받기", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent=new Intent(Incargo.this,FcmProject.class);
-
-                startActivity(intent);
-            }
-        });
-        builder.show();
-    }
 
     public void webView(String bl){
         Intent intent=new Intent(Incargo.this,WebList.class);

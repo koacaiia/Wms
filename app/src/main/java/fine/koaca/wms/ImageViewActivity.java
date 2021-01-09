@@ -62,17 +62,13 @@ public class ImageViewActivity extends AppCompatActivity {
 
     }
     public void glideImageToSave(Bitmap resource){
-
-//        Bitmap bitmap= resource;
         ContentResolver resolver=getContentResolver();
-
         ContentValues values=new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME,System.currentTimeMillis()+".jpg");
         values.put(MediaStore.Images.Media.MIME_TYPE,"image/*");
-        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES+"/Fine/입,출고");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES+"/Fine/DownLoad");
         Uri imageUri=resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
         OutputStream fos= null;
-
         try {
             fos=resolver.openOutputStream(imageUri);
         } catch (FileNotFoundException e) {

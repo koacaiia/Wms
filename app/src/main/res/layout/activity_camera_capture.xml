@@ -90,6 +90,7 @@
         app:layout_constraintVertical_bias="0.26999998" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/captureImageList"
         android:layout_width="0dp"
         android:layout_height="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -97,4 +98,16 @@
         app:layout_constraintStart_toStartOf="@+id/surfaceView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabshare"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        app:layout_constraintBottom_toTopOf="@+id/captureImageList"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/surfaceView"
+        app:layout_constraintTop_toTopOf="@+id/surfaceView"
+        app:layout_constraintVertical_bias="0.96"
+        app:srcCompat="@android:drawable/ic_menu_share" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -171,11 +171,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         database=FirebaseDatabase.getInstance();
         databaseReference=database.getReference("Incargo");
 
-        adapter=new fine.koaca.wms.Fine2IncargoListAdapter(listItems,this);
-
-
+        adapter=new Fine2IncargoListAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
-
 
         editText_delete=new EditText(this);
 
@@ -444,7 +441,7 @@ if(add){
         messageList.setMsg(msg);
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
-        databaseReference.push().setValue(messageList);
+        databaseReference.setValue(messageList);
 
 
     }

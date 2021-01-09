@@ -5,6 +5,33 @@ public class WorkingMessageList {
     String Uri;
     String nickName;
     String time;
+    String date;
+    String consignee;
+    String InOutCargo;
+
+    public String getInOutCargo() {
+        return InOutCargo;
+    }
+
+    public void setInOutCargo(String inOutCargo) {
+        InOutCargo = inOutCargo;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getConsignee() {
+        return consignee;
+    }
+
+    public void setConsignee(String consignee) {
+        this.consignee = consignee;
+    }
 
     public String getMsg(){
         return msg;

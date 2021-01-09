@@ -67,10 +67,11 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
     }
 
     public void setOnItemClicklistener(OnListItemClickListener listener){
+
         this.listener=listener;
     }
 
-    public void setLongClickListener(fine.koaca.wms.OnItemLongClickListener longClickListener){
+    public void setLongClickListener(OnItemLongClickListener longClickListener){
         this.longClickListener=longClickListener;
     }
     @Override
@@ -80,7 +81,7 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
     }
 
     @Override
-    public void onLongItemClick(fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+    public void onLongItemClick(Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
         if(longClickListener !=null){
             longClickListener.onLongItemClick(listViewHolder,v,pos);
         }

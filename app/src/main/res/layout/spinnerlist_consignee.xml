@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/border"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/spinner_consignee_directput"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="직업입력 창"
+            android:inputType="textPersonName"
+            android:textStyle="bold|italic" />
+
+        <Spinner
+            android:id="@+id/spinner_consignee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.7"
+            android:defaultFocusHighlightEnabled="true"
+            android:foregroundGravity="center"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/spinner_result"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="화주명"
+        android:textColor="@color/colorAccent"
+        android:textStyle="bold|italic" />
+
+</LinearLayout>

@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
@@ -82,15 +83,12 @@ public class WorkingMessageData extends AppCompatActivity {
                    }
                 });
 
-
-                getWorkingMessageList();
+        databaseReference = database.getReference("WorkingMessage");
+                getWorkingMessageLists();
     }
 
     public void getWorkingMessageList() {
 
-
-//        databaseReference.setValue(timeStamp1 + timeStamp2 + workingMessage);
-        databaseReference = database.getReference("WorkingMessage");
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -117,15 +115,61 @@ public class WorkingMessageData extends AppCompatActivity {
             }
         });
     }
+        public void getWorkingMessageLists(){
+            ChildEventListener postListener=new ChildEventListener(){
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                    WorkingMessageList data=snapshot.getValue(WorkingMessageList.class);
+                    ((WorkMessageAdapter) adapter).addWorkingMessage(data);
+
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            };
+            String consigName="M&F";
+            Query sortItem=databaseReference.orderByChild(consigName);
+                    sortItem.addChildEventListener(postListener);
+
+        }
+
+
 
    public void putWorkingMessageList(String msg){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         nick=sharedPreferences.getString("nickName","koaca");
         WorkingMessageList messageList=new WorkingMessageList();
+        CalendarPick calendarPick=new CalendarPick();
+        calendarPick.CalendarCall();
+        String date=calendarPick.date_today;
+        String consignee="Etc";
+        String inOutCargo="Etc";
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
+        messageList.setDate(date);
+        messageList.setConsignee(consignee);
+        messageList.setInOutCargo(inOutCargo);
+        messageList.setUri("");
+
         databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.setValue(messageList);
 
