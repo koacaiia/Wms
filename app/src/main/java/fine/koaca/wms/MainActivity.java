@@ -439,6 +439,8 @@ if(add){
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
+        messageList.setConsignee("M&F");
+        messageList.setInOutCargo("Etc");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.setValue(messageList);
