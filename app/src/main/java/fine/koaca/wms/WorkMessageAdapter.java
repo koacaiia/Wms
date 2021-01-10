@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,6 +121,7 @@ implements OnListImageClickListener{
 
     public void addWorkingMessage(WorkingMessageList messageData){
         messageLists.add(messageData);
+        Collections.reverse(messageLists);
         notifyItemInserted(messageLists.size()-1);
     }
 }

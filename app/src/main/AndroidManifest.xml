@@ -20,9 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
         <activity android:name=".ImageViewActivity"></activity>
-        <activity android:name=".WorkingMessageData" />
-
-        <activity android:name=".CameraCaptureTextureView" />
+        <activity android:name=".WorkingMessageData"
+            android:label="Working Message"/>
         <activity
             android:name=".Incargo"
             android:label="Incargo_List">

@@ -29,12 +29,26 @@ String a;
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-       if(a.equals("a")){
-        MainActivity activity=(MainActivity)getActivity();
-        activity.processDatePickerResult(year,month,dayOfMonth);}
-       else{
-           Incargo incargo=(Incargo)getActivity();
-           incargo.processDatePickerResult(year,month,dayOfMonth);
+//       if(a.equals("a")){
+//        MainActivity activity=(MainActivity)getActivity();
+//        activity.processDatePickerResult(year,month,dayOfMonth);}
+//       else{
+//           Incargo incargo=(Incargo)getActivity();
+//           incargo.processDatePickerResult(year,month,dayOfMonth);
+//       }
+       switch(a){
+           case "a":
+               MainActivity activity=(MainActivity)getActivity();
+               activity.processDatePickerResult(year,month,dayOfMonth);
+               break;
+           case "b":
+               Incargo incargo=(Incargo)getActivity();
+               incargo.processDatePickerResult(year,month,dayOfMonth);
+               break;
+           case "c":
+               WorkingMessageData workingMessageData=(WorkingMessageData)getActivity();
+               workingMessageData.processDatePickerResult(year,month,dayOfMonth);
+               break;
        }
 
 

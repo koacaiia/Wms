@@ -10,13 +10,13 @@
         android:background="@drawable/border"
         android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/spinner_search_inpurDate"
+        <Button
+            android:id="@+id/workmessage_inputdate"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:hint="직업입력 창"
+            android:hint="날짜 검색조건"
             android:inputType="textPersonName"
             android:textStyle="bold|italic" />
 
@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:text="화주명"
+        android:text="검색 조건"
         android:textColor="@color/colorAccent"
         android:textStyle="bold|italic" />
 

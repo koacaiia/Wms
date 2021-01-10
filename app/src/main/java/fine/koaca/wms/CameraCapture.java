@@ -110,6 +110,14 @@ public class CameraCapture extends AppCompatActivity
                 consigneeSelected();
             }
         });
+        btn_share.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
 
         camera_date=findViewById(R.id.camera_textView_date);
@@ -131,13 +139,7 @@ public class CameraCapture extends AppCompatActivity
 
             }
         });
-        surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                outCargoSelect();
-                return true;
-            }
-        });
+
 
         recyclerView=findViewById(R.id.captureImageList);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
@@ -188,46 +190,6 @@ public class CameraCapture extends AppCompatActivity
         intent_camera_des=intent.getStringExtra("des");
     }
 
-    public void outCargoSelect(){
-        String[] items_cargo = {"코만푸드", "M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철", "스위치코리아","한큐한신","하랄코"};
-        int items_length=items_cargo.length-5;
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        EditText editText_etc=new EditText(this);
-        builder.setTitle("출고사진 항목선택");
-
-
-        ArrayAdapter<String> cargoAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, items_cargo);
-        cargoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        Spinner spinner_outcargo=new Spinner(this);
-        spinner_outcargo.setAdapter(cargoAdapter);
-        builder.setView(spinner_outcargo);
-
-        spinner_outcargo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                selectedItem=items_cargo[position];
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        builder.setPositiveButton("출고사진", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String timeStamp1 = new SimpleDateFormat("yyyy년MM월dd일E요일").format(new Date());
-                String timeStamp2 = new SimpleDateFormat("a_HH시mm분ss초").format(new Date());
-                camera_date.setText(timeStamp1);
-                camera_bl.setText(timeStamp2);
-                camera_count.setText(selectedItem);
-                camera_des.setText("출고");
-
-            }
-        });
-        builder.create();
-        builder.show();
-        Toast.makeText(this, "clicked", Toast.LENGTH_SHORT).show();
-
-    }
 
     public void consigneeSelected(){
         String[] items_consignee={"M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철", "스위치코리아","한큐한신","하랄코"};
@@ -236,9 +198,9 @@ public class CameraCapture extends AppCompatActivity
         View view=getLayoutInflater().inflate(R.layout.spinnerlist_consignee,null);
         ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
                 items_consignee);
-        Spinner spinner_consignee=view.findViewById(R.id.spinner_consignee);
-        EditText spinner_edit=view.findViewById(R.id.spinner_consignee_directput);
-        TextView spinner_text=view.findViewById(R.id.spinner_result);
+        Spinner spinner_consignee=view.findViewById(R.id.workmessage_spinner);
+        EditText spinner_edit=view.findViewById(R.id.spinner_search_inpurDate);
+        TextView spinner_text=view.findViewById(R.id.workmessage_text);
 
         spinner_edit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -302,7 +264,7 @@ public class CameraCapture extends AppCompatActivity
                     Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
                     captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem);
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -319,7 +281,7 @@ public class CameraCapture extends AppCompatActivity
                     Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
                     captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem);
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -330,6 +292,7 @@ public class CameraCapture extends AppCompatActivity
 
 
         dialogConsignee.show();
+
     }
 
 

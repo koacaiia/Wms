@@ -213,8 +213,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
       fltBtn_Capture.setOnLongClickListener(new View.OnLongClickListener() {
           @Override
           public boolean onLongClick(View v) {
-              Intent intent=new Intent(Incargo.this,CameraCaptureTextureView.class);
-              startActivity(intent);
+
               return true;
           }
       });
@@ -418,10 +417,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
         String[] dateList=dateSelected.toArray(new String[dateSelected.size()]);
         AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
         View view=getLayoutInflater().inflate(R.layout.spinnerlist,null);
-        Spinner sp=view.findViewById(R.id.spinner_consignee);
+        Spinner sp=view.findViewById(R.id.workmessage_spinner);
         dia_date=view.findViewById(R.id.dia_date);
         dia_date.setText(dia_dateInit);
-        dia_consignee=view.findViewById(R.id.spinner_result);
+        dia_consignee=view.findViewById(R.id.workmessage_text);
         ArrayAdapter<String> consigneelistAdapter=new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item, fine.koaca.wms.Incargo.this.consignee_list2);
         consigneelistAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
