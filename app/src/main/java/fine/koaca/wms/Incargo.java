@@ -313,19 +313,25 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 ArrayList<Integer> list_lclcargo=new ArrayList<Integer>();
                 ArrayList<Integer> list_incargo=new ArrayList<Integer>();
 
-                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
-                    Fine2IncargoList data=dataSnapshot.getValue(Fine2IncargoList.class);
-                    if(str_sort.equals("long")){
-                        listItems.add(data);}
-                    else if(str_sort.equals("sort")){
-                        if(dia_consignee.getText().toString().equals("All")){
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
+                    Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
+                    String forty = data.getContainer40();
+                    String twenty = data.getContainer20();
+                    String lCl = data.getLclcargo();
+                    if (!forty.equals("0") || !twenty.equals("0") || !lCl.equals("0")){
+                        if (str_sort.equals("long")) {
                             listItems.add(data);
+                        } else if (str_sort.equals("sort")) {
+                            if (dia_consignee.getText().toString().equals("All")) {
+                                listItems.add(data);
+                            }
+                            if (data.getConsignee().equals(dia_consignee.getText().toString())) {
+                                listItems.add(data);
+                            } else {
+                            }
+                            dia_dateInit = dia_date.getText().toString();
                         }
-                        if(data.getConsignee().equals(dia_consignee.getText().toString())){
-                            listItems.add(data);
-                        }else{}
-                        dia_dateInit=dia_date.getText().toString();
-                    }
+                }
                 }
 
                 Collections.reverse(listItems);
