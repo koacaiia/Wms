@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".ImageViewActivity"></activity>
+        <activity android:name=".ImageViewActivity"
+            android:label="사진정보"></activity>
         <activity android:name=".WorkingMessageData"
             android:label="Working Message"/>
         <activity
@@ -32,7 +33,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraCapture" />
-        <activity android:name=".WebList" />
+        <activity android:name=".WebList"
+            android:label="수입화물통관조회"/>
         <activity android:name=".LocationA" />
         <activity
             android:name=".Location"

@@ -87,8 +87,16 @@ public class Incargo extends AppCompatActivity implements Serializable {
     String searchContents;
 
     String downLoadingMark="";
+    Button reg_Button_date;
+    EditText reg_edit_bl;
+    Button reg_Button_bl;
+    EditText reg_edit_container;
+    Button reg_Button_container;
+    TextView reg_Result_date;
+    TextView reg_Result_bl;
+    TextView reg_Result_container;
 
-    public static String[] consignee_lists;
+
     public Incargo(ArrayList<Fine2IncargoList> listItems) {
         this.listItems=listItems;
     }
@@ -545,9 +553,17 @@ public class Incargo extends AppCompatActivity implements Serializable {
         String year_string=Integer.toString(year);
 
 
-        if(downLoadingMark.equals("DownLoadingOk")){
-            dataMessage=(year_string+"년"+month_string+"월"+day_string+"일");
+        if(downLoadingMark.equals("DownLoadingOk")) {
+            dataMessage = (year_string + "년" + month_string + "월" + day_string + "일");
+
             downLoadDialogMessage(dataMessage);
+        }else if (downLoadingMark.equals("RegData")){
+           {
+              String reg_date = (year_string + "년" + month_string + "월" + day_string + "일");
+              reg_Button_date.setText(reg_date);
+              reg_Result_date.setText(reg_date);
+            }
+
         }else{
             dataMessage=(year_string+"-"+month_string+"-"+day_string);
         dia_date.setText(dataMessage);
@@ -665,10 +681,61 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 break;
 
             case R.id.action_account_down:
-                downLoadingMark="DownLoadingOk";
-                String a="b";
+                AlertDialog.Builder dataReg=new AlertDialog.Builder(this);
+                dataReg.setTitle("화물정보 업데이트");
+                View regView=getLayoutInflater().inflate(R.layout.reg_putdata,null);
+                dataReg.setView(regView);
+
+                reg_Button_date=regView.findViewById(R.id.reg_Button_date);
+                reg_edit_bl=regView.findViewById(R.id.reg_edit_bl);
+                reg_Button_bl=regView.findViewById(R.id.reg_Button_bl);
+                reg_edit_container=regView.findViewById(R.id.reg_edit_container);
+                reg_Button_container=regView.findViewById(R.id.reg_Button_container);
+                reg_Result_date=regView.findViewById(R.id.reg_text_result_date);
+                reg_Result_bl=regView.findViewById(R.id.reg_text_result_bl);
+                reg_Result_container=regView.findViewById(R.id.reg_text_result_container);
+                reg_Button_date.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        downLoadingMark="RegData";
+                        String a="b";
                 DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                 datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+
+                    }
+                });
+                reg_Button_bl.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        reg_Button_bl.setText(reg_edit_bl.getText().toString());
+                        reg_Result_bl.setText(reg_edit_bl.getText().toString());
+                    }
+                });
+
+                reg_Button_container.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        reg_Button_container.setText(reg_edit_container.getText().toString());
+                        reg_Result_container.setText(reg_edit_container.getText().toString());
+
+                    }
+                });
+                dataReg.setPositiveButton("자료등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                dataReg.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                dataReg.setMessage("B/L,컨테이너 번호,입고일"+"\n"+ "변경 또는 등록 가능 합니다.");
+                dataReg.show();
+
                 break;
         }
         return true;

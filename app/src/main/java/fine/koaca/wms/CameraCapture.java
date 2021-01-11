@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.net.Uri;
@@ -30,9 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class CameraCapture extends AppCompatActivity
 {
@@ -84,8 +83,8 @@ public class CameraCapture extends AppCompatActivity
         btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             captureProcess.captureProcess(date_today);
-             list=captureProcess.captureImageList;
+                captureProcess.captureProcess(date_today);
+                list=captureProcess.captureImageList;
 
 
             }
@@ -95,10 +94,10 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public boolean onLongClick(View v) {
 //                captureProcess.downLoadingOnlyImage();
-                    list=captureProcess.queryAllPictures();
+                list=captureProcess.queryAllPictures();
                 adapter=new ImageViewListAdapter(list);
                 adapter.notifyDataSetChanged();
-                 recyclerView.setAdapter(adapter);
+                recyclerView.setAdapter(adapter);
 
                 return true;
             }
@@ -146,12 +145,13 @@ public class CameraCapture extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
         list=captureProcess.queryAllPictures();
         adapter=new ImageViewListAdapter(list);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
+
 
         adapter.onListItemSelected(new OnListItemSelectedInterface() {
             @Override
             public void onItemClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
+
+
                 String uriString=list.get(position).getUriName();
 
                 if(imageListSelected.get(position, false)){
@@ -161,12 +161,15 @@ public class CameraCapture extends AppCompatActivity
                     imageListSelected.put(position,true);
                     upLoadUriString.add(uriString);
                 }
-                Log.i("koacaiia","itemArrayList");
                 adapter.notifyItemChanged(position);
+                Log.i("koacaiia","itemArrayList");
+
 
 
             }
         });
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
 
     }
     @Override
@@ -202,6 +205,7 @@ public class CameraCapture extends AppCompatActivity
         EditText spinner_edit=view.findViewById(R.id.spinner_search_inpurDate);
         TextView spinner_text=view.findViewById(R.id.workmessage_text);
 
+
         spinner_edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,13 +227,13 @@ public class CameraCapture extends AppCompatActivity
         spinner_consignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               spinner_text.setText(items_consignee[position]);
-               spinner_edit.setText("");
+                spinner_text.setText(items_consignee[position]);
+                spinner_edit.setText("");
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                spinner_text.setText("Etc");
             }
         });
 
@@ -242,13 +246,24 @@ public class CameraCapture extends AppCompatActivity
             public void onClick(DialogInterface dialog, int which) {
                 int arrsize=upLoadUriString.size();
                 uploadItem="OutCargo";
+                SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+                String nick=sharedPreferences.getString("nickName","Fine");
+                String consigneeName=spinner_text.getText().toString();
+                String message=consigneeName+"_"+uploadItem;
                 for(int i=0;i<arrsize;i++){
                     Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(),uploadItem);
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    captureProcess.firebaseCameraUpLoad(uri,date_today,consigneeName,uploadItem,nick,message);
+                    Log.i("koacaiia","Uri put"+uri);
+
+                    if(i==arrsize-1){
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+                        startActivity(intent);
+
                     }
                 }
 
@@ -262,9 +277,9 @@ public class CameraCapture extends AppCompatActivity
                 uploadItem="InCargo";
                 for(int i=0;i<arrsize;i++){
                     Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem);
+//                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem, nick, message);
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(800);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -279,9 +294,9 @@ public class CameraCapture extends AppCompatActivity
                 uploadItem="Etc";
                 for(int i=0;i<arrsize;i++){
                     Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem);
+//                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem, nick, message);
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(800);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

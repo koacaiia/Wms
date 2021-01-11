@@ -75,11 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String a;
     String databaseRef_sort1="consignee";
     String databaseRef_sort2="코만";
-
-
     RecyclerView recyclerView;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

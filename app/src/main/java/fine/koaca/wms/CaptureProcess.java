@@ -1,5 +1,6 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
@@ -37,6 +38,7 @@ import java.util.Date;
 
 import fine.koaca.MyApplication;
 
+import static android.content.Context.JOB_SCHEDULER_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CaptureProcess implements SurfaceHolder.Callback {
@@ -52,6 +54,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     String captureItem = "";
     ArrayList<ImageViewList> captureImageList=new ArrayList<ImageViewList>();
     ImageViewListAdapter adapter;
+    ArrayList<String> UriString=new ArrayList<String>();
+
     public CaptureProcess(CameraCapture mainActivity) {
         this.mainActivity = mainActivity;
     }
@@ -78,6 +82,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 OutputStream fos = null;
+                OutputStream fosRe=null;
                 Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
                 windowDegree = new WindowDegree(mainActivity);
@@ -91,12 +96,18 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
                 Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
+                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고/Resize");
+                Uri imageUriRe = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+
                 try {
                     fos = contentResolver.openOutputStream(imageUri);
+                    fosRe=contentResolver.openOutputStream(imageUriRe);
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+               bitmap.compress(Bitmap.CompressFormat.JPEG,10,fosRe);
+
                 try {
                     fos.close();
                 } catch (IOException e) {
@@ -141,36 +152,67 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         }
     }
 
-    public void firebaseCameraUpLoad(Uri imageUri, String date_today, String captureItem, String uploadItem) {
+    public void firebaseCameraUpLoad(Uri imageUri, String date_today, String captureItem, String uploadItem, String nick, String message) {
 
         storage = FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
         storageReference = storage.getReference();
         String strRef=date_today+"/"+captureItem+"/"+System.currentTimeMillis()+".jpg";
         recvRef = storageReference.child("images/" +strRef);
+        String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeStamp_date=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
 
         recvRef.putFile(imageUri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(mainActivity, "공용서버에" +captureItem +"("+uploadItem+")"+ "사진이 성공적으로 UpLoad 되었습니다.",
-                                Toast.LENGTH_SHORT).show();
-                        String msg=captureItem +"("+uploadItem+")"+"_사진 서버에 업로드 성공";
+                        Log.i("koacaiia","uri Put storage successed"+imageUri);
 
-                        recvRef.getDownloadUrl().
-                                addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        String imageUri=String.valueOf(uri);
-                                        putMessage(msg,imageUri,captureItem,uploadItem);
-                                    }
-                                });
-                        }                }).
+
+                        }
+                }).
                 addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
                         String msg=captureItem+"_사진 서버에 업로드 실패";
                         putMessage(msg, "", captureItem, uploadItem);
+                    }
+                });
+
+        try {
+            Thread.sleep(1200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        recvRef.getDownloadUrl().
+                addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String imageURI=String.valueOf(uri);
+                        Log.i("koacaiia","uri down successed"+imageUri);
+                        Log.i("koacaiia","uri down and put successed"+imageURI);
+//
+                        WorkingMessageList messageList=new WorkingMessageList();
+                        messageList.setNickName(nick);
+                        messageList.setTime(timeStamp);
+                        messageList.setMsg(message);
+                        messageList.setUri(imageURI);
+                        messageList.setDate(timeStamp_date);
+                        messageList.setConsignee(captureItem);
+                        messageList.setInOutCargo(uploadItem);
+                        FirebaseDatabase database=FirebaseDatabase.getInstance();
+                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
+                                "/"+nick+"_"+timeStamp+"_"+System.currentTimeMillis());
+                        databaseReference.setValue(messageList);
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+
+                        putMessage("Uri 수신실패","",captureItem,uploadItem);
+                        Log.i("koacaiia","kocaiiaImageUri DownLoad Failed");
                     }
                 });
     }
@@ -267,6 +309,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
 
     public void putMessage(String msg, String imageUri, String captureItem, String uploadItem){
+        @SuppressLint("SimpleDateFormat")
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         SharedPreferences sharedPreferences;
         sharedPreferences=mainActivity.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
@@ -283,10 +326,12 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setDate(date);
         messageList.setConsignee(captureItem);
         messageList.setInOutCargo(uploadItem);
+        Log.i("koacaiia","UriChecked"+imageUri);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+System.currentTimeMillis()+msg);
         databaseReference.setValue(messageList);
+
     }
 
     public void setmAutoFocus(){
@@ -311,7 +356,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
 
-            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고");
+            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고/Resize");
             String strFile=String.valueOf(file);
             Log.i("koacaiia","publicPictureFolder"+strFile);
 
@@ -324,6 +369,11 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             cursor.close();
         return captureImageList;
     }
+
+
+
+
+
 }
 
 
