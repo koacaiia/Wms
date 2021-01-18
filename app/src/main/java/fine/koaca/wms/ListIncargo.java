@@ -15,16 +15,12 @@ public class ListIncargo {
     String container20;
     String lclcargo;
     String remark;
+    String description;
 
-    public ListIncargo(String date){
-        this.date=date;
-    }
-    public ListIncargo(){
 
-    }
 
     public ListIncargo(String working, String date, String consignee, String container, String container40, String container20,
-                       String lclcargo, String remark,String incargo) {
+                       String lclcargo, String remark, String incargo, String description) {
 
         this.working = working;
         this.date = date;
@@ -35,6 +31,15 @@ public class ListIncargo {
         this.lclcargo = lclcargo;
         this.remark = remark;
         this.incargo=incargo;
+        this.description=description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getIncargo() {
@@ -120,6 +125,7 @@ public class ListIncargo {
         result.put("lclcargo",lclcargo);
         result.put("remark",remark);
         result.put("incargo",incargo);
+        result.put("des",description);
         return result;
     }
 }

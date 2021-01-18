@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -9,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.IncargoListAdapter.ListViewHolder> {
+public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.ListViewHolder> {
     public interface AdapterClickListener{
         void onItemClick(View v,int pos);
     }
@@ -30,9 +32,7 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
         }
 
     ArrayList<Fine2IncargoList> list;
-    OnListItemClickListener listener;
-    fine.koaca.wms.OnItemLongClickListener longClickListener;
-    private SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
+    private final SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
     Context context;
 
     public IncargoListAdapter(ArrayList<Fine2IncargoList> list) {
@@ -87,6 +87,11 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
 //                holder.itemView.setBackgroundColor(Color.WHITE);
 //
 //        }}
+        holder.itemView.setSelected(isItemSelected(position));
+    }
+
+    private boolean isItemSelected(int position) {
+        return mSelectedItems.get(position,false);
     }
 
     @Override
@@ -103,9 +108,11 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
         TextView bl;
         TextView des;
         TextView incargo;
+        CardView cardView;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.working=itemView.findViewById(R.id.incargo_working);
+            this.cardView=itemView.findViewById(R.id.background);
             this.date=itemView.findViewById(R.id.incargo_date);
             this.consignee=itemView.findViewById(R.id.incargo_consignee);
             this.container=itemView.findViewById(R.id.incargo_container);
@@ -120,6 +127,15 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
                     int pos=getAdapterPosition();
                     if(mListener !=null){
                         mListener.onItemClick(v,pos);
+                        if(mSelectedItems.get(pos, true)){
+                            mSelectedItems.delete(pos);
+                            mSelectedItems.put(pos,false);
+                            cardView.setCardBackgroundColor(Color.LTGRAY);
+                        }else{
+                            mSelectedItems.put(pos,true);
+                            cardView.setCardBackgroundColor(Color.WHITE);
+                        }
+                        notifyItemChanged(pos);
 
                 }}
             });
@@ -135,4 +151,7 @@ public class IncargoListAdapter extends RecyclerView.Adapter<fine.koaca.wms.Inca
                 }
             });
             }
-        }}
+        }
+
+
+}

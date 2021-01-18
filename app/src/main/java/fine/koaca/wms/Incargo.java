@@ -5,9 +5,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -41,6 +46,8 @@ import java.util.Collections;
 
 public class Incargo extends AppCompatActivity implements Serializable {
     ArrayList<Fine2IncargoList> listItems;
+    ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
+    SparseBooleanArray selectedSortItems=new SparseBooleanArray(0);
     IncargoListAdapter adapter;
     FirebaseDatabase database;
     DatabaseReference databaseReference;
@@ -92,11 +99,21 @@ public class Incargo extends AppCompatActivity implements Serializable {
     Button reg_Button_bl;
     EditText reg_edit_container;
     Button reg_Button_container;
-    TextView reg_Result_date;
-    TextView reg_Result_bl;
-    TextView reg_Result_container;
+//    TextView reg_Result_date;
+//    TextView reg_Result_bl;
+//    TextView reg_Result_container;
 
+    EditText reg_edit_remark;
+    Button reg_Button_remark;
+//    TextView reg_Result_remark;
+    String regDate="";
+    String regBl="";
+    String regContainer="";
+    String regRemark="";
+    String regInint="";
 
+    int versioncode;
+    String alertVersion;
     public Incargo(ArrayList<Fine2IncargoList> listItems) {
         this.listItems=listItems;
     }
@@ -114,6 +131,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
+        getVersion();
 
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
         if(sharedPref==null){
@@ -158,19 +176,30 @@ public class Incargo extends AppCompatActivity implements Serializable {
         adapter.setAdapterClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
-                String sortItemName=listItems.get(pos).getContainer();
-                String filterItemName="container";
-                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
-                bl=listItems.get(pos).getBl();
+//                String sortItemName=listItems.get(pos).getContainer();
+//                String filterItemName="container";
+//                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
+//                bl=listItems.get(pos).getBl();
+                if(selectedSortItems.get(pos, true)){
+                    selectedSortItems.delete(pos);
+                    selectedSortItems.put(pos,false);
+                    listSortItems.remove(listItems.get(pos));
+                }else{
+                    selectedSortItems.put(pos,true);
+                    listSortItems.add(listItems.get(pos));
+                }
+
+                Log.i("koacaiia","koacaiiaArrayList:"+listSortItems);
+                Log.i("koacaiia","koacaiiaArraySize:"+listSortItems.size());
 
             }
         });
         adapter.setAdaptLongClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterLongClickListener() {
             @Override
             public void onLongItemClick(View v, int pos) {
-                String sortItemName=listItems.get(pos).getConsignee();
-                String filterItemName="consignee";
-                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
+//                String sortItemName=listItems.get(pos).getConsignee();
+//                String filterItemName="consignee";
+//                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
             }
         });
 
@@ -183,7 +212,21 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 str_sort_date="today_init";
                 str_sort="long";
                 dia_dateInit=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+                listSortItems.clear();
+                regInint="";
                 getFirebaseIncargoDatabase();
+            }
+        });
+
+        incargo_location.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                sort_dialog="dialogsort";
+                str_sort="long";
+                listSortItems.clear();
+                regInint="putData";
+                getFirebaseIncargoDatabase();
+                return true;
             }
         });
         incargo_mnf.setOnClickListener(new View.OnClickListener() {
@@ -230,6 +273,8 @@ public class Incargo extends AppCompatActivity implements Serializable {
           @Override
           public void onClick(View v) {
             searchSort();
+//              putDataReg();
+
           }
       });
       fltBtn_Search.setOnLongClickListener(new View.OnLongClickListener() {
@@ -241,6 +286,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
               return true;
           }
       });
+
 
     }
 
@@ -326,7 +372,23 @@ public class Incargo extends AppCompatActivity implements Serializable {
                     String forty = data.getContainer40();
                     String twenty = data.getContainer20();
                     String lCl = data.getLclcargo();
-                    if (!forty.equals("0") || !twenty.equals("0") || !lCl.equals("0")){
+                    if(regInint.equals("")){
+                        if (!forty.equals("0") || !twenty.equals("0") || !lCl.equals("0")){
+                            if (str_sort.equals("long")) {
+                                listItems.add(data);
+                            } else if (str_sort.equals("sort")) {
+                                if (dia_consignee.getText().toString().equals("All")) {
+                                    listItems.add(data);
+                                }
+                                if (data.getConsignee().equals(dia_consignee.getText().toString())) {
+                                    listItems.add(data);
+                                } else {
+                                }
+                                dia_dateInit = dia_date.getText().toString();
+                            }
+                        }
+
+                    }else{
                         if (str_sort.equals("long")) {
                             listItems.add(data);
                         } else if (str_sort.equals("sort")) {
@@ -339,7 +401,9 @@ public class Incargo extends AppCompatActivity implements Serializable {
                             }
                             dia_dateInit = dia_date.getText().toString();
                         }
-                }
+
+                    }
+
                 }
 
                 Collections.reverse(listItems);
@@ -409,6 +473,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
           case "today_init":
               sortbyDate=
                       databaseReference.orderByChild("date").equalTo(new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime()));
+              break;
       }
         sortbyDate.addListenerForSingleValueEvent(incargoListener);
 
@@ -559,9 +624,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
             downLoadDialogMessage(dataMessage);
         }else if (downLoadingMark.equals("RegData")){
            {
-              String reg_date = (year_string + "년" + month_string + "월" + day_string + "일");
-              reg_Button_date.setText(reg_date);
-              reg_Result_date.setText(reg_date);
+              regDate= (year_string + "-" + month_string + "-" + day_string);
+              reg_Button_date.setText("Date:"+regDate+"등록");
+              reg_Button_date.setTextColor(Color.RED);
+//              reg_Result_date.setText(putdata_date);
             }
 
         }else{
@@ -681,6 +747,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 break;
 
             case R.id.action_account_down:
+                Log.i("koacaiia","selectedSortItems"+listSortItems);
                 AlertDialog.Builder dataReg=new AlertDialog.Builder(this);
                 dataReg.setTitle("화물정보 업데이트");
                 View regView=getLayoutInflater().inflate(R.layout.reg_putdata,null);
@@ -691,9 +758,13 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 reg_Button_bl=regView.findViewById(R.id.reg_Button_bl);
                 reg_edit_container=regView.findViewById(R.id.reg_edit_container);
                 reg_Button_container=regView.findViewById(R.id.reg_Button_container);
-                reg_Result_date=regView.findViewById(R.id.reg_text_result_date);
-                reg_Result_bl=regView.findViewById(R.id.reg_text_result_bl);
-                reg_Result_container=regView.findViewById(R.id.reg_text_result_container);
+//                reg_Result_date=regView.findViewById(R.id.reg_text_result_date);
+//                reg_Result_bl=regView.findViewById(R.id.reg_text_result_bl);
+//                reg_Result_container=regView.findViewById(R.id.reg_text_result_container);
+                reg_edit_remark=regView.findViewById(R.id.reg_edit_remark);
+                reg_Button_remark=regView.findViewById(R.id.reg_Button_remark);
+//                reg_Result_remark=regView.findViewById(R.id.reg_text_result_remark);
+
                 reg_Button_date.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -702,27 +773,36 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                 datePickerFragment.show(getSupportFragmentManager(),"datePicker");
 
+
                     }
                 });
-                reg_Button_bl.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reg_Button_bl.setText(reg_edit_bl.getText().toString());
-                        reg_Result_bl.setText(reg_edit_bl.getText().toString());
-                    }
+                reg_Button_bl.setOnClickListener(v -> {
+                    regBl=reg_edit_bl.getText().toString();
+                    reg_Button_bl.setText("BL:"+regBl+"등록");
+                    reg_Button_bl.setTextColor(Color.RED);
                 });
 
                 reg_Button_container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        reg_Button_container.setText(reg_edit_container.getText().toString());
-                        reg_Result_container.setText(reg_edit_container.getText().toString());
+                        regContainer=reg_edit_container.getText().toString();
+                        reg_Button_container.setText("Con`t:"+regContainer+"등록");
+                        reg_Button_container.setTextColor(Color.RED);
+                                          }
+                });
 
+                reg_Button_remark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        regRemark=reg_edit_remark.getText().toString();
+                        reg_Button_remark.setText("Remark:"+regRemark+"등록");
+                        reg_Button_remark.setTextColor(Color.RED);
                     }
                 });
                 dataReg.setPositiveButton("자료등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        regData();
 
                     }
                 });
@@ -733,7 +813,16 @@ public class Incargo extends AppCompatActivity implements Serializable {
                     }
                 });
 
-                dataReg.setMessage("B/L,컨테이너 번호,입고일"+"\n"+ "변경 또는 등록 가능 합니다.");
+                dataReg.setNeutralButton("신규등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(Incargo.this,PutDataReg.class);
+                        startActivity(intent);
+
+                    }
+                });
+
+                dataReg.setMessage("총("+listSortItems.size()+")건의 화물정보 업데이트를"+"\n"+ "하기 내용으로 UpDate 진행 합니다.");
                 dataReg.show();
 
                 break;
@@ -819,9 +908,83 @@ public class Incargo extends AppCompatActivity implements Serializable {
     public void webView(String bl){
         Intent intent=new Intent(Incargo.this,WebList.class);
         intent.putExtra("bl",bl);
+        intent.putExtra("version",alertVersion);
         startActivity(intent);
     }
 
+    public void regData(){
+        Fine2IncargoList list=new Fine2IncargoList();
+        for(int i=0;i<listSortItems.size();i++){
+        if(!regBl.equals("")){
+        list.setBl(regBl);}else{
+            list.setBl(listSortItems.get(i).getBl());
+        }
+
+        list.setConsignee(listSortItems.get(i).getConsignee());
+        if(!regContainer.equals("")){
+        list.setContainer(regContainer);}
+        else{list.setContainer(listSortItems.get(i).getContainer());
+            }
+        list.setContainer20(listSortItems.get(i).getContainer20());
+        list.setContainer40(listSortItems.get(i).getContainer40());
+        list.setCount(listSortItems.get(i).getCount());
+        if(!regDate.equals("")){
+        list.setDate(regDate);}else{
+            list.setDate(listSortItems.get(i).getDate());}
+        list.setDescription(listSortItems.get(i).getDescription());
+        list.setIncargo(listSortItems.get(i).getIncargo());
+        list.setLclcargo(listSortItems.get(i).getLclcargo());
+        list.setLocation(listSortItems.get(i).getLocation());
+        if(!regRemark.equals("")){
+        list.setRemark(regRemark);}else{
+            list.setRemark(listSortItems.get(i).getRemark());}
+        list.setWorking(listSortItems.get(i).getWorking());
+
+
+            FirebaseDatabase database=FirebaseDatabase.getInstance();
+            DatabaseReference databaseReference=
+                    database.getReference("Incargo"+"/"+listItems.get(i).getBl()+"_"+listItems.get(i).getDescription()+"_"+listItems.get(i).getCount());
+
+        databaseReference.setValue(list);}
+        getFirebaseIncargoDatabase();
+
+    }
+
+    public void getVersion(){
+        database=FirebaseDatabase.getInstance();
+        databaseReference=database.getReference("Version");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot version:snapshot.getChildren()){
+                    VersionCheck data=version.getValue(VersionCheck.class);
+                    int versionCheck=data.getVersionChecked();
+                    try {
+                        PackageInfo pi=getPackageManager().getPackageInfo(getPackageName(),0);
+                    versioncode=pi.versionCode;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if(versionCheck!=versioncode){
+                        alertVersion="현재 버전:"+versioncode+"으로 "+""+"최신버전:"+versionCheck+" 로 업데이트 바랍니다.!";
+                        webView("version");
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    public void putDataReg(){
+        Intent intent=new Intent(Incargo.this,PutDataReg.class);
+        intent.putExtra("list", listItems);
+        startActivity(intent);
+    }
 
 
 }

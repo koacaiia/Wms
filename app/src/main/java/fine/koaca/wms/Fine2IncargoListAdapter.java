@@ -27,16 +27,20 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
         this.fine2IncargoLists = fine2IncargoLists;
     }
 
+    public Fine2IncargoListAdapter(ArrayList<Fine2IncargoList> list) {
+        this.fine2IncargoLists=list;
+    }
+
     @NonNull
     @Override
-    public fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public Fine2IncargoListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.list,parent,false);
 
         return new ListViewHolder(view,this,this);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull Fine2IncargoListAdapter.ListViewHolder holder, int position) {
           String str_incargo=String.valueOf(fine2IncargoLists.get(position).getIncargo());
           String location_chk=fine2IncargoLists.get(position).getLocation();
 

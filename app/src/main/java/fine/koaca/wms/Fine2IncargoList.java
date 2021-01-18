@@ -2,10 +2,11 @@ package fine.koaca.wms;
 
 import com.google.firebase.database.Exclude;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Fine2IncargoList {
+public class Fine2IncargoList implements Serializable {
 
     String bl;
     String description;

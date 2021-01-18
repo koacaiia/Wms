@@ -58,6 +58,7 @@ public class CalendarPick {
             c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
             c.add(c.DATE,7);
             date_Nsat=formatter.format(c.getTime());
+
          c.getMinimum(Calendar.DAY_OF_MONTH+1);
          date_startMonth=formatter.format(c.getTime());
          date_lastMonth=Integer.toString(c.getActualMaximum(Calendar.DAY_OF_MONTH));

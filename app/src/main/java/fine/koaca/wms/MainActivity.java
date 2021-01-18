@@ -38,7 +38,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     ArrayList<Fine2IncargoList> listItems;
     ArrayList<Fine2IncargoList> listItemsCount;
-    fine.koaca.wms.Fine2IncargoListAdapter adapter;
+    Fine2IncargoListAdapter adapter;
     FirebaseDatabase database;
     DatabaseReference databaseReference;
     EditText textView_bl;
@@ -435,12 +435,13 @@ if(add){
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
+        messageList.setDate(date);
         messageList.setConsignee("M&F");
         messageList.setInOutCargo("Etc");
+        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.setValue(messageList);
-
 
     }
 

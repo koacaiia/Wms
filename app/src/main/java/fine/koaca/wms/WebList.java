@@ -2,9 +2,11 @@ package fine.koaca.wms;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,11 +21,17 @@ public class WebList extends AppCompatActivity {
         webView=findViewById(R.id.web_list);
         Intent intent=getIntent();
         String blList=intent.getStringExtra("bl");
+        String alerVersion=intent.getStringExtra("version");
 
         webView.setWebViewClient(new WebViewClient());
         webSettings=webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl("https://www.tradlinx.com/unipass?type=2&blNo="+blList+"&blYr=2020");
+        Log.i("koacaiia",blList);
+        if(blList.equals("version")){
+            webView.loadUrl("https://play.google.com/store/apps/details?id=fine.koaca.wms");
+            Toast.makeText(this, alerVersion, Toast.LENGTH_SHORT).show();
+        }else{
+           webView.loadUrl("https://www.tradlinx.com/unipass?type=2&blNo="+blList+"&blYr=2021");}
 
     }
 }
