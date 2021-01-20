@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,11 +44,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Incargo extends AppCompatActivity implements Serializable {
     ArrayList<Fine2IncargoList> listItems;
     ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
     SparseBooleanArray selectedSortItems=new SparseBooleanArray(0);
+    ArrayList<ExtractIncargoDataList> arrList=new ArrayList<ExtractIncargoDataList>();
     IncargoListAdapter adapter;
     FirebaseDatabase database;
     DatabaseReference databaseReference;
@@ -83,7 +88,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
     String depotName;
     String nickName;
-    String bl;
+    String bl="";
 
     static private final String SHARE_NAME="SHARE_DEPOT";
     static SharedPreferences sharedPref;
@@ -173,33 +178,65 @@ public class Incargo extends AppCompatActivity implements Serializable {
         }
         adapter=new IncargoListAdapter(listItems,this);
         recyclerView.setAdapter(adapter);
-        adapter.setAdapterClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterClickListener() {
+        adapter.setAdapterClickListener(new IncargoListAdapter.AdapterClickListener() {
             @Override
             public void onItemClick(View v, int pos) {
 //                String sortItemName=listItems.get(pos).getContainer();
 //                String filterItemName="container";
 //                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
 //                bl=listItems.get(pos).getBl();
+                String toDate=listItems.get(pos).getDate();
+                String toConsignee=listItems.get(pos).getConsignee();
+                bl=listItems.get(pos).getBl();
+                String cont=listItems.get(pos).getContainer();
+
                 if(selectedSortItems.get(pos, true)){
                     selectedSortItems.delete(pos);
                     selectedSortItems.put(pos,false);
                     listSortItems.remove(listItems.get(pos));
+                    Toast.makeText(Incargo.this,toDate+"_"+toConsignee+"_"+bl+"_"+cont+"항목 해제", Toast.LENGTH_SHORT).show();
                 }else{
                     selectedSortItems.put(pos,true);
                     listSortItems.add(listItems.get(pos));
+                    Toast.makeText(Incargo.this,toDate+"_"+toConsignee+"_"+bl+"_"+cont+"항목 선택", Toast.LENGTH_SHORT).show();
                 }
-
-                Log.i("koacaiia","koacaiiaArrayList:"+listSortItems);
-                Log.i("koacaiia","koacaiiaArraySize:"+listSortItems.size());
-
             }
         });
-        adapter.setAdaptLongClickListener(new fine.koaca.wms.IncargoListAdapter.AdapterLongClickListener() {
+        adapter.setAdaptLongClickListener(new IncargoListAdapter.AdapterLongClickListener() {
             @Override
             public void onLongItemClick(View v, int pos) {
-//                String sortItemName=listItems.get(pos).getConsignee();
-//                String filterItemName="consignee";
-//                sortGetFirebaseIncargoDatabase(filterItemName,sortItemName);
+                AlertDialog.Builder deleteItem=new AlertDialog.Builder(Incargo.this);
+                deleteItem.setTitle("항목 제거 진행");
+                String deDate=listItems.get(pos).getDate();
+                String deConsignee=listItems.get(pos).getConsignee();
+                String deBl=listItems.get(pos).getBl();
+                String deCont=listItems.get(pos).getContainer();
+                String deCount=listItems.get(pos).getCount();
+                String deDes=listItems.get(pos).getDescription();
+                String msg="반입일: "+deDate+"\n"+"화주명: "+deConsignee+"\n"+"Bl: "+deBl+
+                        "\n"+"컨테이너번호: "+deCont+"\n"+"화물 정보 삭제를 진행 합니다.";
+                String msgWorking="반입일: "+deDate+"_"+"화주명: "+deConsignee+"_"+"\n"+"Bl: "+deBl+
+                        "_컨테이너번호 : "+deCont+"에 대한"+"화물 정보 삭제를 진행.";
+                deleteItem.setMessage(msg);
+                deleteItem.setPositiveButton("삭제 등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Map<String,Object> childUpdates=new HashMap<>();
+                        childUpdates.put(deBl+"_"+deDes+"_"+deCount+"/", null);
+                        databaseReference.updateChildren(childUpdates);
+                        putMessage(msgWorking,"Etc");
+                        getFirebaseIncargoDatabase();
+
+                    }
+                });
+                deleteItem.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                deleteItem.create();
+                deleteItem.show();
             }
         });
 
@@ -240,6 +277,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
         incargo_mnf.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                arrayRe();
 
                 return true;
             }
@@ -369,6 +407,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
                     Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
+                    assert data != null;
                     String forty = data.getContainer40();
                     String twenty = data.getContainer20();
                     String lCl = data.getLclcargo();
@@ -480,10 +519,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
     }
 
     private void dialogMessage(String[] consignee_list2) {
-        final String fixedDate = "날짜지정";
+
         ArrayList<String> dateSelected=new ArrayList<String>();
         dateSelected.add("내일 전체화물 입고 일정");
-        dateSelected.add(fixedDate);
+        dateSelected.add("날짜지정");
         dateSelected.add("이번 주");
         dateSelected.add("다음 주");
         dateSelected.add("이번 달");
@@ -541,10 +580,11 @@ public class Incargo extends AppCompatActivity implements Serializable {
                         break;
                     case 1:
                         String a="b";
-                        str_sort_date="fixed1";
-                        str_sort="sort";
                         DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                         datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+                        str_sort_date="fixed1";
+                        str_sort="sort";
+
 
                     break;
                     case 2:
@@ -743,6 +783,10 @@ public class Incargo extends AppCompatActivity implements Serializable {
                 break;
 
             case R.id.action_account_search:
+                if(bl.equals("")){
+                    Toast.makeText(this, "화물조회 항목비엘 다시한번 확인 바랍니다.", Toast.LENGTH_SHORT).show();
+                     }
+
                 webView(bl);
                 break;
 
@@ -777,26 +821,29 @@ public class Incargo extends AppCompatActivity implements Serializable {
                     }
                 });
                 reg_Button_bl.setOnClickListener(v -> {
-                    regBl=reg_edit_bl.getText().toString();
+
                     reg_Button_bl.setText("BL:"+regBl+"등록");
                     reg_Button_bl.setTextColor(Color.RED);
+                    regBl=reg_edit_bl.getText().toString();
                 });
 
                 reg_Button_container.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        regContainer=reg_edit_container.getText().toString();
+
                         reg_Button_container.setText("Con`t:"+regContainer+"등록");
                         reg_Button_container.setTextColor(Color.RED);
+                        regContainer=reg_edit_container.getText().toString();
                                           }
                 });
 
                 reg_Button_remark.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        regRemark=reg_edit_remark.getText().toString();
+
                         reg_Button_remark.setText("Remark:"+regRemark+"등록");
                         reg_Button_remark.setTextColor(Color.RED);
+                        regRemark=reg_edit_remark.getText().toString();
                     }
                 });
                 dataReg.setPositiveButton("자료등록", new DialogInterface.OnClickListener() {
@@ -914,38 +961,67 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
     public void regData(){
         Fine2IncargoList list=new Fine2IncargoList();
+        MainActivity mainActivity=new MainActivity();
         for(int i=0;i<listSortItems.size();i++){
+            String chBl;
         if(!regBl.equals("")){
-        list.setBl(regBl);}else{
+            chBl=regBl;
+        list.setBl(regBl);}
+        else{
+            chBl="변동사항 없음";
             list.setBl(listSortItems.get(i).getBl());
         }
 
         list.setConsignee(listSortItems.get(i).getConsignee());
+        String chContainer;
         if(!regContainer.equals("")){
+            chContainer=regContainer;
         list.setContainer(regContainer);}
-        else{list.setContainer(listSortItems.get(i).getContainer());
+        else{
+            chContainer="변동사항 없음";
+
+            list.setContainer(listSortItems.get(i).getContainer());
             }
         list.setContainer20(listSortItems.get(i).getContainer20());
         list.setContainer40(listSortItems.get(i).getContainer40());
         list.setCount(listSortItems.get(i).getCount());
+        String chDate;
         if(!regDate.equals("")){
-        list.setDate(regDate);}else{
+            chDate=regDate;
+        list.setDate(regDate);}
+        else{
+            chDate="변동사항 없음";
             list.setDate(listSortItems.get(i).getDate());}
         list.setDescription(listSortItems.get(i).getDescription());
         list.setIncargo(listSortItems.get(i).getIncargo());
         list.setLclcargo(listSortItems.get(i).getLclcargo());
         list.setLocation(listSortItems.get(i).getLocation());
+        String chRemark;
         if(!regRemark.equals("")){
-        list.setRemark(regRemark);}else{
+            chRemark=regRemark;
+        list.setRemark(regRemark);}
+        else{
+            chRemark="변동사항 없음";
             list.setRemark(listSortItems.get(i).getRemark());}
         list.setWorking(listSortItems.get(i).getWorking());
 
 
             FirebaseDatabase database=FirebaseDatabase.getInstance();
             DatabaseReference databaseReference=
-                    database.getReference("Incargo"+"/"+listItems.get(i).getBl()+"_"+listItems.get(i).getDescription()+"_"+listItems.get(i).getCount());
-
-        databaseReference.setValue(list);}
+                    database.getReference("Incargo"+"/"+listSortItems.get(i).getBl()+"_"+listSortItems.get(i).getDescription()+
+                            "_"+listSortItems.get(i).getCount());
+            Log.i("koacaiia",
+                    "selectedData:"+listSortItems.get(i).getBl()+"_"+listSortItems.get(i).getDescription()+
+                            "_"+listSortItems.get(i).getCount());
+        databaseReference.setValue(list);
+        String msg=
+                "("+listSortItems.get(i).getDate()+")_"+listSortItems.get(i).getConsignee()+"_"+"비엘: "+listSortItems.get(i).getBl()+
+            "를";
+        String msg1="반입일: "+chDate+"비엘: "+chBl+"_"+"컨테이너 번호: "+chContainer+"_"+"비고: "+chRemark+"로 변경 진행 합니다.";
+        putMessage(msg+"\n"+msg1,"Etc");
+//        putMessage(msg1,"Etc");
+        }
+        sort_dialog="dialogsort";
         getFirebaseIncargoDatabase();
 
     }
@@ -985,6 +1061,146 @@ public class Incargo extends AppCompatActivity implements Serializable {
         intent.putExtra("list", listItems);
         startActivity(intent);
     }
+    public void putMessage(String msg, String etc) {
+        Log.i("koacaiia","incargoMessage"+msg+etc);
+        String timeStamp=String.valueOf(System.currentTimeMillis());
+        String timeStamp1=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String date=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        String nick=sharedPreferences.getString("nickName","koaca");
+        WorkingMessageList messageList=new WorkingMessageList();
+        messageList.setNickName(nick);
+        messageList.setTime(timeStamp1);
+        messageList.setMsg(msg);
+        messageList.setDate(date);
+        messageList.setConsignee(etc);
+        messageList.setInOutCargo("Etc");
+        messageList.setUri("");
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
+        databaseReference.setValue(messageList);
+
+    }
+    public void arrayRe(){
+        arrList.clear();
+        int listItemsSize;
+        listItemsSize=listItems.size();
+//        consignee_list=arrConsignee.toArray(new String[arrConsignee.size()]);
+//        arrConsignee.clear();
+//        for(String item : consignee_list){
+//            if(!arrConsignee.contains(item))
+//                arrConsignee.add(item);}
+
+        int sum40=0;
+        int sum20=0;
+        int sumCargo=0;
+        int sumQty=0;
+        ArrayList<Integer> list_40=new ArrayList<Integer>();
+        ArrayList<Integer> list_20=new ArrayList<Integer>();
+        ArrayList<Integer> list_Cargo=new ArrayList<Integer>();
+        ArrayList<Integer> list_Qty=new ArrayList<Integer>();
+        int to40 = 0;
+        int to20=0;
+        int toCargo=0;
+        int toQty=0;
+
+//
+        for(int i=0;i<listItemsSize;i++){
+            String consignee=listItems.get(i).getConsignee();
+            int int40=Integer.parseInt(listItems.get(i).getContainer40());
+            int int20=Integer.parseInt(listItems.get(i).getContainer20());
+            int intCargo=Integer.parseInt(listItems.get(i).getLclcargo());
+            int intQty=Integer.parseInt(listItems.get(i).getIncargo());
+//            list_40.add(int40);
+//            list_20.add(int20);
+//            list_Cargo.add(intCargo);
+//            list_Qty.add(intQty);
+
+            sum40=sum40+int40;
+            sum20=sum20+int20;
+            sumCargo=sumCargo+intCargo;
+            sumQty=sumQty+intQty;
+
+            to40=to40+int40;
+            to20=to20+int20;
+            toCargo=toCargo+intCargo;
+            toQty=toQty+intQty;
+            if(i==listItemsSize-1){
+                ExtractIncargoDataList list;
+                if(consignee.equals(listItems.get(i-1).getConsignee())){
+                    list = new ExtractIncargoDataList(consignee, String.valueOf(sum40), String.valueOf(sum20),
+                            String.valueOf(sumCargo), String.valueOf(sumQty));
+
+                }else{
+                    list = new ExtractIncargoDataList(consignee, String.valueOf(int40), String.valueOf(int20),
+                            String.valueOf(intCargo), String.valueOf(intQty));
+
+                }
+                Log.i("koacaiia","koacaSortConsignee"+consignee+sum40+sum20+sumQty);
+                arrList.add(list);
+                sum40=0;
+                sum20=0;
+                sumCargo=0;
+                sumQty=0;
+            }else if(!consignee.equals(listItems.get(i+1).getConsignee())){
+                ExtractIncargoDataList list=new ExtractIncargoDataList(consignee,String.valueOf(sum40),String.valueOf(sum20),
+                        String.valueOf(sumCargo),String.valueOf(sumQty));
+                Log.i("koacaiia","koacaSortConsignee"+consignee+sum40+sum20+sumQty);
+                arrList.add(list);
+                sum40=0;
+                sum20=0;
+                sumCargo=0;
+                sumQty=0;
+            }
+            Log.i("koacaiia","arrListsize"+arrList.size());
 
 
-}
+        }
+        AlertDialog.Builder arrReBuilder=new AlertDialog.Builder(this);
+
+        arrReBuilder.setTitle("입고화물 정보");
+        View view=getLayoutInflater().inflate(R.layout.arr_re,null);
+        TextView textViewConsignee=view.findViewById(R.id.exConsignee);
+
+        TextView textViewContainer40=view.findViewById(R.id.exContainer40);
+        textViewContainer40.setText("40FT:"+"\n"+to40+" 대");
+        TextView textViewContainer20=view.findViewById(R.id.exContainer20);
+        textViewContainer20.setText("20FT:"+"\n"+to20+" 대");
+        TextView textViewCargo=view.findViewById(R.id.exCargo);
+        textViewCargo.setText("Cargo:"+"\n"+toCargo+" 건");
+        TextView textViewQty=view.findViewById(R.id.exQty);
+        textViewQty.setText("입고팔렛트 수량 :"+"\n"+toQty+" PLT");
+        RecyclerView recyclerView=view.findViewById(R.id.reEx);
+        LinearLayoutManager layoutManager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        ExtractIncargoDataAdapter adapter=new ExtractIncargoDataAdapter(arrList);
+        recyclerView.setAdapter(adapter);
+        arrReBuilder.setView(view);
+        arrReBuilder.setPositiveButton("confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+//        arrReBuilder.show();
+        AlertDialog dialog=arrReBuilder.create();
+        dialog.show();
+
+
+        WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
+        params.width=WindowManager.LayoutParams.MATCH_PARENT;
+
+                params.height=1200;
+                        dialog.getWindow().setAttributes(params);
+
+
+
+
+
+
+    }
+    }
+
+
+
+

@@ -49,6 +49,9 @@ String a;
                WorkingMessageData workingMessageData=(WorkingMessageData)getActivity();
                workingMessageData.processDatePickerResult(year,month,dayOfMonth);
                break;
+           case "d":
+               PutDataReg putDataReg=(PutDataReg)getActivity();
+               putDataReg.processDatePickerResult(year,month,dayOfMonth);
        }
 
 

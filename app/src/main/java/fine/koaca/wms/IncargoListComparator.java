@@ -2,7 +2,7 @@ package fine.koaca.wms;
 
 import java.util.Comparator;
 
-public class IncargoListComparator implements Comparator<fine.koaca.wms.Fine2IncargoList> {
+public class IncargoListComparator implements Comparator<Fine2IncargoList> {
     String sort;
 
     public IncargoListComparator(String sort) {
@@ -10,7 +10,7 @@ public class IncargoListComparator implements Comparator<fine.koaca.wms.Fine2Inc
     }
 
     @Override
-    public int compare(fine.koaca.wms.Fine2IncargoList a, fine.koaca.wms.Fine2IncargoList b) {
+    public int compare(Fine2IncargoList a, Fine2IncargoList b) {
 //        if(Integer.parseInt(a.date)>Integer.parseInt(b.date)) return 1;
 //        if(Integer.parseInt(a.date)<Integer.parseInt(b.date)) return -1;
 //        return 0;
@@ -30,6 +30,9 @@ public class IncargoListComparator implements Comparator<fine.koaca.wms.Fine2Inc
                 break;
             case "location":
                 compare=a.location.compareTo(b.location);
+                break;
+            case "consignee":
+                compare=a.consignee.compareTo(b.consignee);
         }
 
         return compare;

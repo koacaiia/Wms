@@ -409,7 +409,7 @@ if(add){
                 getFirebaseDatabase();
                 String msg=count+"_"+description+"_"+"["+location+"]"+"등록 합니다..";
 
-                putMessage(msg);
+                putMessage(msg, "M&F");
                 break;
             case R.id.textView_date:
                 a="a";
@@ -427,16 +427,18 @@ if(add){
         }
     }
 
-    private void putMessage(String msg) {
+    public void putMessage(String msg, String etc) {
+        Log.i("koacaiia","incargoMessage"+msg+etc);
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeStampDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nick=sharedPreferences.getString("nickName","koaca");
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
-        messageList.setDate(date);
-        messageList.setConsignee("M&F");
+        messageList.setDate(timeStampDate);
+        messageList.setConsignee(etc);
         messageList.setInOutCargo("Etc");
         messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();

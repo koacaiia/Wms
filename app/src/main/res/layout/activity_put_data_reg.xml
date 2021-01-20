@@ -23,21 +23,19 @@
             android:orientation="horizontal">
 
 
-            <EditText
-                android:id="@+id/editWorking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_Working"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
                 android:hint="작업상황"
-                android:inputType="textPersonName" />
+                 />
 
             <Button
                 android:id="@+id/btnWorking"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:hint="등록"
                 android:text="등록" />
 
         </LinearLayout>
@@ -49,20 +47,18 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/editDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <TextView
+                android:id="@+id/textViewDate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
                 android:hint="반입일"
-                android:inputType="textPersonName"
                 android:text="" />
 
             <Button
                 android:id="@+id/btnDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -74,19 +70,19 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/editConsignee"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_Consignee"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="화주명"
-                android:inputType="textPersonName" />
+                 />
 
             <Button
                 android:id="@+id/btnConsignee"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -100,8 +96,8 @@
 
             <EditText
                 android:id="@+id/editDes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="품명"
@@ -109,8 +105,8 @@
 
             <Button
                 android:id="@+id/btnDes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -124,8 +120,8 @@
 
             <EditText
                 android:id="@+id/editCont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Con`t"
@@ -133,8 +129,8 @@
 
             <Button
                 android:id="@+id/btnCont"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -146,19 +142,18 @@
             android:layout_weight="1"
             android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/editType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <Spinner
+                android:id="@+id/spinner_Type"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
                 android:hint="Type"
-                android:inputType="textPersonName" />
+                 />
 
             <Button
                 android:id="@+id/btnType"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -172,17 +167,16 @@
 
             <EditText
                 android:id="@+id/editQty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:ems="10"
                 android:hint="Qty"
-                android:inputType="textPersonName" />
+                />
 
             <Button
                 android:id="@+id/btnQty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -196,8 +190,8 @@
 
             <EditText
                 android:id="@+id/editBl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Bl"
@@ -205,8 +199,8 @@
 
             <Button
                 android:id="@+id/btnBl"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 
@@ -220,8 +214,8 @@
 
             <EditText
                 android:id="@+id/editRemark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="Remark"
@@ -229,8 +223,8 @@
 
             <Button
                 android:id="@+id/btnRemark"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="등록" />
 

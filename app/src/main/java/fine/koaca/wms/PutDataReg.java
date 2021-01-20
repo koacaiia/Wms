@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,20 +32,42 @@ public class PutDataReg extends AppCompatActivity {
     String strBl="";
     String strRemark="";
     EditText editWork,editDate,editConsignee,editDes,editCont,editType,editQty,editBl,editRemark;
-    Button btnWork,btnDate,btnConsignee,btnDes,btnCont,btnType,btnQty,btnBl,btnRemark;
+    Button btnWork,btnDate,btnConsignee,btnDes,btnCont,btnType,btnQty,btnBl,btnRemark,regUpload;
+    TextView textViewDate;
+    String[] consigneeList = {"M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철","한큐한신","하랄코"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_put_data_reg);
 
-        editWork=findViewById(R.id.editWorking);
+        Spinner spWork=findViewById(R.id.spinner_Working);
         editBl=findViewById(R.id.editBl);
-        editDate=findViewById(R.id.editDate);
-        editConsignee=findViewById(R.id.editConsignee);
+        textViewDate=findViewById(R.id.textViewDate);
+        textViewDate.setOnClickListener(v->{
+            DatePickerFragment putDataDate=new DatePickerFragment("d");
+            putDataDate.show(getSupportFragmentManager(),"datePicker");
+
+
+        });
+        Spinner spConsignee=findViewById(R.id.spinner_Consignee);
+        ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,PutDataReg.this.consigneeList);
+        consigneeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spConsignee.setAdapter(consigneeAdapter);
+        spConsignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         editDes=findViewById(R.id.editDes);
         editCont=findViewById(R.id.editCont);
-        editType=findViewById(R.id.editType);
+        Spinner spType=findViewById(R.id.spinner_Type);
         editQty=findViewById(R.id.editQty);
         editRemark=findViewById(R.id.editRemark);
 
@@ -49,7 +75,6 @@ public class PutDataReg extends AppCompatActivity {
         btnWork.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editWork=findViewById(R.id.editWorking);
                 strWork=editWork.getText().toString();
                 TextView btnWork=findViewById(R.id.regWorking);
                 btnWork.setText(strWork);
@@ -59,17 +84,13 @@ public class PutDataReg extends AppCompatActivity {
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-           EditText editDate=findViewById(R.id.editDate);
-           strDate=editDate.getText().toString();
-           TextView btnDate=findViewById(R.id.regDate);
-           btnDate.setText(strDate);
+
             }
         });
         btnConsignee=findViewById(R.id.btnConsignee);
         btnConsignee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText editConsignee=findViewById(R.id.editConsignee);
                 strConsignee=editConsignee.getText().toString();
                 TextView btnConsignee=findViewById(R.id.regConsignee);
                 btnConsignee.setText(strConsignee);
@@ -91,7 +112,6 @@ public class PutDataReg extends AppCompatActivity {
         });
         btnType=findViewById(R.id.btnType);
         btnType.setOnClickListener(v->{
-            EditText editType=findViewById(R.id.editType);
             strType=editType.getText().toString();
             TextView btnType=findViewById(R.id.regType);
             btnType.setText(strType);
@@ -119,6 +139,16 @@ public class PutDataReg extends AppCompatActivity {
             btnRemark.setText(strRemark);
         });
 
+        Button regUpload=findViewById(R.id.regUpload);
+        regUpload.setOnClickListener(v->{
+
+        });
+        regUpload.setOnLongClickListener(v->{
+            Intent intent=new Intent(PutDataReg.this,PutDataReg.class);
+            startActivity(intent);
+            return true;
+        });
+
 
 }
 
@@ -126,4 +156,26 @@ public void putEditDate(){
         AlertDialog.Builder editBuilder=new AlertDialog.Builder(this);
 
 }
+
+    public void processDatePickerResult(int year, int month, int dayOfMonth) {
+        String month_string;
+        if(month<10){
+            month_string="0"+Integer.toString(month+1);
+        }else{
+            month_string=Integer.toString(month+1);
+        }
+        String day_string;
+        if(dayOfMonth<10){
+            day_string="0"+Integer.toString(dayOfMonth);
+        }else{
+            day_string=Integer.toString(dayOfMonth);
+        }
+        String year_string=Integer.toString(year);
+
+        strDate=(year_string+"년"+month_string+"월"+day_string+"일");
+        textViewDate.setText(strDate);
+        TextView regDate=findViewById(R.id.regDate);
+        regDate.setText(strDate);
+
+    }
 }
