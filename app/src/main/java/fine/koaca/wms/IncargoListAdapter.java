@@ -15,29 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.ListViewHolder> {
-    public interface AdapterClickListener{
-        void onItemClick(View v,int pos);
-    }
+public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.ListViewHolder>
+implements AdapterClickListener,AdapterLongClickListener{
 
-    public interface AdapterLongClickListener{
-        void onLongItemClick(View v,int pos);
-    }
     private AdapterClickListener mListener=null;
     private AdapterLongClickListener mLongListener=null;
-    public void setAdapterClickListener(AdapterClickListener listener){
-        this.mListener=listener;    }
-        public void setAdaptLongClickListener(AdapterLongClickListener listener){
-        this.mLongListener=listener;
-        }
 
     ArrayList<Fine2IncargoList> list;
     private final SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
     Context context;
-
-    public IncargoListAdapter(ArrayList<Fine2IncargoList> list) {
-        this.list = list;
-    }
 
     public IncargoListAdapter(ArrayList<Fine2IncargoList> list, Context context) {
         this.context=context;
@@ -66,8 +52,6 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
             cargotype="LcLCargo";
         }else{cargotype="미정";}
 
-
-
         holder.working.setText(list.get(position).getWorking());
         holder.date.setText(list.get(position).getDate());
         holder.consignee.setText(list.get(position).getConsignee());
@@ -77,28 +61,31 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
         holder.bl.setText(list.get(position).getBl());
         holder.des.setText(list.get(position).getDescription());
         holder.incargo.setText(list.get(position).getIncargo()+"(PLT)");
-//        if (position<list.size()-1){
-////            String location_chk3=list.get(position-1).getContainer();
-//            String location_chk1=list.get(position).getContainer();
-//            String location_chk2=list.get(position+1).getContainer();
-//            if (location_chk1.equals(location_chk2)) {
-//                holder.itemView.setBackgroundColor(Color.BLUE);
-//            } else {
-//                holder.itemView.setBackgroundColor(Color.WHITE);
-//
-//        }}
-        holder.itemView.setSelected(isItemSelected(position));
-    }
 
-    private boolean isItemSelected(int position) {
-        return mSelectedItems.get(position,false);
+        if(mSelectedItems.get(position,false)){
+            holder.cardView.setBackgroundColor(Color.LTGRAY);
+        }else{
+            holder.cardView.setBackgroundColor(Color.WHITE);
+        }
     }
-
     @Override
     public int getItemCount() {
         return list.size();
     }
-        public class ListViewHolder extends RecyclerView.ViewHolder{
+    public void setAdapterClickListener(AdapterClickListener listener){
+        this.mListener=listener;    }
+    public void setAdaptLongClickListener(AdapterLongClickListener longlistener){
+        this.mLongListener=longlistener;
+    }
+    @Override
+    public void onItemClick(ListViewHolder listViewHolder, View v, int pos) {
+        mListener.onItemClick(listViewHolder,v,pos);
+    }
+    @Override
+    public void onLongItemClick(ListViewHolder listViewHolder, View v, int pos) {
+        mLongListener.onLongItemClick(listViewHolder,v,pos);
+    }
+    public class ListViewHolder extends RecyclerView.ViewHolder{
         TextView working;
         TextView date;
         TextView container;
@@ -126,32 +113,38 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
                 public void onClick(View v) {
                     int pos=getAdapterPosition();
                     if(mListener !=null){
-                        mListener.onItemClick(v,pos);
-                        if(mSelectedItems.get(pos, true)){
-                            mSelectedItems.delete(pos);
-                            mSelectedItems.put(pos,false);
-                            cardView.setCardBackgroundColor(Color.LTGRAY);
-                        }else{
-                            mSelectedItems.put(pos,true);
-                            cardView.setCardBackgroundColor(Color.WHITE);
+                        mListener.onItemClick(ListViewHolder.this,v,pos);
+                            if(mSelectedItems.get(pos, false)){
+                                mSelectedItems.put(pos,false);
+                                cardView.setCardBackgroundColor(Color.WHITE);
+                            }else{
+                                mSelectedItems.put(pos,true);
+                                cardView.setCardBackgroundColor(Color.LTGRAY);
+                            }
+                            notifyItemChanged(pos);
                         }
-                        notifyItemChanged(pos);
-
-                }}
+                      }
             });
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
                     int pos = getAdapterPosition();
                     if (mLongListener != null){
-                        mLongListener.onLongItemClick(v,pos);
+                        mLongListener.onLongItemClick(ListViewHolder.this,v,pos);
                 }
-
                     return true;
                 }
             });
             }
         }
+        public void clearSelectedItem(){
+        int position;
+        for(int i=0;i<mSelectedItems.size();i++){
+            position=mSelectedItems.keyAt(i);
+            mSelectedItems.put(position,false);
+            notifyItemChanged(position);
 
-
+        }
+        mSelectedItems.clear();
+        }
 }
