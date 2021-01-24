@@ -84,8 +84,7 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 captureProcess.captureProcess(date_today);
-                list=captureProcess.captureImageList;
-
+//                list=captureProcess.queryAllPictures();
 
             }
         });
@@ -106,6 +105,7 @@ public class CameraCapture extends AppCompatActivity
         btn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 consigneeSelected();
             }
         });
@@ -151,19 +151,19 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public void onItemClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
 
-
                 String uriString=list.get(position).getUriName();
 
                 if(imageListSelected.get(position, false)){
                     imageListSelected.delete(position);
                     upLoadUriString.remove(uriString);
+
                 }else{
                     imageListSelected.put(position,true);
                     upLoadUriString.add(uriString);
-                }
-                adapter.notifyItemChanged(position);
-                Log.i("koacaiia","itemArrayList");
 
+                }
+//                adapter.notifyItemChanged(position);
+                Log.i("koacaiia","InitSelected ArrayListsize3"+upLoadUriString.size());
 
 
             }
@@ -251,16 +251,18 @@ public class CameraCapture extends AppCompatActivity
                 String consigneeName=spinner_text.getText().toString();
                 String message=consigneeName+"_"+uploadItem;
                 for(int i=0;i<arrsize;i++){
-                    Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-                    captureProcess.firebaseCameraUpLoad(uri,date_today,consigneeName,uploadItem,nick,message);
-                    Log.i("koacaiia","Uri put"+uri);
+                    synchronized (this) {
+                        Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
+                        captureProcess.firebaseCameraUpLoad(uri, date_today, consigneeName, uploadItem, nick, message);
+                        Log.i("koacaiia", "Uri put" + uri);
+                    }
 
                     if(i==arrsize-1){
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            Thread.sleep(200);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
                         Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
                         startActivity(intent);
 

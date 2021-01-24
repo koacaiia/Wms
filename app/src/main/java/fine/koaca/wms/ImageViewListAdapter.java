@@ -61,18 +61,13 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
 
         if(imageListSelected.get(position,false)==true){
             imageListSelected.delete(position);
-            arrUriString.remove(uriString);
+//            arrUriString.remove(uriString);
         }else{
             imageListSelected.put(position,true);
             arrUriString.add(uriString);
         }
-
         notifyItemChanged(position);
-
-
         Log.i("koacaiia",arrUriString+"____arrList");
-
-
     }
 
     private boolean isItemSelected(int position) {
@@ -107,9 +102,7 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
     public void onItemClick(ListViewHolder holder, View view, int position) {
         if(listener !=null){
             listener.onItemClick(holder,view,position);
-
         }
-
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
@@ -125,8 +118,6 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
                     int position = getAdapterPosition();
                     listener.onItemClick(ListViewHolder.this,v,position);
                     toggleItemSelected(position);
-
-                    Log.i("koacaiia", "clickPosition:" + position);
 
                 }
             });

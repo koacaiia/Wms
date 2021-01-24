@@ -764,7 +764,7 @@ return true;
         messageList.setInOutCargo("Etc");
         messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
+        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+date+"_"+timeStamp);
         databaseReference.setValue(messageList);
 
     }
