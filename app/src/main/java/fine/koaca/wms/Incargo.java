@@ -268,7 +268,7 @@ return true;
             @Override
             public boolean onLongClick(View v) {
 //                Intent intent=new Intent(Incargo.this,FcmProcess.class);
-                Intent intent=new Intent(Incargo.this,IncargoEx.class);
+                Intent intent=new Intent(Incargo.this,FcmProcess.class);
                 startActivity(intent);
                 return true;
             }
