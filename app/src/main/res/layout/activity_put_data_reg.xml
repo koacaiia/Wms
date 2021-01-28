@@ -31,13 +31,6 @@
                 android:hint="작업상황"
                  />
 
-            <Button
-                android:id="@+id/btnWorking"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="등록" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -55,13 +48,6 @@
                 android:hint="반입일"
                 android:text="" />
 
-            <Button
-                android:id="@+id/btnDate"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="등록" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -78,13 +64,6 @@
                 android:ems="10"
                 android:hint="화주명"
                  />
-
-            <Button
-                android:id="@+id/btnConsignee"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="등록" />
 
         </LinearLayout>
 
@@ -124,7 +103,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:hint="Con`t"
+                android:hint="Con`t NumBer"
                 android:inputType="textPersonName" />
 
             <Button
@@ -149,13 +128,6 @@
                 android:layout_weight="1"
                 android:hint="Type"
                  />
-
-            <Button
-                android:id="@+id/btnType"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="등록" />
 
         </LinearLayout>
 
@@ -379,7 +351,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:layout_weight="3.5" >
+
+        <EditText
+            android:id="@+id/reg_contCount"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="컨테이너 등록 수량"
+             />
 
         <Button
             android:id="@+id/regUpload"

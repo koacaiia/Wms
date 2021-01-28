@@ -11,7 +11,7 @@
         android:orientation="horizontal">
 
         <EditText
-            android:id="@+id/spinner_search_inpurDate"
+            android:id="@+id/capture_edit_consignee"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -21,7 +21,7 @@
             android:textStyle="bold|italic" />
 
         <Spinner
-            android:id="@+id/workmessage_spinner"
+            android:id="@+id/capture_spinner_consignee"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="0.7"
@@ -31,7 +31,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/workmessage_text"
+        android:id="@+id/capture_text_consignee"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"

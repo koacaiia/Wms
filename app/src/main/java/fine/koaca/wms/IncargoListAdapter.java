@@ -48,8 +48,8 @@ implements AdapterClickListener,AdapterLongClickListener{
             cargotype="20FT";}
         else if(str_container40 .equals("1")){
             cargotype="40FT";
-        }else if(str_lclcargo .equals("")){
-            cargotype="LcLCargo";
+        }else if(str_lclcargo .equals("1")){
+            cargotype="Cargo";
         }else{cargotype="미정";}
 
         holder.working.setText(list.get(position).getWorking());

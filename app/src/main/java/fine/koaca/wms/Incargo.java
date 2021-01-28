@@ -133,7 +133,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
             nickName="Guest";
         }else{
             depotName=sharedPref.getString("depotName",null);
-            nickName=sharedPref.getString("nickName",null);
+            nickName=sharedPref.getString("nickName","Fine");
         }
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         day_start=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
@@ -213,7 +213,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
                         Map<String,Object> childUpdates=new HashMap<>();
                         childUpdates.put(deBl+"_"+deDes+"_"+deCount+"/", null);
                         databaseReference.updateChildren(childUpdates);
-                        putMessage(msgWorking,"Etc");
+                        putMessage(msgWorking,"Etc",nickName);
                         getFirebaseData(dataMessage,dataMessage,"sort", sortConsignee);
                     }
                 });
@@ -371,7 +371,6 @@ return true;
 
         if(downLoadingMark.equals("DownLoadingOk")) {
             dataMessage = (year_string + "년" + month_string + "월" + day_string + "일");
-
             downLoadDialogMessage(dataMessage);
         }else if (downLoadingMark.equals("RegData")){
 
@@ -487,16 +486,14 @@ return true;
 
                 reg_Button_date=regView.findViewById(R.id.reg_Button_date);
                 reg_edit_bl=regView.findViewById(R.id.reg_edit_bl);
+//                reg_edit_bl.setText(listSortItems.get(0).getBl());
                 reg_Button_bl=regView.findViewById(R.id.reg_Button_bl);
                 reg_edit_container=regView.findViewById(R.id.reg_edit_container);
+//                reg_edit_container.setText(listSortItems.get(0).getContainer());
                 reg_Button_container=regView.findViewById(R.id.reg_Button_container);
-//                reg_Result_date=regView.findViewById(R.id.reg_text_result_date);
-//                reg_Result_bl=regView.findViewById(R.id.reg_text_result_bl);
-//                reg_Result_container=regView.findViewById(R.id.reg_text_result_container);
                 reg_edit_remark=regView.findViewById(R.id.reg_edit_remark);
+//                reg_edit_remark.setText(listSortItems.get(0).getRemark());
                 reg_Button_remark=regView.findViewById(R.id.reg_Button_remark);
-//                reg_Result_remark=regView.findViewById(R.id.reg_text_result_remark);
-
                 reg_Button_date.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -513,6 +510,7 @@ return true;
                     reg_Button_bl.setText("BL:"+regBl+"등록");
                     reg_Button_bl.setTextColor(Color.RED);
                     regBl=reg_edit_bl.getText().toString();
+                    reg_edit_bl.setTextColor(Color.RED);
                 });
 
                 reg_Button_container.setOnClickListener(new View.OnClickListener() {
@@ -522,6 +520,7 @@ return true;
                         reg_Button_container.setText("Con`t:"+regContainer+"등록");
                         reg_Button_container.setTextColor(Color.RED);
                         regContainer=reg_edit_container.getText().toString();
+                        reg_edit_container.setTextColor(Color.RED);
                                           }
                 });
 
@@ -532,6 +531,7 @@ return true;
                         reg_Button_remark.setText("Remark:"+regRemark+"등록");
                         reg_Button_remark.setTextColor(Color.RED);
                         regRemark=reg_edit_remark.getText().toString();
+                        reg_edit_remark.setTextColor(Color.RED);
                     }
                 });
                 dataReg.setPositiveButton("자료등록", new DialogInterface.OnClickListener() {
@@ -552,6 +552,7 @@ return true;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Intent intent=new Intent(Incargo.this,PutDataReg.class);
+                        intent.putExtra("consigneeList",consignee_list2);
                         startActivity(intent);
 
                     }
@@ -649,24 +650,23 @@ return true;
 
     public void regData(){
         Fine2IncargoList list=new Fine2IncargoList();
-        MainActivity mainActivity=new MainActivity();
         for(int i=0;i<listSortItems.size();i++){
             String chBl;
         if(!regBl.equals("")){
-            chBl=regBl;
+            chBl="(비엘:"+regBl+")";
         list.setBl(regBl);}
         else{
-            chBl="변동사항 없음";
+            chBl="";
             list.setBl(listSortItems.get(i).getBl());
         }
 
         list.setConsignee(listSortItems.get(i).getConsignee());
         String chContainer;
         if(!regContainer.equals("")){
-            chContainer=regContainer;
+            chContainer="(컨테이너 번호:"+regContainer+")";
         list.setContainer(regContainer);}
         else{
-            chContainer="변동사항 없음";
+            chContainer="";
 
             list.setContainer(listSortItems.get(i).getContainer());
             }
@@ -675,10 +675,10 @@ return true;
         list.setCount(listSortItems.get(i).getCount());
         String chDate;
         if(!regDate.equals("")){
-            chDate=regDate;
+            chDate="(입고일:"+regDate+")";
         list.setDate(regDate);}
         else{
-            chDate="변동사항 없음";
+            chDate="";
             list.setDate(listSortItems.get(i).getDate());}
         list.setDescription(listSortItems.get(i).getDescription());
         list.setIncargo(listSortItems.get(i).getIncargo());
@@ -686,10 +686,10 @@ return true;
         list.setLocation(listSortItems.get(i).getLocation());
         String chRemark;
         if(!regRemark.equals("")){
-            chRemark=regRemark;
+            chRemark="(비고:"+regRemark+")";
         list.setRemark(regRemark);}
         else{
-            chRemark="변동사항 없음";
+            chRemark="";
             list.setRemark(listSortItems.get(i).getRemark());}
         list.setWorking(listSortItems.get(i).getWorking());
 
@@ -703,8 +703,8 @@ return true;
         String msg=
                 "("+listSortItems.get(i).getDate()+")_"+listSortItems.get(i).getConsignee()+"_"+"비엘: "+listSortItems.get(i).getBl()+
             "를";
-        String msg1="반입일: "+chDate+"비엘: "+chBl+"_"+"컨테이너 번호: "+chContainer+"_"+"비고: "+chRemark+"로 변경 진행 합니다.";
-        putMessage(msg+"\n"+msg1,"Etc");
+        String msg1=chDate+chBl+chContainer+chRemark+"로 변경 진행 합니다.";
+        putMessage(msg+"\n"+msg1,"Etc",nickName);
 //        putMessage(msg1,"Etc");
         }
         sort_dialog="dialogsort";
@@ -747,14 +747,12 @@ return true;
         intent.putExtra("list", listItems);
         startActivity(intent);
     }
-    public void putMessage(String msg, String etc) {
+    public void putMessage(String msg, String etc,String nick) {
 
         String timeStamp=String.valueOf(System.currentTimeMillis());
         String timeStamp1=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String date=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
-        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        String nick=sharedPreferences.getString("nickName","" +
-                "Fine");
+
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
         messageList.setTime(timeStamp1);
@@ -852,6 +850,7 @@ return true;
         textViewCargo.setText("Cargo:"+"\n"+toCargo+" 건");
         TextView textViewQty=view.findViewById(R.id.exQty);
         textViewQty.setText("팔렛트 수량 :"+"\n"+toQty+" PLT");
+
         TextView textViewConsignee=view.findViewById(R.id.exSortConsignee);
 
         arrConsignee.add(0,"ALL");

@@ -41,14 +41,14 @@ public class WorkingMessageData extends AppCompatActivity {
     RecyclerView recyclerView;
     WorkMessageAdapter adapter;
     ArrayList<WorkingMessageList> dataList;
-    private String nick;
+    private String nickName;
 
     EditText messageEdit;
     Button btn_send;
     String message;
     SharedPreferences sharedPreferences;
     CalendarPick calendarPick;
-    String sortItemName="date";
+    String sortItemName="time";
     FloatingActionButton fab_search;
     String dialog_date;
     String dialog_consignee;
@@ -56,14 +56,15 @@ public class WorkingMessageData extends AppCompatActivity {
     TextView searchTextView;
     String upLoadItemsName;
     String date;
-    String ref_consignee;
-    String ref_Item;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_working_message_data);
+        sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        nickName=sharedPreferences.getString("nickName","Fine");
 
         recyclerView = findViewById(R.id.recyclerView_workingMessageData);
         messageEdit=findViewById(R.id.edit_workingMessageData);
@@ -79,7 +80,7 @@ public class WorkingMessageData extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 message=String.valueOf(messageEdit.getText().toString());
-                putWorkingMessageList(message,date);
+                putWorkingMessageList(message,date,nickName);
                 messageEdit.setText("");
                 imm.hideSoftInputFromWindow(messageEdit.getWindowToken(),0);
             }
@@ -96,7 +97,7 @@ public class WorkingMessageData extends AppCompatActivity {
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         dataList=new ArrayList<WorkingMessageList>();
-        adapter=new WorkMessageAdapter(dataList,WorkingMessageData.this,nick);
+        adapter=new WorkMessageAdapter(dataList,WorkingMessageData.this,nickName);
         recyclerView.setAdapter(adapter);
 
         adapter.setOnListImageClickListener(new OnListImageClickListener() {
@@ -162,7 +163,9 @@ public class WorkingMessageData extends AppCompatActivity {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                     WorkingMessageList data=snapshot.getValue(WorkingMessageList.class);
-                    ((WorkMessageAdapter) adapter).addWorkingMessage(data);
+                    Log.i("koacaiia","getDate:"+data.getDate()+"___Date:"+date);
+                    if(data.getDate()!=null&&data.getDate().equals(date)){
+                    ((WorkMessageAdapter) adapter).addWorkingMessage(data);}
                 }
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -180,17 +183,16 @@ public class WorkingMessageData extends AppCompatActivity {
             };
 
             Query sortItem;
-                sortItem=databaseReference.orderByChild(sortItemName).equalTo(date);
+                sortItem=databaseReference.orderByChild(sortItemName);
             sortItem.addChildEventListener(postListener);
 
         }
 
 
 
-   public void putWorkingMessageList(String msg,String date){
+   public void putWorkingMessageList(String msg,String date,String nick){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
-        sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        nick=sharedPreferences.getString("nickName","koaca");
+
         WorkingMessageList messageList=new WorkingMessageList();
 
         String consignee="Etc";

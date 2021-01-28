@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +32,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CameraCapture extends AppCompatActivity
 {
@@ -57,7 +60,6 @@ public class CameraCapture extends AppCompatActivity
 
     CaptureProcess captureProcess;
 
-    CalendarPick calendarPick=new CalendarPick();
     String date_today;
 
     RecyclerView recyclerView;
@@ -65,26 +67,29 @@ public class CameraCapture extends AppCompatActivity
     ArrayList<ImageViewList> list=new ArrayList<ImageViewList>();
     ArrayList<String> upLoadUriString=new ArrayList<String>();
     SparseBooleanArray imageListSelected=new SparseBooleanArray(0);
-    private String[] consignee_list;
     String uploadItem;
 
+    @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_capture);
         requestPermissions(permission_list,0);
         intentGetItems();
-        calendarPick.CalendarCall();
-        date_today=calendarPick.date_today;
+
+        date_today=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
 
         btn_capture=findViewById(R.id.btn_textureView_Capture);
-        captureProcess=new CaptureProcess(this);
+        captureProcess=new CaptureProcess(this,adapter);
         btn_capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 captureProcess.captureProcess(date_today);
 //                list=captureProcess.queryAllPictures();
+//                Log.i("koacaiia","adapter Capture image size"+list.size());
+//                adapter.notifyDataSetChanged();
+//                queryAllList(captureImageList);
 
             }
         });
@@ -93,10 +98,7 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public boolean onLongClick(View v) {
 //                captureProcess.downLoadingOnlyImage();
-                list=captureProcess.queryAllPictures();
-                adapter=new ImageViewListAdapter(list);
-                adapter.notifyDataSetChanged();
-                recyclerView.setAdapter(adapter);
+               adapter.clearSelectedItem();
 
                 return true;
             }
@@ -145,13 +147,15 @@ public class CameraCapture extends AppCompatActivity
         recyclerView.setLayoutManager(layoutManager);
         list=captureProcess.queryAllPictures();
         adapter=new ImageViewListAdapter(list);
-
+        adapter.notifyDataSetChanged();
+        recyclerView.setAdapter(adapter);
 
         adapter.onListItemSelected(new OnListItemSelectedInterface() {
             @Override
             public void onItemClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
 
                 String uriString=list.get(position).getUriName();
+
 
                 if(imageListSelected.get(position, false)){
                     imageListSelected.delete(position);
@@ -162,14 +166,10 @@ public class CameraCapture extends AppCompatActivity
                     upLoadUriString.add(uriString);
 
                 }
-//                adapter.notifyItemChanged(position);
-                Log.i("koacaiia","InitSelected ArrayListsize3"+upLoadUriString.size());
-
 
             }
         });
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
+
 
     }
     @Override
@@ -201,9 +201,9 @@ public class CameraCapture extends AppCompatActivity
         View view=getLayoutInflater().inflate(R.layout.spinnerlist_consignee,null);
         ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
                 items_consignee);
-        Spinner spinner_consignee=view.findViewById(R.id.workmessage_spinner);
-        EditText spinner_edit=view.findViewById(R.id.spinner_search_inpurDate);
-        TextView spinner_text=view.findViewById(R.id.workmessage_text);
+        Spinner spinner_spinner=view.findViewById(R.id.capture_spinner_consignee);
+        EditText spinner_edit=view.findViewById(R.id.capture_edit_consignee);
+        TextView spinner_text=view.findViewById(R.id.capture_text_consignee);
 
 
         spinner_edit.setOnClickListener(new View.OnClickListener() {
@@ -224,7 +224,7 @@ public class CameraCapture extends AppCompatActivity
                 return false;
             }
         });
-        spinner_consignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinner_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 spinner_text.setText(items_consignee[position]);
@@ -237,80 +237,65 @@ public class CameraCapture extends AppCompatActivity
             }
         });
 
-        spinner_consignee.setAdapter(consigneeAdapter);
+
+        spinner_spinner.setAdapter(consigneeAdapter);
         dialogConsignee.setView(view);
         dialogConsignee.setMessage("하단의 업체명 선택후 전송 하기랍니다."+"\n"+"화주명 등록 여부 다시 한번 확인 바랍니다.");
 
         dialogConsignee.setPositiveButton("출고사진 UpLoad", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int arrsize=upLoadUriString.size();
                 uploadItem="OutCargo";
-                SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-                String nick=sharedPreferences.getString("nickName","Fine");
-                String consigneeName=spinner_text.getText().toString();
-                String message=consigneeName+"_"+uploadItem;
-                for(int i=0;i<arrsize;i++){
-                    synchronized (this) {
-                        Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
-                        captureProcess.firebaseCameraUpLoad(uri, date_today, consigneeName, uploadItem, nick, message);
-                        Log.i("koacaiia", "Uri put" + uri);
-                    }
-
-                    if(i==arrsize-1){
-//                        try {
-//                            Thread.sleep(200);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-                        Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
-                        startActivity(intent);
-
-                    }
-                }
-
+                upCapturePictures("OutCargo",spinner_text.getText().toString());
             }
         });
 
         dialogConsignee.setNegativeButton("입고사진 UpLoad", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int arrsize=upLoadUriString.size();
                 uploadItem="InCargo";
-                for(int i=0;i<arrsize;i++){
-                    Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-//                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem, nick, message);
-                    try {
-                        Thread.sleep(800);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                upCapturePictures(uploadItem,spinner_text.getText().toString());
             }
         });
         dialogConsignee.setNeutralButton("기타사진 UpLoad", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int arrsize=upLoadUriString.size();
                 uploadItem="Etc";
-                for(int i=0;i<arrsize;i++){
-                    Uri uri=Uri.fromFile(new File(upLoadUriString.get(i)));
-//                    captureProcess.firebaseCameraUpLoad(uri,date_today,spinner_text.getText().toString(), uploadItem, nick, message);
-                    try {
-                        Thread.sleep(800);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                upCapturePictures(uploadItem,spinner_text.getText().toString());
             }
         });
-
 
         dialogConsignee.show();
 
     }
+    public void queryAllList(ArrayList<ImageViewList> captureImageList){
+
+        list=captureImageList;
+        Log.i("koacaiia","adapter Capture image size"+list.size());
+        adapter.notifyDataSetChanged();
+
+
+    }
+    public void upCapturePictures(String inoutItems,String consigneeName){
+        int arrsize=upLoadUriString.size();
+        uploadItem=inoutItems;
+        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        String nick=sharedPreferences.getString("nickName","Fine");
+
+        String message=consigneeName+"_"+uploadItem+"_사진 업로드";
+        for(int i=0;i<arrsize;i++){
+            Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
+            String strRef = date_today + "/" + consigneeName+i +"/" + System.currentTimeMillis() + ".jpg";
+            captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef);
+            if(i==arrsize-1){
+                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+                startActivity(intent);
+
+            }
+        }
+
+    }
+
 
 
 }

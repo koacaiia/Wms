@@ -91,6 +91,7 @@ public class Fine2IncargoList implements Serializable {
     }
 
     public void setBl(String bl) {
+
         this.bl = bl;
     }
 

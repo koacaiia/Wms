@@ -51,6 +51,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="입고수량"
+            android:textSize="9sp"
             android:textColor="#F90000" />
     </LinearLayout>
 

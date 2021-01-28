@@ -6,11 +6,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,45 +22,86 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 
 public class PutDataReg extends AppCompatActivity {
+    Incargo incargo;
     String strWork="";
     String strDate="";
-    String strConsignee="";
+    String strConsignee;
     String strDes="";
-    String strCont="";
+    String strCont="미정";
     String strType="";
-    String strQty="";
+    String strQty="0";
     String strBl="";
     String strRemark="";
-    EditText editWork,editDate,editConsignee,editDes,editCont,editType,editQty,editBl,editRemark;
-    Button btnWork,btnDate,btnConsignee,btnDes,btnCont,btnType,btnQty,btnBl,btnRemark,regUpload;
+    String strCount="";
+    EditText editDes,editCont,editQty,editBl,editRemark;
+    Button btnDes,btnCont,btnQty,btnBl,btnRemark,regUpload;
+    TextView txtWork,txtDate,txtConsignee,txtDes,txtCont,txtType,txtQty,txtBl,txtRemark;
     TextView textViewDate;
-    String[] consigneeList = {"M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철","한큐한신","하랄코"};
-
+    String[] consigneeList;
+    String[] spWorkList={"Bulk","Pallet"};
+    String[] typeList={"40FT","20FT","Cargo"};
+    int contCountSize=1;
+    String nickName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_put_data_reg);
+        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        nickName=sharedPreferences.getString("nickName","Fine");
+        InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
         Spinner spWork=findViewById(R.id.spinner_Working);
+        txtWork=findViewById(R.id.regWorking);
+
+        ArrayAdapter<String> spWorkAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,PutDataReg.this.spWorkList);
+        spWorkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spWork.setAdapter(spWorkAdapter);
+        spWork.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                strWork=spWorkList[position];
+                txtWork.setText("Work:"+"\n"+strWork);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         editBl=findViewById(R.id.editBl);
+        txtBl=findViewById(R.id.regBl);
+        btnBl=findViewById(R.id.btnBl);
+        btnBl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strBl=editBl.getText().toString();
+                txtBl.setText("Bl:"+"\n"+strBl);
+                imm.hideSoftInputFromWindow(editBl.getWindowToken(),0);
+            }
+        });
         textViewDate=findViewById(R.id.textViewDate);
         textViewDate.setOnClickListener(v->{
             DatePickerFragment putDataDate=new DatePickerFragment("d");
             putDataDate.show(getSupportFragmentManager(),"datePicker");
-
-
         });
+        Intent intent2=getIntent();
+        consigneeList=intent2.getStringArrayExtra("consigneeList");
+
         Spinner spConsignee=findViewById(R.id.spinner_Consignee);
+        txtConsignee=findViewById(R.id.regConsignee);
         ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,PutDataReg.this.consigneeList);
         consigneeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spConsignee.setAdapter(consigneeAdapter);
         spConsignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                strConsignee=consigneeList[position];
+                txtConsignee.setText("화주명:"+"\n"+strConsignee);
             }
 
             @Override
@@ -66,81 +110,83 @@ public class PutDataReg extends AppCompatActivity {
             }
         });
         editDes=findViewById(R.id.editDes);
-        editCont=findViewById(R.id.editCont);
-        Spinner spType=findViewById(R.id.spinner_Type);
-        editQty=findViewById(R.id.editQty);
-        editRemark=findViewById(R.id.editRemark);
-
-        btnWork=findViewById(R.id.btnWorking);
-        btnWork.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strWork=editWork.getText().toString();
-                TextView btnWork=findViewById(R.id.regWorking);
-                btnWork.setText(strWork);
-            }
-        });
-        btnDate=findViewById(R.id.btnDate);
-        btnDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        btnConsignee=findViewById(R.id.btnConsignee);
-        btnConsignee.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                strConsignee=editConsignee.getText().toString();
-                TextView btnConsignee=findViewById(R.id.regConsignee);
-                btnConsignee.setText(strConsignee);
-            }
-        });
+        txtDes=findViewById(R.id.regDes);
         btnDes=findViewById(R.id.btnDes);
-        btnDes.setOnClickListener(v -> {
-            EditText editDes=findViewById(R.id.editDes);
+        btnDes.setOnClickListener(v->{
             strDes=editDes.getText().toString();
-            TextView btnDes=findViewById(R.id.regDes);
-            btnDes.setText(strDes);
+            txtDes.setText("품명:"+"\n"+strDes);
+            imm.hideSoftInputFromWindow(editDes.getWindowToken(),0);
         });
+
+        editCont=findViewById(R.id.editCont);
+        txtCont=findViewById(R.id.regContainer);
         btnCont=findViewById(R.id.btnCont);
-        btnCont.setOnClickListener(v->{
-            EditText editCont=findViewById(R.id.editCont);
-            strCont=editCont.getText().toString();
-            TextView btnCont=findViewById(R.id.regContainer);
-            btnCont.setText(strCont);
+        btnCont.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strCont=editCont.getText().toString();
+                txtCont.setText("컨테이너번호:"+"\n"+strCont);
+                imm.hideSoftInputFromWindow(editCont.getWindowToken(),0);
+            }
         });
-        btnType=findViewById(R.id.btnType);
-        btnType.setOnClickListener(v->{
-            strType=editType.getText().toString();
-            TextView btnType=findViewById(R.id.regType);
-            btnType.setText(strType);
+        Spinner spType=findViewById(R.id.spinner_Type);
+        txtType=findViewById(R.id.regType);
+        ArrayAdapter<String> typeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+                PutDataReg.this.typeList);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spType.setAdapter(typeAdapter);
+        spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+              strType=typeList[position];
+              txtType.setText("Type:"+"\n"+strType);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
+        editQty=findViewById(R.id.editQty);
+        editQty.setInputType(InputType.TYPE_CLASS_NUMBER);
+        txtQty=findViewById(R.id.regQty);
         btnQty=findViewById(R.id.btnQty);
-        btnQty.setOnClickListener(v -> {
-            EditText editQty=findViewById(R.id.editQty);
-            strQty=editQty.getText().toString();
-            TextView btnQty=findViewById(R.id.regQty);
-            btnQty.setText(strQty);
+        btnQty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                strQty=editQty.getText().toString();
+                txtQty.setText("Qty:"+"\n"+strQty);
+                imm.hideSoftInputFromWindow(editQty.getWindowToken(),0);
+            }
         });
-        btnBl=findViewById(R.id.btnBl);
-        btnBl.setOnClickListener(v->{
-            EditText editBl=findViewById(R.id.editBl);
-            strBl=editBl.getText().toString();
-            TextView btnBl=findViewById(R.id.regBl);
-            btnBl.setText(strBl);
-        });
+        editRemark=findViewById(R.id.editRemark);
+        txtRemark=findViewById(R.id.regRemark);
         btnRemark=findViewById(R.id.btnRemark);
-        btnRemark.setOnClickListener(v->{
-            EditText editRemark=findViewById(R.id.editRemark);
-            strRemark=editRemark.getText().toString();
-            TextView btnRemark=findViewById(R.id.regRemark);
-            btnRemark.setText(strRemark);
+        btnRemark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 strRemark=editRemark.getText().toString();
+                 txtRemark.setText("비고:"+"\n"+strRemark);
+                 imm.hideSoftInputFromWindow(editRemark.getWindowToken(),0);
+            }
         });
 
-        Button regUpload=findViewById(R.id.regUpload);
+        EditText contCount=findViewById(R.id.reg_contCount);
+        contCount.setInputType(InputType.TYPE_CLASS_NUMBER);
+        regUpload=findViewById(R.id.regUpload);
         regUpload.setOnClickListener(v->{
+
+            if(contCountSize==1){
+                contCountSize=1;
+
+            }else{
+                Integer.parseInt(contCount.getText().toString());
+            }
+
+            postData(contCountSize);
+            Incargo incargo=new Incargo();
+            String msg=strConsignee+"화물 신규 정보 등록";
+            incargo.putMessage(msg,"Etc",nickName);
 
         });
         regUpload.setOnLongClickListener(v->{
@@ -152,8 +198,42 @@ public class PutDataReg extends AppCompatActivity {
 
 }
 
-public void putEditDate(){
-        AlertDialog.Builder editBuilder=new AlertDialog.Builder(this);
+public void postData(int contCountSize){
+        for(int i=0;i<contCountSize;i++){
+        Fine2IncargoList list=new Fine2IncargoList();
+        list.setBl(strBl);
+        list.setConsignee(strConsignee);
+        Log.i("koacaiia","consigneeName"+strConsignee);
+        list.setContainer(strCont);
+        list.setDate(strDate);
+        list.setDescription(strDes);
+        list.setIncargo(strQty);
+        list.setLocation("");
+        list.setRemark(strRemark);
+        list.setWorking(strWork);
+        list.setCount(String.valueOf(i));
+        switch(strType){
+            case "40FT":
+                list.setContainer40("1");
+                list.setContainer20("0");
+                list.setLclcargo("0");
+                break;
+            case "20FT":
+                list.setContainer40("0");
+                list.setContainer20("1");
+                list.setLclcargo("0");
+                break;
+            case "Cargo":
+                list.setContainer40("0");
+                list.setContainer20("0");
+                list.setLclcargo("1");
+                break;
+        }
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strBl+"_"+strDes+"_"+i);
+        databaseReference.setValue(list);}
+        Intent intent=new Intent(PutDataReg.this,Incargo.class);
+        startActivity(intent);
 
 }
 
@@ -172,7 +252,7 @@ public void putEditDate(){
         }
         String year_string=Integer.toString(year);
 
-        strDate=(year_string+"년"+month_string+"월"+day_string+"일");
+        strDate=(year_string+"-"+month_string+"-"+day_string);
         textViewDate.setText(strDate);
         TextView regDate=findViewById(R.id.regDate);
         regDate.setText(strDate);

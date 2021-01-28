@@ -51,23 +51,19 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
         Glide.with(holder.itemView)
                 .load(str)
                 .into(holder.imageView);
-        Log.i("koacaiia",str+"____onbindViewholder getUriName");
         holder.itemView.setSelected(isItemSelected(position));
 
 
     }
     private void toggleItemSelected(int position){
-        String uriString=list.get(position).getUriName();
 
-        if(imageListSelected.get(position,false)==true){
+        if(imageListSelected.get(position, false)){
             imageListSelected.delete(position);
-//            arrUriString.remove(uriString);
+            imageListSelected.put(position,false);
         }else{
             imageListSelected.put(position,true);
-            arrUriString.add(uriString);
         }
         notifyItemChanged(position);
-        Log.i("koacaiia",arrUriString+"____arrList");
     }
 
     private boolean isItemSelected(int position) {

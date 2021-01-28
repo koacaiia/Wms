@@ -63,12 +63,12 @@ public class FcmProcessService extends FirebaseMessagingService {
         }
         inflearn Version*/
 
-        Log.i("kocaiaiia","onMessagedReceived Called");
+        Log.i("koacaiia","onMessagedReceived Called");
         String from=remoteMessage.getFrom();
         Map<String,String> data=remoteMessage.getData();
         String contents=data.get("contents");
 
-        Log.i("koaca","from:"+from+".contents:"+contents);
+        Log.i("koacaiia","from:"+from+".contents:"+contents);
         sendToActivity(getApplicationContext(),from,contents);
 
     }

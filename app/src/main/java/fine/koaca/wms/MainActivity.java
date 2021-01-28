@@ -295,7 +295,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            select.setPositiveButton("선택", new DialogInterface.OnClickListener() {
                @Override
                public void onClick(DialogInterface dialog, int which) {
-
                }
            });
            select.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -334,6 +333,8 @@ if(add){
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);}
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);
         databaseReference.updateChildren(childUpdates);}
+        String msg=count+"_"+description+"_"+"["+location+"]"+"등록 합니다..";
+        putMessage(msg, "M&F");
 
         }
 
