@@ -52,6 +52,7 @@ String a;
            case "d":
                PutDataReg putDataReg=(PutDataReg)getActivity();
                putDataReg.processDatePickerResult(year,month,dayOfMonth);
+               break;
        }
 
 

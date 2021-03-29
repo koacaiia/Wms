@@ -7,6 +7,8 @@
     android:layout_height="match_parent"
     android:importantForAutofill="auto"
     android:orientation="vertical"
+    android:textAlignment="center"
+    android:visibility="visible"
     tools:context=".Location">
 
     <LinearLayout
@@ -27,83 +29,90 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="10"
-        android:orientation="horizontal">
+        android:layout_weight="4"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/location_bl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="bl"
-            android:textSize="10sp"
-            android:textStyle="bold|italic" />
-
-        <TextView
-            android:id="@+id/location_count"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="찻수"
-            android:textSize="10sp"
-            android:textStyle="bold|italic" />
-
-        <TextView
-            android:id="@+id/location_description"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:hint="품명"
-            android:textSize="10sp"
-            android:textStyle="bold|italic" />
+            android:orientation="horizontal">
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/location_bl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="bl"
+                android:textSize="10sp"
+                android:textStyle="bold|italic" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="10"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/location_count"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="찻수"
+                android:textSize="10sp"
+                android:textStyle="bold|italic" />
 
-        <TextView
-            android:id="@+id/location_itemcount"
+            <TextView
+                android:id="@+id/location_description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="품명"
+                android:textSize="10sp"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
             android:layout_weight="1"
-            android:gravity="center"
-            android:hint="수량"
-            android:textSize="10sp"
-            android:textStyle="bold|italic" />
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/txt_location"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:gravity="center"
-            android:hint="Location"
-            android:longClickable="true"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/location_itemcount"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="수량"
+                android:textSize="10sp"
+                android:textStyle="bold|italic" />
 
-        <Spinner
-            android:id="@+id/spinner_rack"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
+            <TextView
+                android:id="@+id/txt_location"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
+                android:gravity="center"
+                android:hint="Location"
+                android:longClickable="true"
+                android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_locationReg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.8"
-            android:text="등록"
-            android:textSize="10sp" />
+            <Spinner
+                android:id="@+id/spinner_rack"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:background="@color/material_on_primary_disabled"
+                android:dropDownWidth="match_parent"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:popupBackground="@drawable/side_nav_bar"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

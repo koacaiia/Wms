@@ -7,6 +7,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -95,11 +96,11 @@ implements AdapterClickListener,AdapterLongClickListener{
         TextView bl;
         TextView des;
         TextView incargo;
-        CardView cardView;
+        LinearLayout cardView;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.working=itemView.findViewById(R.id.incargo_working);
-            this.cardView=itemView.findViewById(R.id.background);
+            this.cardView=itemView.findViewById(R.id.re_back);
             this.date=itemView.findViewById(R.id.incargo_date);
             this.consignee=itemView.findViewById(R.id.incargo_consignee);
             this.container=itemView.findViewById(R.id.incargo_container);
@@ -116,10 +117,10 @@ implements AdapterClickListener,AdapterLongClickListener{
                         mListener.onItemClick(ListViewHolder.this,v,pos);
                             if(mSelectedItems.get(pos, false)){
                                 mSelectedItems.put(pos,false);
-                                cardView.setCardBackgroundColor(Color.WHITE);
+                                cardView.setBackgroundColor(Color.WHITE);
                             }else{
                                 mSelectedItems.put(pos,true);
-                                cardView.setCardBackgroundColor(Color.LTGRAY);
+                                cardView.setBackgroundColor(Color.LTGRAY);
                             }
                             notifyItemChanged(pos);
                         }

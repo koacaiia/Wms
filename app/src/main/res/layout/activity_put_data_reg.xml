@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="등록" />
+                android:text="품명 등록" />
 
         </LinearLayout>
 
@@ -111,7 +111,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="등록" />
+                android:text="컨테이너 번호 등록" />
 
         </LinearLayout>
 
@@ -150,7 +150,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="등록" />
+                android:text="입고수량 등록" />
 
         </LinearLayout>
 
@@ -174,7 +174,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="등록" />
+                android:text="비엘번호 등록" />
 
         </LinearLayout>
 
@@ -198,7 +198,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="등록" />
+                android:text="비고란 등록" />
 
 
         </LinearLayout>
@@ -361,7 +361,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:hint="컨테이너 등록 수량"
-             />
+            android:text="1" />
 
         <Button
             android:id="@+id/regUpload"

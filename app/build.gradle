@@ -11,8 +11,8 @@ android {
         applicationId "fine.koaca.wms"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 18
-        versionName "1.17"
+        versionCode 19
+        versionName "1.19"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {

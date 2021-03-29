@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-
     android:layout_height="120dp"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -12,7 +11,8 @@
             android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardBackgroundColor="#FFFFFFFF"
+
+            app:cardBackgroundColor="#A2ACEE"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp"
             app:cardUseCompatPadding="true">
@@ -21,7 +21,6 @@
                     android:id="@+id/re_back"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     android:orientation="vertical">
 
                         <LinearLayout

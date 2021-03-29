@@ -2,10 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="150dp"
 
-    android:background="@drawable/border"
     android:orientation="vertical">
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:cardBackgroundColor="#969292"
+    app:cardElevation="5dp"
+    app:cardCornerRadius="10dp"
+    app:cardUseCompatPadding="true">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,49 +25,81 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                app:cardBackgroundColor="#9CAEF2"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1dp"
+                app:cardUseCompatPadding="true">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txt_work_nickName"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:textStyle="bold|italic" />
+
+                    <TextView
+                        android:id="@+id/txt_work_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="TextView"
+                        android:textSize="8sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                app:cardBackgroundColor="#969292"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="1dp"
+                app:cardUseCompatPadding="true">
 
                 <TextView
-                    android:id="@+id/txt_work_nickName"
+                    android:id="@+id/txt_work_msg"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:gravity="center|left"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
                     android:textSize="12sp"
                     android:textStyle="bold|italic" />
-
-                <TextView
-                    android:id="@+id/txt_work_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="start|center_vertical"
-                    android:text="TextView"
-                    android:textSize="8sp" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/txt_work_msg"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textSize="12sp"
-                android:textStyle="bold|italic" />
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/image_work_image"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2"
-            app:srcCompat="@drawable/side_nav_bar" />
+            app:cardBackgroundColor="#D7D1D1"
+            app:cardCornerRadius="5dp"
+            app:cardElevation="1dp"
+            app:cardUseCompatPadding="true">
+
+            <ImageView
+                android:id="@+id/image_work_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+
+                />
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
+</androidx.cardview.widget.CardView>
 
 </LinearLayout>

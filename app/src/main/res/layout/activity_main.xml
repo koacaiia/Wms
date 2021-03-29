@@ -161,11 +161,11 @@
                 android:textSize="14sp" />
 
             <Button
-                android:id="@+id/btn_camera"
+                android:id="@+id/btn_search"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="사진촬영" />
+                android:text="화물조회" />
         </LinearLayout>
 
     </LinearLayout>

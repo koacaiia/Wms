@@ -46,12 +46,23 @@ public class PutDataReg extends AppCompatActivity {
     String[] consigneeList;
     String[] spWorkList={"Bulk","Pallet"};
     String[] typeList={"40FT","20FT","Cargo"};
-    int contCountSize=1;
+    int contCountSize;
     String nickName;
+    String[] intentList;
+
+    String wareHouseDepotName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_put_data_reg);
+        Intent getIntent=getIntent();
+
+        intentList=getIntent.getStringArrayExtra("list");
+//        String listLength=intentList[2];
+//        Log.i("koacaiia", "ListRef++++" +listLength );
+        wareHouseDepotName=getIntent.getStringExtra("dataRef");
+
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         nickName=sharedPreferences.getString("nickName","Fine");
         InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
@@ -65,8 +76,11 @@ public class PutDataReg extends AppCompatActivity {
         spWork.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                strWork=spWorkList[position];
+                if(intentList!=null){
+                    strWork=intentList[0];
+                }else{
+                    strWork=spWorkList[position];
+                }
                 txtWork.setText("Work:"+"\n"+strWork);
             }
             @Override
@@ -75,16 +89,28 @@ public class PutDataReg extends AppCompatActivity {
         });
         editBl=findViewById(R.id.editBl);
         txtBl=findViewById(R.id.regBl);
+        if(intentList!=null){
+            strBl=intentList[9];
+            editBl.setText(strBl);
+            txtBl.setText(strBl);
+        }
         btnBl=findViewById(R.id.btnBl);
         btnBl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 strBl=editBl.getText().toString();
                 txtBl.setText("Bl:"+"\n"+strBl);
                 imm.hideSoftInputFromWindow(editBl.getWindowToken(),0);
             }
         });
         textViewDate=findViewById(R.id.textViewDate);
+        if(intentList!=null){
+            strDate=intentList[1];
+            textViewDate.setText(strDate);
+            TextView regDate=findViewById(R.id.regDate);
+            regDate.setText(strDate);
+        }
         textViewDate.setOnClickListener(v->{
             DatePickerFragment putDataDate=new DatePickerFragment("d");
             putDataDate.show(getSupportFragmentManager(),"datePicker");
@@ -100,7 +126,11 @@ public class PutDataReg extends AppCompatActivity {
         spConsignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                strConsignee=consigneeList[position];
+                if(intentList!=null){
+                    strConsignee=intentList[2];
+                }else{
+                    strConsignee=consigneeList[position];
+                }
                 txtConsignee.setText("화주명:"+"\n"+strConsignee);
             }
 
@@ -111,6 +141,11 @@ public class PutDataReg extends AppCompatActivity {
         });
         editDes=findViewById(R.id.editDes);
         txtDes=findViewById(R.id.regDes);
+        if(intentList!=null){
+            strDes=intentList[3];
+            editDes.setText(strDes);
+            txtDes.setText(strDes);
+        }
         btnDes=findViewById(R.id.btnDes);
         btnDes.setOnClickListener(v->{
             strDes=editDes.getText().toString();
@@ -120,6 +155,11 @@ public class PutDataReg extends AppCompatActivity {
 
         editCont=findViewById(R.id.editCont);
         txtCont=findViewById(R.id.regContainer);
+        if(intentList!=null){
+            strCont=intentList[7];
+            editCont.setText(strCont);
+            txtCont.setText(strCont);
+        }
         btnCont=findViewById(R.id.btnCont);
         btnCont.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,7 +178,17 @@ public class PutDataReg extends AppCompatActivity {
         spType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-              strType=typeList[position];
+                if(intentList!=null){
+                if(intentList[4].equals("1")){
+                    strType="20FT";}
+                else if(intentList[5] .equals("1")){
+                    strType="40FT";
+                }else if(intentList[6].equals("1")){
+                    strType="Cargo";
+                }else{strType="미정";}
+                }else{
+                    strType=typeList[position];
+                }
               txtType.setText("Type:"+"\n"+strType);
             }
 
@@ -150,6 +200,11 @@ public class PutDataReg extends AppCompatActivity {
         editQty=findViewById(R.id.editQty);
         editQty.setInputType(InputType.TYPE_CLASS_NUMBER);
         txtQty=findViewById(R.id.regQty);
+        if(intentList!=null){
+            strQty=intentList[8];
+            editQty.setText(strQty);
+            txtQty.setText(strQty);
+        }
         btnQty=findViewById(R.id.btnQty);
         btnQty.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +216,11 @@ public class PutDataReg extends AppCompatActivity {
         });
         editRemark=findViewById(R.id.editRemark);
         txtRemark=findViewById(R.id.regRemark);
+        if(intentList!=null){
+            strRemark=intentList[10];
+            editRemark.setText(strRemark);
+            txtRemark.setText(strRemark);
+        }
         btnRemark=findViewById(R.id.btnRemark);
         btnRemark.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,16 +232,17 @@ public class PutDataReg extends AppCompatActivity {
         });
 
         EditText contCount=findViewById(R.id.reg_contCount);
+        contCount.setOnClickListener(v->{
+            contCount.setText("");
+        });
         contCount.setInputType(InputType.TYPE_CLASS_NUMBER);
         regUpload=findViewById(R.id.regUpload);
         regUpload.setOnClickListener(v->{
 
-            if(contCountSize==1){
-                contCountSize=1;
 
-            }else{
-                Integer.parseInt(contCount.getText().toString());
-            }
+                contCountSize=Integer.parseInt(contCount.getText().toString());
+
+            Log.i("koacaiia","arraysize++++"+contCountSize);
 
             postData(contCountSize);
             Incargo incargo=new Incargo();
@@ -190,7 +251,7 @@ public class PutDataReg extends AppCompatActivity {
 
         });
         regUpload.setOnLongClickListener(v->{
-            Intent intent=new Intent(PutDataReg.this,PutDataReg.class);
+            Intent intent=new Intent(PutDataReg.this,Incargo.class);
             startActivity(intent);
             return true;
         });
@@ -203,7 +264,6 @@ public void postData(int contCountSize){
         Fine2IncargoList list=new Fine2IncargoList();
         list.setBl(strBl);
         list.setConsignee(strConsignee);
-        Log.i("koacaiia","consigneeName"+strConsignee);
         list.setContainer(strCont);
         list.setDate(strDate);
         list.setDescription(strDes);
@@ -230,8 +290,11 @@ public void postData(int contCountSize){
                 break;
         }
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strBl+"_"+strDes+"_"+i);
-        databaseReference.setValue(list);}
+        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strBl+"_"+strDes+"_"+i+"_"+strCont);
+        databaseReference.setValue(list);
+        DatabaseReference databaseReference1=database.getReference(wareHouseDepotName+"/"+strBl+"_"+strDes+"_"+i+"_"+strCont);
+        databaseReference1.setValue(list);
+        }
         Intent intent=new Intent(PutDataReg.this,Incargo.class);
         startActivity(intent);
 

@@ -14,7 +14,7 @@ public class ExtractIncargoDataAdapter extends RecyclerView.Adapter<ExtractIncar
     ArrayList<ExtractIncargoDataList> list=new ArrayList<ExtractIncargoDataList>();
 
     public ExtractIncargoDataAdapter(ArrayList<ExtractIncargoDataList> arrList) {
-        list=arrList;
+        this.list=arrList;
     }
 
     @NonNull

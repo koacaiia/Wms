@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,17 +60,18 @@ implements OnListImageClickListener{
 
 
         if(messageLists.get(position).getNickName().equals(nickName)){
-            holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
-            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_END);
+            holder.msg.setTextColor(Color.RED);
+            holder.nickName.setTextColor(Color.RED);
+            holder.time.setTextColor(Color.RED);
 
-        }else{
-            holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
-            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+
         }
+//        else{
+//            holder.msg.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+//            holder.nickName.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+//            holder.time.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+//            holder.imageview.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+//        }
     }
 
     @Override

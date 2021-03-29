@@ -2,10 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="fine.koaca.wms">
 
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -19,7 +26,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".IncargoEx"></activity>
+        <activity android:name=".IncargoEx">
+
+        </activity>
+
 
         <service android:name=".FcmProcessService">
             <intent-filter>
@@ -31,8 +41,15 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+        <receiver android:name=".AlarmReceiver"
+            android:enabled="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
 
-        <activity android:name=".FcmProcess" />
+        </receiver>
+
+<!--        <activity android:name=".FcmProcess" />-->
         <activity android:name=".PutDataReg" />
         <activity
             android:name=".ImageViewActivity"
@@ -59,6 +76,10 @@
             android:label="Mnf_Location" />
         <activity
             android:name=".MainActivity"
+            android:label="엠엔에프 로케이션 관리" />
+
+        <activity
+            android:name=".MainActivitySub"
             android:label="엠엔에프 로케이션 관리" />
 
         <provider

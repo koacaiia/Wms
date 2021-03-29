@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,12 +72,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     Button btn_databaseReg;
     Button btn_datalocation;
-    Button btn_camera;
+    Button btn_search;
     String sort="date";
     String a;
     String databaseRef_sort1="consignee";
     String databaseRef_sort2="코만";
     RecyclerView recyclerView;
+
+    FloatingActionButton fbtnSearch;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -161,8 +165,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         btn_datalocation.setOnClickListener(this);
-        btn_camera=findViewById(R.id.btn_camera);
-        btn_camera.setOnClickListener(this);
+        btn_search=findViewById(R.id.btn_search);
+        btn_search.setOnClickListener(this);
 
         database=FirebaseDatabase.getInstance();
         databaseReference=database.getReference("Incargo");
@@ -241,9 +245,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             getFirebaseDatabase();
         }
 
-
-
-
         }
 
     private void databaseRegLongClick() {
@@ -294,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
            select.setMessage("다중항목 등록 선택");
            select.setPositiveButton("선택", new DialogInterface.OnClickListener() {
                @Override
-               public void onClick(DialogInterface dialog, int which) {
+               public void onClick(DialogInterface dialog,int which) {
                }
            });
            select.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -421,11 +422,71 @@ if(add){
                 intentActivityName="Location";
                 intentSelect(intentActivityName);
                 break;
-            case R.id.btn_camera:
-                intentActivityName="CameraCapture";
-                intentSelect(intentActivityName);
+            case R.id.btn_search:
+                sortSearch();
                 break;
         }
+    }
+
+    private void sortSearch() {
+        AlertDialog.Builder sortSearchDialog=new AlertDialog.Builder(this);
+        final EditText editText=new EditText(this);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        sortSearchDialog.setTitle("B/l별 화물조회")
+                .setMessage("마지막4자리번호입력바랍니다.")
+                .setView(editText)
+                .setPositiveButton("화물조회", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String sortContents=editText.getText().toString();
+                        searchFireBaseData(sortContents);
+
+
+                    }
+                })
+                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+
+    }
+
+    private void searchFireBaseData(String sortContents) {
+        ValueEventListener postListener=new ValueEventListener(){
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listItemsCount=new ArrayList<Fine2IncargoList>();
+                listItemsCount.clear();
+                listItems.clear();
+                String sortBl;
+                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+                    Fine2IncargoList data=dataSnapshot.getValue(Fine2IncargoList.class);
+
+                    int blNameLength=data.getBl().length();
+                    if(blNameLength>4){
+                        sortBl=data.getBl().substring(data.getBl().length()-4);
+                        if(sortBl.equals(sortContents)){
+                            listItems.add(data);
+                        }
+                    }else{
+
+                    }
+
+                                    }
+                listItems.sort(new IncargoListComparator(sort).reversed());
+                adapter.notifyDataSetChanged();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(fine.koaca.wms.MainActivity.this, "Data Server connection Error", Toast.LENGTH_SHORT).show();
+            }
+        };
+        Query sortbyAge=databaseReference.orderByChild(databaseRef_sort1).equalTo(databaseRef_sort2);
+        sortbyAge.addListenerForSingleValueEvent(postListener);
     }
 
     public void putMessage(String msg, String etc) {
@@ -433,7 +494,7 @@ if(add){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStampDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        String nick=sharedPreferences.getString("nickName","koaca");
+        String nick=sharedPreferences.getString("nickName","FineWareHouseDepot");
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
