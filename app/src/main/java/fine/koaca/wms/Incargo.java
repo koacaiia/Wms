@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -61,6 +62,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+
+//요약등록 putReg container 번호 등록시 신규 child-key로 등록
 public class Incargo extends AppCompatActivity implements Serializable {
     ArrayList<Fine2IncargoList> listItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
@@ -1250,7 +1253,7 @@ return true;
                 Collections.reverse(listItems);
                 adapter.notifyDataSetChanged();
                 sortDialog(startDay, endDay, listSortList);
-                sortDialogEx();
+                sortDialogOld(startDay, endDay, listSortList);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -1426,6 +1429,169 @@ return true;
 
 
     }
+    public void sortDialogOld(String startDay, String endDay, ArrayList<Fine2IncargoList> listSortList){
+        arrList.clear();
+        int listItemsSize;
+        listItemsSize=listSortList.size();
+
+        int sum40=0;
+        int sum20=0;
+        int sumCargo=0;
+        int sumQty=0;
+
+        int to40 = 0;
+        int to20=0;
+        int toCargo=0;
+        int toQty=0;
+
+//
+        for(int i=0;i<listItemsSize;i++){
+            String consignee=listSortList.get(i).getConsignee();
+            int int40=Integer.parseInt(listSortList.get(i).getContainer40());
+            int int20=Integer.parseInt(listSortList.get(i).getContainer20());
+            int intCargo=Integer.parseInt(listSortList.get(i).getLclcargo());
+            int intQty=Integer.parseInt(listSortList.get(i).getIncargo());
+
+            sum40=sum40+int40;
+            sum20=sum20+int20;
+            sumCargo=sumCargo+intCargo;
+            sumQty=sumQty+intQty;
+
+            to40=to40+int40;
+            to20=to20+int20;
+            toCargo=toCargo+intCargo;
+            toQty=toQty+intQty;
+            if(i==listItemsSize-1){
+                ExtractIncargoDataList list;
+                if(consignee.equals(listSortList.get(i-1).getConsignee())){
+                    list = new ExtractIncargoDataList(consignee, String.valueOf(sum40), String.valueOf(sum20),
+                            String.valueOf(sumCargo), String.valueOf(sumQty));
+
+                }else{
+                    list = new ExtractIncargoDataList(consignee, String.valueOf(int40), String.valueOf(int20),
+                            String.valueOf(intCargo), String.valueOf(intQty));
+
+                }
+                arrList.add(list);
+                sum40=0;
+                sum20=0;
+                sumCargo=0;
+                sumQty=0;
+            }else if(!consignee.equals(listSortList.get(i+1).getConsignee())){
+                ExtractIncargoDataList list=new ExtractIncargoDataList(consignee,String.valueOf(sum40),String.valueOf(sum20),
+                        String.valueOf(sumCargo),String.valueOf(sumQty));
+
+                arrList.add(list);
+                sum40=0;
+                sum20=0;
+                sumCargo=0;
+                sumQty=0;
+            }
+        }
+        android.app.AlertDialog.Builder arrReBuilder=new android.app.AlertDialog.Builder(this);
+
+        arrReBuilder.setTitle("입고화물 정보");
+        View view=getLayoutInflater().inflate(R.layout.arr_re,null);
+        TextView textViewDate=view.findViewById(R.id.exDate);
+        if(startDay.equals(endDay)){
+            textViewDate.setText(startDay);
+            textViewDate.setTextColor(Color.RED);
+            incargo_contents_date.setText(startDay);
+        }else{
+            textViewDate.setText(startDay+"\n"+"~"+endDay);
+            incargo_contents_date.setText(startDay+"\n"+"~"+endDay);
+            incargo_contents_date.setTextSize(14);
+            textViewDate.setTextSize(9);
+            textViewDate.setTextColor(Color.RED);
+        }
+
+        TextView textViewContainer40=view.findViewById(R.id.exContainer40);
+        textViewContainer40.setText("40FT:"+"\n"+to40+" 대");
+        TextView textViewContainer20=view.findViewById(R.id.exContainer20);
+        textViewContainer20.setText("20FT:"+"\n"+to20+" 대");
+        TextView textViewCargo=view.findViewById(R.id.exCargo);
+        textViewCargo.setText("Cargo:"+"\n"+toCargo+" 건");
+        TextView textViewQty=view.findViewById(R.id.exQty);
+        textViewQty.setText("팔렛트 수량 :"+"\n"+toQty+" PLT");
+
+        TextView textViewConsignee=view.findViewById(R.id.exSortConsignee);
+
+        arrConsignee.add(0,"ALL");
+        consignee_list=arrConsignee.toArray(new String[arrConsignee.size()]);
+        arrConsignee.clear();
+        for(String item:consignee_list){
+            if(!arrConsignee.contains(item)){
+                arrConsignee.add(item);
+            }
+        }
+        consignee_list2=arrConsignee.toArray(new String[arrConsignee.size()]);
+
+        Spinner spinnerConsignee=view.findViewById(R.id.exSpinnerConsignee);
+        ArrayAdapter<String> consigneeListAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+                consignee_list2);
+        spinnerConsignee.setAdapter(consigneeListAdapter);
+        spinnerConsignee.setSelection(0,false);
+        spinnerConsignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                sortConsignee=consignee_list2[position];
+                textViewConsignee.setText(sortConsignee+":화주검색");
+                textViewConsignee.setTextColor(Color.RED);
+                incargo_contents_consignee.setText(sortConsignee);
+
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                sortConsignee=consignee_list2[0];
+
+            }
+        });
+
+        Button btnStartDay=view.findViewById(R.id.exBtnStartDay);
+        btnStartDay.setOnClickListener(v->{
+            downLoadingMark="StartDate";
+            DatePickerFragment datePickerFragment=new DatePickerFragment("b");
+            datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+        });
+
+        Button btnEndDay=view.findViewById(R.id.exBtnEndDay);
+        btnEndDay.setOnClickListener(v->{
+            downLoadingMark="EndDate";
+            DatePickerFragment datePickerFragment=new DatePickerFragment("b");
+            datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+        });
+        exSortDate=view.findViewById(R.id.exSortDate);
+
+        TextView exSortConsignee=view.findViewById(R.id.exSortConsignee);
+        LinearLayoutManager layoutManager=new LinearLayoutManager(this);
+        RecyclerView recyclerEx=view.findViewById(R.id.reEx);
+        recyclerEx.setLayoutManager(layoutManager);
+        ExtractIncargoDataAdapter adapter=new ExtractIncargoDataAdapter(arrList);
+        recyclerEx.setAdapter(adapter);
+        arrReBuilder.setView(view);
+        arrReBuilder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        arrReBuilder.setNegativeButton("조회진행", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                getFirebaseData(day_start,day_end, "sort",sortConsignee);
+
+            }
+        });
+//        arrReBuilder.show();
+        android.app.AlertDialog dialog=arrReBuilder.create();
+        dialog.show();
+        WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
+        params.width=WindowManager.LayoutParams.MATCH_PARENT;
+        params.height=1600;
+        dialog.getWindow().setAttributes(params);
+    }
+
 
 }
 
