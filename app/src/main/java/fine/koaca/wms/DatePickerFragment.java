@@ -25,6 +25,7 @@ String a;
         int day=c.get(Calendar.DAY_OF_MONTH);
         return new DatePickerDialog(getActivity(),this,year,month,day);
     }
+    
 
 
     @Override
@@ -54,7 +55,5 @@ String a;
                putDataReg.processDatePickerResult(year,month,dayOfMonth);
                break;
        }
-
-
     }
 }

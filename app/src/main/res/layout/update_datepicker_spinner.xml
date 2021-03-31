@@ -51,12 +51,17 @@
             android:textStyle="bold|italic" />
 
         <TextView
+            android:id="@+id/txtUntil"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1.6"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1.4"
+            android:background="#000000"
             android:gravity="center"
-            android:text="~"
-            android:textColor="#040929"
+            android:text="="
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="bold" />
 
