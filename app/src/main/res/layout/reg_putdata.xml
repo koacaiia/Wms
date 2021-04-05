@@ -18,6 +18,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:hint="Date"
+            android:text="Date"
             android:textStyle="bold|italic" />
     </LinearLayout>
 
@@ -45,6 +46,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:hint="BL"
+            android:text="BL"
             android:textStyle="bold|italic" />
     </LinearLayout>
 
@@ -72,6 +74,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:hint="Container"
+            android:text="Container"
             android:textSize="10sp"
             android:textStyle="bold|italic" />
     </LinearLayout>
@@ -98,6 +101,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:hint="Remark"
+            android:text="Remark"
             android:textSize="10sp"
             android:textStyle="bold|italic" />
     </LinearLayout>

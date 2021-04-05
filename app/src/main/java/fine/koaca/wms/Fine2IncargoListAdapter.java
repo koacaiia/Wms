@@ -62,13 +62,6 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
 
     }
 
-    private void addList(fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder holder, int position) {
-        holder.working.setText(fine2IncargoLists.get(position).getWorking());
-        holder.consignee.setText(fine2IncargoLists.get(position).getConsignee());
-        holder.container40.setText(fine2IncargoLists.get(position).getContainer40());
-        holder.container20.setText(fine2IncargoLists.get(position).getContainer20());
-        holder.lclCargo.setText(fine2IncargoLists.get(position).getLclcargo());
-    }
 
     public void setOnItemClicklistener(OnListItemClickListener listener){
 

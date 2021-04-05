@@ -528,7 +528,10 @@ return true;
               regDate= (year_string + "-" + month_string + "-" + day_string);
               reg_Button_date.setText("Date:"+regDate+"등록");
               reg_Button_date.setTextColor(Color.RED);
-//              reg_Result_date.setText(putdata_date);
+              dateSelectCondition="Clicked";
+            if(!regDate.equals("")&&dateSelectCondition.equals("Clicked")){
+                Toast.makeText(getApplicationContext(),"Date Button Clicked",Toast.LENGTH_SHORT).show();
+            }
 
 
         }else if(downLoadingMark.equals("StartDate")) {
@@ -658,6 +661,7 @@ return true;
                         String a="b";
                 DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                 datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+
 
 
                     }
@@ -826,7 +830,8 @@ return true;
             childUpdates.put(dateO+"_"+blO+"_"+desO+"_"+countO+"_"+contNO+"/", null);
             databaseReference.updateChildren(childUpdates);
             String chBl;
-        if(!regBl.equals("")){
+
+        if(!regBl.equals("")&&!reg_Button_bl.getText().toString().equals("BL")){
             chBl="(비엘:"+regBl+")";
         list.setBl(regBl);}
         else{
@@ -837,7 +842,7 @@ return true;
 
         list.setConsignee(listSortItems.get(i).getConsignee());
         String chContainer;
-        if(!regContainer.equals("")){
+        if(!regContainer.equals("")&&!reg_Button_container.equals("Container")){
             chContainer="(컨테이너 번호:"+regContainer+")";
         list.setContainer(regContainer);}
         else{
@@ -849,9 +854,11 @@ return true;
         list.setContainer40(listSortItems.get(i).getContainer40());
         list.setCount(listSortItems.get(i).getCount());
         String chDate;
-        if(!regDate.equals("")){
+        if(!regDate.equals("")&&dateSelectCondition.equals("Clicked")){
             chDate="(입고일:"+regDate+")";
-        list.setDate(regDate);}
+        list.setDate(regDate);
+
+        }
         else{
             chDate="";
             list.setDate(listSortItems.get(i).getDate());
@@ -862,7 +869,7 @@ return true;
         list.setLclcargo(listSortItems.get(i).getLclcargo());
         list.setLocation(listSortItems.get(i).getLocation());
         String chRemark;
-        if(!regRemark.equals("")){
+        if(!regRemark.equals("")&&!reg_Button_remark.equals("Remark")){
             chRemark="(비고:"+regRemark+")";
         list.setRemark(regRemark);}
         else{
