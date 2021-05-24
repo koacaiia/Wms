@@ -376,8 +376,10 @@ return true;
       Button btnAlert=findViewById(R.id.incargo_alert);
       btnAlert.setOnClickListener(v->{
 
-          String emergencyMessage=alertTimeStamp+" 에 업무지원 요청 합니다.!!!";
-          sendAlertMessage(emergencyMessage);
+//          String emergencyMessage=alertTimeStamp+" 에 업무지원 요청 합니다.!!!";
+//          sendAlertMessage(emergencyMessage);
+          Intent intentAnnual=new Intent(Incargo.this,AnnualLeave.class);
+          startActivity(intentAnnual);
 
       });
       btnAlert.setOnLongClickListener(v->{
@@ -405,7 +407,6 @@ return true;
             @Override
             public void onRequestStarted() {
                 Toast.makeText(getApplicationContext(),"지원 알림 요청 성공 하였습니다.",Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
@@ -644,90 +645,93 @@ return true;
                     intent.putExtra("consigneeList",consignee_list2);
                     startActivity(intent);
                 }
-                reg_Button_date.setText(listSortItems.get(0).getDate());
-                reg_edit_bl=regView.findViewById(R.id.reg_edit_bl);
-                reg_edit_bl.setText(listSortItems.get(0).getBl());
-                reg_Button_bl=regView.findViewById(R.id.reg_Button_bl);
-                reg_edit_container=regView.findViewById(R.id.reg_edit_container);
-                reg_edit_container.setText(listSortItems.get(0).getContainer());
-                reg_Button_container=regView.findViewById(R.id.reg_Button_container);
-                reg_edit_remark=regView.findViewById(R.id.reg_edit_remark);
-                reg_edit_remark.setText(listSortItems.get(0).getRemark());
-                reg_Button_remark=regView.findViewById(R.id.reg_Button_remark);
-                reg_Button_date.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        downLoadingMark="RegData";
-                        String a="b";
-                DatePickerFragment datePickerFragment=new DatePickerFragment(a);
-                datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+                if(listSortItems.size()>0){
+                    reg_Button_date.setText(listSortItems.get(0).getDate());
+                    reg_edit_bl=regView.findViewById(R.id.reg_edit_bl);
+                    reg_edit_bl.setText(listSortItems.get(0).getBl());
+                    reg_Button_bl=regView.findViewById(R.id.reg_Button_bl);
+                    reg_edit_container=regView.findViewById(R.id.reg_edit_container);
+                    reg_edit_container.setText(listSortItems.get(0).getContainer());
+                    reg_Button_container=regView.findViewById(R.id.reg_Button_container);
+                    reg_edit_remark=regView.findViewById(R.id.reg_edit_remark);
+                    reg_edit_remark.setText(listSortItems.get(0).getRemark());
+                    reg_Button_remark=regView.findViewById(R.id.reg_Button_remark);
+                    reg_Button_date.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            downLoadingMark="RegData";
+                            String a="b";
+                            DatePickerFragment datePickerFragment=new DatePickerFragment(a);
+                            datePickerFragment.show(getSupportFragmentManager(),"datePicker");
 
 
 
-                    }
-                });
-                reg_Button_bl.setOnClickListener(v -> {
+                        }
+                    });
+                    reg_Button_bl.setOnClickListener(v -> {
 
-                    reg_Button_bl.setText("BL:"+regBl+"등록");
-                    reg_Button_bl.setTextColor(Color.RED);
-                    regBl=reg_edit_bl.getText().toString();
-                    reg_edit_bl.setTextColor(Color.RED);
-                });
+                        reg_Button_bl.setText("BL:"+regBl+"등록");
+                        reg_Button_bl.setTextColor(Color.RED);
+                        regBl=reg_edit_bl.getText().toString();
+                        reg_edit_bl.setTextColor(Color.RED);
+                    });
 
-                reg_Button_container.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    reg_Button_container.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        reg_Button_container.setText("Con`t:"+regContainer+"등록");
-                        reg_Button_container.setTextColor(Color.RED);
-                        regContainer=reg_edit_container.getText().toString();
-                        reg_edit_container.setTextColor(Color.RED);
-                                          }
-                });
+                            reg_Button_container.setText("Con`t:"+regContainer+"등록");
+                            reg_Button_container.setTextColor(Color.RED);
+                            regContainer=reg_edit_container.getText().toString();
+                            reg_edit_container.setTextColor(Color.RED);
+                        }
+                    });
 
-                reg_Button_remark.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    reg_Button_remark.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        reg_Button_remark.setText("Remark:"+regRemark+"등록");
-                        reg_Button_remark.setTextColor(Color.RED);
-                        regRemark=reg_edit_remark.getText().toString();
-                        reg_edit_remark.setTextColor(Color.RED);
-                    }
-                });
-                dataReg.setPositiveButton("요약 자료등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        regData();
+                            reg_Button_remark.setText("Remark:"+regRemark+"등록");
+                            reg_Button_remark.setTextColor(Color.RED);
+                            regRemark=reg_edit_remark.getText().toString();
+                            reg_edit_remark.setTextColor(Color.RED);
+                        }
+                    });
+                    dataReg.setPositiveButton("요약 자료등록", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            regData();
 
-                    }
-                });
-                dataReg.setNegativeButton("세부자료 등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(Incargo.this,PutDataReg.class);
-                        intent.putExtra("dataRef",wareHouseDepot);
-                        intent.putExtra("list",upDataRegList);
-                        intent.putExtra("consigneeList",consignee_list2);
-                        startActivity(intent);
+                        }
+                    });
+                    dataReg.setNegativeButton("세부자료 등록", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent=new Intent(Incargo.this,PutDataReg.class);
+                            intent.putExtra("dataRef",wareHouseDepot);
+                            intent.putExtra("list",upDataRegList);
+                            intent.putExtra("consigneeList",consignee_list2);
+                            startActivity(intent);
 
 
-                    }
-                });
+                        }
+                    });
 
-                dataReg.setNeutralButton("신규등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(Incargo.this,PutDataReg.class);
-                        intent.putExtra("dataRef",wareHouseDepot);
-                        intent.putExtra("consigneeList",consignee_list2);
-                        startActivity(intent);
+                    dataReg.setNeutralButton("신규등록", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent=new Intent(Incargo.this,PutDataReg.class);
+                            intent.putExtra("dataRef",wareHouseDepot);
+                            intent.putExtra("consigneeList",consignee_list2);
+                            startActivity(intent);
 
-                    }
-                });
+                        }
+                    });
 
-                dataReg.setMessage("총("+listSortItems.size()+")건의 화물정보 업데이트를"+"\n"+ "하기 내용으로 UpDate 진행 합니다.");
-                dataReg.show();
+                    dataReg.setMessage("총("+listSortItems.size()+")건의 화물정보 업데이트를"+"\n"+ "하기 내용으로 UpDate 진행 합니다.");
+                    dataReg.show();
+
+                }
 
                 break;
         }
@@ -1033,6 +1037,7 @@ return true;
                 consigneeArrayList.add(item);
             }
         }
+        consigneeArrayList.add("기타");
         consignee_list2=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
 

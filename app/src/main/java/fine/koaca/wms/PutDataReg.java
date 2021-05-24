@@ -118,6 +118,7 @@ public class PutDataReg extends AppCompatActivity {
         Intent intent2=getIntent();
         consigneeList=intent2.getStringArrayExtra("consigneeList");
 
+
         Spinner spConsignee=findViewById(R.id.spinner_Consignee);
         txtConsignee=findViewById(R.id.regConsignee);
         ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,PutDataReg.this.consigneeList);

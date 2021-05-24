@@ -51,7 +51,7 @@ public class WorkingMessageData extends AppCompatActivity {
     String sortItemName="time";
     FloatingActionButton fab_search;
     String dialog_date;
-    String dialog_consignee;
+    String dialog_consignee="ALL";
 
     TextView searchTextView;
     String upLoadItemsName;
@@ -130,11 +130,16 @@ public class WorkingMessageData extends AppCompatActivity {
                 dataList.clear();
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
                     WorkingMessageList data=dataSnapshot.getValue(WorkingMessageList.class);
-                    if(data.getConsignee().equals(dialog_consignee) && data.getInOutCargo().equals(upLoadItemsName)){
-                    dataList.add(data);
-                    Log.i("koacaiia","queryData:"+data.getConsignee()+"="+upLoadItemsName);
+                    if(dialog_consignee.equals("ALL")){
+                        if(data.getInOutCargo().equals(upLoadItemsName)){
+                            dataList.add(data);}
 
+                    }else{
+                        if(data.getConsignee().equals(dialog_consignee) && data.getInOutCargo().equals(upLoadItemsName)){
+                            dataList.add(data);
+                        }
                     }
+
                 }
                 adapter.notifyDataSetChanged();
                 messageEdit.setText(dialog_date+"_"+dialog_consignee+"_"+upLoadItemsName+"조회결과");
@@ -222,7 +227,7 @@ public class WorkingMessageData extends AppCompatActivity {
         dialog_date="All Time";
        getWorkingMessageList(dialog_date, dialog_consignee, upLoadItemsName);
 
-       String[] items_cargo = {"M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철","한큐한신","하랄코","Etc"};
+       String[] items_cargo = {"ALL","M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철","한큐한신","하랄코","Etc"};
        AlertDialog.Builder searchBuilder=new AlertDialog.Builder(this);
        searchBuilder.setTitle("검색 조건 설정창");
        View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);

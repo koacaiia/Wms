@@ -1,5 +1,7 @@
 package fine.koaca.wms;
 
+import android.util.Log;
+
 import java.util.Comparator;
 
 public class IncargoListComparator implements Comparator<Fine2IncargoList> {
@@ -34,8 +36,9 @@ public class IncargoListComparator implements Comparator<Fine2IncargoList> {
             case "consignee":
                 compare=a.consignee.compareTo(b.consignee);
         }
-
+        Log.i("koacaiia","compare Value=="+compare);
         return compare;
+
 
     }
 }
