@@ -28,6 +28,15 @@
             android:textStyle="bold|italic" />
 
         <TextView
+            android:id="@+id/annualtxt_annual2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="TextView"
+            android:textStyle="bold|italic" />
+
+        <TextView
             android:id="@+id/annualtxt_half1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

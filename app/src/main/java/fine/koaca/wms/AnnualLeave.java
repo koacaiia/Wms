@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -41,6 +43,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     TextView txtTitle;
     String staffDate;
     String strMonth;
+    String vDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,10 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             }
 
         });
+        btnAnnual.setOnLongClickListener(v->{
+            alertDialogVacation();
+            return true;
+        });
         Button btnhalf1=view.findViewById(R.id.btnhalf1);
         btnhalf1.setOnClickListener(v->{
             if(staffDate==null){
@@ -130,6 +137,57 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             }
 
         });
+
+    }
+
+    private void alertDialogVacation() {
+        View view=getLayoutInflater().inflate(R.layout.annual_datepicker,null);
+        DatePicker vDatePicker=view.findViewById(R.id.adatepicker_default);
+        vDatePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                String month;
+                if(monthOfYear+1<10){
+                    month="0"+monthOfYear+1;
+                }else{
+                    month=String.valueOf(monthOfYear+1);
+                }
+                String day;
+                if(dayOfMonth<10){
+                    day="0"+dayOfMonth;
+                }else{
+                    day=String.valueOf(dayOfMonth);
+                }
+                vDate=month+"-"+day;
+            }
+        });
+        Button btnDateStart=view.findViewById(R.id.aBtnSearchDate_start);
+        btnDateStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(vDate!=null){
+                    btnDateStart.setText(vDate);
+                }else{
+                    Toast.makeText(getBaseContext(),"!!날짜를 지정 바랍니다!!.",Toast.LENGTH_SHORT).show();
+                    Log.i("duatjsrb","null Clicked");
+                }
+
+            }
+        }
+        );
+        Button btnDateEnd=view.findViewById(R.id.aBtnSearchDate_end);
+        btnDateEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btnDateEnd.setText(vDate);
+            }
+        });
+        Button btnDate=view.findViewById(R.id.abtnSearchDate);
+
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setView(view)
+                .show();
 
     }
 
@@ -167,7 +225,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                     Log.i("duatjsrb","Name:"+list.get(i).getName()+"/totalDate:"+totalDate);
                     DatabaseReference dataRef=database.getReference("AnnualData/"+strMonth+"_"+list.get(i).getName());
 //            dataRef.updateChildren(value);
-                    AnnualList mList=new AnnualList(list.get(i).getName(),list.get(i).getAnnual(),list.get(i).getHalf1(),
+                    AnnualList mList=new AnnualList(list.get(i).getName(),list.get(i).getAnnual(),
+                            list.get(i).getAnnual2(),list.get(i).getHalf1(),
                             list.get(i).getHalf2(),totalDate);
                     dataRef.setValue(mList);
                 }
@@ -217,7 +276,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         for(int i=0;i<staffList.length;i++){
             path=strMonth+"_"+staffList[i];
             DatabaseReference databaseReference=database.getReference("AnnualData/"+path);
-            AnnualList list=new AnnualList(staffList[i],"","","",0.0);
+            AnnualList list=new AnnualList(staffList[i],"","","","",0.0);
             databaseReference.setValue(list);
         }
     }
@@ -235,6 +294,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                                 switch(condition){
                                     case "월차":
                                         map.put("annual",staffDate);
+
                                         break;
                                     case "반차1":
                                         map.put("half1",staffDate);
@@ -267,7 +327,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference data=database.getReference("AnnualData/"+strMonth+"_"+name);
-                                AnnualList mList=new AnnualList(name,"","","",0.0);
+                                AnnualList mList=new AnnualList(name,"","","","",0.0);
                                 data.setValue(mList);
 
                             }

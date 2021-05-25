@@ -83,6 +83,7 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
     public class ListViewHolder extends RecyclerView.ViewHolder {
         TextView txtName;
         TextView txtAnnual;
+        TextView txtAnnual2;
         TextView half1;
         TextView half2;
         TextView totalDate;
@@ -90,6 +91,7 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
             super(itemView);
             this.txtName=itemView.findViewById(R.id.annualtxt_name);
             this.txtAnnual=itemView.findViewById(R.id.annualtxt_annual);
+            this.txtAnnual2=itemView.findViewById(R.id.annualtxt_annual2);
             this.half1=itemView.findViewById(R.id.annualtxt_half1);
             this.half2=itemView.findViewById(R.id.annualtxt_half2);
             this.totalDate=itemView.findViewById(R.id.annualtxt_totaldate);

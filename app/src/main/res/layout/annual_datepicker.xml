@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:backgroundTint="@android:color/darker_gray"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <androidx.cardview.widget.CardView
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:cardBackgroundColor="#27C6C7CD"
+        app:cardUseCompatPadding="true">
+
+
+    <DatePicker
+        android:id="@+id/adatepicker_default"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:calendarViewShown="false"
+
+        android:dayOfWeekTextAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:defaultFocusHighlightEnabled="true"
+        android:fadeScrollbars="true"
+        android:headerMonthTextAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:yearListItemTextAppearance="@style/TextAppearance.AppCompat.Body1" />
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/aBtnSearchDate_start"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="#27C6C7CD"
+            android:gravity="center"
+            android:text="시작일"
+            android:textColor="#000000"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/atxtUntil"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1.4"
+            android:background="#000000"
+            android:gravity="center"
+            android:text="~"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/aBtnSearchDate_end"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:backgroundTint="#27C6C7CD"
+            android:gravity="center"
+            android:text="종료일"
+            android:textColor="#000000"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/abtnSearchDate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="2"
+                android:backgroundTint="#27C6C7CD"
+                android:gravity="center"
+                android:text="휴가등록"
+                android:textColor="#000000"
+                android:textStyle="bold|italic"
+                app:cornerRadius="5dp" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

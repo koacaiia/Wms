@@ -3,6 +3,7 @@ package fine.koaca.wms;
 public class AnnualList {
     String name;
     String annual;
+    String annual2;
     String half1;
     String half2;
     Double totaldate;
@@ -10,9 +11,10 @@ public class AnnualList {
     public AnnualList(){
 
     }
-    public AnnualList(String name, String annual, String half1, String half2,Double totaldate) {
+    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate) {
         this.name = name;
         this.annual = annual;
+        this.annual2=annual2;
         this.half1 = half1;
         this.half2 = half2;
         this.totaldate=totaldate;
@@ -56,5 +58,13 @@ public class AnnualList {
 
     public void setTotaldate(Double totaldate) {
         this.totaldate = totaldate;
+    }
+
+    public String getAnnual2() {
+        return annual2;
+    }
+
+    public void setAnnual2(String annual2) {
+        this.annual2 = annual2;
     }
 }
