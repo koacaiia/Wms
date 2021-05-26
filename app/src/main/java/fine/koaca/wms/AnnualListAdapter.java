@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,6 +47,7 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
     public void onBindViewHolder(@NonNull @NotNull ListViewHolder holder, int position) {
         holder.txtName.setText(list.get(position).getName());
         holder.txtAnnual.setText(list.get(position).getAnnual());
+        holder.txtAnnual2.setText(list.get(position).getAnnual2());
         holder.half1.setText(list.get(position).getHalf1());
         holder.half2.setText(list.get(position).getHalf2());
         holder.totalDate.setText(String.valueOf(list.get(position).getTotaldate()));
@@ -74,6 +76,16 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
                 holder.half2.setBackgroundColor(Color.LTGRAY);
             }
         }
+        holder.txtName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String name=list.get(position).getName();
+                     AnnualLeave leave=new AnnualLeave(list);
+                     leave.sortData(name);
+            }
+        }
+
+        );
     }
     @Override
     public int getItemCount() {
