@@ -275,7 +275,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
                         childUpdates.put(deDate+"_"+deBl+"_"+deDes+"_"+deCount+"_"+deCont+"/", null);
                         databaseReference.updateChildren(childUpdates);
 
-                        putMessage(msgWorking,"Etc",nickName);
+                       putMessage(msgWorking,"Etc",nickName);
                         getFirebaseData(dataMessage,dataMessage,"sort", sortConsignee);
                     }
                 });

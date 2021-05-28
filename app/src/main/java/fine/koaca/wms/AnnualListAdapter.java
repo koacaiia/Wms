@@ -25,14 +25,20 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
     public interface AnnualLongClickListener{
         void longClick(AnnualListAdapter.ListViewHolder holder,View view,int position);
     }
+
+    public interface AnnualTxtClickListener{
+        void onTxtItemClick(AnnualListAdapter.ListViewHolder holder,View view,int position);
+    }
     AnnualOnClickListener onClickListener;
     AnnualLongClickListener longClickListener;
+    AnnualTxtClickListener onTxtClickListener;
 
     public AnnualListAdapter(ArrayList<AnnualList> list,AnnualOnClickListener listener,
-                             AnnualLongClickListener longClickListener) {
+                             AnnualLongClickListener longClickListener,AnnualTxtClickListener txtClickListener) {
         this.list=list;
         this.onClickListener=listener;
         this.longClickListener=longClickListener;
+        this.onTxtClickListener=txtClickListener;
     }
 
     @NonNull
@@ -76,16 +82,16 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
                 holder.half2.setBackgroundColor(Color.LTGRAY);
             }
         }
-        holder.txtName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name=list.get(position).getName();
-                     AnnualLeave leave=new AnnualLeave(list);
-                     leave.sortData(name);
-            }
-        }
+//        holder.txtName.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String name=list.get(position).getName();
+//                     AnnualLeave leave=new AnnualLeave(list);
+//                     leave.sortData(name);
+//            }
+//        }
 
-        );
+//        );
     }
     @Override
     public int getItemCount() {
@@ -121,6 +127,14 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
                     return true;
                 }
             });
+
+            this.txtName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onTxtClickListener.onTxtItemClick(ListViewHolder.this,v,getAdapterPosition());
+                }
+            });
+
         }
     }
 }

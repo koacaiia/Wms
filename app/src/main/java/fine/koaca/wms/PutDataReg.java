@@ -127,11 +127,9 @@ public class PutDataReg extends AppCompatActivity {
         spConsignee.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(intentList!=null){
-                    strConsignee=intentList[2];
-                }else{
+
                     strConsignee=consigneeList[position];
-                }
+
                 txtConsignee.setText("화주명:"+"\n"+strConsignee);
             }
 
@@ -291,9 +289,10 @@ public void postData(int contCountSize){
                 break;
         }
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strBl+"_"+strDes+"_"+i+"_"+strCont);
+        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strDate+"_"+strBl+"_"+strDes+"_"+i+"_"+strCont);
         databaseReference.setValue(list);
-        DatabaseReference databaseReference1=database.getReference(wareHouseDepotName+"/"+strBl+"_"+strDes+"_"+i+"_"+strCont);
+        DatabaseReference databaseReference1=
+                database.getReference(wareHouseDepotName+"/"+strDate+"_"+strBl+"_"+strDes+"_"+i+"_"+strCont);
         databaseReference1.setValue(list);
         }
         Intent intent=new Intent(PutDataReg.this,Incargo.class);
