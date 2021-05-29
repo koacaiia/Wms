@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -25,7 +27,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.CDATASection;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,6 +48,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     String staffDate;
     String strMonth;
     String vDate;
+
+
 
     public AnnualLeave(ArrayList<AnnualList> list) {
         this.list=list;
@@ -77,6 +83,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         });
 
         strMonth=new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(5,7);
+
+
 
     }
 
@@ -426,7 +434,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     public void sortData(String name, String dateS, String dateE) {
 
-
+        Log.i("duatjsrb","Dates:"+dateS+"/DateE::"+dateE);
         list.clear();
 //        AnnualListAdapter adapter=new AnnualListAdapter(list,this,this,this);
         DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("AnnualData");
@@ -435,13 +443,29 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     AnnualList mList=data.getValue(AnnualList.class);
-                    int intS=Integer.parseInt(mList.getAnnual());
-                    int intE=Integer.parseInt(mList.getAnnual());
-                    int intdateS=Integer.parseInt(dateS);
-                    int intdateE=Integer.parseInt(dateE);
-                    if(intS>=intdateS && intE<=intdateE){
-                        list.add(mList);
+                    if( ! mList.getAnnual().equals("") &&  !mList.getAnnual2().equals("")){
+                        int intSmonth=Integer.parseInt(mList.getAnnual().substring(5,7));
+                        int intSday=Integer.parseInt(mList.getAnnual().substring(8,10));
+                        int intEmonth=Integer.parseInt(mList.getAnnual2().substring(5,7));
+                        int intEday=Integer.parseInt(mList.getAnnual2().substring(8,10));
+                        int intdateSmonth=Integer.parseInt(dateS.substring(5,7));
+                        int intdateSday=Integer.parseInt(dateS.substring(8,10));
+                        int intdateEmonth=Integer.parseInt(dateE.substring(5,7));
+                        int intdateEday=Integer.parseInt(dateE.substring(8,10));
+
+                        Log.i("duatjsrb","Annual Value::::"+intSmonth+"parameter Value:::"+intdateSmonth);
+                        if(intSmonth >= intdateSmonth && intSday >= intdateSday && intEmonth <=intdateEmonth && intEday <= intdateEday){
+
+                            Log.i("duatjsrb","int Smonth:"+intSmonth+"int Date:"+intdateSmonth+"/int Sday:"+intSday+
+                                    "intdateSday"+intdateSday);
+                            Log.i("duatjsrb","intEmonth:"+intEmonth+"intDateEmonth:"+intdateEmonth+"/intEday:"+intEday+
+                                    "intdateEday:"+intdateEday);
+                            list.add(mList);
+                            }
+
                     }
+
+
 
                 }
 
@@ -508,18 +532,22 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             }
         });
         Button btnDate=view.findViewById(R.id.abtnSearchDate);
+
+        btnDate.setText(name+" 직원 에 대한 기간별 근태상황 조회");
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        builder.setView(view);
+        AlertDialog dialog=builder.create();
+        dialog.show();
+
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dateS[0] =btnStart.getText().toString();
                 dateE[0] =btnEnd.getText().toString();
                 sortData(name,dateS[0],dateE[0]);
+                dialog.dismiss();
             }
         });
-        btnDate.setText(name+" 직원 에 대한 기간별 근태상황 조회");
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-
-        builder.setView(view);
-        builder.show();
     }
 }
