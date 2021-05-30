@@ -58,7 +58,8 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
         holder.half2.setText(list.get(position).getHalf2());
         holder.totalDate.setText(String.valueOf(list.get(position).getTotaldate()));
 
-        String annual = null;
+        String annual;
+        String annual2;
         String half1;
         String half2;
         String toDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(8,10);
@@ -70,6 +71,12 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
                 holder.txtAnnual.setBackgroundColor(Color.GRAY);
             }
            }
+        if(!list.get(position).getAnnual2().equals("")){
+            annual2=list.get(position).getAnnual2().substring(8,10);
+            if(Integer.parseInt(annual2)<=Integer.parseInt(toDay)){
+                holder.txtAnnual2.setBackgroundColor(Color.GRAY);
+            }
+        }
         if(!list.get(position).getHalf1().equals("")){
             half1=list.get(position).getHalf1().substring(8,10);
             if(Integer.parseInt(half1)<=Integer.parseInt(toDay)){
@@ -82,16 +89,7 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
                 holder.half2.setBackgroundColor(Color.LTGRAY);
             }
         }
-//        holder.txtName.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String name=list.get(position).getName();
-//                     AnnualLeave leave=new AnnualLeave(list);
-//                     leave.sortData(name);
-//            }
-//        }
 
-//        );
     }
     @Override
     public int getItemCount() {

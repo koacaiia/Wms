@@ -45,6 +45,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="반차2" />
+
+            <Button
+                android:id="@+id/btnvacation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="휴가" />
         </LinearLayout>
 
     </LinearLayout>
