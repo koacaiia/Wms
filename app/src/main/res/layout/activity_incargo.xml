@@ -108,7 +108,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="3dp"
                     android:layout_weight="1.2"
-                    android:text="작업지원요청" />
+                    android:text="근태등록" />
 
                 <Button
                     android:id="@+id/incargo_reset"

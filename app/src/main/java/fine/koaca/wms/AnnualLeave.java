@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     String staffDate;
     String strMonth;
     String vDate;
+    int intYear;
+    int intMonth;
 
     public AnnualLeave(ArrayList<AnnualList> list) {
         this.list=list;
@@ -66,17 +69,17 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         recyclerview.setLayoutManager(manager);
         list=new ArrayList<>();
         database=FirebaseDatabase.getInstance();
-        strMonth=new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(5,7);
+        strMonth=new SimpleDateFormat("yyyy_MM_dd").format(new Date()).substring(0,7);
         getData(strMonth);
         adapter=new AnnualListAdapter(list,this,this,this);
         recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         txtTitle=findViewById(R.id.annualtxt_title);
+        txtTitle.setText(strMonth+" 근태상황");
         txtTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
+                numberPickerDate();
 
             }
         });
@@ -92,8 +95,66 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     }
 
-    private void putDateData(String staffName) {
+    private void numberPickerDate() {
         View view=getLayoutInflater().inflate(R.layout.datepicker_spinner,null);
+        Button btnSearch=view.findViewById(R.id.btn_search);
+        NumberPicker yearPicker=(NumberPicker)view.findViewById(R.id.picker_year);
+
+
+        NumberPicker monthPicker=(NumberPicker)view.findViewById(R.id.picker_month);
+
+        Calendar cal=Calendar.getInstance();
+        monthPicker.setMinValue(1);
+        monthPicker.setMaxValue(12);
+        monthPicker.setValue(cal.get(Calendar.MONTH)+1);
+        intMonth=cal.get(Calendar.MONTH)+1;
+
+
+        Calendar cal2=Calendar.getInstance();
+        int year=cal2.get(Calendar.YEAR);
+        yearPicker.setMinValue(2020);
+        yearPicker.setMaxValue(2023);
+        yearPicker.setValue(year);
+        intYear=cal2.get(Calendar.YEAR);
+
+
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setView(view);
+        AlertDialog dialog=builder.create();
+                dialog.show();
+
+        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                intYear =newVal;
+            }
+        });
+
+        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                intMonth=newVal;
+            }
+        });
+
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String strMonth =String.valueOf(intMonth);
+                if(intMonth<10){
+                    strMonth="0"+intMonth;
+                }
+                getData(intYear+"_"+strMonth);
+
+                dialog.dismiss();
+                txtTitle.setText(intYear+"_"+intMonth+" 근태상황");
+            }
+        });
+    }
+
+    private void putDateData(String staffName) {
+        View view=getLayoutInflater().inflate(R.layout.datepicker_calendar,null);
         DatePicker datePicker=view.findViewById(R.id.datePicker_start);
         Button btnAnnual=view.findViewById(R.id.btnannual);
         final String[] condition = new String[1];
@@ -260,7 +321,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 for(DataSnapshot data:snapshot.getChildren()){
                     AnnualList mList=data.getValue(AnnualList.class);
                     String path=data.getKey();
-                    String sortPath=data.getKey().substring(5,7);
+                    String sortPath=data.getKey().substring(0,7);
                     if(strMonth.equals(sortPath)) {
 
 
@@ -437,7 +498,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                DatabaseReference data=database.getReference("AnnualData/2021_"+strMonth+"_"+name);
+                                DatabaseReference data=database.getReference("AnnualData/"+strMonth+"_"+name);
                                 AnnualList mList=new AnnualList(name,"","","","",0.0);
                                 data.setValue(mList);
 

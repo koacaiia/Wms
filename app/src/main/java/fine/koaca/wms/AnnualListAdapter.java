@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -97,7 +98,7 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
-        TextView txtName;
+        Button txtName;
         TextView txtAnnual;
         TextView txtAnnual2;
         TextView half1;
