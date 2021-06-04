@@ -40,15 +40,27 @@
         >
 
 
+        <Button
+            android:id="@+id/btn_searchS"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="시작월" />
 
         <Button
-            android:id="@+id/btn_search"
-            android:layout_width="0dp"
+            android:id="@+id/btn_searchE"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:text="Search"
-            android:textAllCaps="false"
-            />
+            android:text="종료월" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:text="Search"
+        android:textAllCaps="false" />
 </LinearLayout>

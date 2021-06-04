@@ -7,17 +7,27 @@ public class AnnualList {
     String half1;
     String half2;
     Double totaldate;
+    String date;
 
     public AnnualList(){
 
     }
-    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate) {
+    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate,String date) {
         this.name = name;
         this.annual = annual;
         this.annual2=annual2;
         this.half1 = half1;
         this.half2 = half2;
         this.totaldate=totaldate;
+        this.date=date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getName() {

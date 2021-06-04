@@ -80,7 +80,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
 
 //        Log.i("koacaiia","ringtoneService Called"+ringtone.toString());
         String alertTimeStamp = new SimpleDateFormat("HH시mm분").format(new Date());
-        Intent intent = new Intent(this, IncargoEx.class);
+        Intent intent = new Intent(this, AnnualLeave.class);
 //        intent.putExtra("vibrator", getApplicationContext().toString());
 //        intent.putExtra("vib", (Serializable) vibrator);
 //        intent.putExtra("rt", (Serializable) ringtone);
@@ -111,20 +111,20 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0,builder.build());
-        try {
-            Thread.sleep(10000);
-            ringtone.stop();
+//        try {
+//            Thread.sleep(10000);
+//            ringtone.stop();
+////            Thread.sleep(30000);
+////            vibrator.cancel();
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        try {
 //            Thread.sleep(30000);
 //            vibrator.cancel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            Thread.sleep(30000);
-            vibrator.cancel();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
 //        intent=new Intent(this,IncargoEx.class);
 //        PendingIntent pi=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);

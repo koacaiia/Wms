@@ -52,7 +52,8 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ListViewHolder holder, int position) {
-        holder.txtName.setText(list.get(position).getName());
+        holder.txtName.setText(list.get(position).getDate()+"\n"+list.get(position).getName());
+
         holder.txtAnnual.setText(list.get(position).getAnnual());
         holder.txtAnnual2.setText(list.get(position).getAnnual2());
         holder.half1.setText(list.get(position).getHalf1());

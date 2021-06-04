@@ -379,6 +379,8 @@ return true;
 //          String emergencyMessage=alertTimeStamp+" 에 업무지원 요청 합니다.!!!";
 //          sendAlertMessage(emergencyMessage);
           Intent intentAnnual=new Intent(Incargo.this,AnnualLeave.class);
+          intentAnnual.putExtra("DepotName",depotName);
+          intentAnnual.putExtra("nickName",nickName);
           startActivity(intentAnnual);
 
       });
