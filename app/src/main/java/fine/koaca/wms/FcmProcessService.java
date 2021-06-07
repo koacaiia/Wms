@@ -43,6 +43,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
     public Vibrator vibrator;
     public Incargo incargo;
     public Ringtone ringtone;
+    int id;
 
 
 
@@ -59,6 +60,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         Map<String, String> data = remoteMessage.getData();
         String contents = data.get("contents");
         String nickName=data.get("nickName");
+        String message=data.get("message");
 
 
 //        msg=remoteMessage.getNotification().getBody();
@@ -71,16 +73,32 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
 //            Log.i("koacaiia","vibrator+++Called"+vibrator.toString());
 //            Log.i("koacaiia","Ringtone++++Called"+rt.toString());
 
-        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[]{3000, 1000}, 0);
-
-        Uri ringtoneUri=RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        ringtone=RingtoneManager.getRingtone(getBaseContext(),ringtoneUri);
-        ringtone.play();
+//        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+//        vibrator.vibrate(new long[]{3000, 1000}, 0);
+//
+//        Uri ringtoneUri=RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+//        ringtone=RingtoneManager.getRingtone(getBaseContext(),ringtoneUri);
+//        ringtone.play();
 
 //        Log.i("koacaiia","ringtoneService Called"+ringtone.toString());
         String alertTimeStamp = new SimpleDateFormat("HH시mm분").format(new Date());
-        Intent intent = new Intent(this, AnnualLeave.class);
+        Intent intent; 
+        switch(contents){
+            case "Annual":
+            intent=new Intent(this, AnnualLeave.class);
+            id=0;
+            break;
+            case "CameraUpLoad":
+                intent=new Intent(this,WorkingMessageData.class);
+                id=1;
+                break;
+            case "WorkingMessage":
+                id=2;
+                intent=new Intent(this,WorkingMessageData.class);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + contents);
+        } 
 //        intent.putExtra("vibrator", getApplicationContext().toString());
 //        intent.putExtra("vib", (Serializable) vibrator);
 //        intent.putExtra("rt", (Serializable) ringtone);
@@ -96,7 +114,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert")
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(nickName)
-                .setContentText(contents)
+                .setContentText(message)
                 .setContentIntent(contentIntent)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setVibrate(new long[]{10000, 10000,})
@@ -110,7 +128,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
 //Log.i("kocaiia",vibrator.toString()+"_____"+ringtone.toString());
         NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0,builder.build());
+        notificationManager.notify(id,builder.build());
 //        try {
 //            Thread.sleep(10000);
 //            ringtone.stop();

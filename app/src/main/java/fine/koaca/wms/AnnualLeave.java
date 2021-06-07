@@ -57,6 +57,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     String depotName;
     String nickName;
+    String alertDepot;
 
     static RequestQueue requestQueue;
     public AnnualLeave(ArrayList<AnnualList> list) {
@@ -75,8 +76,9 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
-        depotName="Test";
+        depotName=getIntent().getStringExtra("depotName");
         nickName=getIntent().getStringExtra("nickName");
+        alertDepot=getIntent().getStringExtra("alertDepot");
         recyclerview=findViewById(R.id.recyclerViewAnnual);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         recyclerview.setLayoutManager(manager);
@@ -726,6 +728,6 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     private void sendPush(String depotName,String nickname,String message){
         PushFcmProgress fcm=new PushFcmProgress(requestQueue);
-        fcm.sendAlertMessage(depotName,nickName,message);
+        fcm.sendAlertMessage(alertDepot,nickName,message,"Annual");
     }
 }

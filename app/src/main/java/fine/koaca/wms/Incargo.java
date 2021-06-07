@@ -340,6 +340,9 @@ return true;
           @Override
           public void onClick(View v) {
               Intent intent=new Intent(Incargo.this,CameraCapture.class);
+              intent.putExtra("depotName",depotName);
+              intent.putExtra("nickName",nickName);
+              intent.putExtra("alertDepot",alertDepot);
               startActivity(intent);
           }
       });
@@ -365,6 +368,7 @@ return true;
           public boolean onLongClick(View v) {
               Intent intent=new Intent(Incargo.this,WorkingMessageData.class);
               intent.putExtra("nickName",nickName);
+              intent.putExtra("alertDepot",alertDepot);
               startActivity(intent);
               return true;
           }
@@ -379,8 +383,9 @@ return true;
 //          String emergencyMessage=alertTimeStamp+" 에 업무지원 요청 합니다.!!!";
 //          sendAlertMessage(emergencyMessage);
           Intent intentAnnual=new Intent(Incargo.this,AnnualLeave.class);
-          intentAnnual.putExtra("DepotName",depotName);
+          intentAnnual.putExtra("depotName",depotName);
           intentAnnual.putExtra("nickName",nickName);
+          intentAnnual.putExtra("alertDepot",alertDepot);
           startActivity(intentAnnual);
 
       });
@@ -400,7 +405,7 @@ return true;
             dataObj.put("nickName",nickName);
 
             requestData.put("data",dataObj);
-            requestData.put("to","/topics/"+alertDepot);
+            requestData.put("to","/topics/"+depotName);
 
         }catch (Exception e){
             e.printStackTrace();
@@ -702,7 +707,8 @@ return true;
                     dataReg.setPositiveButton("요약 자료등록", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            regData();
+                            String consignee=listSortItems.get(0).consignee;
+                            regData(consignee);
 
                         }
                     });
@@ -822,7 +828,7 @@ return true;
         startActivity(intent);
     }
 
-    public void regData(){
+    public void regData(String consignee){
         Fine2IncargoList list=new Fine2IncargoList();
 
         String dateO,blO,desO,countO,contNO;
@@ -907,6 +913,18 @@ return true;
         sort_dialog="dialogsort";
         getFirebaseData(day_start,day_end,"sort", sortConsignee);
 
+        pushMessage(alertDepot,nickName,consignee+"_화물정보 업데이트 되었습니다.","WorkingMessage");
+
+//        PushFcmProgress push=new PushFcmProgress(requestQueue);
+//        push.sendAlertMessage(alertDepot,nickName,consignee+"_화물정보 업데이트 되었습니다.","WorkingMessage");
+
+
+    }
+
+    private void pushMessage(String depotName, String nickName, String message, String contents) {
+        Log.i("duatjsrb","DepotName Value::::"+depotName);
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(depotName,nickName,message,contents);
     }
 
     public void getVersion(){
@@ -961,6 +979,8 @@ return true;
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+date+"_"+timeStamp);
         databaseReference.setValue(messageList);
+
+        pushMessage(depotName,nick,msg,"WorkingMessage");
 
     }
     public void sortDialog(String startDay, String endDay, ArrayList<Fine2IncargoList> listSortList){
@@ -1397,6 +1417,8 @@ return true;
         clickBuilder.setView(view)
                 .show();
     }
+
+
 
 
 

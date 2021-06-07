@@ -29,7 +29,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -68,6 +71,11 @@ public class CameraCapture extends AppCompatActivity
     ArrayList<String> upLoadUriString=new ArrayList<String>();
     SparseBooleanArray imageListSelected=new SparseBooleanArray(0);
     String uploadItem;
+    String depotName;
+    String nickName;
+    String alertDepot;
+
+    static RequestQueue requestQueue;
 
     @SuppressLint("SimpleDateFormat")
     @Override
@@ -76,6 +84,18 @@ public class CameraCapture extends AppCompatActivity
         setContentView(R.layout.activity_camera_capture);
         requestPermissions(permission_list,0);
         intentGetItems();
+
+        FirebaseMessaging.getInstance().subscribeToTopic("testUp");
+
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+        }
+
+        depotName=getIntent().getStringExtra("depotName");
+        nickName=getIntent().getStringExtra("nickName");
+        alertDepot=getIntent().getStringExtra("alertDepot");
+
+
 
         date_today=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
@@ -293,6 +313,8 @@ public class CameraCapture extends AppCompatActivity
 
             }
         }
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
 
     }
 

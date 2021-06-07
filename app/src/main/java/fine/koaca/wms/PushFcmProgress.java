@@ -24,16 +24,18 @@ public class PushFcmProgress {
         this.requestQueue=requestQueue;
     }
 
-    public void sendAlertMessage(String depotName,String nickName,String message){
+    public void sendAlertMessage(String depotName,String nickName,String message,String contents){
         JSONObject requestData=new JSONObject();
         try {
             requestData.put("priority","high");
             JSONObject dataObj=new JSONObject();
-            dataObj.put("contents",message);
+            dataObj.put("contents",contents);
             dataObj.put("nickName",nickName);
+            dataObj.put("message",message);
 
             requestData.put("data",dataObj);
             requestData.put("to","/topics/"+depotName);
+            Log.i("duatjsrb","toPicVlale"+depotName);
         } catch (JSONException e) {
             e.printStackTrace();
         }

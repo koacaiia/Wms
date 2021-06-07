@@ -33,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 public class WorkingMessageData extends AppCompatActivity {
@@ -141,6 +142,7 @@ public class WorkingMessageData extends AppCompatActivity {
                     }
 
                 }
+                dataList.sort(new WorkingMessageListComparator("time"));
                 adapter.notifyDataSetChanged();
                 messageEdit.setText(dialog_date+"_"+dialog_consignee+"_"+upLoadItemsName+"조회결과");
             }
@@ -316,4 +318,17 @@ public class WorkingMessageData extends AppCompatActivity {
     }
 
 
+    private class WorkingMessageListComparator implements Comparator<WorkingMessageList> {
+        String time;
+        public WorkingMessageListComparator(String time) {
+            this.time=time;
+        }
+
+        @Override
+        public int compare(WorkingMessageList a, WorkingMessageList b) {
+            int compare=0;
+            compare=a.time.compareTo(b.time);
+            return compare;
+        }
+    }
 }
