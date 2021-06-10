@@ -172,7 +172,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     public synchronized void firebaseCameraUpLoad(Uri imageUri,String captureItem, String uploadItem, String nick,
                                                   String message, String strRef) {
 
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference = storage.getReference();
         StorageReference recvRef = storageReference.child("images/" + strRef);
     String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());

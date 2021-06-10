@@ -985,7 +985,6 @@ return true;
     }
     public void sortDialog(String startDay, String endDay, ArrayList<Fine2IncargoList> listSortList){
         arrList.clear();
-
         arrConsignee.clear();
         int listSize=listSortList.size();
         String consigneeName;
@@ -1327,6 +1326,8 @@ return true;
     }
         public void getFirebaseDataInit(){
         databaseReference=database.getReference(wareHouseDepot);
+        String databaseValue= databaseReference.getRoot().toString();
+        Log.i("duatjsrb",databaseValue);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -111,6 +111,7 @@ public class WorkingMessageData extends AppCompatActivity {
                 });
 
         databaseReference = database.getReference("WorkingMessage");
+        Log.i("TestValue",databaseReference.getRoot().toString());
                 getWorkingMessageLists(date);
 
                 fab_search=findViewById(R.id.btn_workMessageSearch);

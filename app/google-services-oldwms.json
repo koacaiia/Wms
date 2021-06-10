@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "184669191763",
+    "project_id": "wmsysk",
+    "storage_bucket": "wmsysk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184669191763:android:429719b34550f891f210a6",
+        "android_client_info": {
+          "package_name": "fine.koaca.wms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "184669191763-2kav2qd9ot6isoqbiq7528loeijssvhb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCp6-EDRZuWm5TZWfEf3UL590v5PFrBzEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "184669191763-2kav2qd9ot6isoqbiq7528loeijssvhb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
