@@ -22,6 +22,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -49,22 +51,31 @@ public class PutDataReg extends AppCompatActivity {
     int contCountSize;
     String nickName;
     String[] intentList;
+    String alertDepot;
 
     String wareHouseDepotName;
+    static RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_put_data_reg);
         Intent getIntent=getIntent();
-
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+            Log.i("TestValue",requestQueue.toString());
+        }
         intentList=getIntent.getStringArrayExtra("list");
+        alertDepot=getIntent.getStringExtra("alertDepot");
+
+
 //        String listLength=intentList[2];
 //        Log.i("koacaiia", "ListRef++++" +listLength );
         wareHouseDepotName=getIntent.getStringExtra("dataRef");
 
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         nickName=sharedPreferences.getString("nickName","Fine");
+
         InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
         Spinner spWork=findViewById(R.id.spinner_Working);
@@ -248,6 +259,8 @@ public class PutDataReg extends AppCompatActivity {
             String msg=strConsignee+"화물 신규 정보 등록";
             incargo.putMessage(msg,"Etc",nickName);
 
+            Log.i("TestValue","AlertDepotName+++"+alertDepot+"nickName++++"+nickName+"consigneeName++++"+strConsignee);
+
         });
         regUpload.setOnLongClickListener(v->{
             Intent intent=new Intent(PutDataReg.this,Incargo.class);
@@ -295,6 +308,14 @@ public void postData(int contCountSize){
                 database.getReference(wareHouseDepotName+"/"+strDate+"_"+strBl+"_"+strDes+"_"+i+"_"+strCont);
         databaseReference1.setValue(list);
         }
+    PushFcmProgress push=new PushFcmProgress(requestQueue);
+        String message;
+        if(contCountSize>0){
+            message="_화물정보 업데이트 되었습니다.";
+        }else{
+            message="_신규 화물정보 업데이트 되었습니다.";
+        }
+    push.sendAlertMessage(alertDepot,nickName,strConsignee+message,"WorkingMessage");
         Intent intent=new Intent(PutDataReg.this,Incargo.class);
         startActivity(intent);
 

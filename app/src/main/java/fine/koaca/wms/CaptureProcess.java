@@ -175,10 +175,10 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference = storage.getReference();
         StorageReference recvRef = storageReference.child("images/" + strRef);
-    String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
-    String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
 
-    recvRef.putFile(imageUri)
+        recvRef.putFile(imageUri)
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -411,7 +411,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         messageList.setInOutCargo(inoutCargo);
                         FirebaseDatabase database=FirebaseDatabase.getInstance();
                         DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-                                "/"+nick+"_"+timeStamp+"_"+System.currentTimeMillis()+"Pus");
+                                "/"+nick+"_"+timeStamp+"_"+System.currentTimeMillis()+"_Pus");
                         databaseReference.setValue(messageList);
                     }
                 })

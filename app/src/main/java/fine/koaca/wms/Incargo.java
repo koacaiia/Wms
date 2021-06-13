@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.Vibrator;
 import android.text.InputType;
 import android.util.Log;
@@ -650,6 +651,9 @@ return true;
                     intent.putExtra("dataRef",wareHouseDepot);
                     intent.putExtra("list",upDataRegList);
                     intent.putExtra("consigneeList",consignee_list2);
+                    intent.putExtra("alertDepot",alertDepot);
+                    Log.i("TestValue","AlertDePotName+++"+alertDepot);
+
                     startActivity(intent);
                 }
                 if(listSortItems.size()>0){
@@ -719,6 +723,7 @@ return true;
                             intent.putExtra("dataRef",wareHouseDepot);
                             intent.putExtra("list",upDataRegList);
                             intent.putExtra("consigneeList",consignee_list2);
+                            intent.putExtra("alertDepot",alertDepot);
                             startActivity(intent);
 
 
