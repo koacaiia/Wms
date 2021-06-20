@@ -4,5 +4,5 @@ import android.view.View;
 
 public interface OnListImageClickListener {
 
-    void onItemClickImage(WorkMessageAdapter.ListViewHolder holder, View view, int position);
+    void onItemClickImage(WorkingMessageAdapter.ListViewHolder holder, View view, int position);
 }

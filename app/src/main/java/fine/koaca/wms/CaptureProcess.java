@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -35,10 +36,12 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import fine.koaca.MyApplication;
 
-import static android.content.Context.JOB_SCHEDULER_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 
 public class CaptureProcess implements SurfaceHolder.Callback {
@@ -50,7 +53,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     CalendarPick calendarPick;
     ArrayList<ImageViewList> captureImageList=new ArrayList<ImageViewList>();
     ImageViewListAdapter adapter;
-    ArrayList<String> UriString=new ArrayList<String>();
+    ArrayList<String> uriString=new ArrayList<String>();
 
     public CaptureProcess(CameraCapture mainActivity,ImageViewListAdapter adapter) {
         this.mainActivity = mainActivity;
@@ -169,22 +172,22 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         }
     }
 
-    public synchronized void firebaseCameraUpLoad(Uri imageUri,String captureItem, String uploadItem, String nick,
-                                                  String message, String strRef) {
+    public synchronized void firebaseCameraUpLoad(Uri imageUri, String captureItem, String uploadItem, String nick,
+                                                  String message, String strRef, int i, int arSize) {
 
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference = storage.getReference();
         StorageReference recvRef = storageReference.child("images/" + strRef);
+
         String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+
 
         recvRef.putFile(imageUri)
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Log.i("koacaiia", "uri Put storage successed" + imageUri);
-
-                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem);
+                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize);
                 }
 
             })
@@ -194,44 +197,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
                     String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
                     putMessage(msg, "", captureItem, uploadItem);
-                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem);
+                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem, i,arSize);
                 }
             });
-
-//        try {
-//            Thread.sleep(700);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        recvRef.getDownloadUrl().
-//                addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                    @Override
-//                    public void onSuccess(Uri uri) {
-//                        String imageURI=String.valueOf(uri);
-//                        Log.i("koacaiia","uri down successed"+imageUri);
-//                        Log.i("koacaiia","uri down and put successed"+imageURI);//
-//                        WorkingMessageList messageList=new WorkingMessageList();
-//                        messageList.setNickName(nick);
-//                        messageList.setTime(timeStamp);
-//                        messageList.setMsg(message);
-//                        messageList.setUri(imageURI);
-//                        messageList.setDate(timeStamp_date);
-//                        messageList.setConsignee(captureItem);
-//                        messageList.setInOutCargo(uploadItem);
-//                        FirebaseDatabase database=FirebaseDatabase.getInstance();
-//                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-//                                "/"+nick+"_"+timeStamp+"_"+System.currentTimeMillis()+"Pus");
-//                        databaseReference.setValue(messageList);
-//                    }
-//                })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        putMessage("Uri 수신실패","",captureItem,uploadItem);
-//                        Log.i("koacaiia","kocaiiaImageUri DownLoad Failed");
-//                    }
-//                });
-//
 
     }
     public void bitmapReturn(File fileName, String itemName) {
@@ -340,7 +308,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
-        messageList.setUri(imageUri);
+//        messageList.setUri(imageUri);
         messageList.setDate(date);
         messageList.setConsignee(captureItem);
         messageList.setInOutCargo(uploadItem);
@@ -393,27 +361,97 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     }
 
     public void receivedUri(StorageReference recvRef, String nick, String timeStamp, String msg, String timeStamp_date,
-                            String consigneeName, String inoutCargo){
-        StorageReference recvRefRun=recvRef;
-        recvRefRun.getDownloadUrl()
+                            String consigneeName, String inoutCargo, int i,int arSize){
+
+
+        recvRef.getDownloadUrl()
                 .addOnSuccessListener(new OnSuccessListener<Uri>(){
 
                     @Override
                     public void onSuccess(Uri uri) {
                         String imageUri=String.valueOf(uri);
+
+                        uriString.add(imageUri);
+                        Log.i("TestValue","ArrayList Value+++:"+uriString);
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
                         messageList.setTime(timeStamp);
                         messageList.setMsg(msg);
-                        messageList.setUri(imageUri);
+
+
+                        if(arSize-1==i){
+
+                            String strUri0 = null;
+                            String strUri1=null;
+                            String strUri2=null;
+                            String strUri3=null;
+                            String strUri4=null;
+                            switch(i){
+                                case 0:
+                                   strUri0=uriString.get(0);
+                                   break;
+                                case 1:
+                                    strUri0=uriString.get(0);
+                                    strUri1=uriString.get(1);
+                                    break;
+                                case 2:
+                                    strUri0=uriString.get(0);
+                                    strUri1=uriString.get(1);
+                                    strUri2=uriString.get(2);
+                                    break;
+                                case 3:
+                                    strUri0=uriString.get(0);
+                                    strUri1=uriString.get(1);
+                                    strUri2=uriString.get(2);
+                                    strUri3=uriString.get(3);
+                                    break;
+                                case 4:
+                                    strUri0=uriString.get(0);
+                                    strUri1=uriString.get(1);
+                                    strUri2=uriString.get(2);
+                                    strUri3=uriString.get(3);
+                                    strUri4=uriString.get(4);
+                                    break;
+                            }
+
+                            if(strUri0==null){
+                                strUri0="";
+                            }
+                            if(strUri1==null){
+                                strUri1="";
+                            }
+                            if(strUri2==null){
+                                strUri2="";
+                            }
+                            if(strUri3==null){
+                                strUri3="";
+                            }
+                            if(strUri4==null){
+                                strUri4="";
+                            }
+                            messageList.setUri0(strUri0);
+                            messageList.setUri1(strUri1);
+                            messageList.setUri2(strUri2);
+                            messageList.setUri3(strUri3);
+                            messageList.setUri4(strUri4);
+                        }
+
+
                         messageList.setDate(timeStamp_date);
                         messageList.setConsignee(consigneeName);
                         messageList.setInOutCargo(inoutCargo);
                         FirebaseDatabase database=FirebaseDatabase.getInstance();
                         DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-                                "/"+nick+"_"+timeStamp+"_"+System.currentTimeMillis()+"_Pus");
+                                "/"+nick+"_"+timeStamp);
                         databaseReference.setValue(messageList);
+                        if(arSize-1==i){
+
+                           mainActivity.initIntent();
+
+                        }
+
                     }
+
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override

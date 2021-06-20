@@ -502,7 +502,7 @@ if(add){
         messageList.setDate(timeStampDate);
         messageList.setConsignee(etc);
         messageList.setInOutCargo("Etc");
-        messageList.setUri("");
+//        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.setValue(messageList);

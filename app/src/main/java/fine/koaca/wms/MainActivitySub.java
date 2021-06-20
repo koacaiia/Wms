@@ -243,7 +243,7 @@ public class MainActivitySub extends AppCompatActivity implements Serializable {
         messageList.setDate(timeStampDate);
         messageList.setConsignee(etc);
         messageList.setInOutCargo("Etc");
-        messageList.setUri("");
+//        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference dataRef=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         dataRef.setValue(messageList);

@@ -1,7 +1,6 @@
 package fine.koaca.wms;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;

@@ -304,17 +304,21 @@ public class CameraCapture extends AppCompatActivity
         String message=consigneeName+"_"+uploadItem+"_사진 업로드";
         for(int i=0;i<arrsize;i++){
             Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
-            String strRef = date_today + "/" + consigneeName+i +"/" + System.currentTimeMillis() + ".jpg";
-            captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef);
-            if(i==arrsize-1){
-                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
-                startActivity(intent);
-
-            }
+            String strRef = date_today + "/" + consigneeName+"/"+uploadItem+"/" + System.currentTimeMillis() + ".jpg";
+            captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize);
+//            if(i==arrsize-1){
+//                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+//                startActivity(intent);
+//
+//            }
         }
         PushFcmProgress push=new PushFcmProgress(requestQueue);
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
 
+    }
+    public void initIntent(){
+        Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+        startActivity(intent);
     }
 
 

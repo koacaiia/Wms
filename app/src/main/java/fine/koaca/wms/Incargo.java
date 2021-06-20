@@ -348,12 +348,12 @@ return true;
       fltBtn_Capture.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
+//
+//              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
+//              startActivity(intent);
 
-              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
-              startActivity(intent);
 
-
-//              intentCameraActivity();
+              intentCameraActivity();
           }
       });
 
@@ -1028,7 +1028,7 @@ return true;
         messageList.setDate(date);
         messageList.setConsignee(etc);
         messageList.setInOutCargo("Etc");
-        messageList.setUri("");
+//        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+date+"_"+timeStamp);
         databaseReference.setValue(messageList);

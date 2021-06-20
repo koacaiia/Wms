@@ -35,7 +35,7 @@ public class PushFcmProgress {
 
             requestData.put("data",dataObj);
             requestData.put("to","/topics/"+depotName);
-            Log.i("duatjsrb","toPicVlale"+depotName);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

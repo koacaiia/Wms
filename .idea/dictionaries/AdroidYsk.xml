@@ -16,6 +16,8 @@
       <w>outwarehouse</w>
       <w>preg</w>
       <w>putdata</w>
+      <w>recv</w>
+      <w>recylcerview</w>
       <w>regworking</w>
       <w>responsed</w>
       <w>spworking</w>
@@ -23,6 +25,8 @@
       <w>thereshold</w>
       <w>totaldate</w>
       <w>totalqty</w>
+      <w>workmessage</w>
+      <w>workmessageimagelist</w>
     </words>
   </dictionary>
 </component>

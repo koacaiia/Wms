@@ -22,6 +22,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,16 +34,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 
-public class WorkingMessageData extends AppCompatActivity {
+public class WorkingMessageData extends AppCompatActivity implements Serializable {
     private FirebaseDatabase database;
     private DatabaseReference databaseReference;
     RecyclerView recyclerView;
-    WorkMessageAdapter adapter;
+    WorkingMessageAdapter adapter;
     ArrayList<WorkingMessageList> dataList;
     private String nickName;
     String depotName;
@@ -62,7 +65,8 @@ public class WorkingMessageData extends AppCompatActivity {
     String date;
     String[] consigneeList;
 
-
+    RequestQueue requestQueue;
+    String alertDepot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,23 @@ public class WorkingMessageData extends AppCompatActivity {
         sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         nickName=sharedPreferences.getString("nickName","Fine");
         depotName=sharedPreferences.getString("depotName",null);
+
+        if(depotName !=null){
+            switch(depotName){
+                case "2물류(02010027)":
+                    alertDepot="Depot2";
+                    break;
+                case "1물류(02010810)":
+                    alertDepot="Depot1";
+                    break;
+                case "(주)화인통상 창고사업부":
+                    alertDepot="Depot";
+                    break;
+            }}else{
+            Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
+            databaseReference=database.getReference("Incargo");
+            return;
+        }
 
         recyclerView = findViewById(R.id.recyclerView_workingMessageData);
         messageEdit=findViewById(R.id.edit_workingMessageData);
@@ -103,15 +124,27 @@ public class WorkingMessageData extends AppCompatActivity {
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         dataList=new ArrayList<WorkingMessageList>();
-        adapter=new WorkMessageAdapter(dataList,WorkingMessageData.this,nickName);
+        adapter=new WorkingMessageAdapter(dataList,WorkingMessageData.this,nickName);
         recyclerView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
         adapter.setOnListImageClickListener(new OnListImageClickListener() {
           @Override
-            public void onItemClickImage(WorkMessageAdapter.ListViewHolder holder, View view, int position) {
-              String uri=dataList.get(position).getUri();
+            public void onItemClickImage(WorkingMessageAdapter.ListViewHolder holder, View view, int position) {
+              String strUri0=dataList.get(position).getUri0();
+              String strUri1=dataList.get(position).getUri1();
+              String strUri2=dataList.get(position).getUri2();
+              String strUri3=dataList.get(position).getUri3();
+              String strUri4=dataList.get(position).getUri4();
+              ArrayList<String> uriArrayList=new ArrayList<>();
+              uriArrayList.add(strUri0);
+              uriArrayList.add(strUri1);
+              uriArrayList.add(strUri2);
+              uriArrayList.add(strUri3);
+              uriArrayList.add(strUri4);
 
-               intentImageView(uri);
+
+               intentImageView(uriArrayList);
                    }
                 });
 
@@ -123,57 +156,12 @@ public class WorkingMessageData extends AppCompatActivity {
                 fab_search.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-
                         searchCondition(Incargo.shared_consigneeList);
-
-
-
-                    }
+                   }
                 });
     }
 
-    private void beforeSearchCondition() {
-        DatabaseReference databaseReference;
-        switch(depotName){
-            case "2물류(02010027)":
-                databaseReference=database.getReference("Incargo2");
-                break;
-            case "1물류(02010810)":
-                databaseReference=database.getReference("Incargo1");
-                break;
-            case "(주)화인통상 창고사업부":
-                databaseReference=database.getReference("Incargo");
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + depotName);
-        }
 
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                ArrayList<String> list=new ArrayList<>();
-                for(DataSnapshot data:snapshot.getChildren()){
-                   Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                    String consigneeName=mList.getConsignee();
-                    if(!consigneeName.equals("")&&!list.contains(consigneeName)){
-                        list.add(consigneeName);
-                    }
-
-                }
-                consigneeList=list.toArray(new String[list.size()]);
-                searchCondition(consigneeList);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull @NotNull DatabaseError error) {
-
-            }
-        });
-
-
-    }
 
     public void getWorkingMessageList(String dialog_date, String dialog_consignee, String upLoadItemsName) {
         ValueEventListener postListener=new ValueEventListener(){
@@ -224,7 +212,7 @@ public class WorkingMessageData extends AppCompatActivity {
                     WorkingMessageList data=snapshot.getValue(WorkingMessageList.class);
                     Log.i("koacaiia","getDate:"+data.getDate()+"___Date:"+date);
                     if(data.getDate()!=null&&data.getDate().equals(date)){
-                    ((WorkMessageAdapter) adapter).addWorkingMessage(data);}
+                    ((WorkingMessageAdapter) adapter).addWorkingMessage(data);}
                 }
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -262,18 +250,24 @@ public class WorkingMessageData extends AppCompatActivity {
         messageList.setDate(date);
         messageList.setConsignee(consignee);
         messageList.setInOutCargo(inOutCargo);
-        messageList.setUri("");
+//        messageList.setUri("");
 
         databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         databaseReference.setValue(messageList);
 
+       PushFcmProgress push=new PushFcmProgress(requestQueue);
+       push.sendAlertMessage(alertDepot,nickName,message,"WorkingMessage");
+//        adapter.notifyDataSetChanged();
+       intentWorkMessageActivity();
+
 
 
    }
-   public void intentImageView(String uri){
+   public void intentImageView(ArrayList<String> uri){
         Intent intent=new Intent(WorkingMessageData.this,ImageViewActivity.class);
-        intent.putExtra("uri",uri);
-        Log.i("koacaiia",uri+"___UriToString");
+        String[] uriList=uri.toArray(new String[uri.size()]);
+        intent.putExtra("uri",uriList);
+
         startActivity(intent);
    }
    public void searchCondition(String[] consigneeList){
@@ -387,5 +381,11 @@ public class WorkingMessageData extends AppCompatActivity {
             compare=a.time.compareTo(b.time);
             return compare;
         }
+    }
+
+    public void intentWorkMessageActivity(){
+        Intent intent=new Intent(WorkingMessageData.this,WorkingMessageData.class);
+        startActivity(intent);
+
     }
 }

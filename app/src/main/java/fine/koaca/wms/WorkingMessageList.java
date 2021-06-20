@@ -2,19 +2,97 @@ package fine.koaca.wms;
 
 public class WorkingMessageList {
     String msg;
-    String Uri;
+    String uri0;
+    String uri1;
+    String uri2;
+    String uri3;
+    String uri4;
     String nickName;
     String time;
     String date;
     String consignee;
     String InOutCargo;
 
-    public String getInOutCargo() {
-        return InOutCargo;
+    public WorkingMessageList(String msg, String uri0, String uri1, String uri2, String uri3, String uri4, String nickName, String time, String date, String consignee, String inOutCargo) {
+        this.msg = msg;
+        this.uri0 = uri0;
+        this.uri1 = uri1;
+        this.uri2 = uri2;
+        this.uri3 = uri3;
+        this.uri4 = uri4;
+        this.nickName = nickName;
+        this.time = time;
+        this.date = date;
+        this.consignee = consignee;
+        InOutCargo = inOutCargo;
     }
 
-    public void setInOutCargo(String inOutCargo) {
-        InOutCargo = inOutCargo;
+    public WorkingMessageList() {
+
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String getUri0() {
+        return uri0;
+    }
+
+    public void setUri0(String uri0) {
+        this.uri0 = uri0;
+    }
+
+    public String getUri1() {
+        return uri1;
+    }
+
+    public void setUri1(String uri1) {
+        this.uri1 = uri1;
+    }
+
+    public String getUri2() {
+        return uri2;
+    }
+
+    public void setUri2(String uri2) {
+        this.uri2 = uri2;
+    }
+
+    public String getUri3() {
+        return uri3;
+    }
+
+    public void setUri3(String uri3) {
+        this.uri3 = uri3;
+    }
+
+    public String getUri4() {
+        return uri4;
+    }
+
+    public void setUri4(String uri4) {
+        this.uri4 = uri4;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 
     public String getDate() {
@@ -33,31 +111,12 @@ public class WorkingMessageList {
         this.consignee = consignee;
     }
 
-    public String getMsg(){
-        return msg;
-    }
-    public void setMsg(String msg){
-        this.msg=msg;
-    }
-    public String getNickName(){
-        return nickName;
-    }
-    public void setNickName(String nickName){
-        this.nickName=nickName;
-    }
-    public String getTime(){
-        return time;
-    }
-    public void setTime(String time){
-        this.time=time;
+    public String getInOutCargo() {
+        return InOutCargo;
     }
 
-    public String getUri() {
-        return Uri;
-    }
-
-    public void setUri(String uri) {
-        Uri = uri;
+    public void setInOutCargo(String inOutCargo) {
+        InOutCargo = inOutCargo;
     }
 }
 

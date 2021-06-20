@@ -360,7 +360,7 @@ public class Location extends AppCompatActivity  {
         messageList.setMsg(msg);
         messageList.setConsignee(consignee);
         messageList.setInOutCargo("Etc");
-        messageList.setUri("");
+//        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference dataRef=database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
         dataRef.setValue(messageList);

@@ -3,6 +3,8 @@ package fine.koaca.wms;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -14,6 +16,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -27,36 +30,52 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ImageViewActivity extends AppCompatActivity {
-    ImageView imageView;
+    RecyclerView imageViewRecycler;
     FloatingActionButton fab;
-    String uri;
+    String[] uri;
+    ArrayList<String> list;
+    ImageViewActivityAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
         Intent intent=getIntent();
-        uri=intent.getStringExtra("uri");
+        uri=intent.getStringArrayExtra("uri");
 
-        imageView=findViewById(R.id.img);
+        list=new ArrayList<String>(Arrays.asList(uri));
+        Log.i("List Value","1"+list.get(0)+"2"+list.get(1));
+
+
+
+
+        imageViewRecycler=findViewById(R.id.imageViewActivity_recyclerView);
+        GridLayoutManager manager=new GridLayoutManager(this,2);
+        imageViewRecycler.setLayoutManager(manager);
+        adapter=new ImageViewActivityAdapter(list);
+        imageViewRecycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+
         fab=findViewById(R.id.floatingActionButton);
 
-        Glide.with(this).asBitmap()
-                .load(uri)
-                .into(new SimpleTarget<Bitmap>() {
-                          @Override
-                          public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                              imageView.setImageBitmap(resource);
-                              fab.setOnClickListener(new View.OnClickListener() {
-                                  @Override
-                                  public void onClick(View v) {
-                                      glideImageToSave(resource);
-                                  }
-                              });
-                          }
-                      });
+//        Glide.with(this).asBitmap()
+//                .load(uri)
+//                .into(new SimpleTarget<Bitmap>() {
+//                          @Override
+//                          public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                              imageView.setImageBitmap(resource);
+//                              fab.setOnClickListener(new View.OnClickListener() {
+//                                  @Override
+//                                  public void onClick(View v) {
+//                                      glideImageToSave(resource);
+//                                  }
+//                              });
+//                          }
+//                      });
 
 
 
