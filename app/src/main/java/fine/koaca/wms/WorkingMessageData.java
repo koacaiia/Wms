@@ -31,6 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -43,13 +45,14 @@ public class WorkingMessageData extends AppCompatActivity {
     WorkMessageAdapter adapter;
     ArrayList<WorkingMessageList> dataList;
     private String nickName;
+    String depotName;
 
     EditText messageEdit;
     Button btn_send;
     String message;
     SharedPreferences sharedPreferences;
     CalendarPick calendarPick;
-    String sortItemName="time";
+    String sortItemName="date";
     FloatingActionButton fab_search;
     String dialog_date;
     String dialog_consignee="ALL";
@@ -57,6 +60,7 @@ public class WorkingMessageData extends AppCompatActivity {
     TextView searchTextView;
     String upLoadItemsName;
     String date;
+    String[] consigneeList;
 
 
 
@@ -66,6 +70,7 @@ public class WorkingMessageData extends AppCompatActivity {
         setContentView(R.layout.activity_working_message_data);
         sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         nickName=sharedPreferences.getString("nickName","Fine");
+        depotName=sharedPreferences.getString("depotName",null);
 
         recyclerView = findViewById(R.id.recyclerView_workingMessageData);
         messageEdit=findViewById(R.id.edit_workingMessageData);
@@ -118,11 +123,56 @@ public class WorkingMessageData extends AppCompatActivity {
                 fab_search.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                    searchCondition();
+
+
+                        searchCondition(Incargo.shared_consigneeList);
+
 
 
                     }
                 });
+    }
+
+    private void beforeSearchCondition() {
+        DatabaseReference databaseReference;
+        switch(depotName){
+            case "2물류(02010027)":
+                databaseReference=database.getReference("Incargo2");
+                break;
+            case "1물류(02010810)":
+                databaseReference=database.getReference("Incargo1");
+                break;
+            case "(주)화인통상 창고사업부":
+                databaseReference=database.getReference("Incargo");
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + depotName);
+        }
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                ArrayList<String> list=new ArrayList<>();
+                for(DataSnapshot data:snapshot.getChildren()){
+                   Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
+                    String consigneeName=mList.getConsignee();
+                    if(!consigneeName.equals("")&&!list.contains(consigneeName)){
+                        list.add(consigneeName);
+                    }
+
+                }
+                consigneeList=list.toArray(new String[list.size()]);
+                searchCondition(consigneeList);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
+
     }
 
     public void getWorkingMessageList(String dialog_date, String dialog_consignee, String upLoadItemsName) {
@@ -133,6 +183,7 @@ public class WorkingMessageData extends AppCompatActivity {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
                     WorkingMessageList data=dataSnapshot.getValue(WorkingMessageList.class);
                     if(dialog_consignee.equals("ALL")){
+                        assert data != null;
                         if(data.getInOutCargo().equals(upLoadItemsName)){
                             dataList.add(data);}
 
@@ -225,13 +276,16 @@ public class WorkingMessageData extends AppCompatActivity {
         Log.i("koacaiia",uri+"___UriToString");
         startActivity(intent);
    }
-   public void searchCondition(){
+   public void searchCondition(String[] consigneeList){
 
         dialog_date="All Time";
-       getWorkingMessageList(dialog_date, dialog_consignee, upLoadItemsName);
+        getWorkingMessageList(dialog_date, dialog_consignee, upLoadItemsName);
 
-       String[] items_cargo = {"ALL","M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철","한큐한신","하랄코","Etc"};
-       AlertDialog.Builder searchBuilder=new AlertDialog.Builder(this);
+//       consigneeList = new String[]{"ALL", "M&F", "SPC", "공차", "케이비켐", "BNI", "기타", "스위치코리아", "서강비철", "한큐한신", "하랄코", "Etc"};
+
+
+
+        AlertDialog.Builder searchBuilder=new AlertDialog.Builder(this);
        searchBuilder.setTitle("검색 조건 설정창");
        View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);
        Button searchButton=view.findViewById(R.id.workmessage_inputdate);
@@ -239,7 +293,7 @@ public class WorkingMessageData extends AppCompatActivity {
        searchTextView=view.findViewById(R.id.workmessage_text);
        searchTextView.setText("All Time");
        ArrayAdapter<String> searchAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-               items_cargo);
+               consigneeList);
        searchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
        searchSpinner.setAdapter(searchAdapter);
 
@@ -256,7 +310,7 @@ public class WorkingMessageData extends AppCompatActivity {
        searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
            @Override
            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               dialog_consignee=items_cargo[position];
+               dialog_consignee=consigneeList[position];
                searchTextView.append("_"+dialog_consignee);
 
            }
@@ -281,6 +335,8 @@ public class WorkingMessageData extends AppCompatActivity {
            @Override
            public void onClick(DialogInterface dialog, int which) {
                upLoadItemsName="InCargo";
+               Log.i("TestValue",
+                       "dataValue+++:"+dialog_date+"ConsigneeNameValue+++:"+dialog_consignee+"UpLoadValue+++:"+upLoadItemsName);
                getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
            }

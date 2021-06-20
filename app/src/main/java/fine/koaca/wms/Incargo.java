@@ -10,6 +10,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
@@ -64,7 +68,7 @@ import java.util.Map;
 
 
 
-public class Incargo extends AppCompatActivity implements Serializable {
+public class Incargo extends AppCompatActivity implements Serializable , SensorEventListener {
     ArrayList<Fine2IncargoList> listItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortList=new ArrayList<Fine2IncargoList>();
@@ -80,7 +84,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
 
     ArrayList<String> arrConsignee = new ArrayList<>();
     String [] consignee_list;
-    String [] consignee_list2;
+    static String [] shared_consigneeList;
 
     String dataMessage;
     Button incargo_location;
@@ -142,7 +146,7 @@ public class Incargo extends AppCompatActivity implements Serializable {
             Manifest.permission.ANSWER_PHONE_CALLS,
     };
 
-    Vibrator vibrator;
+
     String[] upDataRegList;
 
     String wareHouseDepot="Incargo";
@@ -151,16 +155,20 @@ public class Incargo extends AppCompatActivity implements Serializable {
     String dateSelectCondition="";
 
     SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
+
+    SensorManager mSensorManager;
+    Sensor mAccelerometer;
+    private long mShakeTime;
+    private static final int SHAKE_SKIP_TIME=500;
+    private static final float SHAKE_THERESHOLD_GRAVITY=2.7F;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
         requestPermissions(permission_list,0);
 
-
-        Intent intent=getIntent();
-
-        vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+        mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
         if(sharedPref==null){
@@ -340,11 +348,12 @@ return true;
       fltBtn_Capture.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-              Intent intent=new Intent(Incargo.this,CameraCapture.class);
-              intent.putExtra("depotName",depotName);
-              intent.putExtra("nickName",nickName);
-              intent.putExtra("alertDepot",alertDepot);
+
+              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
               startActivity(intent);
+
+
+//              intentCameraActivity();
           }
       });
 
@@ -395,6 +404,14 @@ return true;
           return false;
 
       });
+    }
+
+    private void intentCameraActivity() {
+        Intent intent=new Intent(Incargo.this,CameraCapture.class);
+        intent.putExtra("depotName",depotName);
+        intent.putExtra("nickName",nickName);
+        intent.putExtra("alertDepot",alertDepot);
+        startActivity(intent);
     }
 
     private void sendAlertMessage(String message) {
@@ -467,6 +484,37 @@ return true;
         request.setShouldCache(false);
         sendResponseListener.onRequestStarted();
         requestQueue.add(request);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            float axisX=event.values[0];
+            float axisY=event.values[1];
+            float axisZ=event.values[2];
+
+            float gravityX=axisX/SensorManager.GRAVITY_EARTH;
+            float gravityY=axisY/SensorManager.GRAVITY_EARTH;
+            float gravityZ=axisZ/SensorManager.GRAVITY_EARTH;
+
+            Float f=gravityX*gravityX+gravityY*gravityY+gravityZ*gravityZ;
+            double squaredD=Math.sqrt(f.doubleValue());
+            float gForce=(float) squaredD;
+            if(gForce>SHAKE_THERESHOLD_GRAVITY){
+                long currentTime=System.currentTimeMillis();
+                if(mShakeTime+SHAKE_SKIP_TIME>currentTime){
+                    return;
+                }
+                mShakeTime=currentTime;
+                intentCameraActivity();
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     public interface SendResponseListener{
@@ -650,7 +698,7 @@ return true;
                     Intent intent=new Intent(Incargo.this,PutDataReg.class);
                     intent.putExtra("dataRef",wareHouseDepot);
                     intent.putExtra("list",upDataRegList);
-                    intent.putExtra("consigneeList",consignee_list2);
+                    intent.putExtra("consigneeList",shared_consigneeList);
                     intent.putExtra("alertDepot",alertDepot);
                     Log.i("TestValue","AlertDePotName+++"+alertDepot);
 
@@ -722,7 +770,7 @@ return true;
                             Intent intent=new Intent(Incargo.this,PutDataReg.class);
                             intent.putExtra("dataRef",wareHouseDepot);
                             intent.putExtra("list",upDataRegList);
-                            intent.putExtra("consigneeList",consignee_list2);
+                            intent.putExtra("consigneeList",shared_consigneeList);
                             intent.putExtra("alertDepot",alertDepot);
                             startActivity(intent);
 
@@ -735,7 +783,7 @@ return true;
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent=new Intent(Incargo.this,PutDataReg.class);
                             intent.putExtra("dataRef",wareHouseDepot);
-                            intent.putExtra("consigneeList",consignee_list2);
+                            intent.putExtra("consigneeList",shared_consigneeList);
                             startActivity(intent);
 
                         }
@@ -1055,16 +1103,18 @@ return true;
 
 
 
-        consigneeArrayList.add(0,"ALL");
+
         consignee_list=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
         consigneeArrayList.clear();
+        consigneeArrayList.add(0,"ALL");
+
         for(String item:consignee_list){
-            if(!consigneeArrayList.contains(item)){
+            if(!item.equals("")&&!consigneeArrayList.contains(item)){
                 consigneeArrayList.add(item);
             }
         }
-        consigneeArrayList.add("기타");
-        consignee_list2=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
+
+        shared_consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
 
         Button searchDetail=view.findViewById(R.id.btnDetailSearch);
@@ -1236,12 +1286,12 @@ return true;
         final String[] spinnerconsignee = {"All"};
         Spinner consigneeSpinner=view.findViewById(R.id.spinner_consigneelist);
         ArrayAdapter<String> consigneeListAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-                consignee_list2);
+                shared_consigneeList);
         consigneeSpinner.setAdapter(consigneeListAdapter);
         consigneeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinnerconsignee[0] =consignee_list2[position];
+                spinnerconsignee[0] =shared_consigneeList[position];
             }
 
             @Override
@@ -1331,9 +1381,7 @@ return true;
     }
         public void getFirebaseDataInit(){
         databaseReference=database.getReference(wareHouseDepot);
-        String databaseValue= databaseReference.getRoot().toString();
-        Log.i("duatjsrb",databaseValue);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()){
@@ -1425,9 +1473,17 @@ return true;
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this,mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
+    }
 
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
 }
 
 

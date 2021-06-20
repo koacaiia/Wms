@@ -26,15 +26,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".AnnualLeave"></activity>
-        <activity android:name=".IncargoEx"></activity>
+        <activity android:name=".OutCargoActivity"></activity>
+        <activity android:name=".AnnualLeave" />
+        <activity android:name=".IncargoEx" />
 
         <service android:name=".FcmProcessService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
 
         <receiver
             android:name=".AlarmReceiver"

@@ -215,12 +215,11 @@ public class CameraCapture extends AppCompatActivity
 
 
     public void consigneeSelected(){
-        String[] items_consignee={"M&F", "SPC", "공차", "케이비켐", "BNI","기타","스위치코리아","서강비철", "스위치코리아","한큐한신","하랄코"};
         AlertDialog.Builder dialogConsignee=new AlertDialog.Builder(this);
         dialogConsignee.setTitle("항목 선택");
         View view=getLayoutInflater().inflate(R.layout.spinnerlist_consignee,null);
         ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-                items_consignee);
+                Incargo.shared_consigneeList);
         Spinner spinner_spinner=view.findViewById(R.id.capture_spinner_consignee);
         EditText spinner_edit=view.findViewById(R.id.capture_edit_consignee);
         TextView spinner_text=view.findViewById(R.id.capture_text_consignee);
@@ -247,7 +246,7 @@ public class CameraCapture extends AppCompatActivity
         spinner_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinner_text.setText(items_consignee[position]);
+                spinner_text.setText(Incargo.shared_consigneeList[position]);
                 spinner_edit.setText("");
             }
 

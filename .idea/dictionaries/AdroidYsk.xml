@@ -5,19 +5,24 @@
       <w>annualtxt</w>
       <w>btnhalf</w>
       <w>cargotype</w>
+      <w>detailrecyclerview</w>
       <w>incaro</w>
       <w>intdate</w>
       <w>koacaiia</w>
       <w>kocaiia</w>
       <w>longlistener</w>
       <w>newputdata</w>
+      <w>outcargo</w>
+      <w>outwarehouse</w>
       <w>preg</w>
       <w>putdata</w>
       <w>regworking</w>
       <w>responsed</w>
       <w>spworking</w>
       <w>strhalf</w>
+      <w>thereshold</w>
       <w>totaldate</w>
+      <w>totalqty</w>
     </words>
   </dictionary>
 </component>
