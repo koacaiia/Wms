@@ -92,7 +92,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 int degree = windowDegree.getDegree();
                 bitmap = rotate(bitmap, degree);
                 contentResolver = mainActivity.getContentResolver();
-                Log.i("koacaiia",contentResolver+"__information");
                 contentValues = new ContentValues();
                 contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
                 contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
@@ -279,7 +278,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                     });
                             if(tempFile.exists()){
                             tempFile.delete();
-                            Log.i("koacaiia",tempFile+"_deleted");
                             }
                         }
                         }
@@ -313,7 +311,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setDate(date);
         messageList.setConsignee(captureItem);
         messageList.setInOutCargo(uploadItem);
-        Log.i("koacaiia","UriChecked"+imageUri);
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference =
@@ -373,7 +370,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         String imageUri=String.valueOf(uri);
 
                         uriString.add(imageUri);
-                        Log.i("TestValue","ArrayList Value+++:"+uriString);
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
                         messageList.setTime(timeStamp);

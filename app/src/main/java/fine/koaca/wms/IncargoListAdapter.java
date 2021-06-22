@@ -41,7 +41,6 @@ implements AdapterClickListener,AdapterLongClickListener{
     @Override
     public void onBindViewHolder(@NonNull fine.koaca.wms.IncargoListAdapter.ListViewHolder holder, int position) {
         String str_container20=String.valueOf(list.get(position).getContainer20());
-        Log.i("kocaca",str_container20);
         String str_container40=String.valueOf(list.get(position).getContainer40());
         String str_lclcargo=String.valueOf(list.get(position).getLclcargo());
         String cargotype;

@@ -453,7 +453,6 @@ public class CameraCapture extends AppCompatActivity
     public void queryAllList(ArrayList<ImageViewList> captureImageList){
 
         list=captureImageList;
-        Log.i("koacaiia","adapter Capture image size"+list.size());
         adapter.notifyDataSetChanged();
 
 

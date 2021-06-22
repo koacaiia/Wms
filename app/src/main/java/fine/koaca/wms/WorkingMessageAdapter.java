@@ -70,7 +70,11 @@ implements OnListImageClickListener{
         String nickName=sharedPreferences.getString("nickName",null);
 
         if(messageLists.get(position).getNickName().equals(nickName)){
-            holder.linearLayout.setGravity(Gravity.END);
+           LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
+           params.gravity=Gravity.END;
+           holder.linearLayout.setLayoutParams(params);
+
+
 
         }
 
@@ -107,6 +111,7 @@ implements OnListImageClickListener{
         CardView cardView;
         LinearLayout linearLayout;
 
+
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.msg=itemView.findViewById(R.id.txt_work_msg);
@@ -119,6 +124,7 @@ implements OnListImageClickListener{
             this.image4=itemView.findViewById(R.id.work_image4);
             this.cardView=itemView.findViewById(R.id.workinglistcardview);
             this.linearLayout=itemView.findViewById(R.id.workinglayout);
+
 
 
             itemView.setOnClickListener(new View.OnClickListener() {

@@ -652,7 +652,6 @@ return true;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         depotName=depotSortList[which];
-                        Log.i("depo1",depotName);
                         reg_depot.setText("부서명_"+depotName+"로 확인");
 
                     }
@@ -662,7 +661,6 @@ return true;
                     public void onClick(DialogInterface dialog, int which) {
                         editor.putString("depotName",depotName);
                         editor.putString("nickName",nickName);
-                        Log.i("depo2",depotName);
                         editor.apply();
                         Toast.makeText(Incargo.this, depotName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
                         Intent intent=new Intent(Incargo.this,Incargo.class);
@@ -700,7 +698,6 @@ return true;
                     intent.putExtra("list",upDataRegList);
                     intent.putExtra("consigneeList",shared_consigneeList);
                     intent.putExtra("alertDepot",alertDepot);
-                    Log.i("TestValue","AlertDePotName+++"+alertDepot);
 
                     startActivity(intent);
                 }
@@ -975,7 +972,6 @@ return true;
     }
 
     private void pushMessage(String depotName, String nickName, String message, String contents) {
-        Log.i("duatjsrb","DepotName Value::::"+depotName);
         PushFcmProgress push=new PushFcmProgress(requestQueue);
         push.sendAlertMessage(depotName,nickName,message,contents);
     }
