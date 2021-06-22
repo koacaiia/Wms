@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,19 +21,27 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -187,6 +196,18 @@ public class CameraCapture extends AppCompatActivity
 
                 }
 
+                if(upLoadUriString.size()>5){
+                    AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
+                    builder.setTitle("!사진전송 주의사항")
+                            .setMessage("한번에 전송할수 있는 사진은 최대 5장 입니다.")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                   Toast.makeText(getApplicationContext(),"사진을 다신 선택 하기 바랍니다.",Toast.LENGTH_SHORT).show();
+                                    adapter.clearSelectedItem();
+                                }
+                            }).show();
+                }
             }
         });
 
@@ -223,6 +244,148 @@ public class CameraCapture extends AppCompatActivity
         Spinner spinner_spinner=view.findViewById(R.id.capture_spinner_consignee);
         EditText spinner_edit=view.findViewById(R.id.capture_edit_consignee);
         TextView spinner_text=view.findViewById(R.id.capture_text_consignee);
+        ImageView imageView0=view.findViewById(R.id.dialog_imageView0);
+        ImageView imageView1=view.findViewById(R.id.dialog_imageView1);
+        ImageView imageView2=view.findViewById(R.id.dialog_imageView2);
+        ImageView imageView3=view.findViewById(R.id.dialog_imageView3);
+        ImageView imageView4=view.findViewById(R.id.dialog_imageView4);
+        switch(upLoadUriString.size()){
+            case 1:
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(0))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                imageView0.setImageBitmap(resource);
+                            }});
+                break;
+            case 2:
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(0))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView0.setImageBitmap(resource);
+                            }
+                        });
+
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(1))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView1.setImageBitmap(resource);
+                            }
+                        });
+                break;
+            case 3:
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(0))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView0.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(1))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView1.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(2))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView2.setImageBitmap(resource);
+                            }
+                        });
+                break;
+            case 4:
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(0))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView0.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                    .load(upLoadUriString.get(1))
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                            imageView1.setImageBitmap(resource);
+                        }
+                    });
+                Glide.with(view).asBitmap()
+                    .load(upLoadUriString.get(2))
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                            imageView2.setImageBitmap(resource);
+                        }
+                    });
+                Glide.with(view).asBitmap()
+                    .load(upLoadUriString.get(3))
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                            imageView3.setImageBitmap(resource);
+                        }
+                    });
+                break;
+            case 5:
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(0))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView0.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(1))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView1.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(2))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView2.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(3))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView3.setImageBitmap(resource);
+                            }
+                        });
+                Glide.with(view).asBitmap()
+                        .load(upLoadUriString.get(4))
+                        .into(new SimpleTarget<Bitmap>() {
+                            @Override
+                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
+                                imageView4.setImageBitmap(resource);
+                            }
+                        });
+
+
+
+                break;
+        }
+
+
 
 
         spinner_edit.setOnClickListener(new View.OnClickListener() {
@@ -261,7 +424,7 @@ public class CameraCapture extends AppCompatActivity
         dialogConsignee.setView(view);
         dialogConsignee.setMessage("하단의 업체명 선택후 전송 하기랍니다."+"\n"+"화주명 등록 여부 다시 한번 확인 바랍니다.");
 
-        dialogConsignee.setPositiveButton("출고사진 UpLoad", new DialogInterface.OnClickListener() {
+        dialogConsignee.setPositiveButton("출고사진 ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 uploadItem="OutCargo";
@@ -269,14 +432,14 @@ public class CameraCapture extends AppCompatActivity
             }
         });
 
-        dialogConsignee.setNegativeButton("입고사진 UpLoad", new DialogInterface.OnClickListener() {
+        dialogConsignee.setNegativeButton("입고사진 ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 uploadItem="InCargo";
                 upCapturePictures(uploadItem,spinner_text.getText().toString());
             }
         });
-        dialogConsignee.setNeutralButton("기타사진 UpLoad", new DialogInterface.OnClickListener() {
+        dialogConsignee.setNeutralButton("기타사진 ", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 uploadItem="Etc";
@@ -312,8 +475,8 @@ public class CameraCapture extends AppCompatActivity
 //
 //            }
         }
-        PushFcmProgress push=new PushFcmProgress(requestQueue);
-        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+//        PushFcmProgress push=new PushFcmProgress(requestQueue);
+//        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
 
     }
     public void initIntent(){

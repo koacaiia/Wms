@@ -46,6 +46,7 @@
         <activity android:name=".PutDataReg" />
         <activity
             android:name=".ImageViewActivity"
+            android:theme="@style/Theme.AppCompat"
             android:label="사진정보" />
         <activity
             android:name=".WorkingMessageData"

@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +21,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -33,17 +36,19 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ImageViewActivity extends AppCompatActivity {
+public class ImageViewActivity extends AppCompatActivity implements ImageViewActivityAdapter.ImageViewClicked {
     RecyclerView imageViewRecycler;
     FloatingActionButton fab;
     String[] uri;
     ArrayList<String> list;
     ImageViewActivityAdapter adapter;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_view);
+        context=this.getApplicationContext();
         Intent intent=getIntent();
         uri=intent.getStringArrayExtra("uri");
 
@@ -56,7 +61,7 @@ public class ImageViewActivity extends AppCompatActivity {
         imageViewRecycler=findViewById(R.id.imageViewActivity_recyclerView);
         GridLayoutManager manager=new GridLayoutManager(this,2);
         imageViewRecycler.setLayoutManager(manager);
-        adapter=new ImageViewActivityAdapter(list);
+        adapter=new ImageViewActivityAdapter(list,this);
         imageViewRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
@@ -99,6 +104,49 @@ public class ImageViewActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Toast.makeText(this,"Saved InPath PICTURES/Fine/DownLoad",Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(ImageViewActivity.this);
+        View view=getLayoutInflater().inflate(R.layout.imageview_list,null);
+
+        ImageView imageView=view.findViewById(R.id.captureimageview);
+
+        Glide.with(view).asBitmap()
+                .load(uri[position])
+                .into(new SimpleTarget<Bitmap>() {
+                          @Override
+                          public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                             imageView.setImageBitmap(resource);
+
+                          }});
+        builder.setTitle("사진저장 확인 ")
+                .setView(view)
+                .setMessage("저장된 사진은 PICTURES/Fine/DownLoad 경로에 저장 됩니다."+"\n"+"업무에 참고 하시기 바랍니다."+"\n")
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Glide.with(ImageViewActivity.this).asBitmap()
+                                .load(uri[position])
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                        glideImageToSave(resource);
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+
+
 
     }
 }

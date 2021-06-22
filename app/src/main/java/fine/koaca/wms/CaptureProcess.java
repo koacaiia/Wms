@@ -188,6 +188,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize);
+
                 }
 
             })
@@ -354,7 +355,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             }
 
         }
-        Log.i("koacaiia","FirstCapture_query"+ captureImageList.size());
+
         cursor.close();
 
         return captureImageList;
@@ -457,7 +458,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         putMessage("Failed Uri Received","",consigneeName,inoutCargo);
-                        Log.i("koacaiia","KocaiiaImageUri DownLoading Failed");
+
 
                     }
                 });

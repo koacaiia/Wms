@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -102,10 +103,12 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
+        CardView cardView;
         public ListViewHolder(@NonNull View itemView,OnListItemSelectedInterface listener,
                               OnListItemLongSelectedInterface longlistener) {
             super(itemView);
             this.imageView=itemView.findViewById(R.id.captureimageview);
+            this.cardView=itemView.findViewById(R.id.capturecardview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

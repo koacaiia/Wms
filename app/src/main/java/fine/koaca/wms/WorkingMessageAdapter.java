@@ -2,14 +2,19 @@ package fine.koaca.wms;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -44,7 +49,8 @@ implements OnListImageClickListener{
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         holder.msg.setText(messageLists.get(position).getMsg());
         holder.nickName.setText(messageLists.get(position).getNickName());
-        holder.time.setText(messageLists.get(position).getTime());
+        String time=messageLists.get(position).getTime();
+        holder.time.setText(time.substring(time.length()-9));
         Glide.with(holder.itemView)
                 .load(messageLists.get(position).getUri0())
                 .into(holder.image0);
@@ -64,10 +70,7 @@ implements OnListImageClickListener{
         String nickName=sharedPreferences.getString("nickName",null);
 
         if(messageLists.get(position).getNickName().equals(nickName)){
-            holder.msg.setTextColor(Color.RED);
-            holder.nickName.setTextColor(Color.RED);
-            holder.time.setTextColor(Color.RED);
-
+            holder.linearLayout.setGravity(Gravity.END);
 
         }
 
@@ -101,6 +104,8 @@ implements OnListImageClickListener{
         ImageView image2;
         ImageView image3;
         ImageView image4;
+        CardView cardView;
+        LinearLayout linearLayout;
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,6 +117,8 @@ implements OnListImageClickListener{
             this.image2=itemView.findViewById(R.id.work_image2);
             this.image3=itemView.findViewById(R.id.work_image3);
             this.image4=itemView.findViewById(R.id.work_image4);
+            this.cardView=itemView.findViewById(R.id.workinglistcardview);
+            this.linearLayout=itemView.findViewById(R.id.workinglayout);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {

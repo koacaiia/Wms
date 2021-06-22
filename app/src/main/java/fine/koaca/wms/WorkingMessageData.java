@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -89,7 +90,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     break;
             }}else{
             Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
-            databaseReference=database.getReference("Incargo");
+
             return;
         }
 
@@ -119,7 +120,9 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 return true;
             }
         });
+        databaseReference = database.getReference("WorkingMessage");
 
+        getWorkingMessageLists(date);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -127,6 +130,8 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         adapter=new WorkingMessageAdapter(dataList,WorkingMessageData.this,nickName);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        
 
         adapter.setOnListImageClickListener(new OnListImageClickListener() {
           @Override
@@ -148,9 +153,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                    }
                 });
 
-        databaseReference = database.getReference("WorkingMessage");
-        Log.i("TestValue",databaseReference.getRoot().toString());
-                getWorkingMessageLists(date);
+
 
                 fab_search=findViewById(R.id.btn_workMessageSearch);
                 fab_search.setOnClickListener(new View.OnClickListener() {
@@ -159,6 +162,10 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                         searchCondition(Incargo.shared_consigneeList);
                    }
                 });
+
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+        }
     }
 
 
@@ -180,9 +187,9 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                             dataList.add(data);
                         }
                     }
-
+                    dataList.sort(new WorkingMessageListComparator("time"));
                 }
-                dataList.sort(new WorkingMessageListComparator("time"));
+
                 adapter.notifyDataSetChanged();
                 messageEdit.setText(dialog_date+"_"+dialog_consignee+"_"+upLoadItemsName+"조회결과");
             }
@@ -206,32 +213,32 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
 
     public void getWorkingMessageLists(String date){
-            ChildEventListener postListener=new ChildEventListener(){
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    WorkingMessageList data=snapshot.getValue(WorkingMessageList.class);
-                    Log.i("koacaiia","getDate:"+data.getDate()+"___Date:"+date);
-                    if(data.getDate()!=null&&data.getDate().equals(date)){
-                    ((WorkingMessageAdapter) adapter).addWorkingMessage(data);}
-                }
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                }
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+        ValueEventListener listener=new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    WorkingMessageList mList=data.getValue(WorkingMessageList.class);
 
+                    if(mList.getDate()!=null&&mList.getDate().equals(date)){
+                        dataList.add(mList);
+                       }
+                    dataList.sort(new WorkingMessageListComparator("time"));
                 }
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            };
+                adapter.notifyDataSetChanged();
 
-            Query sortItem;
-                sortItem=databaseReference.orderByChild(sortItemName);
-            sortItem.addChildEventListener(postListener);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        databaseReference.addListenerForSingleValueEvent(listener);
+
+
+
+
+
 
         }
 
@@ -378,7 +385,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         @Override
         public int compare(WorkingMessageList a, WorkingMessageList b) {
             int compare=0;
-            compare=a.time.compareTo(b.time);
+            compare=b.time.replaceAll("[^0-9]", "").compareTo(a.time.replaceAll("[^0-9]", ""));
             return compare;
         }
     }

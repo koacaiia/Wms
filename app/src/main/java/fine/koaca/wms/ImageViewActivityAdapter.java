@@ -16,8 +16,16 @@ import java.util.ArrayList;
 
 public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActivityAdapter.ListView>{
     ArrayList<String> list;
-    public ImageViewActivityAdapter(ArrayList<String> list) {
+    ImageViewClicked clickListener;
+
+
+    public interface ImageViewClicked {
+        void imageViewClicked(ImageViewActivityAdapter.ListView listView,View v,int position);
+
+    }
+    public ImageViewActivityAdapter(ArrayList<String> list,ImageViewClicked clickListener) {
         this.list=list;
+        this.clickListener=clickListener;
     }
 
     @NonNull
@@ -48,6 +56,13 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
         public ListView(@NonNull @NotNull View itemView) {
             super(itemView);
             this.imageView=itemView.findViewById(R.id.captureimageview_activity);
+
+            this.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickListener.imageViewClicked(ListView.this,v,getAdapterPosition());
+                }
+            });
         }
     }
 }

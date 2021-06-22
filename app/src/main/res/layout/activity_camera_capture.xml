@@ -24,12 +24,12 @@
         android:layout_height="wrap_content"
         android:clickable="true"
         android:foregroundGravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/captureImageList"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.88"
+        app:layout_constraintHorizontal_bias="0.89"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/surfaceView"
-        app:layout_constraintVertical_bias="0.83"
+        app:layout_constraintVertical_bias="0.97"
         app:srcCompat="@drawable/ic_menu_camera" />
 
     <TextView
@@ -92,9 +92,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/captureImageList"
         android:layout_width="0dp"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/surfaceView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />

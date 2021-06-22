@@ -5,10 +5,18 @@
     android:layout_height="wrap_content"
     android:background="@xml/item_selector">
 
-    <ImageView
-        android:id="@+id/captureimageview_activity"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:srcCompat="@drawable/side_nav_bar" />
+        android:layout_height="match_parent"
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true">
+
+        <ImageView
+            android:id="@+id/captureimageview_activity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/side_nav_bar" />
+    </androidx.cardview.widget.CardView>
+
 </LinearLayout>
