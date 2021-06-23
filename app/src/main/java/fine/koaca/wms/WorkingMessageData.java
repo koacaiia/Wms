@@ -148,8 +148,11 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
               uriArrayList.add(strUri3);
               uriArrayList.add(strUri4);
 
+              String message=
+                      dataList.get(position).getNickName()+":"+dataList.get(position).getTime()+"\n"+dataList.get(position).getMsg();
 
-               intentImageView(uriArrayList);
+
+               intentImageView(uriArrayList,message);
                    }
                 });
 
@@ -270,10 +273,11 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
 
    }
-   public void intentImageView(ArrayList<String> uri){
+   public void intentImageView(ArrayList<String> uri, String message){
         Intent intent=new Intent(WorkingMessageData.this,ImageViewActivity.class);
         String[] uriList=uri.toArray(new String[uri.size()]);
         intent.putExtra("uri",uriList);
+        intent.putExtra("message",message);
 
         startActivity(intent);
    }

@@ -195,9 +195,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
-                    String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
-                    putMessage(msg, "", captureItem, uploadItem);
-                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem, i,arSize);
+//                    String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
+//                    putMessage(msg, "", captureItem, uploadItem);
+//                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem, i,arSize);
                 }
             });
 
@@ -431,6 +431,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                             messageList.setUri2(strUri2);
                             messageList.setUri3(strUri3);
                             messageList.setUri4(strUri4);
+
+                            Toast.makeText(mainActivity,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
                         }
 
 

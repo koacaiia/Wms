@@ -19,8 +19,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +45,8 @@ public class ImageViewActivity extends AppCompatActivity implements ImageViewAct
     ArrayList<String> list;
     ImageViewActivityAdapter adapter;
     Context context;
+    String message;
+    TextView txtMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +55,13 @@ public class ImageViewActivity extends AppCompatActivity implements ImageViewAct
         context=this.getApplicationContext();
         Intent intent=getIntent();
         uri=intent.getStringArrayExtra("uri");
+        message=intent.getStringExtra("message");
 
         list=new ArrayList<String>(Arrays.asList(uri));
-        Log.i("List Value","1"+list.get(0)+"2"+list.get(1));
+        txtMessage=findViewById(R.id.imageViewActivityTitle);
 
-
+        txtMessage.setText(message);
+        txtMessage.setGravity(Gravity.CENTER);
 
 
         imageViewRecycler=findViewById(R.id.imageViewActivity_recyclerView);
@@ -64,24 +70,6 @@ public class ImageViewActivity extends AppCompatActivity implements ImageViewAct
         adapter=new ImageViewActivityAdapter(list,this);
         imageViewRecycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-        fab=findViewById(R.id.floatingActionButton);
-
-//        Glide.with(this).asBitmap()
-//                .load(uri)
-//                .into(new SimpleTarget<Bitmap>() {
-//                          @Override
-//                          public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-//                              imageView.setImageBitmap(resource);
-//                              fab.setOnClickListener(new View.OnClickListener() {
-//                                  @Override
-//                                  public void onClick(View v) {
-//                                      glideImageToSave(resource);
-//                                  }
-//                              });
-//                          }
-//                      });
-
 
 
     }

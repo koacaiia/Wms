@@ -468,14 +468,11 @@ public class CameraCapture extends AppCompatActivity
             Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
             String strRef = date_today + "/" + consigneeName+"/"+uploadItem+"/" + System.currentTimeMillis() + ".jpg";
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize);
-//            if(i==arrsize-1){
-//                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
-//                startActivity(intent);
-//
-//            }
+
+
         }
-//        PushFcmProgress push=new PushFcmProgress(requestQueue);
-//        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
 
     }
     public void initIntent(){

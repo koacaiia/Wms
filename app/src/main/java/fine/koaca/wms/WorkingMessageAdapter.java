@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,8 @@ implements OnListImageClickListener{
     String myNickname;
     Context context;
     SharedPreferences sharedPreferences;
+
+    private SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
 
     public WorkingMessageAdapter(ArrayList<WorkingMessageList> messageLists, Context context, String myNickname) {
         this.messageLists = messageLists;
@@ -68,15 +71,21 @@ implements OnListImageClickListener{
                 .into(holder.image4);
         sharedPreferences=context.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nickName=sharedPreferences.getString("nickName",null);
-
+        LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
         if(messageLists.get(position).getNickName().equals(nickName)){
-           LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
-           params.gravity=Gravity.END;
-           holder.linearLayout.setLayoutParams(params);
-
-
-
+            mSelectedItems.put(position,true);}
+        else {
+            mSelectedItems.put(position,false);
         }
+       if(mSelectedItems.get(position,true)){
+           params.gravity=Gravity.END;
+       }else{
+           params.gravity=Gravity.START;
+       }
+
+
+
+        holder.linearLayout.setLayoutParams(params);
 
     }
 

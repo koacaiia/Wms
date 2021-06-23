@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/workinglayout"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
@@ -25,7 +25,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
@@ -69,7 +69,6 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     app:cardBackgroundColor="#969292"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="1dp"
@@ -77,12 +76,11 @@
 
                     <TextView
                         android:id="@+id/txt_work_msg"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight="1"
                         android:gravity="center|fill"
-                        android:textSize="14sp"
+                        android:textSize="16sp"
                         android:textStyle="bold|italic" />
                 </androidx.cardview.widget.CardView>
 
@@ -100,25 +98,25 @@
                     <ImageView
                         android:id="@+id/work_image1"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1" />
 
                     <ImageView
                         android:id="@+id/work_image2"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1" />
 
                     <ImageView
                         android:id="@+id/work_image3"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1" />
 
                     <ImageView
                         android:id="@+id/work_image4"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1" />
                 </LinearLayout>
 
