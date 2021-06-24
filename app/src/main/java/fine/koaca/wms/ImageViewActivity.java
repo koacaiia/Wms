@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
@@ -65,7 +66,8 @@ public class ImageViewActivity extends AppCompatActivity implements ImageViewAct
 
 
         imageViewRecycler=findViewById(R.id.imageViewActivity_recyclerView);
-        GridLayoutManager manager=new GridLayoutManager(this,2);
+//        GridLayoutManager manager=new GridLayoutManager(this,2);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
         imageViewRecycler.setLayoutManager(manager);
         adapter=new ImageViewActivityAdapter(list,this);
         imageViewRecycler.setAdapter(adapter);

@@ -29,7 +29,7 @@ public class WebList extends AppCompatActivity {
         Log.i("koacaiia",blList);
         if(blList.equals("version")){
             webView.loadUrl("https://play.google.com/store/apps/details?id=fine.koaca.wms");
-            Toast.makeText(this, alerVersion, Toast.LENGTH_SHORT).show();
+
         }else{
            webView.loadUrl("https://www.tradlinx.com/unipass?type=2&blNo="+blList+"&blYr=2021");}
 

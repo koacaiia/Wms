@@ -171,13 +171,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
          mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
-        if(sharedPref==null){
-            depotName="2물류(02010027)";
-            nickName="Guest";
-        }else{
-            depotName=sharedPref.getString("depotName",null);
-            nickName=sharedPref.getString("nickName","Fine");
+
+        if (sharedPref.getString("depotName", null) == null) {
+
+        putUserInformation();
+        return;
         }
+        depotName=sharedPref.getString("depotName",null);
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         day_start=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
                 day_end=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
@@ -211,8 +211,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 break;
         }}else{
             Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
-            databaseReference=database.getReference("Incargo");
-            alertDepot="Depot";
+            databaseReference=database.getReference("Incargo2");
+            alertDepot="Depot2";
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
@@ -617,63 +617,11 @@ return true;
    @SuppressLint("NonConstantResourceId")
    @Override
     public boolean onOptionsItemSelected(MenuItem item){
-       sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
-       editor= sharedPref.edit();
+
         switch(item.getItemId()){
             case R.id.action_account:
-                ArrayList<String> depotSort=new ArrayList<String>();
-                depotSort.add("1물류(02010810)");
-                depotSort.add("2물류(02010027)");
-                depotSort.add("(주)화인통상 창고사업부");
 
-                ArrayList selectedItems=new ArrayList();
-                int defaultItem=0;
-                selectedItems.add(defaultItem);
-
-                String[] depotSortList=depotSort.toArray(new String[depotSort.size()]);
-                AlertDialog.Builder sortBuilder=new AlertDialog.Builder(Incargo.this);
-                View view=getLayoutInflater().inflate(R.layout.user_reg,null);
-                EditText reg_edit=view.findViewById(R.id.user_reg_Edit);
-
-                Button reg_button=view.findViewById(R.id.user_reg_button);
-                TextView reg_depot=view.findViewById(R.id.user_reg_depot);
-
-                reg_button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                       nickName=reg_edit.getText().toString();
-                       reg_depot.setText(depotName+"_"+nickName+"으로 사용자 등록을"+"\n"+" 진행할려면 하단 confirm 버튼 클릭 바랍니다.");
-
-                    }
-                });
-
-                sortBuilder.setView(view);
-                sortBuilder.setSingleChoiceItems(depotSortList,defaultItem,new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        depotName=depotSortList[which];
-                        reg_depot.setText("부서명_"+depotName+"로 확인");
-
-                    }
-                });
-                sortBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        editor.putString("depotName",depotName);
-                        editor.putString("nickName",nickName);
-                        editor.apply();
-                        Toast.makeText(Incargo.this, depotName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
-                        Intent intent=new Intent(Incargo.this,Incargo.class);
-                        startActivity(intent);
-                    }
-                });
-                sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                sortBuilder.show();
+              putUserInformation();
                 break;
 
             case R.id.action_account_search:
@@ -1319,6 +1267,7 @@ return true;
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listItems.clear();
                 listSortList.clear();
+                Log.i("TestValue","DepotName+++:::"+depotName);
                 for(DataSnapshot dataSnapshot:snapshot.getChildren()) {
                     Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
                     String forty = data.getContainer40();
@@ -1479,6 +1428,63 @@ return true;
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(this);
+    }
+
+    public void putUserInformation(){
+        editor= sharedPref.edit();
+        ArrayList<String> depotSort=new ArrayList<String>();
+        depotSort.add("1물류(02010810)");
+        depotSort.add("2물류(02010027)");
+        depotSort.add("(주)화인통상 창고사업부");
+
+        ArrayList selectedItems=new ArrayList();
+        int defaultItem=0;
+        selectedItems.add(defaultItem);
+
+        String[] depotSortList=depotSort.toArray(new String[depotSort.size()]);
+        AlertDialog.Builder sortBuilder=new AlertDialog.Builder(Incargo.this);
+        View view=getLayoutInflater().inflate(R.layout.user_reg,null);
+        EditText reg_edit=view.findViewById(R.id.user_reg_Edit);
+
+        Button reg_button=view.findViewById(R.id.user_reg_button);
+        TextView reg_depot=view.findViewById(R.id.user_reg_depot);
+
+        reg_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nickName=reg_edit.getText().toString();
+                reg_depot.setText(depotName+"_"+nickName+"으로 사용자 등록을"+"\n"+" 진행할려면 하단 confirm 버튼 클릭 바랍니다.");
+
+            }
+        });
+
+        sortBuilder.setView(view);
+        sortBuilder.setSingleChoiceItems(depotSortList,defaultItem,new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                depotName=depotSortList[which];
+                reg_depot.setText("부서명_"+depotName+"로 확인");
+
+            }
+        });
+        sortBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                editor.putString("depotName",depotName);
+                editor.putString("nickName",nickName);
+                editor.apply();
+                Toast.makeText(Incargo.this, depotName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(Incargo.this,Incargo.class);
+                startActivity(intent);
+            }
+        });
+        sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        sortBuilder.show();
     }
 }
 
