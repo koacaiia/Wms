@@ -21,9 +21,12 @@ public class TitleActivity extends AppCompatActivity {
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
     FirebaseDatabase database;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReferenceOut;
+    DatabaseReference databaseReferenceIn;
     ArrayList<OutCargoList> listOut;
+    ArrayList<Fine2IncargoList> listIn;
     OutCargoListAdapter adapterOut;
+    IncargoListAdapter adapterIn;
     String refPath;
 
 
@@ -33,21 +36,28 @@ public class TitleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_title);
 
         recyclerViewOut=findViewById(R.id.titleRecyclerOut);
+        recyclerViewIn=findViewById(R.id.titleRecyclerOutIn);
         LinearLayoutManager outManager=new LinearLayoutManager(this);
+        LinearLayoutManager inManager=new LinearLayoutManager(this);
         recyclerViewOut.setLayoutManager(outManager);
+        recyclerViewIn.setLayoutManager(inManager);
         database=FirebaseDatabase.getInstance();
 
         getFirebaseData();
         adapterOut=new OutCargoListAdapter(listOut);
+        adapterIn=new IncargoListAdapter(listIn,this);
         recyclerViewOut.setAdapter(adapterOut);
+        recyclerViewIn.setAdapter(adapterIn);
         adapterOut.notifyDataSetChanged();
+        adapterIn.notifyDataSetChanged();
     }
 
     private void getFirebaseData() {
         listOut=new ArrayList<>();
-        refPath="Outcargo2";
-        databaseReference=database.getReference(refPath);
-        ValueEventListener inListener=new ValueEventListener() {
+        listIn=new ArrayList<>();
+//        refPath="Outcargo2";
+        databaseReferenceOut=database.getReference("Outcargo2");
+        ValueEventListener outListener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot dataOut:snapshot.getChildren()){
@@ -62,7 +72,26 @@ public class TitleActivity extends AppCompatActivity {
 
             }
         };
-        databaseReference.addListenerForSingleValueEvent(inListener);
+
+        databaseReferenceIn=database.getReference("Incargo2");
+        ValueEventListener inListener=new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot dataIn:snapshot.getChildren()){
+                    Fine2IncargoList mListIn=dataIn.getValue(Fine2IncargoList.class);
+                    listIn.add(mListIn);
+                }
+                adapterIn.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        databaseReferenceIn.addListenerForSingleValueEvent(inListener);
+        databaseReferenceOut.addListenerForSingleValueEvent(outListener);
 
     }
 }
