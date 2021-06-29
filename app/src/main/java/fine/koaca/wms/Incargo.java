@@ -89,6 +89,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String dataMessage;
     Button incargo_location;
     Button incargo_mnf;
+    Button incargo_outcargo;
 
     TextView incargo_incargo;
     TextView incargo_contents_date;
@@ -209,10 +210,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 wareHouseDepot="Incargo";
                 alertDepot="Depot";
                 break;
-        }}else{
+        }
+            nickName=sharedPref.getString("nickName","Guest");
+        }else{
             Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
             databaseReference=database.getReference("Incargo2");
             alertDepot="Depot2";
+            nickName="Guest";
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
@@ -349,8 +353,7 @@ return true;
           @Override
           public void onClick(View v) {
 //
-//              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
-//              startActivity(intent);
+//
 
 
               intentCameraActivity();
@@ -360,7 +363,8 @@ return true;
       fltBtn_Capture.setOnLongClickListener(new View.OnLongClickListener() {
           @Override
           public boolean onLongClick(View v) {
-
+              Intent intent=new Intent(Incargo.this,TitleActivity.class);
+              startActivity(intent);
               return true;
           }
       });
@@ -403,6 +407,15 @@ return true;
 
           return false;
 
+      });
+
+      incargo_outcargo=findViewById(R.id.incargo_outcargo);
+      incargo_outcargo.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
+              startActivity(intent);
+          }
       });
     }
 
@@ -887,9 +900,6 @@ return true;
             list.setRemark(listSortItems.get(i).getRemark());}
         list.setWorking(listSortItems.get(i).getWorking());
 
-
-
-
             FirebaseDatabase database=FirebaseDatabase.getInstance();
             DatabaseReference databaseReference=
                     database.getReference(wareHouseDepot+"/"+regDate+"_"+regBl+"_"+listSortItems.get(i).getDescription()+
@@ -906,12 +916,13 @@ return true;
             "를";
         String msg1=chDate+chBl+chContainer+chRemark+"로 변경 진행 합니다.";
         putMessage(msg+"\n"+msg1,"Etc",nickName);
+        Log.i("TestValue","beforeNickName Value"+nickName);
 //        putMessage(msg1,"Etc");
         }
         sort_dialog="dialogsort";
         getFirebaseData(day_start,day_end,"sort", sortConsignee);
 
-        pushMessage(alertDepot,nickName,consignee+"_화물정보 업데이트 되었습니다.","WorkingMessage");
+
 
 //        PushFcmProgress push=new PushFcmProgress(requestQueue);
 //        push.sendAlertMessage(alertDepot,nickName,consignee+"_화물정보 업데이트 되었습니다.","WorkingMessage");
@@ -975,9 +986,10 @@ return true;
 //        messageList.setUri("");
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+date+"_"+timeStamp);
+        Log.i("TestValue","nickNameValue"+nick);
         databaseReference.setValue(messageList);
 
-        pushMessage(depotName,nick,msg,"WorkingMessage");
+        pushMessage(alertDepot,nickName,msg,"WorkingMessage");
 
     }
     public void sortDialog(String startDay, String endDay, ArrayList<Fine2IncargoList> listSortList){

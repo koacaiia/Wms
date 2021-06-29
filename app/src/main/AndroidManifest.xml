@@ -26,7 +26,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".OutCargoActivity"></activity>
+        <activity android:name=".TitleActivity"></activity>
+        <activity android:name=".OutCargoActivity" />
         <activity android:name=".AnnualLeave" />
         <activity android:name=".IncargoEx" />
 
@@ -46,8 +47,8 @@
         <activity android:name=".PutDataReg" />
         <activity
             android:name=".ImageViewActivity"
-            android:theme="@style/Theme.AppCompat"
-            android:label="사진정보" />
+            android:label="사진정보"
+            android:theme="@style/Theme.AppCompat" />
         <activity
             android:name=".WorkingMessageData"
             android:label="Working Message" />

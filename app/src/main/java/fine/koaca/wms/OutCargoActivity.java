@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -15,7 +16,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class OutCargoActivity extends AppCompatActivity {
     FirebaseDatabase database;
@@ -25,12 +28,14 @@ public class OutCargoActivity extends AppCompatActivity {
     OutCargoListAdapter adapter;
     String departmentName;
 
-
-
+    TextView txtTitle;
+    String dateToDay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_cargo);
+
+        dateToDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
         recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
         LinearLayoutManager manager=new LinearLayoutManager(this);
@@ -41,6 +46,9 @@ public class OutCargoActivity extends AppCompatActivity {
         adapter=new OutCargoListAdapter(list,this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+
+        txtTitle=findViewById(R.id.activity_list_outcargo_title);
+        txtTitle.setText(dateToDay+" 출고 목록");
     }
 
     private void getOutcargoData() {

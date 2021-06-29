@@ -8,13 +8,13 @@ public class OutCargoList {
     String outwarehouse;
     String eaQty;
     String pltQty;
-    int totalQty;
+    String totalQty;
 
     public OutCargoList(){
 
     }
 
-    public OutCargoList(String consigneeName, String date, String description, String managementNo, String outwarehouse, String eaQty, String pltQty, int totalQty) {
+    public OutCargoList(String consigneeName, String date, String description, String managementNo, String outwarehouse, String eaQty, String pltQty, String totalQty) {
         this.consigneeName = consigneeName;
         this.date = date;
         this.description = description;
@@ -81,11 +81,11 @@ public class OutCargoList {
         this.pltQty = pltQty;
     }
 
-    public int getTotalQty() {
+    public String getTotalQty() {
         return totalQty;
     }
 
-    public void setTotalQty(int totalQty) {
+    public void setTotalQty(String totalQty) {
         this.totalQty = totalQty;
     }
 }

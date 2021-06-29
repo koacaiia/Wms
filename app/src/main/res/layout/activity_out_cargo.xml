@@ -8,11 +8,13 @@
     tools:context=".OutCargoActivity">
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/activity_list_outcargo_title"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="14"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="TextView"
+        android:textStyle="bold|italic" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_list_outcargo_recyclerview"

@@ -22,6 +22,10 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
         this.context=context;
     }
 
+    public OutCargoListAdapter(ArrayList<OutCargoList> listOut) {
+        this.list=listOut;
+    }
+
     @NonNull
     @NotNull
     @Override
@@ -41,7 +45,7 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
         holder.consigneeName.setText(list.get(position).getConsigneeName());
         holder.date.setText(list.get(position).getDate());
         holder.outwarehouse.setText(list.get(position).getOutwarehouse());
-        holder.totalQty.setText(String.valueOf(list.get(position).getTotalQty()));
+        holder.totalQty.setText(list.get(position).getTotalQty());
         holder.managementNo.setText(no);
         holder.description.setText(des);
         holder.pQty.setText(pQ);
