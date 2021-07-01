@@ -9,7 +9,7 @@
 
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/activity_title_txttile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1.8"
@@ -30,12 +30,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView9"
+            android:id="@+id/activity_title_txtin"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="2.7"
             android:gravity="center"
-            android:text="TextView" />
+            android:text="입고 현황" />
 
         <LinearLayout
 
@@ -192,27 +192,45 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView10"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2.7"
-                android:gravity="center"
-                android:text="TextView" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="출고 현황" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="출고건수(건)"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="PLT"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:text="EA"/>
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="2.5">
-
-                <TextView
-                    android:id="@+id/textView12"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="4"
-                    android:gravity="center"
-                    android:text="진척률(%)" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -227,25 +245,36 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/textView8"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="출고건수" />
+                            android:text="Total" />
 
                         <TextView
+                            android:id="@+id/titleTotalCargo"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="PLT" />
+                            android:hint="event" />
 
                         <TextView
+                            android:id="@+id/titleTotalCargoPlt"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="EA" />
+                            android:hint="PLT" />
+
+                        <TextView
+                            android:id="@+id/titleTotalCargoEa"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint="EA" />
 
                     </LinearLayout>
 
@@ -254,6 +283,14 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/textView9"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="미진행" />
 
                         <TextView
                             android:id="@+id/titleProgressOutcargo"
@@ -277,6 +314,42 @@
                             android:gravity="center" />
 
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="진척률"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/titleProgressOutcargoRate"
+                            android:gravity="center"
+                            android:hint="%"
+                            android:layout_weight="1"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:hint="%"
+                            android:layout_weight="1"
+                            android:id="@+id/titleProgressOutcargoPltRate"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:hint="%"
+                            android:id="@+id/titleProgressOutcargoEaRate"/>
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
 

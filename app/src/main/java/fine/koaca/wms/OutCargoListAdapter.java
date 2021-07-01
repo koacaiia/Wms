@@ -13,18 +13,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapter.ListView>{
     ArrayList<OutCargoList> list;
     Context context;
-    public OutCargoListAdapter(ArrayList<OutCargoList> list,Context context) {
+    OutCargoListAdapterClickListener listener;
+
+    public interface OutCargoListAdapterClickListener{
+        void itemClicked(OutCargoListAdapter.ListView listView,View v,int position);
+    }
+    public OutCargoListAdapter(ArrayList<OutCargoList> list,Context context,OutCargoListAdapterClickListener listener) {
         this.list=list;
         this.context=context;
+        this.listener=listener;
     }
 
-    public OutCargoListAdapter(ArrayList<OutCargoList> listOut) {
-        this.list=listOut;
-    }
+
 
     @NonNull
     @NotNull
@@ -76,6 +81,13 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
             this.description=itemView.findViewById(R.id.list_outcargo_description);
             this.pQty=itemView.findViewById(R.id.list_outcargo_pltQty);
             this.eQty=itemView.findViewById(R.id.list_outcargo_eaQty);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.itemClicked(ListView.this,v,getAdapterPosition());
+                }
+            });
 
 
         }

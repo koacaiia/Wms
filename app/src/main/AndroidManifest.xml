@@ -26,7 +26,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".TitleActivity"></activity>
+        <activity android:name=".OutCargoImageViewActivity"></activity>
+        <activity android:name=".TitleActivity" />
         <activity android:name=".OutCargoActivity" />
         <activity android:name=".AnnualLeave" />
         <activity android:name=".IncargoEx" />

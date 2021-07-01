@@ -8,6 +8,7 @@
       <w>detailrecyclerview</w>
       <w>incaro</w>
       <w>intdate</w>
+      <w>keypath</w>
       <w>koacaiia</w>
       <w>kocaiia</w>
       <w>longlistener</w>
@@ -27,6 +28,7 @@
       <w>totalqty</w>
       <w>workmessage</w>
       <w>workmessageimagelist</w>
+      <w>workprocess</w>
     </words>
   </dictionary>
 </component>

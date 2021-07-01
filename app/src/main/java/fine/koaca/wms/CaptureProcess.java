@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -54,6 +55,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     ArrayList<ImageViewList> captureImageList=new ArrayList<ImageViewList>();
     ImageViewListAdapter adapter;
     ArrayList<String> uriString=new ArrayList<String>();
+    Context context;
 
     public CaptureProcess(CameraCapture mainActivity,ImageViewListAdapter adapter) {
         this.mainActivity = mainActivity;
@@ -63,6 +65,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     public CaptureProcess() {
 
     }
+
 
     public void preViewProcess() {
         mainActivity.surfaceHolder.addCallback(this);
@@ -187,7 +190,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize);
-
+                    Log.i("TestValue","Shared Message 2"+"arrSize++"+arSize);
                 }
 
             })
@@ -370,13 +373,15 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         String imageUri=String.valueOf(uri);
 
                         uriString.add(imageUri);
+//
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
                         messageList.setTime(timeStamp);
                         messageList.setMsg(msg);
 
 
-                        if(arSize-1==i){
+
+                        if(uriString.size()-1==i){
 
                             String strUri0 = null;
                             String strUri1=null;

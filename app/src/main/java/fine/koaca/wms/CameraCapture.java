@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -86,6 +87,8 @@ public class CameraCapture extends AppCompatActivity
 
     static RequestQueue requestQueue;
 
+
+
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +96,8 @@ public class CameraCapture extends AppCompatActivity
         setContentView(R.layout.activity_camera_capture);
         requestPermissions(permission_list,0);
         intentGetItems();
+
+
 
         FirebaseMessaging.getInstance().subscribeToTopic("testUp");
 
@@ -468,9 +473,8 @@ public class CameraCapture extends AppCompatActivity
             Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
             String strRef = date_today + "/" + consigneeName+"/"+uploadItem+"/" + System.currentTimeMillis() + ".jpg";
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize);
-
-
         }
+
         PushFcmProgress push=new PushFcmProgress(requestQueue);
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
 

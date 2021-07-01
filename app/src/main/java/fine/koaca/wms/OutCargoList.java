@@ -1,6 +1,8 @@
 package fine.koaca.wms;
 
-public class OutCargoList {
+import java.io.Serializable;
+
+public class OutCargoList implements Serializable {
     String consigneeName;
     String date;
     String description;
@@ -9,12 +11,14 @@ public class OutCargoList {
     String eaQty;
     String pltQty;
     String totalQty;
+    String keypath;
+    String workprocess;
 
     public OutCargoList(){
 
     }
 
-    public OutCargoList(String consigneeName, String date, String description, String managementNo, String outwarehouse, String eaQty, String pltQty, String totalQty) {
+    public OutCargoList(String consigneeName, String date, String description, String managementNo, String outwarehouse, String eaQty, String pltQty, String totalQty, String keypath, String workprocess) {
         this.consigneeName = consigneeName;
         this.date = date;
         this.description = description;
@@ -23,6 +27,8 @@ public class OutCargoList {
         this.eaQty = eaQty;
         this.pltQty = pltQty;
         this.totalQty = totalQty;
+        this.keypath = keypath;
+        this.workprocess = workprocess;
     }
 
     public String getConsigneeName() {
@@ -87,5 +93,21 @@ public class OutCargoList {
 
     public void setTotalQty(String totalQty) {
         this.totalQty = totalQty;
+    }
+
+    public String getKeypath() {
+        return keypath;
+    }
+
+    public void setKeypath(String keypath) {
+        this.keypath = keypath;
+    }
+
+    public String getWorkprocess() {
+        return workprocess;
+    }
+
+    public void setWorkprocess(String workprocess) {
+        this.workprocess = workprocess;
     }
 }
