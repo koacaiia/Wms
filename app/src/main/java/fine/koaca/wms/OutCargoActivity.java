@@ -61,8 +61,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
         }
 
-
-
         adapter=new OutCargoListAdapter(list,this,this);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
@@ -118,14 +116,14 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             public void onClick(DialogInterface dialog, int which) {
                 switch(which){
                     case 0:
-                       updateValue();
+                        updateValue("완");
                         break;
                     case 1:
-//                        updateValue();
+                        updateValue("완");
                         intentImageViewActivity();
                         break;
                     case 2:
-                        Toast.makeText(getApplicationContext(),"2"+clickValueList[which],Toast.LENGTH_SHORT).show();
+                        updateValue("미");
                         break;
                 }
                 dialog.dismiss();
@@ -139,11 +137,11 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         startActivity(intent);
     }
 
-    public void updateValue(){
+    public void updateValue(String updateValue){
         DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
 
         Map<String,Object> value=new HashMap<>();
-        value.put("workprocess","완");
+        value.put("workprocess",updateValue);
         dataRef.updateChildren(value);
 
         adapter.notifyDataSetChanged();

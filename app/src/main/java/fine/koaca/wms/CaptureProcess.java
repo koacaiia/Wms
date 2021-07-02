@@ -1,9 +1,14 @@
 package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -190,7 +195,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize);
-                    Log.i("TestValue","Shared Message 2"+"arrSize++"+arSize);
+
+
                 }
 
             })
@@ -372,7 +378,41 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     public void onSuccess(Uri uri) {
                         String imageUri=String.valueOf(uri);
 
-                        uriString.add(imageUri);
+//                        uriString.add(imageUri);
+                        if(uriString.size()==0){
+                            AlertDialog.Builder builder=new AlertDialog.Builder(mainActivity);
+                            builder.setTitle("전송실패")
+                                    .setMessage("전송중 오류 발생하였습니다.다시 진행 바랍니다.")
+                                    .setPositiveButton("재전송", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            mainActivity.upCapturePictures(consigneeName,inoutCargo);
+                                        }
+                                    })
+                                    .setNegativeButton("카톡으로 전송", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            String message=nick+":"+consigneeName+"_"+inoutCargo+"사진 전달";
+
+                                            mainActivity.sendMessage(message+"(카톡)");
+                                            Intent intent=new Intent(Intent.ACTION_SEND);
+                                            intent.setType("text/plain");
+                                            intent.putExtra(Intent.EXTRA_TEXT, message );
+                                            intent.setPackage("com.kakao.talk");
+                                            mainActivity.startActivity(intent);
+                                        }
+                                    })
+                                    .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(mainActivity.getApplicationContext(), "사진 전송을 취소 합니다.",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .show();
+                            return;
+                        }
 //
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
@@ -449,9 +489,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                 "/"+nick+"_"+timeStamp);
                         databaseReference.setValue(messageList);
                         if(arSize-1==i){
-
+                            mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                            mainActivity.initIntent();
-
                         }
 
                     }
