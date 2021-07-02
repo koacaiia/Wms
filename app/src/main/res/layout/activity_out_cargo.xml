@@ -10,8 +10,7 @@
     <TextView
         android:id="@+id/activity_list_outcargo_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="14"
+        android:layout_height="50dp"
         android:gravity="center"
         android:text="TextView"
         android:textStyle="bold|italic" />
@@ -19,7 +18,14 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/activity_list_outcargo_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:visibility="visible" />
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_list_outcargo_imageviewRe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ public class OutCargoImageViewActivity extends AppCompatActivity implements Imag
     ArrayList<String> imageViewLists=new ArrayList<>();
     ImageViewActivityAdapter adapter;
     CaptureProcess captureProcess;
-
+    TextView txtTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -4,11 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/outcargoActivity_date"
-        android:title="날짜조회"
+        android:title="완료건 포함날짜 조회"
         app:showAsAction="always" />
 
-    <item
-        android:id="@+id/outcargoActivity_Allsearch"
-        android:title="모든내역조회"
-        app:showAsAction="always" />
 </menu>
