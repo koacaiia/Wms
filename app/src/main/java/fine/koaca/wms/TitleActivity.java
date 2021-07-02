@@ -15,6 +15,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     DatabaseReference databaseReferenceOut;
     DatabaseReference databaseReferenceIn;
     ArrayList<OutCargoList> listOut;
+    ArrayList<OutCargoList> listOutSort;
     ArrayList<Fine2IncargoList> listIn;
     OutCargoListAdapter adapterOut;
     IncargoListAdapter adapterIn;
@@ -51,8 +53,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         txtTitle=findViewById(R.id.activity_title_txttile);
 
         txtTitle.setText(dateToday+"일  입,출고 현황 ");
-
-
 
         recyclerViewOut=findViewById(R.id.titleRecyclerOut);
         recyclerViewIn=findViewById(R.id.titleRecyclerOutIn);
@@ -77,6 +77,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         ValueEventListener listener=new ValueEventListener() {
             ArrayList<OutCargoList> listOutP=new ArrayList<>();
+            ArrayList<OutCargoList> listOutTotal=new ArrayList<>();
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 int intTotalPlt = 0,intTotalEa=0,intProgressPlt=0,intProgressEa=0;
@@ -84,36 +85,38 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                       OutCargoList mList=data.getValue(OutCargoList.class);
                       assert mList != null;
                       String totalQty=mList.getTotalQty();
-                      String outwarehouse=mList.getOutwarehouse();
+                      String workProcess=mList.getWorkprocess();
 
-                      if(outwarehouse.contains("(완)")){
+                      if(workProcess.equals("완")){
                           listOutP.add(mList);
                           if(totalQty.contains("PLT")){
                               intProgressPlt=intProgressPlt+Integer.parseInt(totalQty.substring(0, totalQty.length() - 3));
                           }else{
                               intProgressEa=intProgressEa+ Integer.parseInt(totalQty.substring(0, totalQty.length() - 2));
                           }
+                      }else{
+                          listOut.add(mList);
                       }
                       if(totalQty.contains("PLT")){
                           intTotalPlt=intTotalPlt+ Integer.parseInt(totalQty.substring(0, totalQty.length() - 3));
                       }else{
                           intTotalEa=intTotalEa+ Integer.parseInt(totalQty.substring(0, totalQty.length() - 2));
                       }
-                      listOut.add(mList);
+                      listOutTotal.add(mList);
 
                   }
 
                   int pCargo,pPlt,pEa,rCargo,rPlt,rEa;
 
-                  pCargo=listOut.size()-listOutP.size();
+                  pCargo=listOutTotal.size()-listOutP.size();
                   pPlt=intTotalPlt-intProgressPlt;
                   pEa=intTotalEa-intProgressEa;
 
-                  rCargo= (int)(((double) listOutP.size() /(double) listOut.size())*100);
+                  rCargo= (int)(((double) listOutP.size() /(double) listOutTotal.size())*100);
                   rPlt=(int)(((double) intProgressPlt /(double) intTotalPlt)*100);
                   rEa=(int)(((double) intProgressEa /(double) intTotalEa)*100);
                   TextView totalCargo=findViewById(R.id.titleTotalCargo);
-                  totalCargo.setText(listOut.size()+"건");
+                  totalCargo.setText(listOutTotal.size()+"건");
                   TextView proCargo=findViewById(R.id.titleProgressOutcargo);
                   proCargo.setText(pCargo+"건");
                   TextView rateCargo=findViewById(R.id.titleProgressOutcargoRate);
@@ -143,7 +146,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             }
         };
         databaseReferenceOut=database.getReference("Outcargo2");
-        databaseReferenceOut.addListenerForSingleValueEvent(listener);
+        Query sortByDateOutcargoData=databaseReferenceOut.orderByChild("date").equalTo(dateToday);
+        sortByDateOutcargoData.addListenerForSingleValueEvent(listener);
     }
 
     private void getFirebaseDataIn() {

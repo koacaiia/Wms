@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/outcargoActivity_date"
+        android:title="날짜조회"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/outcargoActivity_Allsearch"
+        android:title="모든내역조회"
+        app:showAsAction="always" />
+</menu>

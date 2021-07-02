@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,6 +60,8 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
 
     @Override
     public int getItemCount() {
+
+        Log.i("TestValue","List Size::::"+list.size());
         return list.size();
     }
 
