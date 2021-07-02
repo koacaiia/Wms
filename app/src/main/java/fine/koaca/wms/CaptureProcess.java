@@ -378,7 +378,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     public void onSuccess(Uri uri) {
                         String imageUri=String.valueOf(uri);
 
-//                        uriString.add(imageUri);
+                        uriString.add(imageUri);
                         if(uriString.size()==0){
                             AlertDialog.Builder builder=new AlertDialog.Builder(mainActivity);
                             builder.setTitle("전송실패")
