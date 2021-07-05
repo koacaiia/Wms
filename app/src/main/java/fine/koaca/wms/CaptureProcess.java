@@ -379,118 +379,81 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         String imageUri=String.valueOf(uri);
 
                         uriString.add(imageUri);
-                        if(uriString.size()==0){
-                            AlertDialog.Builder builder=new AlertDialog.Builder(mainActivity);
-                            builder.setTitle("전송실패")
-                                    .setMessage("전송중 오류 발생하였습니다.다시 진행 바랍니다.")
-                                    .setPositiveButton("재전송", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mainActivity.upCapturePictures(consigneeName,inoutCargo);
-                                        }
-                                    })
-                                    .setNegativeButton("카톡으로 전송", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                            String message=nick+":"+consigneeName+"_"+inoutCargo+"사진 전달";
-
-                                            mainActivity.sendMessage(message+"(카톡)");
-                                            Intent intent=new Intent(Intent.ACTION_SEND);
-                                            intent.setType("text/plain");
-                                            intent.putExtra(Intent.EXTRA_TEXT, message );
-                                            intent.setPackage("com.kakao.talk");
-                                            mainActivity.startActivity(intent);
-                                        }
-                                    })
-                                    .setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Toast.makeText(mainActivity.getApplicationContext(), "사진 전송을 취소 합니다.",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .show();
-                            return;
-                        }
-//
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
                         messageList.setTime(timeStamp);
                         messageList.setMsg(msg);
 
+                        FirebaseDatabase database=FirebaseDatabase.getInstance();
+                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
+                                "/"+nick+"_"+timeStamp);
+                            String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="";
+
+                            try{
+                                switch(i){
+
+                                    case 0:
+                                        strUri0=uriString.get(0);
+
+                                        break;
+                                    case 1:
+                                        strUri0=uriString.get(0);
+                                        strUri1=uriString.get(1);
+                                        break;
+                                    case 2:
+                                        strUri0=uriString.get(0);
+                                        strUri1=uriString.get(1);
+                                        strUri2=uriString.get(2);
+                                        break;
+                                    case 3:
+                                        strUri0=uriString.get(0);
+                                        strUri1=uriString.get(1);
+                                        strUri2=uriString.get(2);
+                                        strUri3=uriString.get(3);
+                                        break;
+                                    case 4:
+                                        strUri0=uriString.get(0);
+                                        strUri1=uriString.get(1);
+                                        strUri2=uriString.get(2);
+                                        strUri3=uriString.get(3);
+                                        strUri4=uriString.get(4);
+                                        break;
+
+                                }
+                            }catch(IndexOutOfBoundsException e){
+                               Toast.makeText(mainActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
+                                messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
+                            }
 
 
-                        if(uriString.size()-1==i){
-
-                            String strUri0 = null;
-                            String strUri1=null;
-                            String strUri2=null;
-                            String strUri3=null;
-                            String strUri4=null;
-                            switch(i){
-                                case 0:
-                                   strUri0=uriString.get(0);
-                                   break;
-                                case 1:
-                                    strUri0=uriString.get(0);
-                                    strUri1=uriString.get(1);
-                                    break;
-                                case 2:
-                                    strUri0=uriString.get(0);
-                                    strUri1=uriString.get(1);
-                                    strUri2=uriString.get(2);
-                                    break;
-                                case 3:
-                                    strUri0=uriString.get(0);
-                                    strUri1=uriString.get(1);
-                                    strUri2=uriString.get(2);
-                                    strUri3=uriString.get(3);
-                                    break;
-                                case 4:
-                                    strUri0=uriString.get(0);
-                                    strUri1=uriString.get(1);
-                                    strUri2=uriString.get(2);
-                                    strUri3=uriString.get(3);
-                                    strUri4=uriString.get(4);
-                                    break;
-                            }
-
-                            if(strUri0==null){
-                                strUri0="";
-                            }
-                            if(strUri1==null){
-                                strUri1="";
-                            }
-                            if(strUri2==null){
-                                strUri2="";
-                            }
-                            if(strUri3==null){
-                                strUri3="";
-                            }
-                            if(strUri4==null){
-                                strUri4="";
-                            }
                             messageList.setUri0(strUri0);
                             messageList.setUri1(strUri1);
                             messageList.setUri2(strUri2);
                             messageList.setUri3(strUri3);
                             messageList.setUri4(strUri4);
 
-                            Toast.makeText(mainActivity,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
-                        }
-
-
                         messageList.setDate(timeStamp_date);
                         messageList.setConsignee(consigneeName);
                         messageList.setInOutCargo(inoutCargo);
-                        FirebaseDatabase database=FirebaseDatabase.getInstance();
-                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-                                "/"+nick+"_"+timeStamp);
+
                         databaseReference.setValue(messageList);
                         if(arSize-1==i){
-                            mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                           mainActivity.initIntent();
+                            if(arSize==uriString.size()){
+                                mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                                Toast.makeText(mainActivity,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
+                                mainActivity.initIntent();
+                            }else{
+//                                Map<String,Object> value=new HashMap<>();
+//                                value.put("msg",
+//                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+//                                databaseReference.updateChildren(value);
+//                                Log.i("TestValue",
+//                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+
+                                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size());
+
+                            }
+
                         }
 
                     }
@@ -504,14 +467,44 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                     }
                 });
-
-
     }
 
+    public void failedUpLoad(String nick, String consigneeName, String inoutCargo, int arSize, int size){
+        AlertDialog.Builder builder=new AlertDialog.Builder(mainActivity);
+        AlertDialog dialog=builder.create();
+        builder.setTitle("전송실패")
+                .setMessage("전송중 오류 발생하였습니다.다시 진행 바랍니다."+"\n"+"전송요청 사진:"+arSize+"장"+"\n"+"실재 서버 전송사진 숫자:"+size+"장")
+                .setPositiveButton("재전송", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(mainActivity,CameraCapture.class);
+                        mainActivity.startActivity(intent);
+                    }
+                })
+                .setNegativeButton("카톡으로 전송", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String message=nick+":"+consigneeName+"_"+inoutCargo+"사진 전달";
+
+                        mainActivity.sendMessage(message+"(카톡)");
+                        Intent intent=new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, message );
+                        intent.setPackage("com.kakao.talk");
+                        mainActivity.startActivity(intent);
+                    }
+                })
+                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
 
+                    }
+                })
+                .show();
 
-
+    }
 }
 
 

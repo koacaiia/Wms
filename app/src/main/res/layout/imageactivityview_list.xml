@@ -6,6 +6,7 @@
     android:background="@xml/item_selector">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/capturecardview_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:cardCornerRadius="10dp"

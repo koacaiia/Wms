@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,6 +43,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WorkingMessageData extends AppCompatActivity implements Serializable {
     private FirebaseDatabase database;
@@ -68,6 +72,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
     RequestQueue requestQueue;
     String alertDepot;
+    String pickedDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,11 +171,106 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                    }
                 });
 
+                fab_search.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        workingMessageListSortByDate();
+                        return true;
+                    }
+                });
+
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
     }
 
+    private void workingMessageListSortByDate() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        DatePicker pickerDialog=new DatePicker(this);
+
+        builder.setTitle("항목 삭제")
+                .setMessage("지정일 이후 메세지 항목 삭제진행"+"\n"+"기존 서버자료 필히 백업후 진행 바랍니다")
+                .setView(pickerDialog)
+                .setPositiveButton("목록삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dataList.clear();
+                        ArrayList<String> pathKey=new ArrayList<>();
+                        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+                                for(DataSnapshot data:snapshot.getChildren()){
+                                    WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+                                    String key=data.getKey();
+                                    dataList.add(mList);
+                                    pathKey.add(key);
+
+                                }
+
+                                int dataListSize=dataList.size();
+                                for(int i=0;i<dataListSize;i++){
+                                    String transDate;
+                                    String pickedDateRe;
+                                    String refPath="WorkingMessage"+"/"+dataList.get(i).getNickName()+"_"+dataList.get(i).getTime();
+                                    pickedDateRe=pickedDate.replace("년","")
+                                            .replace("월","")
+                                            .replace("일","");
+                                    int intPickedDateRe=Integer.parseInt(pickedDateRe);
+                                    if(dataList.get(i).getDate()!=null){
+                                        transDate=dataList.get(i).getDate().replace("년","")
+                                                .replace("월","")
+                                                .replace("일","");
+                                    }else{
+                                        transDate=("20210101");
+                                    }
+
+                                    int intTransDate=Integer.parseInt(transDate);
+
+                                    if(intTransDate<intPickedDateRe){
+                                        Log.i("TestValue","DateInDataBase:::"+pathKey.get(i));
+                                        Map<String,Object> value=new HashMap<>();
+                                        value.put(pathKey.get(i)+"/",null);
+                                        DatabaseReference databaseReferenceIn=
+                                                database.getReference("WorkingMessage");
+                                        databaseReferenceIn.updateChildren(value);
+                                    }
+
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+                        }
+                })
+                .show();
+        pickerDialog.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                String month;
+                String date;
+                if((monthOfYear+1)<10){
+                    month="년0"+(monthOfYear+1)+"월";
+                }else{
+                    month="년"+(monthOfYear+1)+"월";
+                }
+                if(dayOfMonth<10){
+                    date="0"+dayOfMonth+"일";
+                    }else{
+                    date=dayOfMonth+"일";
+                }
+                pickedDate=year+month+date;
+                Toast.makeText(getApplicationContext(),pickedDate+"선택 되었습니다.",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
 
     public void getWorkingMessageList(String dialog_date, String dialog_consignee, String upLoadItemsName) {
@@ -389,6 +489,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         @Override
         public int compare(WorkingMessageList a, WorkingMessageList b) {
             int compare=0;
+
             compare=b.time.replaceAll("[^0-9]", "").compareTo(a.time.replaceAll("[^0-9]", ""));
             return compare;
         }

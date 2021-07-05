@@ -329,7 +329,7 @@ if(add){
             Fine2IncargoList list=new Fine2IncargoList(bl,description,date,count,container,incargo,remark,container40,container20,
                     lclCargo,working,
                     location,consignee);
-                Log.i("putdatalistupdate",String.valueOf(listItems.size()));
+
             postValues=list.toMap();
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);}
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);

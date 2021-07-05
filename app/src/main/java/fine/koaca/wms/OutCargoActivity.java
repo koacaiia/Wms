@@ -243,7 +243,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 String month,day;
-                if(monthOfYear<10){
+                if((monthOfYear+1)<10){
                     month="0"+(monthOfYear+1);
                 }else{
                     month=String.valueOf(monthOfYear+1);

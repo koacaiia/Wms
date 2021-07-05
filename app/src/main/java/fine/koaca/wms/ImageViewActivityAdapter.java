@@ -1,11 +1,14 @@
 package fine.koaca.wms;
 
+import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +20,7 @@ import java.util.ArrayList;
 public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActivityAdapter.ListView>{
     ArrayList<String> list;
     ImageViewClicked clickListener;
+    SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
 
 
     public interface ImageViewClicked {
@@ -44,6 +48,7 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
                 .load(str)
                 .into(holder.imageView);
 
+
     }
 
     @Override
@@ -53,14 +58,21 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
 
     public class ListView extends RecyclerView.ViewHolder {
         ImageView imageView;
+        CardView cardView;
         public ListView(@NonNull @NotNull View itemView) {
             super(itemView);
             this.imageView=itemView.findViewById(R.id.captureimageview_activity);
+            this.cardView=itemView.findViewById(R.id.capturecardview_activity);
 
             this.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     clickListener.imageViewClicked(ListView.this,v,getAdapterPosition());
+                    if(mSelectedItems.get(getAdapterPosition(),false)){
+                        mSelectedItems.put(getAdapterPosition(),true);
+                    }else{
+                        mSelectedItems.put(getAdapterPosition(),false);
+                    }
                 }
             });
         }

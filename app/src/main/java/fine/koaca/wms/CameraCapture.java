@@ -131,9 +131,8 @@ public class CameraCapture extends AppCompatActivity
         btn_capture.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                captureProcess.downLoadingOnlyImage();
-               adapter.clearSelectedItem();
-
+                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+                startActivity(intent);
                 return true;
             }
         });
@@ -384,14 +383,8 @@ public class CameraCapture extends AppCompatActivity
                                 imageView4.setImageBitmap(resource);
                             }
                         });
-
-
-
                 break;
         }
-
-
-
 
         spinner_edit.setOnClickListener(new View.OnClickListener() {
             @Override

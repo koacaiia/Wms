@@ -124,7 +124,6 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
                 public boolean onLongClick(View v) {
                     int position=getAdapterPosition();
 //                    longlistener.onItemLongSelected(v,position);
-                    Log.i("koacaiia","longclickPostion"+position);
                     return true;
                 }
             });
