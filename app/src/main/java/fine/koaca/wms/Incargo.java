@@ -2,6 +2,7 @@ package fine.koaca.wms;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -162,6 +163,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     private long mShakeTime;
     private static final int SHAKE_SKIP_TIME=500;
     private static final float SHAKE_THERESHOLD_GRAVITY=2.7F;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

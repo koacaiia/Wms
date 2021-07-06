@@ -1,5 +1,6 @@
 package fine.koaca.wms;
 
+import android.graphics.Color;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -47,6 +48,11 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
         Glide.with(holder.itemView)
                 .load(str)
                 .into(holder.imageView);
+        if(mSelectedItems.get(position,true)){
+            holder.itemView.setBackgroundColor(Color.WHITE);
+        }else{
+            holder.itemView.setBackgroundColor(Color.BLACK);
+        }
 
 
     }
@@ -68,11 +74,12 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
                 @Override
                 public void onClick(View v) {
                     clickListener.imageViewClicked(ListView.this,v,getAdapterPosition());
-                    if(mSelectedItems.get(getAdapterPosition(),false)){
-                        mSelectedItems.put(getAdapterPosition(),true);
-                    }else{
+                    if(mSelectedItems.get(getAdapterPosition(),true)){
                         mSelectedItems.put(getAdapterPosition(),false);
+                    }else{
+                        mSelectedItems.put(getAdapterPosition(),true);
                     }
+                    notifyItemChanged(getAdapterPosition());
                 }
             });
         }

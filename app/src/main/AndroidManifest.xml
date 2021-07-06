@@ -26,11 +26,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".OutCargoImageViewActivity"></activity>
         <activity android:name=".TitleActivity" />
         <activity android:name=".OutCargoActivity" />
         <activity android:name=".AnnualLeave" />
-        <activity android:name=".IncargoEx" />
 
         <service android:name=".FcmProcessService">
             <intent-filter>
@@ -38,13 +36,7 @@
             </intent-filter>
         </service>
 
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="false">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver> <!-- <activity android:name=".FcmProcess" /> -->
+        <!-- <activity android:name=".FcmProcess" /> -->
         <activity android:name=".PutDataReg" />
         <activity
             android:name=".ImageViewActivity"

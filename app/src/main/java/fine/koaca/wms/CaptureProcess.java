@@ -2,9 +2,6 @@ package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -43,7 +40,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fine.koaca.MyApplication;
@@ -53,6 +49,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class CaptureProcess implements SurfaceHolder.Callback {
     Camera camera;
     CameraCapture mainActivity=new CameraCapture();
+    OutCargoActivity outCargoActivity=new OutCargoActivity();
     WindowDegree windowDegree;
     ContentResolver contentResolver;
     ContentValues contentValues;
@@ -60,14 +57,18 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     ArrayList<ImageViewList> captureImageList=new ArrayList<ImageViewList>();
     ImageViewListAdapter adapter;
     ArrayList<String> uriString=new ArrayList<String>();
-    Context context;
+
 
     public CaptureProcess(CameraCapture mainActivity,ImageViewListAdapter adapter) {
         this.mainActivity = mainActivity;
         this.adapter=adapter;
     }
 
-    public CaptureProcess() {
+
+    public CaptureProcess(OutCargoActivity outCargoActivity) {
+      this.outCargoActivity=outCargoActivity;
+    }
+    public CaptureProcess(){
 
     }
 
@@ -180,7 +181,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     }
 
     public synchronized void firebaseCameraUpLoad(Uri imageUri, String captureItem, String uploadItem, String nick,
-                                                  String message, String strRef, int i, int arSize) {
+                                                  String message, String strRef, int i, int arSize, String context) {
 
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference = storage.getReference();
@@ -194,7 +195,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize);
+                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize,context);
 
 
                 }
@@ -203,7 +204,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
 //                    String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
 //                    putMessage(msg, "", captureItem, uploadItem);
 //                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem, i,arSize);
@@ -368,7 +369,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     }
 
     public void receivedUri(StorageReference recvRef, String nick, String timeStamp, String msg, String timeStamp_date,
-                            String consigneeName, String inoutCargo, int i,int arSize){
+                            String consigneeName, String inoutCargo, int i, int arSize, String context){
 
 
         recvRef.getDownloadUrl()
@@ -376,6 +377,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                     @Override
                     public void onSuccess(Uri uri) {
+
+
                         String imageUri=String.valueOf(uri);
 
                         uriString.add(imageUri);
@@ -421,8 +424,19 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                                 }
                             }catch(IndexOutOfBoundsException e){
-                               Toast.makeText(mainActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
-                                messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
+
+                                switch(context){
+                                    case "OutCargoActivity":
+                                        Toast.makeText(outCargoActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case "CameraCapture":
+                                        Toast.makeText(mainActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
+                                                Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+
+
+                                 messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
                             }
 
 
@@ -439,18 +453,35 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         databaseReference.setValue(messageList);
                         if(arSize-1==i){
                             if(arSize==uriString.size()){
-                                mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                                Toast.makeText(mainActivity,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
-                                mainActivity.initIntent();
-                            }else{
-//                                Map<String,Object> value=new HashMap<>();
-//                                value.put("msg",
-//                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-//                                databaseReference.updateChildren(value);
-//                                Log.i("TestValue",
-//                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
 
-                                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size());
+//                                mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+//                                Toast.makeText(context,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
+//                            Intent intent=new Intent(context,context.getClass());
+//                            context.startActivity(intent);
+                                switch(context){
+
+                                    case "OutCargoActivity":
+
+                                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                                                Toast.LENGTH_SHORT).show();
+                                        Intent intent=new Intent(outCargoActivity.getApplicationContext(),OutCargoActivity.class);
+                                        outCargoActivity.startActivity(intent);
+                                        break;
+                                    case "CameraCapture":
+                                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                                                Toast.LENGTH_SHORT).show();
+                                        mainActivity.initIntent();
+                                        break;
+                                }
+                            }else{
+                                Map<String,Object> value=new HashMap<>();
+                                value.put("msg",
+                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+                                databaseReference.updateChildren(value);
+                                Log.i("TestValue",
+                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+
+                                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size(),context);
 
                             }
 
@@ -469,16 +500,30 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 });
     }
 
-    public void failedUpLoad(String nick, String consigneeName, String inoutCargo, int arSize, int size){
-        AlertDialog.Builder builder=new AlertDialog.Builder(mainActivity);
+    public void failedUpLoad(String nick, String consigneeName, String inoutCargo, int arSize, int size, String context){
+
+
+        AlertDialog.Builder builder;
+        if(context.equals("CameraCapture")){
+            builder=new AlertDialog.Builder(mainActivity);
+        }else{
+            builder=new AlertDialog.Builder(outCargoActivity);
+        }
+
         AlertDialog dialog=builder.create();
         builder.setTitle("전송실패")
                 .setMessage("전송중 오류 발생하였습니다.다시 진행 바랍니다."+"\n"+"전송요청 사진:"+arSize+"장"+"\n"+"실재 서버 전송사진 숫자:"+size+"장")
                 .setPositiveButton("재전송", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(mainActivity,CameraCapture.class);
-                        mainActivity.startActivity(intent);
+                        if(context.equals("CameraCapture")){
+                            Intent intent=new Intent(mainActivity,CameraCapture.class);
+                            mainActivity.startActivity(intent);
+                        }else{
+                            Intent intent=new Intent(outCargoActivity,OutCargoActivity.class);
+                            outCargoActivity.startActivity(intent);
+                        }
+
                     }
                 })
                 .setNegativeButton("카톡으로 전송", new DialogInterface.OnClickListener() {
@@ -492,7 +537,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         intent.setType("text/plain");
                         intent.putExtra(Intent.EXTRA_TEXT, message );
                         intent.setPackage("com.kakao.talk");
-                        mainActivity.startActivity(intent);
+                        if(context.equals("CameraCapture")){
+
+                            mainActivity.startActivity(intent);
+                        }else{
+
+                            outCargoActivity.startActivity(intent);
+                        }
                     }
                 })
                 .setNeutralButton("취소", new DialogInterface.OnClickListener() {

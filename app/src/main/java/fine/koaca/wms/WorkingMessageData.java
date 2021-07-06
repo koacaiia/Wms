@@ -249,6 +249,46 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                         });
                         }
                 })
+                .setNegativeButton("Test항목 삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dataList.clear();
+                        ArrayList<String> pathKey=new ArrayList<>();
+                        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+                        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+
+                                for(DataSnapshot data:snapshot.getChildren()){
+                                    WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+                                    String key=data.getKey();
+                                    dataList.add(mList);
+                                    pathKey.add(key);
+                                }
+                                int dataListSize=dataList.size();
+                                for(int i=0;i<dataListSize;i++){
+                                    String nickName=dataList.get(i).nickName;
+                                    if(nickName.equals("Test")){
+                                        Map<String,Object> value=new HashMap<>();
+                                        value.put(pathKey.get(i)+"/",null);
+                                        DatabaseReference databaseReferenceIn=
+                                                database.getReference("WorkingMessage");
+                                        databaseReferenceIn.updateChildren(value);
+                                    }
+
+                                }
+                                adapter.notifyDataSetChanged();
+                            }
+
+
+                            @Override
+                            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+                            }
+                        });
+
+                    }
+                })
                 .show();
         pickerDialog.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
             @Override

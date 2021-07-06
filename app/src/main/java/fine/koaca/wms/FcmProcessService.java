@@ -99,16 +99,10 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
             default:
                 throw new IllegalStateException("Unexpected value: " + contents);
         } 
-//        intent.putExtra("vibrator", getApplicationContext().toString());
-//        intent.putExtra("vib", (Serializable) vibrator);
-//        intent.putExtra("rt", (Serializable) ringtone);
-        Intent fullscreenIntent = new Intent(this, IncargoEx.class);
 
-//        intent.putExtra("vibrate", "cancel");
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(this, 0, fullscreenIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
+
 
 
         NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert")
@@ -191,21 +185,5 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         notificationManager.cancel(0);
 
     }
-    @SuppressLint("ShortAlarm")
-    public void alarmManager(){
-        PackageManager pm=this.getPackageManager();
-        ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
-        pm.setComponentEnabledSetting(receiver,
-                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                PackageManager.DONT_KILL_APP);
 
-        AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);
-        Date t = new Date();
-        t.setTime(java.lang.System.currentTimeMillis() + 300);
-        Intent intent=new Intent(FcmProcessService.this, AlarmReceiver.class);
-        PendingIntent alarmIntent=PendingIntent.getBroadcast(this,0,intent,0  );
-        am.setRepeating(AlarmManager.RTC_WAKEUP,t.getTime(),60,alarmIntent);
-        Log.i("koacaiia","koacaiia___alarmManager Run Completed");
-
-    }
 }

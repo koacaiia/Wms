@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.icu.text.StringPrepParseException;
 import android.net.Uri;
@@ -16,14 +18,17 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -53,7 +58,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     String refPath;
 
     ArrayList<String> imageViewLists=new ArrayList<>();
+    ArrayList<String> clickedImageViewLists=new ArrayList<>();
     ImageViewActivityAdapter iAdapter;
+    SparseBooleanArray clickedArray=new SparseBooleanArray(0);
+    FloatingActionButton fltBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,15 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         dateToDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
+        fltBtn=findViewById(R.id.activity_list_outcargo_flb);
+        fltBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                upCapturePictures("OutCargo",list.get(0).consigneeName);
+
+            }
+        });
         recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager=new LinearLayoutManager(this);
@@ -84,6 +100,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         txtTitle=findViewById(R.id.activity_list_outcargo_title);
         txtTitle.setText(dateToDay+" 출고 목록");
+
     }
 
     private void getOutcargoData() {
@@ -191,7 +208,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
         imageRecyclerView.setAdapter(iAdapter);
 
-
     }
 
     private void intentTitleActivity() {
@@ -199,10 +215,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         startActivity(intent);
     }
 
-    private void intentImageViewActivity() {
-        Intent intent=new Intent(this,OutCargoImageViewActivity.class);
-        startActivity(intent);
-    }
 
     public void updateValue(String updateValue){
         DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
@@ -313,6 +325,46 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        String uriString=imageViewLists.get(position);
+       if(clickedArray.get(position,false)){
+           clickedArray.delete(position);
+           clickedImageViewLists.remove(uriString);
+       }else{
+           clickedArray.put(position,true);
+           clickedImageViewLists.add(uriString);
+       }
+       if(clickedImageViewLists.size()>5){
+           AlertDialog.Builder builder=new AlertDialog.Builder(this);
+           builder.setTitle("!사진전송 주의사항")
+                   .setMessage("한번에 전송할수 있는 사진은 최대 5장 입니다.")
+                   .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialog, int which) {
+                           Toast.makeText(getApplicationContext(),"사진을 다신 선택 하기 바랍니다.",Toast.LENGTH_SHORT).show();
+
+                       }
+                   }).show();
+       }
+       String clickedPictureCount="("+clickedImageViewLists.size()+"장 선택)";
+        txtTitle.setText(dateToDay+" 출고 목록"+clickedPictureCount);
+    }
+
+    public void upCapturePictures(String inoutItems,String consigneeName){
+        int arrsize=clickedImageViewLists.size();
+
+        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
+        String nick=sharedPreferences.getString("nickName","Fine");
+
+        String message=consigneeName+"_"+inoutItems+"_사진 업로드";
+        CaptureProcess captureProcess=new CaptureProcess(this);
+        String activityName=this.getClass().getSimpleName();
+        for(int i=0;i<arrsize;i++){
+            Uri uri = Uri.fromFile(new File(clickedImageViewLists.get(i)));
+            String strRef = dateToDay + "/" + consigneeName+"/"+inoutItems+"/" + nick+System.currentTimeMillis() + ".jpg";
+            captureProcess.firebaseCameraUpLoad(uri, consigneeName, inoutItems, nick, message,strRef,i,arrsize,activityName);
+        }
+
+
 
     }
 }

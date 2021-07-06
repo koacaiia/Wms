@@ -70,10 +70,7 @@ public class ExtractConsigneeList {
                    if(!consigneeName.equals("")){
                        if(!arrayListConsigneeList.contains(consigneeName)){
                            arrayListConsigneeList.add(consigneeName);
-
-
                        }
-
                    }
                }
                arrayListConsigneeList.add("Etc");

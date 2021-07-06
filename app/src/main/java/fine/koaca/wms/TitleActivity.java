@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -39,15 +40,27 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     IncargoListAdapter adapterIn;
     String dateToday;
 
-
     TextView txtTitle;
+    static private final String SHARE_NAME="SHARE_DEPOT";
+    static SharedPreferences sharedPref;
+    static SharedPreferences.Editor editor;
 
+    String departmentName,nickName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
 
+        sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
+        if(sharedPref.getString("depotName",null)==null){
+            NickCheckProcess nickcheckProcess=new NickCheckProcess(this);
+            nickcheckProcess.putUserInformation();
+            return;
+        }
+
+        departmentName=sharedPref.getString("depotName",null);
+        nickName=sharedPref.getString("nickName",null);
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         txtTitle=findViewById(R.id.activity_title_txttile);
@@ -66,6 +79,14 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         getFirebaseDataOut();
         adapterOut=new OutCargoListAdapter(listOut,this,this);
         adapterIn=new IncargoListAdapter(listIn,this);
+
+        adapterIn.setAdapterClickListener(new AdapterClickListener() {
+            @Override
+            public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+                Intent intent=new Intent(getApplicationContext(),Incargo.class);
+                startActivity(intent);
+            }
+        });
         recyclerViewOut.setAdapter(adapterOut);
         recyclerViewIn.setAdapter(adapterIn);
         adapterOut.notifyDataSetChanged();

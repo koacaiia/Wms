@@ -15,7 +15,7 @@ public class ConsigneeList {
     }
 
     public String[] getConsigneeList_list() {
-        Log.i("TestValue","Call back confirm");
+
         return consigneeList_list;
     }
 

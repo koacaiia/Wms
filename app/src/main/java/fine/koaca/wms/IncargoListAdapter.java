@@ -26,7 +26,7 @@ implements AdapterClickListener,AdapterLongClickListener{
     private final SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
     Context context;
 
-    public IncargoListAdapter(ArrayList<Fine2IncargoList> list, Context context) {
+    public  IncargoListAdapter(ArrayList<Fine2IncargoList> list, Context context) {
         this.context=context;
         this.list=list;
     }

@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
@@ -39,7 +38,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -462,10 +460,11 @@ public class CameraCapture extends AppCompatActivity
         String nick=sharedPreferences.getString("nickName","Fine");
 
         String message=consigneeName+"_"+uploadItem+"_사진 업로드";
+        String activityName=this.getClass().getSimpleName();
         for(int i=0;i<arrsize;i++){
             Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
             String strRef = date_today + "/" + consigneeName+"/"+uploadItem+"/" + nick+System.currentTimeMillis() + ".jpg";
-            captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize);
+            captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize, activityName);
         }
 
 
