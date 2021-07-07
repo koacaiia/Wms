@@ -5,30 +5,50 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class TitleActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener , Serializable {
+public class TitleActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener ,
+        Serializable, SensorEventListener {
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
     FirebaseDatabase database;
@@ -48,17 +68,38 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     String departmentName,nickName,wareHouseDepot,alertDepot;
 
+    SensorManager mSensorManager;
+    Sensor mAccelerometer;
+    private long mShakeTime;
+    private static final int SHAKE_SKIP_TIME=500;
+    private static final float SHAKE_THERESHOLD_GRAVITY=2.7F;
+
+    String [] permission_list={
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.VIBRATE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.USE_FULL_SCREEN_INTENT,
+            Manifest.permission.ANSWER_PHONE_CALLS,
+    };
+
+    static RequestQueue requestQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
 
+        requestPermissions(permission_list,0);
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
         if(sharedPref.getString("depotName",null)==null){
             NickCheckProcess nickcheckProcess=new NickCheckProcess(this);
             nickcheckProcess.putUserInformation();
             return;
         }
+
+
 
         departmentName=sharedPref.getString("depotName",null);
         nickName=sharedPref.getString("nickName",null);
@@ -86,6 +127,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         txtTitle=findViewById(R.id.activity_title_txttile);
 
         txtTitle.setText(dateToday+"일  입,출고 현황 ");
+        txtTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initIntent();
+            }
+        });
 
         recyclerViewOut=findViewById(R.id.titleRecyclerOut);
         recyclerViewIn=findViewById(R.id.titleRecyclerOutIn);
@@ -110,8 +157,20 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         recyclerViewOut.setAdapter(adapterOut);
         recyclerViewIn.setAdapter(adapterIn);
 
+        mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        getVersion();
 
+        FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+        }
 
+    }
+
+    private void initIntent() {
+        Intent intent=new Intent(this,TitleActivity.class);
+        startActivity(intent);
     }
 
     public void titleDialog() {
@@ -286,8 +345,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 .setNegativeButton("세부출고 현황", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(getApplicationContext(),OutCargoActivity.class);
-                        startActivity(intent);
+                        intentOutcargoActivity();
                     }
                 })
                 .setNeutralButton("현황 확인", new DialogInterface.OnClickListener() {
@@ -303,8 +361,159 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
+        intentOutcargoActivity();
+    }
+
+    private void intentOutcargoActivity() {
         Intent intent=new Intent(this,OutCargoActivity.class);
+        intent.putExtra("depotName",departmentName);
+        intent.putExtra("nickName",nickName);
+        intent.putExtra("alertDepot",alertDepot);
         intent.putExtra("listOut",listOut);
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this,mAccelerometer,SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
+            float axisX=event.values[0];
+            float axisY=event.values[1];
+            float axisZ=event.values[2];
+
+            float gravityX=axisX/SensorManager.GRAVITY_EARTH;
+            float gravityY=axisY/SensorManager.GRAVITY_EARTH;
+            float gravityZ=axisZ/SensorManager.GRAVITY_EARTH;
+
+            Float f=gravityX*gravityX+gravityY*gravityY+gravityZ*gravityZ;
+            double squaredD=Math.sqrt(f.doubleValue());
+            float gForce=(float) squaredD;
+            if(gForce>SHAKE_THERESHOLD_GRAVITY){
+                long currentTime=System.currentTimeMillis();
+                if(mShakeTime+SHAKE_SKIP_TIME>currentTime){
+                    return;
+                }
+                mShakeTime=currentTime;
+                Intent intent=new Intent(this,TitleActivity.class);
+                startActivity(intent);
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        for(int result:grantResults){
+            if(result== PackageManager.PERMISSION_DENIED){
+                Toast.makeText(this, "permission denied"+permissions[requestCode], Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+    }
+    public void getVersion(){
+        database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference;
+        databaseReference=database.getReference("Version");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot version:snapshot.getChildren()){
+                    VersionCheck data=version.getValue(VersionCheck.class);
+                    int versionCheck=data.getVersionChecked();
+                    int versioncode = 0;
+                    try {
+                        PackageInfo pi=getPackageManager().getPackageInfo(getPackageName(),0);
+                        versioncode=pi.versionCode;
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    if(versionCheck!=versioncode){
+                        String alertVersion="현재 버전:"+versioncode+"으로 "+""+"최신버전:"+versionCheck+" 로 업데이트 바랍니다.!";
+
+                        Intent intent=new Intent(getApplicationContext(),WebList.class);
+                        intent.putExtra("version",alertVersion);
+                       startActivity(intent);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void sendData(JSONObject requestData, SendResponseListener sendResponseListener) {
+        JsonObjectRequest request=new JsonObjectRequest(
+                Request.Method.POST,
+                "https://fcm.googleapis.com/fcm/send",
+                requestData,
+                new Response.Listener<JSONObject>(){
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        sendResponseListener.onRequestCompleted();
+                    }},
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        sendResponseListener.onRequestWithError(error);
+                    }
+                })
+        {
+            @Override
+            protected Map<String,String> getParams() throws AuthFailureError {
+                Map<String,String> params=new HashMap<String,String>();
+                return params;
+            }
+            @Override
+            public Map<String,String> getHeaders() throws AuthFailureError{
+                Map<String,String> headers=new HashMap<String,String>();
+                headers.put("Authorization","key=AAAAKv8kPlM:APA91bF8Hq-XBpxF9a0z7pDBVRBabqUZt3uela3d6m5r9iWXzIzCJJcCplCcWRksa47jYXGGL5LMSBTMXVWzVhU4JzThvsExOQ2VKRt1H7rzoOg6yL2CKH4KNlIbV1oCC8zzJ1DHxW10");
+                return headers;
+            }
+            @Override
+            public String getBodyContentType(){
+                return "application/json";
+            }
+
+        };
+
+        request.setShouldCache(false);
+        sendResponseListener.onRequestStarted();
+        requestQueue.add(request);
+    }
+    public interface SendResponseListener{
+        public void onRequestStarted();
+        public void onRequestCompleted();
+        public void onRequestWithError(VolleyError error);
+
+    }
+
+    public  void pushMessage(String depotName, String nickName, String message, String contents) {
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(depotName,nickName,message,contents);
+    }
+
+
+
 }

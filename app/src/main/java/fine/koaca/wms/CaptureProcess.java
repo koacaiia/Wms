@@ -454,20 +454,17 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         if(arSize-1==i){
                             if(arSize==uriString.size()){
 
-//                                mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-//                                Toast.makeText(context,msg+"("+arSize+")"+"개의 사진을 전송 했습니다.",Toast.LENGTH_SHORT).show();
-//                            Intent intent=new Intent(context,context.getClass());
-//                            context.startActivity(intent);
                                 switch(context){
 
                                     case "OutCargoActivity":
-
+                                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                                         Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                                 Toast.LENGTH_SHORT).show();
                                         Intent intent=new Intent(outCargoActivity.getApplicationContext(),OutCargoActivity.class);
                                         outCargoActivity.startActivity(intent);
                                         break;
                                     case "CameraCapture":
+                                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                                         Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                                 Toast.LENGTH_SHORT).show();
                                         mainActivity.initIntent();

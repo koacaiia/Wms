@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
@@ -99,9 +100,7 @@ public class CameraCapture extends AppCompatActivity
 
         FirebaseMessaging.getInstance().subscribeToTopic("testUp");
 
-        if(requestQueue==null){
-            requestQueue= Volley.newRequestQueue(getApplicationContext());
-        }
+
 
         depotName=getIntent().getStringExtra("depotName");
         nickName=getIntent().getStringExtra("nickName");
@@ -213,6 +212,9 @@ public class CameraCapture extends AppCompatActivity
             }
         });
 
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+        }
 
     }
     @Override
@@ -476,7 +478,9 @@ public class CameraCapture extends AppCompatActivity
     }
 
     public void sendMessage(String message){
+
         PushFcmProgress push=new PushFcmProgress(requestQueue);
+
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
     }
 

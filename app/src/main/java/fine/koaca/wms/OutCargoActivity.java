@@ -28,6 +28,8 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,7 +53,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     RecyclerView recyclerView;
     ArrayList<OutCargoList> list;
     OutCargoListAdapter adapter;
-    String departmentName;
+    String departmentName,nickName,alertDepot;
 
     TextView txtTitle;
     String dateToDay;
@@ -63,12 +65,16 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     SparseBooleanArray clickedArray=new SparseBooleanArray(0);
     FloatingActionButton fltBtn;
 
+    static RequestQueue requestQueue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_cargo);
 
         dateToDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        nickName=getIntent().getStringExtra("nickName");
+        alertDepot=getIntent().getStringExtra("alertDepot");
 
         fltBtn=findViewById(R.id.activity_list_outcargo_flb);
         fltBtn.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +106,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         txtTitle=findViewById(R.id.activity_list_outcargo_title);
         txtTitle.setText(dateToDay+" 출고 목록");
+
+        if(requestQueue==null){
+            requestQueue= Volley.newRequestQueue(getApplicationContext());
+        }
 
     }
 
@@ -366,5 +376,12 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
 
 
+    }
+
+    public void sendMessage(String message){
+
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+
+        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
     }
 }

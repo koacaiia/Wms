@@ -26,7 +26,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
-        <activity android:name=".TitleActivity" />
+        <activity android:name=".Incargo" />
         <activity android:name=".OutCargoActivity" />
         <activity android:name=".AnnualLeave" />
 
@@ -46,8 +46,8 @@
             android:name=".WorkingMessageData"
             android:label="Working Message" />
         <activity
-            android:name=".Incargo"
-            android:label="Incargo_List">
+            android:name=".TitleActivity"
+            android:label="FineTrading Wms">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

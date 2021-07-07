@@ -137,16 +137,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
 
 
-    static RequestQueue requestQueue;
-    String [] permission_list={
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.VIBRATE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.USE_FULL_SCREEN_INTENT,
-            Manifest.permission.ANSWER_PHONE_CALLS,
-    };
+
+
 
 
     String[] upDataRegList;
@@ -168,7 +160,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
-        requestPermissions(permission_list,0);
+
 
         mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
          mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -221,9 +213,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             nickName="Guest";
         }
 
-        FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
 
-        getVersion();
+
+
         getFirebaseDataInit();
         String alertTimeStamp=new SimpleDateFormat("HH시mm분").format(new Date());
         adapter=new IncargoListAdapter(listItems,this);
@@ -389,9 +381,7 @@ return true;
               return true;
           }
       });
-        if(requestQueue==null){
-            requestQueue= Volley.newRequestQueue(getApplicationContext());
-        }
+
 
       Button btnAlert=findViewById(R.id.incargo_alert);
       btnAlert.setOnClickListener(v->{
@@ -429,77 +419,38 @@ return true;
         startActivity(intent);
     }
 
-    private void sendAlertMessage(String message) {
-        JSONObject requestData=new JSONObject();
-        try{
-            requestData.put("priority","high");
-            JSONObject dataObj=new JSONObject();
-            dataObj.put("contents",message);
-            dataObj.put("nickName",nickName);
+//    private void sendAlertMessage(String message) {
+//        JSONObject requestData=new JSONObject();
+//        try{
+//            requestData.put("priority","high");
+//            JSONObject dataObj=new JSONObject();
+//            dataObj.put("contents",message);
+//            dataObj.put("nickName",nickName);
+//
+//            requestData.put("data",dataObj);
+//            requestData.put("to","/topics/"+depotName);
+//
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        sendData(requestData,new SendResponseListener(){
+//            @Override
+//            public void onRequestStarted() {
+//                Toast.makeText(getApplicationContext(),"지원 알림 요청 성공 하였습니다.",Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onRequestCompleted() {
+//            }
+//
+//            @Override
+//            public void onRequestWithError(VolleyError error) {
+//
+//            }
+//        });
+//    }
 
-            requestData.put("data",dataObj);
-            requestData.put("to","/topics/"+depotName);
 
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        sendData(requestData,new SendResponseListener(){
-            @Override
-            public void onRequestStarted() {
-                Toast.makeText(getApplicationContext(),"지원 알림 요청 성공 하였습니다.",Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onRequestCompleted() {
-            }
-
-            @Override
-            public void onRequestWithError(VolleyError error) {
-
-            }
-        });
-    }
-
-
-    private void sendData(JSONObject requestData, SendResponseListener sendResponseListener) {
-        JsonObjectRequest request=new JsonObjectRequest(
-        Request.Method.POST,
-                "https://fcm.googleapis.com/fcm/send",
-                requestData,
-                new Response.Listener<JSONObject>(){
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        sendResponseListener.onRequestCompleted();
-                    }},
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        sendResponseListener.onRequestWithError(error);
-                    }
-                })
-        {
-            @Override
-            protected Map<String,String> getParams() throws AuthFailureError {
-            Map<String,String> params=new HashMap<String,String>();
-            return params;
-        }
-            @Override
-            public Map<String,String> getHeaders() throws AuthFailureError{
-            Map<String,String> headers=new HashMap<String,String>();
-                headers.put("Authorization","key=AAAAKv8kPlM:APA91bF8Hq-XBpxF9a0z7pDBVRBabqUZt3uela3d6m5r9iWXzIzCJJcCplCcWRksa47jYXGGL5LMSBTMXVWzVhU4JzThvsExOQ2VKRt1H7rzoOg6yL2CKH4KNlIbV1oCC8zzJ1DHxW10");
-            return headers;
-        }
-            @Override
-            public String getBodyContentType(){
-            return "application/json";
-        }
-
-        };
-
-        request.setShouldCache(false);
-        sendResponseListener.onRequestStarted();
-        requestQueue.add(request);
-    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -532,12 +483,7 @@ return true;
 
     }
 
-    public interface SendResponseListener{
-        public void onRequestStarted();
-        public void onRequestCompleted();
-        public void onRequestWithError(VolleyError error);
 
-    }
 
     private void searchSort() {
         AlertDialog.Builder searchBuilder=new AlertDialog.Builder(Incargo.this);
@@ -837,7 +783,6 @@ return true;
     public void webView(String bl){
         Intent intent=new Intent(Incargo.this,WebList.class);
         intent.putExtra("bl",bl);
-        intent.putExtra("version",alertVersion);
         startActivity(intent);
     }
 
@@ -932,41 +877,6 @@ return true;
 
     }
 
-    private void pushMessage(String depotName, String nickName, String message, String contents) {
-        PushFcmProgress push=new PushFcmProgress(requestQueue);
-        push.sendAlertMessage(depotName,nickName,message,contents);
-    }
-
-    public void getVersion(){
-        database=FirebaseDatabase.getInstance();
-        databaseReference=database.getReference("Version");
-
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot version:snapshot.getChildren()){
-                    VersionCheck data=version.getValue(VersionCheck.class);
-                    int versionCheck=data.getVersionChecked();
-                    try {
-                        PackageInfo pi=getPackageManager().getPackageInfo(getPackageName(),0);
-                    versioncode=pi.versionCode;
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    if(versionCheck!=versioncode){
-                        alertVersion="현재 버전:"+versioncode+"으로 "+""+"최신버전:"+versionCheck+" 로 업데이트 바랍니다.!";
-                        webView("version");
-
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
     public void putDataReg(){
         Intent intent=new Intent(Incargo.this,PutDataReg.class);
         intent.putExtra("list", listItems);
@@ -990,8 +900,8 @@ return true;
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nick+"_"+date+"_"+timeStamp);
         Log.i("TestValue","nickNameValue"+nick);
         databaseReference.setValue(messageList);
-
-        pushMessage(alertDepot,nickName,msg,"WorkingMessage");
+        TitleActivity titleActivity=new TitleActivity();
+        titleActivity.pushMessage(alertDepot,nickName,msg,"WorkingMessage");
 
     }
     public void sortDialog(String startDay, String endDay, ArrayList<Fine2IncargoList> listSortList){
@@ -1359,17 +1269,7 @@ return true;
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        for(int result:grantResults){
-            if(result== PackageManager.PERMISSION_DENIED){
-                Toast.makeText(this, "permission denied"+permissions[requestCode], Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
 
-    }
 
     public void getFirebaseDataSortDate(String sortDateItem){
         Calendar calendar=Calendar.getInstance();
