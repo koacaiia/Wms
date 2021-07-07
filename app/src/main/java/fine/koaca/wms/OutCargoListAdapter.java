@@ -60,8 +60,6 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
 
     @Override
     public int getItemCount() {
-
-        Log.i("TestValue","List Size::::"+list.size());
         return list.size();
     }
 
