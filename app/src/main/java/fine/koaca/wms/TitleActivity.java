@@ -90,6 +90,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
+        mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         requestPermissions(permission_list,0);
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
@@ -130,6 +132,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         txtTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 initIntent();
             }
         });
@@ -147,18 +151,17 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         adapterOut=new OutCargoListAdapter(listOut,this,this);
         adapterIn=new IncargoListAdapter(listIn,this);
 
-        adapterIn.setAdapterClickListener(new AdapterClickListener() {
-            @Override
-            public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-                Intent intent=new Intent(getApplicationContext(),Incargo.class);
-                startActivity(intent);
-            }
-        });
+//        adapterIn.setAdapterClickListener(new AdapterClickListener() {
+//            @Override
+//            public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+//                Intent intent=new Intent(getApplicationContext(),Incargo.class);
+//                startActivity(intent);
+//            }
+//        });
         recyclerViewOut.setAdapter(adapterOut);
         recyclerViewIn.setAdapter(adapterIn);
 
-        mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
-        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
         getVersion();
 
         FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
@@ -170,8 +173,27 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     private void initIntent() {
         Intent intent=new Intent(this,TitleActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+    private void inCargoIntent(){
+        Intent intent=new Intent(this,Incargo.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("depotName",departmentName);
+        intent.putExtra("nickName",nickName);
+        intent.putExtra("alertDepot",alertDepot);
+        startActivity(intent);
+    }
+    private void intentOutcargoActivity() {
+        Intent intent=new Intent(this,OutCargoActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("depotName",departmentName);
+        intent.putExtra("nickName",nickName);
+        intent.putExtra("alertDepot",alertDepot);
+        intent.putExtra("listOut",listOut);
+        startActivity(intent);
+    }
+
 
     public void titleDialog() {
         AlertDialog.Builder titleBuilder=new AlertDialog.Builder(this);
@@ -361,17 +383,50 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
-        intentOutcargoActivity();
+        String refPath=listOut.get(position).getKeypath();
+        dialogOutCargoRecyclerItemClicked(refPath);
     }
 
-    private void intentOutcargoActivity() {
-        Intent intent=new Intent(this,OutCargoActivity.class);
-        intent.putExtra("depotName",departmentName);
-        intent.putExtra("nickName",nickName);
-        intent.putExtra("alertDepot",alertDepot);
-        intent.putExtra("listOut",listOut);
-        startActivity(intent);
+    private void dialogOutCargoRecyclerItemClicked(String refPath) {
+        ArrayList<String> clickValue=new ArrayList<>();
+        clickValue.add("사진제외 출고완료 등록");
+        clickValue.add("사진포함 출고완료 등록");
+        clickValue.add("세부출고목록 창 전환");
+        String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("출고항목 진행상황")
+                .setSingleChoiceItems(clickValueList,0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch(which){
+                            case 0:
+                                DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
+                                Map<String,Object> value=new HashMap<>();
+                                value.put("workprocess","완");
+                                dataRef.updateChildren(value);
+                                adapterOut.notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(),refPath+"건 출고 완료등록",Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                int listOutSize=listOut.size();
+                                for(int i=(listOutSize-1);0 <= i;i--){
+                                    if(!refPath.equals(listOut.get(i).getKeypath())){
+                                        listOut.remove(i);
+
+                                    }
+                                }
+                                intentOutcargoActivity();
+                                break;
+                            case 2:
+                                intentOutcargoActivity();
+                                break;
+                        }
+                    }
+                })
+                .show();
+
     }
+
 
     @Override
     protected void onResume() {

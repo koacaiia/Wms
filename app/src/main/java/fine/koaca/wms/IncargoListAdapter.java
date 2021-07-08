@@ -17,18 +17,30 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.ListViewHolder>
-implements AdapterClickListener,AdapterLongClickListener{
+{
 
-    private AdapterClickListener mListener=null;
-    private AdapterLongClickListener mLongListener=null;
-
+    AdapterClickListener mListener=null;
+    AdapterLongClickListener mLongListener=null;
     ArrayList<Fine2IncargoList> list;
-    private final SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
+    SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
     Context context;
 
+    public interface AdapterClickListener {
+        void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder,View v, int pos);
+
+    }
+    public interface AdapterLongClickListener {
+        void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder,View v, int pos);
+    }
     public  IncargoListAdapter(ArrayList<Fine2IncargoList> list, Context context) {
         this.context=context;
         this.list=list;
+    }
+
+    public IncargoListAdapter(ArrayList<Fine2IncargoList> listItems,  AdapterClickListener mListener, AdapterLongClickListener mLongListener) {
+        this.list=listItems;
+        this.mListener=mListener;
+        this.mLongListener=mLongListener;
     }
 
     @NonNull
@@ -72,19 +84,7 @@ implements AdapterClickListener,AdapterLongClickListener{
     public int getItemCount() {
         return list.size();
     }
-    public void setAdapterClickListener(AdapterClickListener listener){
-        this.mListener=listener;    }
-    public void setAdaptLongClickListener(AdapterLongClickListener longlistener){
-        this.mLongListener=longlistener;
-    }
-    @Override
-    public void onItemClick(ListViewHolder listViewHolder, View v, int pos) {
-        mListener.onItemClick(listViewHolder,v,pos);
-    }
-    @Override
-    public void onLongItemClick(ListViewHolder listViewHolder, View v, int pos) {
-        mLongListener.onLongItemClick(listViewHolder,v,pos);
-    }
+
     public class ListViewHolder extends RecyclerView.ViewHolder{
         TextView working;
         TextView date;

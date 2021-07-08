@@ -9,7 +9,6 @@ import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,23 +61,7 @@ public class MainActivitySub extends AppCompatActivity implements Serializable {
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
-        adapter.setOnItemClicklistener(new OnListItemClickListener() {
-            @Override
-            public void onItemClick(Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
-                if(mSelectedItems.get(position,false)){
-                    mSelectedItems.put(position,false);
-                    mSelectedList.remove(list.get(position));
 
-                }else{
-                    mSelectedItems.put(position,true);
-                    mSelectedList.add(list.get(position));
-                }
-                locationDialog(mSelectedList,position);
-                Log.i("kaocaiia","selected List Size____"+mSelectedList.size());
-            }
-
-
-        });
 
         fBtnSearch=findViewById(R.id.fbtnSearch );
         fBtnSearch.setOnClickListener(v->{

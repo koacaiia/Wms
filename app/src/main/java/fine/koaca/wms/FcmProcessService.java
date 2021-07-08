@@ -63,24 +63,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         String message=data.get("message");
 
 
-//        msg=remoteMessage.getNotification().getBody();
-//        SharedPreferences sharedPreferences = getSharedPreferences("SHARE_DEPOT", MODE_PRIVATE);
-//        if (sharedPreferences == null) {
-//            nickName = "Guest";
-//        } else {
-//            nickName = sharedPreferences.getString("nickName", "Fine");
-//        }
-//            Log.i("koacaiia","vibrator+++Called"+vibrator.toString());
-//            Log.i("koacaiia","Ringtone++++Called"+rt.toString());
 
-//        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-//        vibrator.vibrate(new long[]{3000, 1000}, 0);
-//
-//        Uri ringtoneUri=RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-//        ringtone=RingtoneManager.getRingtone(getBaseContext(),ringtoneUri);
-//        ringtone.play();
-
-//        Log.i("koacaiia","ringtoneService Called"+ringtone.toString());
         String alertTimeStamp = new SimpleDateFormat("HH시mm분").format(new Date());
         Intent intent; 
         switch(contents){
@@ -100,57 +83,22 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
                 throw new IllegalStateException("Unexpected value: " + contents);
         } 
 
-
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-
         NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert")
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.logo3)
                 .setContentTitle(nickName)
                 .setContentText(message)
                 .setContentIntent(contentIntent)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setVibrate(new long[]{10000, 10000,})
                 .setAutoCancel(true)
-
-//                .setOngoing(true)
-
-//                .setFullScreenIntent(fullScreenPendingIntent,true)
                 ;
 
-//Log.i("kocaiia",vibrator.toString()+"_____"+ringtone.toString());
         NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
         notificationManager.notify(id,builder.build());
-//        try {
-//            Thread.sleep(10000);
-//            ringtone.stop();
-////            Thread.sleep(30000);
-////            vibrator.cancel();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        try {
-//            Thread.sleep(30000);
-//            vibrator.cancel();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
-//        intent=new Intent(this,IncargoEx.class);
-//        PendingIntent pi=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
-//        try {
-//            pi.send();
-//        } catch (PendingIntent.CanceledException e) {
-//            e.printStackTrace();
-//        }
-
-//      vibratorStart("start");
-
 
     }
-
     private NotificationCompat.Builder getNotificationBuilder(String ask,String name){
         NotificationCompat.Builder builder=null;
         NotificationManager manager=(NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -164,26 +112,4 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         builder=new NotificationCompat.Builder(this,ask);
         return builder;
     }
-
-    public void vibratorStart(String start){
-//        incargo=new Incargo();
-//        incargo.vibratorStart(start);
-
-        vibrator=(Vibrator)getSystemService(getApplicationContext().VIBRATOR_SERVICE);
-//
-        if(start.equals("start")){
-            vibrator.vibrate(new long[]{3000,1000},0);
-            Log.i("koacaiia","koacaiiaVibrate___name"+vibrator.toString());
-        }else{
-            vibrator.cancel();
-        }
-
     }
-    public void notificationStop(){
-        NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.cancel(0);
-
-    }
-
-}

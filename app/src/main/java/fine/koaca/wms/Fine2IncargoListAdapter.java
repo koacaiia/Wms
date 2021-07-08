@@ -15,16 +15,18 @@ import java.util.ArrayList;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.RED;
 
-public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoListAdapter.ListViewHolder> implements    OnListItemClickListener,OnItemLongClickListener {
+public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoListAdapter.ListViewHolder>  {
 
     ArrayList<Fine2IncargoList> fine2IncargoLists;
-    OnListItemClickListener listener;
-    OnItemLongClickListener longClickListener;
+    OnInCargoListItemClickListener listener;
+    OnInCargoListItemLongClickListener listenerLong;
 
     private SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
 
-    public Fine2IncargoListAdapter(ArrayList<Fine2IncargoList> fine2IncargoLists, MainActivity mainActivity) {
+    public Fine2IncargoListAdapter(ArrayList<Fine2IncargoList> fine2IncargoLists,OnInCargoListItemClickListener listener, OnInCargoListItemLongClickListener listenerLong) {
         this.fine2IncargoLists = fine2IncargoLists;
+        this.listener=listener;
+        this.listenerLong=listenerLong;
     }
 
     public Fine2IncargoListAdapter(ArrayList<Fine2IncargoList> list) {
@@ -36,7 +38,7 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
     public Fine2IncargoListAdapter.ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.list,parent,false);
 
-        return new ListViewHolder(view,this,this);
+        return new ListViewHolder(view);
     }
 
     @Override
@@ -63,42 +65,19 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
     }
 
 
-    public void setOnItemClicklistener(OnListItemClickListener listener){
 
-        this.listener=listener;
-    }
-
-    public void setLongClickListener(OnItemLongClickListener longClickListener){
-        this.longClickListener=longClickListener;
-    }
     @Override
     public int getItemCount() {
-//        return fine2IncargoLists.size();
+
         return (fine2IncargoLists !=null ? fine2IncargoLists.size():0);
     }
 
-    @Override
-    public void onLongItemClick(Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        if(longClickListener !=null){
-            longClickListener.onLongItemClick(listViewHolder,v,pos);
-        }
 
-    }
-
-    @Override
-    public void onItemClick(fine.koaca.wms.Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
-        if(listener !=null){
-            listener.onItemClick(holder,view,position);
-        }
-
-
-    }
 
 
     public class ListViewHolder extends RecyclerView.ViewHolder{
         TextView working,bl,date,container,container40,container20,lclCargo,des,location,remark,count_seal,incargo,consignee;
-        public ListViewHolder(@NonNull View itemView,final OnListItemClickListener listener,
-                              final fine.koaca.wms.OnItemLongClickListener longClickListener) {
+        public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.bl=itemView.findViewById(R.id.textView2);
             this.des=itemView.findViewById(R.id.textView);
@@ -141,17 +120,23 @@ public class Fine2IncargoListAdapter extends RecyclerView.Adapter<Fine2IncargoLi
                 @Override
                 public boolean onLongClick(View v) {
                     int pos=getAdapterPosition();
-                    if(longClickListener !=null){
-                        longClickListener.onLongItemClick(ListViewHolder.this,v,pos);
+                    if(listenerLong !=null){
+                        listenerLong.onItemClickLong(ListViewHolder.this,v,pos);
 
                     }
                     return true;
                 }
             });
-
-
-
         }
     }
 
+    public interface OnInCargoListItemClickListener {
+        void onItemClick(ListViewHolder listViewHolder, View v, int pos);
+
+    }
+
+    public interface OnInCargoListItemLongClickListener {
+        void onItemClickLong(ListViewHolder holder, View view, int position);
+
+    }
 }

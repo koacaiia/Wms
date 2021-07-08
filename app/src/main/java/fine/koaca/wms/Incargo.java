@@ -69,7 +69,8 @@ import java.util.Map;
 
 
 
-public class Incargo extends AppCompatActivity implements Serializable , SensorEventListener {
+public class Incargo extends AppCompatActivity implements Serializable , SensorEventListener,
+        IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener {
     ArrayList<Fine2IncargoList> listItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortList=new ArrayList<Fine2IncargoList>();
@@ -135,21 +136,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String alertVersion;
     Query sortByData;
 
-
-
-
-
-
-
     String[] upDataRegList;
-
     String wareHouseDepot="Incargo";
     String alertDepot="Depot";
 
     String dateSelectCondition="";
 
     SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
-
     SensorManager mSensorManager;
     Sensor mAccelerometer;
     private long mShakeTime;
@@ -213,89 +206,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             nickName="Guest";
         }
 
-
-
-
         getFirebaseDataInit();
-        String alertTimeStamp=new SimpleDateFormat("HH시mm분").format(new Date());
-        adapter=new IncargoListAdapter(listItems,this);
+        adapter=new IncargoListAdapter(listItems,this,this);
         recyclerView.setAdapter(adapter);
-        adapter.setAdapterClickListener(new AdapterClickListener() {
-            @Override
-            public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-
-                bl=listItems.get(pos).getBl();
-                String incargoWorking=listItems.get(pos).getWorking();
-                String incargoDate=listItems.get(pos).getDate();
-                String incargoConsigneeName=listItems.get(pos).getConsignee();
-                String incargoDescription=listItems.get(pos).getDescription();
-                String incargoContainerNumber=listItems.get(pos).getContainer();
-                String incargoQty=listItems.get(pos).getIncargo();
-                String incargoBl=listItems.get(pos).getBl();
-                String incargoRemark=listItems.get(pos).getRemark();
-                String incargoContainer20=String.valueOf(listItems.get(pos).getContainer20());
-                String incargoContainer40=String.valueOf(listItems.get(pos).getContainer40());
-                String incargoCargo=String.valueOf(listItems.get(pos).getLclcargo());
-
-
-                upDataRegList= new String[]{incargoWorking,incargoDate,incargoConsigneeName,incargoDescription,
-                        incargoContainer20,incargoContainer40,incargoCargo,
-                        incargoContainerNumber,incargoQty,incargoBl,incargoRemark};
-
-                if(selectedSortItems.get(pos, false)){
-                    selectedSortItems.put(pos,false);
-//                    selectedSortItems.delete(pos);
-                    listSortItems.remove(listItems.get(pos));
-                    Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 해제",
-                            Toast.LENGTH_SHORT).show();
-                }else{
-                    selectedSortItems.put(pos,true);
-//                    selectedSortItems.delete(pos);
-                    listSortItems.add(listItems.get(pos));
-                    Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 선택",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-        adapter.setAdaptLongClickListener(new AdapterLongClickListener() {
-            @Override
-            public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-
-                AlertDialog.Builder deleteItem=new AlertDialog.Builder(Incargo.this);
-                deleteItem.setTitle("항목 제거 진행");
-                String deDate=listItems.get(pos).getDate();
-                String deConsignee=listItems.get(pos).getConsignee();
-                String deBl=listItems.get(pos).getBl();
-                String deCont=listItems.get(pos).getContainer();
-                String deCount=listItems.get(pos).getCount();
-                String deDes=listItems.get(pos).getDescription();
-                String msg="반입일: "+deDate+"\n"+"화주명: "+deConsignee+"\n"+"Bl: "+deBl+
-                        "\n"+"컨테이너번호: "+deCont+"\n"+"화물 정보 삭제를 진행 합니다.";
-                String msgWorking="반입일: "+deDate+"_"+"화주명: "+deConsignee+"_"+"\n"+"Bl: "+deBl+
-                        "_컨테이너번호 : "+deCont+"에 대한"+"화물 정보 삭제를 진행.";
-                deleteItem.setMessage(msg);
-                deleteItem.setPositiveButton("삭제 등록", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Map<String,Object> childUpdates=new HashMap<>();
-                        childUpdates.put(deDate+"_"+deBl+"_"+deDes+"_"+deCount+"_"+deCont+"/", null);
-                        databaseReference.updateChildren(childUpdates);
-
-                       putMessage(msgWorking,"Etc",nickName);
-                        getFirebaseData(dataMessage,dataMessage,"sort", sortConsignee);
-                    }
-                });
-                deleteItem.setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                deleteItem.create();
-                deleteItem.show();
-            }
-        });
 
         incargo_location=findViewById(R.id.incargo_reset);
         incargo_location.setOnClickListener(new View.OnClickListener() {
@@ -1399,6 +1312,79 @@ return true;
             }
         });
         sortBuilder.show();
+    }
+
+
+    @Override
+    public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+        bl=listItems.get(pos).getBl();
+        String incargoWorking=listItems.get(pos).getWorking();
+        String incargoDate=listItems.get(pos).getDate();
+        String incargoConsigneeName=listItems.get(pos).getConsignee();
+        String incargoDescription=listItems.get(pos).getDescription();
+        String incargoContainerNumber=listItems.get(pos).getContainer();
+        String incargoQty=listItems.get(pos).getIncargo();
+        String incargoBl=listItems.get(pos).getBl();
+        String incargoRemark=listItems.get(pos).getRemark();
+        String incargoContainer20=String.valueOf(listItems.get(pos).getContainer20());
+        String incargoContainer40=String.valueOf(listItems.get(pos).getContainer40());
+        String incargoCargo=String.valueOf(listItems.get(pos).getLclcargo());
+
+
+        upDataRegList= new String[]{incargoWorking,incargoDate,incargoConsigneeName,incargoDescription,
+                incargoContainer20,incargoContainer40,incargoCargo,
+                incargoContainerNumber,incargoQty,incargoBl,incargoRemark};
+
+        if(selectedSortItems.get(pos, false)){
+            selectedSortItems.put(pos,false);
+//                    selectedSortItems.delete(pos);
+            listSortItems.remove(listItems.get(pos));
+            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 해제",
+                    Toast.LENGTH_SHORT).show();
+        }else{
+            selectedSortItems.put(pos,true);
+//                    selectedSortItems.delete(pos);
+            listSortItems.add(listItems.get(pos));
+            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 선택",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+        AlertDialog.Builder deleteItem=new AlertDialog.Builder(Incargo.this);
+        deleteItem.setTitle("항목 제거 진행");
+        String deDate=listItems.get(pos).getDate();
+        String deConsignee=listItems.get(pos).getConsignee();
+        String deBl=listItems.get(pos).getBl();
+        String deCont=listItems.get(pos).getContainer();
+        String deCount=listItems.get(pos).getCount();
+        String deDes=listItems.get(pos).getDescription();
+        String msg="반입일: "+deDate+"\n"+"화주명: "+deConsignee+"\n"+"Bl: "+deBl+
+                "\n"+"컨테이너번호: "+deCont+"\n"+"화물 정보 삭제를 진행 합니다.";
+        String msgWorking="반입일: "+deDate+"_"+"화주명: "+deConsignee+"_"+"\n"+"Bl: "+deBl+
+                "_컨테이너번호 : "+deCont+"에 대한"+"화물 정보 삭제를 진행.";
+        deleteItem.setMessage(msg);
+        deleteItem.setPositiveButton("삭제 등록", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Map<String,Object> childUpdates=new HashMap<>();
+                childUpdates.put(deDate+"_"+deBl+"_"+deDes+"_"+deCount+"_"+deCont+"/", null);
+                databaseReference.updateChildren(childUpdates);
+
+                putMessage(msgWorking,"Etc",nickName);
+                getFirebaseData(dataMessage,dataMessage,"sort", sortConsignee);
+            }
+        });
+        deleteItem.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        deleteItem.create();
+        deleteItem.show();
     }
 }
 

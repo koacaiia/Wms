@@ -37,7 +37,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,  Fine2IncargoListAdapter.OnInCargoListItemClickListener,
+        Fine2IncargoListAdapter.OnInCargoListItemLongClickListener {
     ArrayList<Fine2IncargoList> listItems;
     ArrayList<Fine2IncargoList> listItemsCount;
     Fine2IncargoListAdapter adapter;
@@ -171,46 +172,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         database=FirebaseDatabase.getInstance();
         databaseReference=database.getReference("Incargo");
 
-        adapter=new Fine2IncargoListAdapter(listItems,this);
+        adapter=new Fine2IncargoListAdapter(listItems,this,this);
         recyclerView.setAdapter(adapter);
 
         editText_delete=new EditText(this);
 
-        adapter.setOnItemClicklistener(new OnListItemClickListener() {
-            @Override
-            public void onItemClick(Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
-                String bl=listItems.get(position).getBl();
-                String des=listItems.get(position).getDescription();
-                String loc=listItems.get(position).getLocation();
-                String date=listItems.get(position).getDate();
-                String count=listItems.get(position).getCount();
-                String remark=listItems.get(position).getRemark();
-                String container=listItems.get(position).getContainer();
-                String incargo=listItems.get(position).getIncargo();
-                working=listItems.get(position).getWorking();
-                container40=listItems.get(position).getContainer40();
-                container20=listItems.get(position).getContainer20();
-                consignee=listItems.get(position).getConsignee();
-                lclCargo=listItems.get(position).getLclcargo();
 
-                textView_bl.setText(bl);
-                textView_des.setText(des);
-                textView_date.setText(date);
-                textView_loc.setText(loc);
-                textView_count.setText(count);
-                editText_remark.setText(remark);
-                textView_container.setText(container);
-                editText_incargo.setText(incargo);
-
-                           }
-
-        });
-        adapter.setLongClickListener(new OnItemLongClickListener() {
-            @Override
-            public void onLongItemClick(Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-            databaseRegLongClick();
-            }
-        });
 
         Intent intent=getIntent();
         String str_location=intent.getStringExtra("location");
@@ -692,4 +659,37 @@ break;
     }
 
 
+    @Override
+    public void onItemClick(Fine2IncargoListAdapter.ListViewHolder listViewHolder, View v, int position) {
+        String bl=listItems.get(position).getBl();
+        String des=listItems.get(position).getDescription();
+        String loc=listItems.get(position).getLocation();
+        String date=listItems.get(position).getDate();
+        String count=listItems.get(position).getCount();
+        String remark=listItems.get(position).getRemark();
+        String container=listItems.get(position).getContainer();
+        String incargo=listItems.get(position).getIncargo();
+        working=listItems.get(position).getWorking();
+        container40=listItems.get(position).getContainer40();
+        container20=listItems.get(position).getContainer20();
+        consignee=listItems.get(position).getConsignee();
+        lclCargo=listItems.get(position).getLclcargo();
+
+        textView_bl.setText(bl);
+        textView_des.setText(des);
+        textView_date.setText(date);
+        textView_loc.setText(loc);
+        textView_count.setText(count);
+        editText_remark.setText(remark);
+        textView_container.setText(container);
+        editText_incargo.setText(incargo);
+
+    }
+
+
+
+    @Override
+    public void onItemClickLong(Fine2IncargoListAdapter.ListViewHolder holder, View view, int position) {
+        databaseRegLongClick();
+    }
 }

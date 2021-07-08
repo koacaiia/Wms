@@ -97,6 +97,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             getOutcargoData();
         }else{
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
+            pictureUpdate();
 
         }
 
@@ -169,10 +170,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         };
         Query sortByDateDatabase=databaseReference.orderByChild("date").equalTo(dateToDay);
         sortByDateDatabase.addListenerForSingleValueEvent(listener);
-
-
     }
-
 
     public void itemClickedDialog(){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
