@@ -1,23 +1,16 @@
 package fine.koaca.wms;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.os.Vibrator;
 import android.text.InputType;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -37,16 +30,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -54,9 +41,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -70,7 +56,7 @@ import java.util.Map;
 
 
 public class Incargo extends AppCompatActivity implements Serializable , SensorEventListener,
-        IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener {
+        IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener,ImageViewActivityAdapter.ImageViewClicked {
     ArrayList<Fine2IncargoList> listItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems=new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortList=new ArrayList<Fine2IncargoList>();
@@ -91,7 +77,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String dataMessage;
     Button incargo_location;
     Button incargo_mnf;
-    Button incargo_outcargo;
+
 
     TextView incargo_incargo;
     TextView incargo_contents_date;
@@ -131,9 +117,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String regContainer="";
     String regRemark="";
 
-
-    int versioncode;
-    String alertVersion;
     Query sortByData;
 
     String[] upDataRegList;
@@ -148,6 +131,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     private long mShakeTime;
     private static final int SHAKE_SKIP_TIME=500;
     private static final float SHAKE_THERESHOLD_GRAVITY=2.7F;
+
+    ArrayList<String> imageViewLists=new ArrayList<>();
+    ImageViewActivityAdapter iAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +236,6 @@ return true;
         });
         dia_dateInit=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-
         incargo_contents_date.setText(dia_dateInit);
         incargo_contents_consignee.setText(depotName+" 전 화물 입고현황");
 
@@ -259,11 +244,7 @@ return true;
       fltBtn_Capture.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-//
-//
-
-
-              intentCameraActivity();
+           intentCameraActivity();
           }
       });
 
@@ -295,33 +276,6 @@ return true;
           }
       });
 
-
-      Button btnAlert=findViewById(R.id.incargo_alert);
-      btnAlert.setOnClickListener(v->{
-
-//          String emergencyMessage=alertTimeStamp+" 에 업무지원 요청 합니다.!!!";
-//          sendAlertMessage(emergencyMessage);
-          Intent intentAnnual=new Intent(Incargo.this,AnnualLeave.class);
-          intentAnnual.putExtra("depotName",depotName);
-          intentAnnual.putExtra("nickName",nickName);
-          intentAnnual.putExtra("alertDepot",alertDepot);
-          startActivity(intentAnnual);
-
-      });
-      btnAlert.setOnLongClickListener(v->{
-
-          return false;
-
-      });
-
-      incargo_outcargo=findViewById(R.id.incargo_outcargo);
-      incargo_outcargo.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              Intent intent=new Intent(Incargo.this,OutCargoActivity.class);
-              startActivity(intent);
-          }
-      });
     }
 
     private void intentCameraActivity() {
@@ -331,39 +285,6 @@ return true;
         intent.putExtra("alertDepot",alertDepot);
         startActivity(intent);
     }
-
-//    private void sendAlertMessage(String message) {
-//        JSONObject requestData=new JSONObject();
-//        try{
-//            requestData.put("priority","high");
-//            JSONObject dataObj=new JSONObject();
-//            dataObj.put("contents",message);
-//            dataObj.put("nickName",nickName);
-//
-//            requestData.put("data",dataObj);
-//            requestData.put("to","/topics/"+depotName);
-//
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//        sendData(requestData,new SendResponseListener(){
-//            @Override
-//            public void onRequestStarted() {
-//                Toast.makeText(getApplicationContext(),"지원 알림 요청 성공 하였습니다.",Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onRequestCompleted() {
-//            }
-//
-//            @Override
-//            public void onRequestWithError(VolleyError error) {
-//
-//            }
-//        });
-//    }
-
-
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -395,8 +316,6 @@ return true;
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
-
-
 
     private void searchSort() {
         AlertDialog.Builder searchBuilder=new AlertDialog.Builder(Incargo.this);
@@ -433,8 +352,6 @@ return true;
         searchBuilder.show();
     }
 
-
-
     public void processDatePickerResult(int year, int month, int dayOfMonth) {
         String month_string;
         if(month<10){
@@ -450,12 +367,6 @@ return true;
         }
         String year_string=Integer.toString(year);
 
-
-        if(downLoadingMark.equals("DownLoadingOk")) {
-            dataMessage = (year_string + "년" + month_string + "월" + day_string + "일");
-            downLoadDialogMessage(dataMessage);
-        }else if (downLoadingMark.equals("RegData")){
-
               regDate= (year_string + "-" + month_string + "-" + day_string);
               reg_Button_date.setText("Date:"+regDate+"등록");
               reg_Button_date.setTextColor(Color.RED);
@@ -463,21 +374,6 @@ return true;
             if(!regDate.equals("")&&dateSelectCondition.equals("Clicked")){
                 Toast.makeText(getApplicationContext(),"Date Button Clicked",Toast.LENGTH_SHORT).show();
             }
-
-
-        }else if(downLoadingMark.equals("StartDate")) {
-            dataMessage=(year_string+"-"+month_string+"-"+day_string);
-            day_start=dataMessage;
-            day_end=dataMessage;
-
-        }else if(downLoadingMark.equals("EndDate")) {
-            dataMessage=(year_string+"-"+month_string+"-"+day_string);
-            day_end=dataMessage;
-           }
-        else{
-            dataMessage=(year_string+"-"+month_string+"-"+day_string);
-        dia_date.setText(dataMessage);
-        dia_dateInit=dataMessage;}
     }
 
 
@@ -541,8 +437,6 @@ return true;
                             String a="b";
                             DatePickerFragment datePickerFragment=new DatePickerFragment(a);
                             datePickerFragment.show(getSupportFragmentManager(),"datePicker");
-
-
 
                         }
                     });
@@ -661,38 +555,6 @@ return true;
         databaseReference.addListenerForSingleValueEvent(listener);
     }
 
-    public void downLoadDialogMessage(String dataMessage){
-        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
-        builder.setTitle("서버 저장사진 다운로드");
-        builder.setMessage(dataMessage +"_목록을 지정하였습니다."+"\n"+"하단 세부항목 버튼을 클릭하여 다운로드 진행 합니다.");
-        CaptureProcess captureProcess=new CaptureProcess();
-
-        builder.setPositiveButton("입고사진 다운로드", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String downLoadingItems="InCargo";
-                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
-            }
-        });
-        builder.setNegativeButton("출고사진 다운로드", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String downLoadingItems="OutCargo";
-                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
-            }
-        });
-        builder.setNeutralButton("기타사진 다운로드", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String downLoadingItems="Etc";
-                captureProcess.downLoadingUri(dataMessage,downLoadingItems);
-            }
-        });
-        builder.show();
-    }
-
-
-
     public void webView(String bl){
         Intent intent=new Intent(Incargo.this,WebList.class);
         intent.putExtra("bl",bl);
@@ -777,17 +639,10 @@ return true;
         String msg1=chDate+chBl+chContainer+chRemark+"로 변경 진행 합니다.";
         putMessage(msg+"\n"+msg1,"Etc",nickName);
         Log.i("TestValue","beforeNickName Value"+nickName);
-//        putMessage(msg1,"Etc");
+
         }
         sort_dialog="dialogsort";
         getFirebaseData(day_start,day_end,"sort", sortConsignee);
-
-
-
-//        PushFcmProgress push=new PushFcmProgress(requestQueue);
-//        push.sendAlertMessage(alertDepot,nickName,consignee+"_화물정보 업데이트 되었습니다.","WorkingMessage");
-
-
     }
 
     public void putDataReg(){
@@ -1171,7 +1026,6 @@ return true;
                     consigneeArrayList.add(data.getConsignee());
                     arrConsignee.add(data.getConsignee());
                 }
-
                 getFirebaseData(dataMessage,dataMessage,"sort", sortConsignee);
             }
 
@@ -1317,37 +1171,70 @@ return true;
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        bl=listItems.get(pos).getBl();
-        String incargoWorking=listItems.get(pos).getWorking();
-        String incargoDate=listItems.get(pos).getDate();
-        String incargoConsigneeName=listItems.get(pos).getConsignee();
-        String incargoDescription=listItems.get(pos).getDescription();
-        String incargoContainerNumber=listItems.get(pos).getContainer();
-        String incargoQty=listItems.get(pos).getIncargo();
-        String incargoBl=listItems.get(pos).getBl();
-        String incargoRemark=listItems.get(pos).getRemark();
-        String incargoContainer20=String.valueOf(listItems.get(pos).getContainer20());
-        String incargoContainer40=String.valueOf(listItems.get(pos).getContainer40());
-        String incargoCargo=String.valueOf(listItems.get(pos).getLclcargo());
+        RecyclerView imageRecyclerView=findViewById(R.id.incargo_recyclerView_image);
+        GridLayoutManager manager=new GridLayoutManager(this,2);
+        imageRecyclerView.setLayoutManager(manager);
+        PublicMethod pictures=new PublicMethod(this);
+        imageViewLists=pictures.getPictureLists();
+        iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
+        imageRecyclerView.setAdapter(iAdapter);
+        String dataRefPathValue=
+                wareHouseDepot+"/"+listItems.get(pos).getDate()+"_"+listItems.get(pos).getBl()+"_"+listItems.get(pos).getDescription()+
+                "_"+listItems.get(pos).getCount()+"_"+listItems.get(pos).getContainer();
+        String keyValue=listItems.get(pos).getDate()+"_"+listItems.get(pos).getBl()+"_"+listItems.get(pos).getDescription()+
+                "_"+listItems.get(pos).getCount()+"_"+listItems.get(pos).getContainer();
+        Log.i("TestValue","keyValue First Method::::"+keyValue);
+        listItems.clear();
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
+                    if(data.getKey().equals(keyValue)){
+                        listItems.add(mList);
+                        Log.i("TestValue","keyValue InListener::::"+keyValue);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
-        upDataRegList= new String[]{incargoWorking,incargoDate,incargoConsigneeName,incargoDescription,
-                incargoContainer20,incargoContainer40,incargoCargo,
-                incargoContainerNumber,incargoQty,incargoBl,incargoRemark};
+            }
+        });
 
-        if(selectedSortItems.get(pos, false)){
-            selectedSortItems.put(pos,false);
-//                    selectedSortItems.delete(pos);
-            listSortItems.remove(listItems.get(pos));
-            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 해제",
-                    Toast.LENGTH_SHORT).show();
-        }else{
-            selectedSortItems.put(pos,true);
-//                    selectedSortItems.delete(pos);
-            listSortItems.add(listItems.get(pos));
-            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 선택",
-                    Toast.LENGTH_SHORT).show();
-        }
+//        bl=listItems.get(pos).getBl();
+//        String incargoWorking=listItems.get(pos).getWorking();
+//        String incargoDate=listItems.get(pos).getDate();
+//        String incargoConsigneeName=listItems.get(pos).getConsignee();
+//        String incargoDescription=listItems.get(pos).getDescription();
+//        String incargoContainerNumber=listItems.get(pos).getContainer();
+//        String incargoQty=listItems.get(pos).getIncargo();
+//        String incargoBl=listItems.get(pos).getBl();
+//        String incargoRemark=listItems.get(pos).getRemark();
+//        String incargoContainer20=String.valueOf(listItems.get(pos).getContainer20());
+//        String incargoContainer40=String.valueOf(listItems.get(pos).getContainer40());
+//        String incargoCargo=String.valueOf(listItems.get(pos).getLclcargo());
+//
+//
+//        upDataRegList= new String[]{incargoWorking,incargoDate,incargoConsigneeName,incargoDescription,
+//                incargoContainer20,incargoContainer40,incargoCargo,
+//                incargoContainerNumber,incargoQty,incargoBl,incargoRemark};
+//
+//        if(selectedSortItems.get(pos, false)){
+//            selectedSortItems.put(pos,false);
+////                    selectedSortItems.delete(pos);
+//            listSortItems.remove(listItems.get(pos));
+//            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 해제",
+//                    Toast.LENGTH_SHORT).show();
+//        }else{
+//            selectedSortItems.put(pos,true);
+////                    selectedSortItems.delete(pos);
+//            listSortItems.add(listItems.get(pos));
+//            Toast.makeText(Incargo.this,incargoDate+"_"+incargoConsigneeName+"_"+bl+"_"+incargoContainerNumber+"항목 선택",
+//                    Toast.LENGTH_SHORT).show();
+//        }
 
     }
 
@@ -1385,6 +1272,11 @@ return true;
         });
         deleteItem.create();
         deleteItem.show();
+    }
+
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+
     }
 }
 

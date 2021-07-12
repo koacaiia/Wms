@@ -142,6 +142,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         refPath=list.get(position).getKeypath();
+
         getOutcargoData(refPath);
         itemClickedDialog();
     }
@@ -175,7 +176,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     public void itemClickedDialog(){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         AlertDialog dialog=builder.create();
-        builder.setTitle("작업현황 변경사항");
+        builder.setTitle("출고현황 변경사항");
         ArrayList<String> clickValue=new ArrayList<>();
         clickValue.add("사진제외 출고완료 등록");
         clickValue.add("사진포함 출고완료 등록");
@@ -211,8 +212,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         RecyclerView imageRecyclerView=findViewById(R.id.activity_list_outcargo_imageviewRe);
         GridLayoutManager manager=new GridLayoutManager(this,2);
         imageRecyclerView.setLayoutManager(manager);
-        imageViewLists=new ArrayList<>();
-        queryAllPictures();
+
+        PublicMethod getImageLists=new PublicMethod(this);
+        imageViewLists=getImageLists.getPictureLists();
+
         iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
         imageRecyclerView.setAdapter(iAdapter);
 
@@ -304,32 +307,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 .show();
     }
 
-    public ArrayList<String> queryAllPictures(){
-//        captureImageList=new ArrayList<ImageViewList>();
-        imageViewLists.clear();
-        Uri uri =MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection={MediaStore.MediaColumns.DATA};
-        Cursor cursor=this.getContentResolver().query(uri,projection,null,null, MediaStore.MediaColumns.DATE_ADDED +
-                " desc");
-        int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
-        while(cursor.moveToNext()){
-            String uriI=cursor.getString(columnsDataIndex);
-
-            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고/Resize");
-            String strFile=String.valueOf(file);
-
-            if(uriI.startsWith(strFile)){
-//                ImageViewList lists=new ImageViewList(uriI);
-                imageViewLists.add(uriI);
-            }
-
-        }
-
-        cursor.close();
-
-        return imageViewLists;
-    }
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {

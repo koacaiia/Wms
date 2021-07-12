@@ -7,18 +7,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,7 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TitleActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener ,
-        Serializable, SensorEventListener {
+        Serializable, SensorEventListener,IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener {
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
     FirebaseDatabase database;
@@ -85,13 +92,18 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     };
 
     static RequestQueue requestQueue;
+    Display display;
 
+    Button btnAnnual;
+    Button btnWorkmessage;
+    Button btnCamera;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
         mSensorManager=(SensorManager)getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        display=((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         requestPermissions(permission_list,0);
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
@@ -100,8 +112,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             nickcheckProcess.putUserInformation();
             return;
         }
-
-
 
         departmentName=sharedPref.getString("depotName",null);
         nickName=sharedPref.getString("nickName",null);
@@ -133,7 +143,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             @Override
             public void onClick(View v) {
 
-
                 initIntent();
             }
         });
@@ -146,18 +155,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         recyclerViewIn.setLayoutManager(inManager);
 
         titleDialog();
-//        getFirebaseDataIn();
-//        getFirebaseDataOut();
-        adapterOut=new OutCargoListAdapter(listOut,this,this);
-        adapterIn=new IncargoListAdapter(listIn,this);
 
-//        adapterIn.setAdapterClickListener(new AdapterClickListener() {
-//            @Override
-//            public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-//                Intent intent=new Intent(getApplicationContext(),Incargo.class);
-//                startActivity(intent);
-//            }
-//        });
+        adapterOut=new OutCargoListAdapter(listOut,this,this);
+        adapterIn=new IncargoListAdapter(listIn,this,this);
         recyclerViewOut.setAdapter(adapterOut);
         recyclerViewIn.setAdapter(adapterIn);
 
@@ -168,6 +168,40 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
+
+        btnAnnual=findViewById(R.id.titleAnnual);
+        btnAnnual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentAnnual=new Intent(TitleActivity.this,AnnualLeave.class);
+                intentAnnual.putExtra("depotName",departmentName);
+                intentAnnual.putExtra("nickName",nickName);
+                intentAnnual.putExtra("alertDepot",alertDepot);
+                startActivity(intentAnnual);
+            }
+        });
+        btnWorkmessage=findViewById(R.id.titleWorkmessage);
+        btnWorkmessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(TitleActivity.this,WorkingMessageData.class);
+                intent.putExtra("nickName",nickName);
+                intent.putExtra("alertDepot",alertDepot);
+                startActivity(intent);
+
+            }
+        });
+        btnCamera=findViewById(R.id.titleCamera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(TitleActivity.this,CameraCapture.class);
+                intent.putExtra("depotName",departmentName);
+                intent.putExtra("nickName",nickName);
+                intent.putExtra("alertDepot",alertDepot);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -198,6 +232,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     public void titleDialog() {
         AlertDialog.Builder titleBuilder=new AlertDialog.Builder(this);
         View view= getLayoutInflater().inflate(R.layout.title_dialog,null);
+        Button btnConfirm=view.findViewById(R.id.button2);
+        Button btnIncargo=view.findViewById(R.id.button4);
+        Button btnOutcargo=view.findViewById(R.id.button3);
+
         TextView textTitle=view.findViewById(R.id.dialog_title_txttile);
         textTitle.setText(dateToday+" 입,출고 현황");
         ArrayList<OutCargoList> listOutP=new ArrayList<>();
@@ -307,7 +345,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                         case "컨테이너 진입":
                             proIncargoC=proIncargoC+(eCon40*2)+eCon20;
                             break;
-                        case "입고작업":
+                        case "입고작업 완료":
                             proIncargoC=proIncargoC+(eCon40*2)+eCon20;
                             proIncargo=proIncargo+(eCon40*2)+eCon20;
                             break;
@@ -356,27 +394,57 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         sortByDateIncargoData.addListenerForSingleValueEvent(inListener);
 
 
-        titleBuilder.setView(view)
-                .setPositiveButton("세부입고 현황", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(getApplicationContext(),Incargo.class);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("세부출고 현황", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        intentOutcargoActivity();
-                    }
-                })
-                .setNeutralButton("현황 확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+        titleBuilder.setView(view);
+//                .setPositiveButton("세부입고 현황", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        Intent intent=new Intent(getApplicationContext(),Incargo.class);
+//                        startActivity(intent);
+//                    }
+//                })
+//                .setNegativeButton("세부출고 현황", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        intentOutcargoActivity();
+//                    }
+//                })
+//                .setNeutralButton("현황 확인", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                    }
+//                });
 
-                    }
-                })
-                .show();
+        AlertDialog dialog=titleBuilder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+        WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
+        params.width=WindowManager.LayoutParams.MATCH_PARENT;
+        params.height= WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(params);
+
+        btnConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        btnIncargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(getApplicationContext(),Incargo.class);
+                        startActivity(intent);
+            }
+        });
+        btnOutcargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intentOutcargoActivity();
+            }
+        });
+
+
+
     }
 
 
@@ -557,6 +625,51 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         sendResponseListener.onRequestStarted();
         requestQueue.add(request);
     }
+
+    @Override
+    public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+                String pathValue=
+                wareHouseDepot+"/"+listIn.get(pos).getDate()+"_"+listIn.get(pos).getBl()+"_"+listIn.get(pos).getDescription()+
+                "_"+listIn.get(pos).getCount()+"_"+listIn.get(pos).getContainer();
+
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference(pathValue);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        ArrayList<String> incargoContent=new ArrayList<>();
+        incargoContent.add("컨테이너 진입");
+        incargoContent.add("입고작업 완료");
+        incargoContent.add("검수완료");
+        incargoContent.add("창고반입");
+
+        String[] incargoContentList=incargoContent.toArray(new String[incargoContent.size()]);
+
+        builder.setTitle("입고현황 변경사항")
+                .setSingleChoiceItems(incargoContentList,0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        String contentValue=incargoContentList[which];
+                        Map<String,Object> putValue=new HashMap<>();
+                        putValue.put("working",contentValue);
+                        databaseReference.updateChildren(putValue);
+                        adapterIn.notifyDataSetChanged();
+
+                        Toast.makeText(getApplicationContext(),contentValue+"로 작업 현황 등록 합니다.",Toast.LENGTH_SHORT).show();
+                        dialog.cancel();
+
+                    }
+                })
+                .show();
+
+
+    }
+
+    @Override
+    public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+
+    }
+
     public interface SendResponseListener{
         public void onRequestStarted();
         public void onRequestCompleted();

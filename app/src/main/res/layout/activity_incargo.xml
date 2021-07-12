@@ -47,7 +47,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="6.5"
+            android:layout_weight="6"
             android:orientation="horizontal">
 
             <TextView
@@ -74,60 +74,52 @@
                 android:textStyle="bold|italic" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/incargo_recyclerViewList"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1.5"
-            android:focusable="auto"
-            android:focusableInTouchMode="true"
-            android:nestedScrollingEnabled="true" />
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/incargo_recyclerViewList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="auto"
+                android:focusableInTouchMode="true"
+                android:nestedScrollingEnabled="true">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/incargo_recyclerView_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="6.6"
-            android:orientation="vertical">
+            android:layout_weight="6"
+            android:orientation="horizontal">
 
-            <LinearLayout
+            <Button
+                android:id="@+id/incargo_mnf"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="3dp"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:text="엠엔에프 관련" />
 
-                <Button
-                    android:id="@+id/incargo_mnf"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:text="엠엔에프 관련" />
-
-                <Button
-                    android:id="@+id/incargo_outcargo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:text="출고목록" />
-
-                <Button
-                    android:id="@+id/incargo_alert"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:text="근태등록" />
-
-                <Button
-                    android:id="@+id/incargo_reset"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="3dp"
-                    android:layout_weight="1"
-                    android:text="입고목목 초기화" />
-            </LinearLayout>
-
+            <Button
+                android:id="@+id/incargo_reset"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_weight="1"
+                android:text="입고목목 초기화" />
         </LinearLayout>
 
     </LinearLayout>
