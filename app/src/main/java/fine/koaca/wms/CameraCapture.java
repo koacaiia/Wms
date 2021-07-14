@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -117,10 +118,7 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 captureProcess.captureProcess(date_today);
-//                list=captureProcess.queryAllPictures();
-//                Log.i("koacaiia","adapter Capture image size"+list.size());
-//                adapter.notifyDataSetChanged();
-//                queryAllList(captureImageList);
+
 
             }
         });
@@ -138,7 +136,8 @@ public class CameraCapture extends AppCompatActivity
             @Override
             public void onClick(View v) {
 
-                consigneeSelected();
+//                consigneeSelected();
+                sharedInOutCaro();
             }
         });
         btn_share.setOnLongClickListener(new View.OnLongClickListener() {
@@ -217,6 +216,36 @@ public class CameraCapture extends AppCompatActivity
         }
 
     }
+
+    private void sharedInOutCaro() {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("입,출고 사진 공유 선택창")
+                .setMessage("하단 입,출고 항목을 선택하여 공유할 사진의 항목을 등록 바랍니다.")
+                .setPositiveButton("출고", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(CameraCapture.this,OutCargoActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("입고", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(CameraCapture.this,Incargo.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -472,8 +501,14 @@ public class CameraCapture extends AppCompatActivity
 
 
     }
-    public void initIntent(){
+    public void messageIntent(){
         Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+    public void initIntent(){
+        Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -482,6 +517,27 @@ public class CameraCapture extends AppCompatActivity
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+    }
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
+        builder.setTitle("화면 선택")
+                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(CameraCapture.this,TitleActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
     }
 
 

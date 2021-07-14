@@ -20,14 +20,19 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
     ArrayList<OutCargoList> list;
     Context context;
     OutCargoListAdapterClickListener listener;
-
+    OutCargoListAdapterLongClickListener longListener;
     public interface OutCargoListAdapterClickListener{
         void itemClicked(OutCargoListAdapter.ListView listView,View v,int position);
     }
-    public OutCargoListAdapter(ArrayList<OutCargoList> list,Context context,OutCargoListAdapterClickListener listener) {
+    public interface OutCargoListAdapterLongClickListener{
+        void itemLongClicked(OutCargoListAdapter.ListView listView,View v,int position);
+    }
+    public OutCargoListAdapter(ArrayList<OutCargoList> list,Context context,OutCargoListAdapterClickListener listener,
+                               OutCargoListAdapterLongClickListener longListener) {
         this.list=list;
         this.context=context;
         this.listener=listener;
+        this.longListener=longListener;
     }
 
 
@@ -88,6 +93,15 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
                 public void onClick(View v) {
                     listener.itemClicked(ListView.this,v,getAdapterPosition());
                 }
+            });
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    longListener.itemLongClicked(ListView.this,v,getAdapterPosition());
+                    return true;
+                }
+
+
             });
 
 

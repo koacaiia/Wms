@@ -48,7 +48,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OutCargoActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener, ImageViewActivityAdapter.ImageViewClicked {
+public class OutCargoActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener,
+        OutCargoListAdapter.OutCargoListAdapterLongClickListener, ImageViewActivityAdapter.ImageViewClicked {
     FirebaseDatabase database;
     RecyclerView recyclerView;
     ArrayList<OutCargoList> list;
@@ -101,7 +102,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         }
 
-        adapter=new OutCargoListAdapter(list,this,this);
+        adapter=new OutCargoListAdapter(list,this,this,this);
         recyclerView.setAdapter(adapter);
 
 
@@ -126,8 +127,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                     list.add(mList);
                 }
                 adapter.notifyDataSetChanged();
-//                adapter=new OutCargoListAdapter(list,getApplicationContext(),OutCargoActivity.this::itemClicked);
-//                recyclerView.setAdapter(adapter);
 
             }
             @Override
@@ -142,9 +141,12 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         refPath=list.get(position).getKeypath();
+        String consigneeName=list.get(position).getConsigneeName();
+        String dialogTitle=
+                consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
 
         getOutcargoData(refPath);
-        itemClickedDialog();
+        itemClickedDialog(consigneeName,dialogTitle);
     }
 
     private void getOutcargoData(String refPath) {
@@ -161,8 +163,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
                 }
                 adapter.notifyDataSetChanged();
-//                adapter=new OutCargoListAdapter(list,getApplicationContext(),OutCargoActivity.this::itemClicked);
-//                recyclerView.setAdapter(adapter);
 
             }
             @Override
@@ -173,7 +173,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         sortByDateDatabase.addListenerForSingleValueEvent(listener);
     }
 
-    public void itemClickedDialog(){
+    public void itemClickedDialog(String consigneeName, String dialogTitle){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         AlertDialog dialog=builder.create();
         builder.setTitle("출고현황 변경사항");
@@ -181,9 +181,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         clickValue.add("사진제외 출고완료 등록");
         clickValue.add("사진포함 출고완료 등록");
         clickValue.add("미출고 등록");
+        clickValue.add("신규출고 항목으로 공유");
 
         String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
-
+        builder.setTitle(dialogTitle+" 출고");
         builder.setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -200,6 +201,11 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                     case 2:
                         updateValue("미");
                         intentTitleActivity();
+                        break;
+                    case 3:
+                        PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+                        publicMethod.putNewDataUpdateAlarm(nickName,alertDepot,dialogTitle+" 신규 등록",consigneeName,"OutCargo",requestQueue);
+
                         break;
                 }
                 dialog.dismiss();
@@ -221,8 +227,14 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     }
 
-    private void intentTitleActivity() {
+    public void intentTitleActivity() {
         Intent intent=new Intent(OutCargoActivity.this,TitleActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+    public void initIntent() {
+        Intent intent=new Intent(OutCargoActivity.this,OutCargoActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -250,11 +262,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 dateAlertDialog();
 
                 break;
-//            case R.id.outcargoActivity_Allsearch:
-//
-//                getOutcargoData();
-//
-//                break;
+
         }
         return true;
     }
@@ -359,5 +367,38 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+    }
+
+    public void messageIntent() {
+        Intent intent=new Intent(this,WorkingMessageData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+        builder.setTitle("화면 선택")
+                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(OutCargoActivity.this,TitleActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
+    }
+
+    @Override
+    public void itemLongClicked(OutCargoListAdapter.ListView listView, View v, int position) {
+
     }
 }

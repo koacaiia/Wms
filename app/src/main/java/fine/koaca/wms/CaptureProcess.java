@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -32,6 +33,8 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -57,6 +60,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     ArrayList<ImageViewList> captureImageList=new ArrayList<ImageViewList>();
     ImageViewListAdapter adapter;
     ArrayList<String> uriString=new ArrayList<String>();
+    Activity activity;
+    Incargo inCargoActivity=new Incargo();
 
 
     public CaptureProcess(CameraCapture mainActivity,ImageViewListAdapter adapter) {
@@ -67,6 +72,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     public CaptureProcess(OutCargoActivity outCargoActivity) {
       this.outCargoActivity=outCargoActivity;
+    }
+    public CaptureProcess(Incargo inCargoActivity) {
+        this.inCargoActivity=inCargoActivity;
     }
     public CaptureProcess(){
 
@@ -195,7 +203,23 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize,context);
+//                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize,context);
+                   recvRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                       @Override
+                       public void onSuccess(Uri uri) {
+                           String strUri=String.valueOf(uri);
+                           uriString.add(strUri);
+                           if(i==(arSize-1)){
+                               upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,arSize,context);
+                           }
+                       }
+                   })
+                           .addOnFailureListener(new OnFailureListener() {
+                               @Override
+                               public void onFailure(@NonNull @NotNull Exception e) {
+                                   putMessage("Failed Uri Received","",captureItem,uploadItem);
+                               }
+                           });
 
 
                 }
@@ -212,94 +236,122 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             });
 
     }
-    public void bitmapReturn(File fileName, String itemName) {
 
-        OutputStream fos = null;
+    private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i, int arSize,
+                                     String context) {
+        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+        WorkingMessageList messageList= new WorkingMessageList();
+        messageList.setNickName(nick);
+        messageList.setTime(timeStamp);
+        messageList.setMsg(msg);
 
-        Bitmap bitmap = BitmapFactory.decodeFile(String.valueOf(fileName));
-        contentResolver = MyApplication.getAppContext().getContentResolver();
-        contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.DISPLAY_NAME,itemName);
-        contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
-        contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
-        Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-        try {
-            fos = contentResolver.openOutputStream(imageUri);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
+                "/"+nick+"_"+timeStamp);
+        String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="";
+
+        try{
+            switch(i){
+
+                case 0:
+                    strUri0=uriString.get(0);
+
+                    break;
+                case 1:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    break;
+                case 2:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    strUri2=uriString.get(2);
+                    break;
+                case 3:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    strUri2=uriString.get(2);
+                    strUri3=uriString.get(3);
+                    break;
+                case 4:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    strUri2=uriString.get(2);
+                    strUri3=uriString.get(3);
+                    strUri4=uriString.get(4);
+                    break;
+
+            }
+        }catch(IndexOutOfBoundsException e){
+
+            switch(context){
+                case "OutCargoActivity":
+                    Toast.makeText(outCargoActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
+                    break;
+                case "CameraCapture":
+                    Toast.makeText(mainActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                case "Incargo":
+                    Toast.makeText(inCargoActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
+                            Toast.LENGTH_SHORT).show();
+                    break;
+            }
+
+
+            messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
         }
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
 
-        try {
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+
+        messageList.setUri0(strUri0);
+        messageList.setUri1(strUri1);
+        messageList.setUri2(strUri2);
+        messageList.setUri3(strUri3);
+        messageList.setUri4(strUri4);
+
+        messageList.setDate(timeStamp_date);
+        messageList.setConsignee(consigneeName);
+        messageList.setInOutCargo(inoutCargo);
+
+        databaseReference.setValue(messageList);
+        if(arSize-1==i){
+            if(arSize==uriString.size()){
+
+                switch(context){
+
+                    case "OutCargoActivity":
+                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                                Toast.LENGTH_SHORT).show();
+                        outCargoActivity.messageIntent();
+                        break;
+                    case "CameraCapture":
+                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                                Toast.LENGTH_SHORT).show();
+                        mainActivity.messageIntent();
+                    case "Incargo":
+                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        inCargoActivity.messageIntent();
+                        break;
+                }
+            }else{
+                Map<String,Object> value=new HashMap<>();
+                value.put("msg",
+                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+                databaseReference.updateChildren(value);
+                Log.i("TestValue",
+                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
+
+                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size(),context);
+
+            }
+
         }
 
     }
 
-    public void downLoadingUri(String dataMessage,String downLoadingItems){
-        FirebaseStorage storage=FirebaseStorage.getInstance("gs://wmsysk.appspot.com");
-        StorageReference listRef = storage.getReference().child("/images/" + dataMessage + "/" + downLoadingItems+"/");
-        listRef.listAll()
-                .addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                    @Override
-                    public void onSuccess(ListResult listResult) {
-                        for(StorageReference item:listResult.getItems()) {
-                            String itemName=item.getName();
-                            StorageReference itemRef = storage.getReference().child("/images/" + dataMessage + "/" + downLoadingItems + "/" + itemName);
 
-                            String dirPath = "/storage/emulated/0/" + Environment.DIRECTORY_PICTURES + "/Fine/입,출고";
-                            File fileName=new File(dirPath,itemName);
-
-                            if(fileName.exists()){
-
-                            }else{
-                            File tempFile= null;
-                            try {
-                                tempFile = File.createTempFile("koaca",".jpg");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-
-                            File finalTempFile = tempFile;
-                                File finalTempFile1 = tempFile;
-                                itemRef.getFile(tempFile)
-                                    .addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                                        @Override
-                                        public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-//                                            OutputStream fos = null;
-
-                                            bitmapReturn(finalTempFile1,itemName);
-                                            Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
-                                                            "DownLoad에 " +
-                                                            "성공하였습니다.",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Toast.makeText(MyApplication.getAppContext(), "서버에서"+dataMessage+"_"+downLoadingItems+"사진 목록 " +
-                                                            "DownLoad에 " +
-                                                            "실패하였습니다.",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                            if(tempFile.exists()){
-                            tempFile.delete();
-                            }
-                        }
-                        }
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i("koacaiia","DownLoad List Transfer Failed");
-                    }
-                });
-    }
 
 
 
@@ -380,7 +432,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
 
                         String imageUri=String.valueOf(uri);
-
                         uriString.add(imageUri);
                         WorkingMessageList messageList= new WorkingMessageList();
                         messageList.setNickName(nick);
@@ -433,6 +484,10 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                         Toast.makeText(mainActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
                                                 Toast.LENGTH_SHORT).show();
                                         break;
+                                    case "Incargo":
+                                        Toast.makeText(inCargoActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
+                                                Toast.LENGTH_SHORT).show();
+                                        break;
                                 }
 
 
@@ -460,14 +515,16 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                         outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                                         Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                                 Toast.LENGTH_SHORT).show();
-                                        Intent intent=new Intent(outCargoActivity.getApplicationContext(),OutCargoActivity.class);
-                                        outCargoActivity.startActivity(intent);
+                                        outCargoActivity.initIntent();
                                         break;
                                     case "CameraCapture":
                                         mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                                         Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                                 Toast.LENGTH_SHORT).show();
-                                        mainActivity.initIntent();
+                                        mainActivity.messageIntent();
+                                    case "Incargo":
+                                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                                        inCargoActivity.initIntent();
                                         break;
                                 }
                             }else{
@@ -501,24 +558,44 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
 
         AlertDialog.Builder builder;
-        if(context.equals("CameraCapture")){
-            builder=new AlertDialog.Builder(mainActivity);
-        }else{
-            builder=new AlertDialog.Builder(outCargoActivity);
+
+        switch(context){
+
+            case "OutCargoActivity":
+                builder=new AlertDialog.Builder(outCargoActivity);
+                break;
+            case "CameraCapture":
+
+                builder=new AlertDialog.Builder(mainActivity);
+                break;
+            case "Incargo":
+                builder=new AlertDialog.Builder(inCargoActivity);
+                break;
+
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + context);
         }
 
         AlertDialog dialog=builder.create();
+
         builder.setTitle("전송실패")
                 .setMessage("전송중 오류 발생하였습니다.다시 진행 바랍니다."+"\n"+"전송요청 사진:"+arSize+"장"+"\n"+"실재 서버 전송사진 숫자:"+size+"장")
                 .setPositiveButton("재전송", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if(context.equals("CameraCapture")){
-                            Intent intent=new Intent(mainActivity,CameraCapture.class);
-                            mainActivity.startActivity(intent);
-                        }else{
-                            Intent intent=new Intent(outCargoActivity,OutCargoActivity.class);
-                            outCargoActivity.startActivity(intent);
+                        switch(context){
+
+                            case "OutCargoActivity":
+
+                                outCargoActivity.initIntent();
+                                break;
+                            case "CameraCapture":
+
+                                mainActivity.initIntent();
+                            case "Incargo":
+                               inCargoActivity.initIntent();
+                                break;
                         }
 
                     }
@@ -534,12 +611,18 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         intent.setType("text/plain");
                         intent.putExtra(Intent.EXTRA_TEXT, message );
                         intent.setPackage("com.kakao.talk");
-                        if(context.equals("CameraCapture")){
+                        switch(context){
 
-                            mainActivity.startActivity(intent);
-                        }else{
+                            case "OutCargoActivity":
 
-                            outCargoActivity.startActivity(intent);
+                                outCargoActivity.initIntent();
+                                break;
+                            case "CameraCapture":
+
+                                mainActivity.initIntent();
+                            case "Incargo":
+                                inCargoActivity.initIntent();
+                                break;
                         }
                     }
                 })

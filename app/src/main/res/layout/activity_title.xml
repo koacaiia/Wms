@@ -8,11 +8,13 @@
     tools:context=".TitleActivity">
 
 
-    <TextView
-        android:id="@+id/activity_title_txttile"
+    <Button
+        android:id="@+id/activity_title_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1.7"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_weight="1.6"
         android:gravity="center"
         android:text="TextView" />
 
@@ -53,7 +55,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1.7"
+        android:layout_weight="1.6"
         android:orientation="horizontal">
 
         <Button

@@ -9,30 +9,17 @@
     tools:context=".Incargo">
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/incargo_floatBtn_Capture"
+        android:id="@+id/incargo_floatBtn_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/linearLayout6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81"
-        app:srcCompat="@drawable/photo_camera24px1" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/incargo_floatBtn_search"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/incargo_floatBtn_Capture"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.91"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.93"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        app:layout_constraintVertical_bias="0.88"
+        app:srcCompat="@android:drawable/ic_menu_share" />
 
     <LinearLayout
         android:id="@+id/linearLayout6"
@@ -110,16 +97,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:layout_weight="1"
-                android:text="엠엔에프 관련" />
+                android:text="목록조회/MnF"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/incargo_camera"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
+                android:layout_weight="1"
+                android:text="카메라" />
 
             <Button
                 android:id="@+id/incargo_reset"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
+                android:layout_marginStart="3dp"
+                android:layout_marginEnd="3dp"
                 android:layout_weight="1"
-                android:text="입고목목 초기화" />
+                android:text="목목 초기화" />
         </LinearLayout>
 
     </LinearLayout>

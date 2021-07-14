@@ -55,6 +55,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TitleActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener ,
+        OutCargoListAdapter.OutCargoListAdapterLongClickListener,
         Serializable, SensorEventListener,IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener {
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
@@ -62,13 +63,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     DatabaseReference databaseReferenceOut;
     DatabaseReference databaseReferenceIn;
     ArrayList<OutCargoList> listOut=new ArrayList<>();
-    ArrayList<OutCargoList> listOutSort;
     ArrayList<Fine2IncargoList> listIn=new ArrayList<>();
     OutCargoListAdapter adapterOut;
     IncargoListAdapter adapterIn;
     String dateToday;
 
-    TextView txtTitle;
+    Button btnTitle;
     static private final String SHARE_NAME="SHARE_DEPOT";
     static SharedPreferences sharedPref;
     static SharedPreferences.Editor editor;
@@ -136,13 +136,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         }
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        txtTitle=findViewById(R.id.activity_title_txttile);
+        btnTitle=findViewById(R.id.activity_title_btn);
 
-        txtTitle.setText(dateToday+"일  입,출고 현황 ");
-        txtTitle.setOnClickListener(new View.OnClickListener() {
+        btnTitle.setText(dateToday+"일  입,출고 현황 (화면초기화)");
+        btnTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 initIntent();
             }
         });
@@ -156,7 +155,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         titleDialog();
 
-        adapterOut=new OutCargoListAdapter(listOut,this,this);
+        adapterOut=new OutCargoListAdapter(listOut,this,this,this);
         adapterIn=new IncargoListAdapter(listIn,this,this);
         recyclerViewOut.setAdapter(adapterOut);
         recyclerViewIn.setAdapter(adapterIn);
@@ -196,6 +195,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(TitleActivity.this,CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("depotName",departmentName);
                 intent.putExtra("nickName",nickName);
                 intent.putExtra("alertDepot",alertDepot);
@@ -326,19 +326,30 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
 
         ValueEventListener inListener= new ValueEventListener() {
-            int con40,con20,cargo,qty,totalTeu,proIncargo,proIncargoW,proIncargoI,proIncargoC,eCon40,eCon20;
+            int con40,con20,cargo,qty,totalTeu,proIncargo,proIncargoW,proIncargoI,proIncargoC,eCon40,eCon20,eCargo;
 
 
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot dataIn:snapshot.getChildren()){
                     Fine2IncargoList mListIn=dataIn.getValue(Fine2IncargoList.class);
-                    listIn.add(mListIn);
-                    eCon40=Integer.parseInt(mListIn.getContainer40());
-                    eCon20=Integer.parseInt(mListIn.getContainer20());
+
+                    String str40,str20,strCargo;
+                    str40= mListIn.getContainer40();
+                    str20=mListIn.getContainer20();
+                    strCargo=mListIn.getLclcargo();
+                    if(!str40.equals("0")||!str20.equals("0")||!strCargo.equals("0")){
+                        listIn.add(mListIn);
+                    }
+
+                    eCon40=Integer.parseInt(str40);
+                    eCon20=Integer.parseInt(str20);
+                    eCargo=Integer.parseInt(strCargo);
                     con40=con40+eCon40;
                     con20=con20+eCon20;
-                    cargo=cargo+Integer.parseInt(mListIn.getLclcargo());
+                    cargo=cargo+eCargo;
+
+
                     qty=qty+Integer.parseInt(mListIn.getIncargo());
                     String workP=mListIn.getWorking();
                     switch(workP){
@@ -395,25 +406,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
 
         titleBuilder.setView(view);
-//                .setPositiveButton("세부입고 현황", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Intent intent=new Intent(getApplicationContext(),Incargo.class);
-//                        startActivity(intent);
-//                    }
-//                })
-//                .setNegativeButton("세부출고 현황", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        intentOutcargoActivity();
-//                    }
-//                })
-//                .setNeutralButton("현황 확인", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//
-//                    }
-//                });
 
         AlertDialog dialog=titleBuilder.create();
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -432,19 +424,20 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         btnIncargo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
                 Intent intent=new Intent(getApplicationContext(),Incargo.class);
-                        startActivity(intent);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         });
         btnOutcargo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                dialog.dismiss();
+                listOut=null;
                 intentOutcargoActivity();
             }
         });
-
-
-
     }
 
 
@@ -452,46 +445,37 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         String refPath=listOut.get(position).getKeypath();
-        dialogOutCargoRecyclerItemClicked(refPath);
+        String consigneeName=listOut.get(position).getConsigneeName();
+        String dialogTitle=
+                consigneeName+"_"+listOut.get(position).getDescription()+listOut.get(position).getTotalQty();
+        dialogOutCargoRecyclerItemClicked(refPath,dialogTitle,consigneeName);
     }
 
-    private void dialogOutCargoRecyclerItemClicked(String refPath) {
-        ArrayList<String> clickValue=new ArrayList<>();
-        clickValue.add("사진제외 출고완료 등록");
-        clickValue.add("사진포함 출고완료 등록");
-        clickValue.add("세부출고목록 창 전환");
-        String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("출고항목 진행상황")
-                .setSingleChoiceItems(clickValueList,0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch(which){
-                            case 0:
-                                DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
-                                Map<String,Object> value=new HashMap<>();
-                                value.put("workprocess","완");
-                                dataRef.updateChildren(value);
-                                adapterOut.notifyDataSetChanged();
-                                Toast.makeText(getApplicationContext(),refPath+"건 출고 완료등록",Toast.LENGTH_SHORT).show();
-                                break;
-                            case 1:
-                                int listOutSize=listOut.size();
-                                for(int i=(listOutSize-1);0 <= i;i--){
-                                    if(!refPath.equals(listOut.get(i).getKeypath())){
-                                        listOut.remove(i);
+    private void putNewDataUpdateAlarm(String dialogTitle, String consigneeName, String out) {
+        String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
 
-                                    }
-                                }
-                                intentOutcargoActivity();
-                                break;
-                            case 2:
-                                intentOutcargoActivity();
-                                break;
-                        }
-                    }
-                })
-                .show();
+        WorkingMessageList messageList=new WorkingMessageList();
+
+
+        messageList.setNickName(nickName);
+        messageList.setTime(timeStamp);
+        messageList.setMsg(dialogTitle);
+        messageList.setDate(timeDate);
+        messageList.setConsignee(consigneeName);
+        messageList.setInOutCargo(out);
+
+
+        DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nickName+"_"+timeStamp);
+        databaseReference.setValue(messageList);
+
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(alertDepot,nickName,dialogTitle,"WorkingMessage");
+
+        Intent intent=new Intent(this,WorkingMessageData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
 
     }
 
@@ -586,54 +570,61 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         });
     }
 
-    private void sendData(JSONObject requestData, SendResponseListener sendResponseListener) {
-        JsonObjectRequest request=new JsonObjectRequest(
-                Request.Method.POST,
-                "https://fcm.googleapis.com/fcm/send",
-                requestData,
-                new Response.Listener<JSONObject>(){
+    private void dialogOutCargoRecyclerItemClicked(String refPath, String dialogTitle, String consigneeName) {
+        ArrayList<String> clickValue=new ArrayList<>();
+        clickValue.add("사진제외 출고완료 등록");
+        clickValue.add("사진포함 출고완료 등록");
+        clickValue.add("신규출고 항목으로 공유");
+        String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle(dialogTitle+" 출고")
+                .setSingleChoiceItems(clickValueList,0, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        sendResponseListener.onRequestCompleted();
-                    }},
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        sendResponseListener.onRequestWithError(error);
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch(which){
+                            case 0:
+                                DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
+                                Map<String,Object> value=new HashMap<>();
+                                value.put("workprocess","완");
+                                dataRef.updateChildren(value);
+                                adapterOut.notifyDataSetChanged();
+                                Toast.makeText(getApplicationContext(),refPath+"건 출고 완료등록",Toast.LENGTH_SHORT).show();
+                                break;
+                            case 1:
+                                int listOutSize=listOut.size();
+                                for(int i=(listOutSize-1);0 <= i;i--){
+                                    if(!refPath.equals(listOut.get(i).getKeypath())){
+                                        listOut.remove(i);
+
+                                    }
+                                }
+
+                                intentOutcargoActivity();
+                                break;
+
+                            case 2:
+                                putNewDataUpdateAlarm(dialogTitle+" 신규 등록",consigneeName,"OutCargo");
+
+                                break;
+                        }
+                        dialog.cancel();
                     }
                 })
-        {
-            @Override
-            protected Map<String,String> getParams() throws AuthFailureError {
-                Map<String,String> params=new HashMap<String,String>();
-                return params;
-            }
-            @Override
-            public Map<String,String> getHeaders() throws AuthFailureError{
-                Map<String,String> headers=new HashMap<String,String>();
-                headers.put("Authorization","key=AAAAKv8kPlM:APA91bF8Hq-XBpxF9a0z7pDBVRBabqUZt3uela3d6m5r9iWXzIzCJJcCplCcWRksa47jYXGGL5LMSBTMXVWzVhU4JzThvsExOQ2VKRt1H7rzoOg6yL2CKH4KNlIbV1oCC8zzJ1DHxW10");
-                return headers;
-            }
-            @Override
-            public String getBodyContentType(){
-                return "application/json";
-            }
+                .show();
 
-        };
-
-        request.setShouldCache(false);
-        sendResponseListener.onRequestStarted();
-        requestQueue.add(request);
     }
+
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-                String pathValue=
-                wareHouseDepot+"/"+listIn.get(pos).getDate()+"_"+listIn.get(pos).getBl()+"_"+listIn.get(pos).getDescription()+
-                "_"+listIn.get(pos).getCount()+"_"+listIn.get(pos).getContainer();
+
+        String keyValue=listIn.get(pos).getDate()+"_"+listIn.get(pos).getBl()+"_"+listIn.get(pos).getDescription()+
+                        "_"+listIn.get(pos).getCount()+"_"+listIn.get(pos).getContainer();
+        String updateTitleValue=
+                listIn.get(pos).getConsignee()+"_비엘:"+listIn.get(pos).getBl()+"_컨테이너:"+listIn.get(pos).getContainer();
 
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference(pathValue);
+        DatabaseReference databaseReference=database.getReference(wareHouseDepot+"/"+keyValue);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
         ArrayList<String> incargoContent=new ArrayList<>();
@@ -641,22 +632,38 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         incargoContent.add("입고작업 완료");
         incargoContent.add("검수완료");
         incargoContent.add("창고반입");
+        incargoContent.add("입고관련 사진등록");
+        incargoContent.add("신규입고 항목으로 공유");
+
 
         String[] incargoContentList=incargoContent.toArray(new String[incargoContent.size()]);
 
-        builder.setTitle("입고현황 변경사항")
+        builder.setTitle(updateTitleValue+" 입고")
                 .setSingleChoiceItems(incargoContentList,0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intent=new Intent(getApplicationContext(),Incargo.class);
+                        switch(which){
+                            case 0: case 1: case 2:case 3:
+                                String contentValue=incargoContentList[which];
+                                Map<String,Object> putValue=new HashMap<>();
+                                putValue.put("working",contentValue);
+                                databaseReference.updateChildren(putValue);
+                                initIntent();
+                                break;
+                            case 4:
+                                intent.putExtra("refPath",keyValue);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                break;
+                            case 5:
+                                putNewDataUpdateAlarm(updateTitleValue+" 신규 등록", listIn.get(pos).getConsignee(),"OutCargo");
 
-                        String contentValue=incargoContentList[which];
-                        Map<String,Object> putValue=new HashMap<>();
-                        putValue.put("working",contentValue);
-                        databaseReference.updateChildren(putValue);
-                        adapterIn.notifyDataSetChanged();
+                                break;
 
-                        Toast.makeText(getApplicationContext(),contentValue+"로 작업 현황 등록 합니다.",Toast.LENGTH_SHORT).show();
-                        dialog.cancel();
+                        }
+
 
                     }
                 })
@@ -667,15 +674,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     @Override
     public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+        Intent intent=new Intent(this,Incargo.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
 
     }
 
-    public interface SendResponseListener{
-        public void onRequestStarted();
-        public void onRequestCompleted();
-        public void onRequestWithError(VolleyError error);
-
-    }
 
     public  void pushMessage(String depotName, String nickName, String message, String contents) {
         PushFcmProgress push=new PushFcmProgress(requestQueue);
@@ -683,5 +687,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     }
 
 
-
+    @Override
+    public void itemLongClicked(OutCargoListAdapter.ListView listView, View v, int position) {
+        Intent intent=new Intent(this,Incargo.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+    }
 }

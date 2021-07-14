@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -10,11 +11,14 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,5 +78,34 @@ public class PublicMethod {
         }
         cursor.close();
         return imageViewLists;
+    }
+
+    public void putNewDataUpdateAlarm(String nickName,String alertDepot,String dialogTitle, String consigneeName, String out,
+                                      RequestQueue requestQueue) {
+        String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+        String timeDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+
+        WorkingMessageList messageList=new WorkingMessageList();
+
+
+        messageList.setNickName(nickName);
+        messageList.setTime(timeStamp);
+        messageList.setMsg(dialogTitle);
+        messageList.setDate(timeDate);
+        messageList.setConsignee(consigneeName);
+        messageList.setInOutCargo(out);
+
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nickName+"_"+timeStamp);
+        databaseReference.setValue(messageList);
+
+        PushFcmProgress push=new PushFcmProgress(requestQueue);
+        push.sendAlertMessage(alertDepot,nickName,dialogTitle,"WorkingMessage");
+
+        Intent intent=new Intent(activity,WorkingMessageData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        activity.startActivity(intent);
+
+
     }
 }

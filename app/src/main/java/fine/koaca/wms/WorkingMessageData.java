@@ -167,7 +167,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 fab_search.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        searchCondition(Incargo.shared_consigneeList);
+                        searchCondition();
                    }
                 });
 
@@ -421,80 +421,97 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
         startActivity(intent);
    }
-   public void searchCondition(String[] consigneeList){
+   public void searchCondition(){
+        ArrayList<String> consigneeArrayList=new ArrayList<>();
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+                    String consigneeName=mList.getConsignee();
+                    if(!consigneeArrayList.contains(consigneeName)){
+                        consigneeArrayList.add(consigneeName);
+                    }
+                }
+                consigneeArrayList.add(0,"ALL");
+                consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
+                dialog_date="All Time";
 
-        dialog_date="All Time";
-        getWorkingMessageList(dialog_date, dialog_consignee, upLoadItemsName);
+                AlertDialog.Builder searchBuilder=new AlertDialog.Builder(WorkingMessageData.this);
+                searchBuilder.setTitle("검색 조건 설정창");
+                View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);
+                Button searchButton=view.findViewById(R.id.workmessage_inputdate);
+                Spinner searchSpinner=view.findViewById(R.id.workmessage_spinner);
+                searchTextView=view.findViewById(R.id.workmessage_text);
+                searchTextView.setText("All Time");
+                ArrayAdapter<String> searchAdapter=new ArrayAdapter<String>(WorkingMessageData.this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        consigneeList);
+                searchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                searchSpinner.setAdapter(searchAdapter);
 
-//       consigneeList = new String[]{"ALL", "M&F", "SPC", "공차", "케이비켐", "BNI", "기타", "스위치코리아", "서강비철", "한큐한신", "하랄코", "Etc"};
+                searchButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String a="c";
+                        DatePickerFragment datePickerFragment=new DatePickerFragment(a);
+                        datePickerFragment.show(getSupportFragmentManager(),"datePicker");
+                        searchTextView.setText(dialog_date);
+                    }
+                });
 
+                searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        dialog_consignee=consigneeList[position];
+                        searchTextView.append("_"+dialog_consignee);
 
+                    }
 
-        AlertDialog.Builder searchBuilder=new AlertDialog.Builder(this);
-       searchBuilder.setTitle("검색 조건 설정창");
-       View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);
-       Button searchButton=view.findViewById(R.id.workmessage_inputdate);
-       Spinner searchSpinner=view.findViewById(R.id.workmessage_spinner);
-       searchTextView=view.findViewById(R.id.workmessage_text);
-       searchTextView.setText("All Time");
-       ArrayAdapter<String> searchAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-               consigneeList);
-       searchAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-       searchSpinner.setAdapter(searchAdapter);
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
 
-       searchButton.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               String a="c";
-               DatePickerFragment datePickerFragment=new DatePickerFragment(a);
-               datePickerFragment.show(getSupportFragmentManager(),"datePicker");
-               searchTextView.setText(dialog_date);
-           }
-       });
+                    }
+                });
 
-       searchSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-           @Override
-           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-               dialog_consignee=consigneeList[position];
-               searchTextView.append("_"+dialog_consignee);
-
-           }
-
-           @Override
-           public void onNothingSelected(AdapterView<?> parent) {
-
-           }
-       });
-
-       searchBuilder.setView(view);
-       searchBuilder.setPositiveButton("출고 검색", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) {
-               upLoadItemsName="OutCargo";
-               getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
+                searchBuilder.setView(view);
+                searchBuilder.setPositiveButton("출고 검색", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        upLoadItemsName="OutCargo";
+                        getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
 
-           }
-       });
-       searchBuilder.setNegativeButton("입고 검색", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) {
-               upLoadItemsName="InCargo";
-               Log.i("TestValue",
-                       "dataValue+++:"+dialog_date+"ConsigneeNameValue+++:"+dialog_consignee+"UpLoadValue+++:"+upLoadItemsName);
-               getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
+                    }
+                });
+                searchBuilder.setNegativeButton("입고 검색", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        upLoadItemsName="InCargo";
+                        Log.i("TestValue",
+                                "dataValue+++:"+dialog_date+"ConsigneeNameValue+++:"+dialog_consignee+"UpLoadValue+++:"+upLoadItemsName);
+                        getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
-           }
-       });
-       searchBuilder.setNeutralButton("기타 검색", new DialogInterface.OnClickListener() {
-           @Override
-           public void onClick(DialogInterface dialog, int which) {
-               upLoadItemsName="Etc";
-               getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
+                    }
+                });
+                searchBuilder.setNeutralButton("기타 검색", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        upLoadItemsName="Etc";
+                        getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
-           }
-       });
-       searchBuilder.show();
+                    }
+                });
+                searchBuilder.show();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        });
+
 
 
    }
@@ -539,5 +556,26 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         Intent intent=new Intent(WorkingMessageData.this,WorkingMessageData.class);
         startActivity(intent);
 
+    }
+    @Override
+    public void onBackPressed() {
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(WorkingMessageData.this);
+        builder.setTitle("화면 선택")
+                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(WorkingMessageData.this,TitleActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
     }
 }

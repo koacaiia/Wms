@@ -36,6 +36,7 @@
                                     android:layout_weight="1.1"
                                     android:gravity="center"
                                     android:hint="작업상황"
+                                    android:textColor="#FF0202"
                                     android:textSize="10sp"
                                     android:textStyle="bold|italic" />
 

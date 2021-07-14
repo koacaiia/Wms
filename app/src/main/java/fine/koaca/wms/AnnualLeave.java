@@ -514,15 +514,15 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                                 switch(condition){
                                     case "월차":
                                         map.put("annual",staffDate);
-                                        sendPush("Test",nickName,staffDate+" 로 월차 등록 합니다.");
+                                        sendPush(depotName,nickName,staffDate+" 로 월차 등록 합니다.");
                                         break;
                                     case "반차1":
                                         map.put("half1",staffDate);
-                                        sendPush("Test",nickName,staffDate+" 로 반차1 등록 합니다.");
+                                        sendPush(depotName,nickName,staffDate+" 로 반차1 등록 합니다.");
                                         break;
                                     case "반차2":
                                         map.put("half2",staffDate);
-                                        sendPush("Test",nickName,staffName+"로 반차2 등록 합니다.");
+                                        sendPush(depotName,nickName,staffName+"로 반차2 등록 합니다.");
 
                                         break;
                                 }
@@ -596,9 +596,6 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                     int intMonth=Integer.parseInt(data.getKey().substring(5,7));
                     int intdateSmonth=Integer.parseInt(dateS);
                     int intdateEmonth=Integer.parseInt(dateE);
-
-                    Log.i("duatjsrb",
-                            "intMonth:::"+intMonth+"///intDateSmonth::::"+intdateSmonth+"////intDateEmonth::::"+intdateEmonth);
                     if(intMonth>=intdateSmonth && intMonth<=intdateEmonth){
 
                         list.add(mList);
@@ -729,5 +726,26 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     private void sendPush(String depotName,String nickname,String message){
         PushFcmProgress fcm=new PushFcmProgress(requestQueue);
         fcm.sendAlertMessage(alertDepot,nickName,message,"Annual");
+    }
+    @Override
+    public void onBackPressed() {
+
+        android.app.AlertDialog.Builder builder=new android.app.AlertDialog.Builder(AnnualLeave.this);
+        builder.setTitle("화면 선택")
+                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent=new Intent(AnnualLeave.this,TitleActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .show();
     }
 }

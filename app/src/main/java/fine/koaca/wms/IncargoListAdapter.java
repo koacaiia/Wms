@@ -64,7 +64,11 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
             cargotype="Cargo";
         }else{cargotype="미정";}
 
-        holder.working.setText(list.get(position).getWorking());
+
+        String workingStatus;
+        workingStatus=list.get(position).getWorking();
+
+        holder.working.setText(workingStatus);
         holder.date.setText(list.get(position).getDate());
         holder.consignee.setText(list.get(position).getConsignee());
         holder.container.setText(list.get(position).getContainer());
@@ -74,11 +78,17 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
         holder.des.setText(list.get(position).getDescription());
         holder.incargo.setText(list.get(position).getIncargo()+"(PLT)");
 
-//        if(mSelectedItems.get(position,false)){
-//            holder.cardView.setBackgroundColor(Color.LTGRAY);
-//        }else{
-//            holder.cardView.setBackgroundColor(Color.WHITE);
-//        }
+        if(mSelectedItems.get(position,false)){
+            holder.cardView.setBackgroundColor(Color.LTGRAY);
+        }else{
+            if(workingStatus.equals("")){
+                holder.cardView.setBackgroundColor(Color.GRAY);
+            }else{
+                holder.cardView.setBackgroundColor(Color.WHITE);
+            }
+
+
+        }
     }
     @Override
     public int getItemCount() {
@@ -108,20 +118,14 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
             this.bl=itemView.findViewById(R.id.incargo_bl);
             this.des=itemView.findViewById(R.id.incargo_des);
             this.incargo=itemView.findViewById(R.id.incargo_incargo);
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int pos=getAdapterPosition();
                     if(mListener !=null){
                         mListener.onItemClick(ListViewHolder.this,v,pos);
-//                            if(mSelectedItems.get(pos, false)){
-//                                mSelectedItems.put(pos,false);
-//                                cardView.setBackgroundColor(Color.WHITE);
-//                            }else{
-//                                mSelectedItems.put(pos,true);
-//                                cardView.setBackgroundColor(Color.LTGRAY);
-//                            }
-//                            notifyItemChanged(pos);
+
                         }
                       }
             });
@@ -131,6 +135,14 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
                     int pos = getAdapterPosition();
                     if (mLongListener != null){
                         mLongListener.onLongItemClick(ListViewHolder.this,v,pos);
+                        if(mSelectedItems.get(pos, false)){
+                                mSelectedItems.put(pos,false);
+                                cardView.setBackgroundColor(Color.WHITE);
+                            }else{
+                                mSelectedItems.put(pos,true);
+                                cardView.setBackgroundColor(Color.LTGRAY);
+                            }
+                            notifyItemChanged(pos);
                 }
                     return true;
                 }
