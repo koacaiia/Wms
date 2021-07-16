@@ -1,13 +1,16 @@
 package fine.koaca.wms;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -61,6 +64,13 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
         holder.description.setText(des);
         holder.pQty.setText(pQ);
         holder.eQty.setText(eQ);
+
+        if(!list.get(position).getWorkprocess().equals("완")){
+            holder.cardView.setBackgroundColor(Color.GRAY);
+        }else{
+            holder.date.setText("출고 완료");
+            holder.date.setTextColor(Color.RED);
+        }
     }
 
     @Override
@@ -77,6 +87,7 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
         TextView description;
         TextView pQty;
         TextView eQty;
+        LinearLayout cardView;
         public ListView(@NonNull @NotNull View itemView) {
             super(itemView);
             this.consigneeName=itemView.findViewById(R.id.list_outcargo_consignee);
@@ -87,6 +98,7 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
             this.description=itemView.findViewById(R.id.list_outcargo_description);
             this.pQty=itemView.findViewById(R.id.list_outcargo_pltQty);
             this.eQty=itemView.findViewById(R.id.list_outcargo_eaQty);
+            this.cardView=itemView.findViewById(R.id.list_outcargo_cardview);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

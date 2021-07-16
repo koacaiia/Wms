@@ -44,12 +44,14 @@ import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class OutCargoActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener,
-        OutCargoListAdapter.OutCargoListAdapterLongClickListener, ImageViewActivityAdapter.ImageViewClicked {
+        OutCargoListAdapter.OutCargoListAdapterLongClickListener, ImageViewActivityAdapter.ImageViewClicked ,
+        Comparator<OutCargoList> {
     FirebaseDatabase database;
     RecyclerView recyclerView;
     ArrayList<OutCargoList> list;
@@ -125,6 +127,15 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 for(DataSnapshot data:snapshot.getChildren()){
                     OutCargoList mList=data.getValue(OutCargoList.class);
                     list.add(mList);
+                    list.sort(new Comparator<OutCargoList>() {
+                        @Override
+                        public int compare(OutCargoList a, OutCargoList b) {
+                            int compare=0;
+
+                            compare=a.workprocess.compareTo(b.workprocess);
+                            return compare;
+                        }
+                    });
                 }
                 adapter.notifyDataSetChanged();
 
@@ -400,5 +411,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     @Override
     public void itemLongClicked(OutCargoListAdapter.ListView listView, View v, int position) {
 
+    }
+
+    @Override
+    public int compare(OutCargoList o1, OutCargoList o2) {
+        return 0;
     }
 }

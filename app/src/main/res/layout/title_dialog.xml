@@ -479,7 +479,7 @@
                     android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp"
                     android:layout_weight="1"
-                    android:text="세부 출고" />
+                    android:text="출고" />
 
                 <Button
                     android:id="@+id/button4"
@@ -490,7 +490,7 @@
                     android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp"
                     android:layout_weight="1"
-                    android:text="세부 입고" />
+                    android:text="입고" />
             </LinearLayout>
         </LinearLayout>
 

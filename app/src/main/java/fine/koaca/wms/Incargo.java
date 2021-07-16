@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,8 @@ import java.util.Objects;
 
 
 public class Incargo extends AppCompatActivity implements Serializable , SensorEventListener,
-        IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener,ImageViewActivityAdapter.ImageViewClicked {
+        IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener,
+        ImageViewActivityAdapter.ImageViewClicked, Comparator<Fine2IncargoList> {
     ArrayList<Fine2IncargoList> listItems = new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems = new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortList = new ArrayList<Fine2IncargoList>();
@@ -154,11 +156,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
 
-        if (sharedPref.getString("depotName", null) == null) {
 
-            putUserInformation();
-            return;
-        }
         depotName = sharedPref.getString("depotName", null);
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         day_start = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
@@ -410,10 +408,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_account:
-
-                putUserInformation();
-                break;
 
             case R.id.action_account_search:
                 if (bl.equals("")) {
@@ -1012,7 +1006,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                             }
                         }
                     }
-
+                    listItems.sort(new Comparator<Fine2IncargoList>() {
+                        @Override
+                        public int compare(Fine2IncargoList o1, Fine2IncargoList o2) {
+                            int compare=o1.working.compareTo(o2.working);
+                            return compare;
+                        }
+                    });
+                    Collections.reverse(listItems);
                 }
                 Collections.reverse(listItems);
                 adapter.notifyDataSetChanged();
@@ -1132,62 +1133,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         mSensorManager.unregisterListener(this);
     }
 
-    public void putUserInformation() {
-        editor = sharedPref.edit();
-        ArrayList<String> depotSort = new ArrayList<String>();
-        depotSort.add("1물류(02010810)");
-        depotSort.add("2물류(02010027)");
-        depotSort.add("(주)화인통상 창고사업부");
-
-        ArrayList selectedItems = new ArrayList();
-        int defaultItem = 0;
-        selectedItems.add(defaultItem);
-
-        String[] depotSortList = depotSort.toArray(new String[depotSort.size()]);
-        AlertDialog.Builder sortBuilder = new AlertDialog.Builder(Incargo.this);
-        View view = getLayoutInflater().inflate(R.layout.user_reg, null);
-        EditText reg_edit = view.findViewById(R.id.user_reg_Edit);
-
-        Button reg_button = view.findViewById(R.id.user_reg_button);
-        TextView reg_depot = view.findViewById(R.id.user_reg_depot);
-
-        reg_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                nickName = reg_edit.getText().toString();
-                reg_depot.setText(depotName + "_" + nickName + "으로 사용자 등록을" + "\n" + " 진행할려면 하단 confirm 버튼 클릭 바랍니다.");
-
-            }
-        });
-
-        sortBuilder.setView(view);
-        sortBuilder.setSingleChoiceItems(depotSortList, defaultItem, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                depotName = depotSortList[which];
-                reg_depot.setText("부서명_" + depotName + "로 확인");
-
-            }
-        });
-        sortBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                editor.putString("depotName", depotName);
-                editor.putString("nickName", nickName);
-                editor.apply();
-                Toast.makeText(Incargo.this, depotName + "__" + nickName + "로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(Incargo.this, Incargo.class);
-                startActivity(intent);
-            }
-        });
-        sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        sortBuilder.show();
-    }
 
 
     @Override
@@ -1412,14 +1357,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
 
     }
-
-    private void intentTitleActivity() {
-        Intent intent = new Intent(Incargo.this, TitleActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-    }
-
-    public void initIntent() {
+        public void initIntent() {
         Intent intent = new Intent(Incargo.this, Incargo.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -1472,6 +1410,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     }
                 })
                 .show();
+    }
+
+    @Override
+    public int compare(Fine2IncargoList a, Fine2IncargoList b) {
+        int compare=0;
+        compare=a.working.compareTo(b.working);
+        return 0;
     }
 }
 

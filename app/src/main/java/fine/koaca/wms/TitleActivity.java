@@ -22,10 +22,14 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,13 +54,15 @@ import org.json.JSONObject;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TitleActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener ,
         OutCargoListAdapter.OutCargoListAdapterLongClickListener,
-        Serializable, SensorEventListener,IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener {
+        Serializable, SensorEventListener,IncargoListAdapter.AdapterClickListener,IncargoListAdapter.AdapterLongClickListener ,
+        Comparator<Fine2IncargoList> {
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
     FirebaseDatabase database;
@@ -73,7 +79,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     static SharedPreferences sharedPref;
     static SharedPreferences.Editor editor;
 
-    String departmentName,nickName,wareHouseDepot,alertDepot;
+    String departmentName,nickName,wareHouseDepotIn,wareHouseDepotOut,alertDepot;
 
     SensorManager mSensorManager;
     Sensor mAccelerometer;
@@ -119,20 +125,32 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         switch(departmentName){
             case "2물류(02010027)":
                 databaseReferenceIn=database.getReference("Incargo2");
-                wareHouseDepot="Incargo2";
+                databaseReferenceOut=database.getReference("Outcargo2");
+                wareHouseDepotIn="Incargo2";
+                wareHouseDepotOut="Outcargo2";
                 alertDepot="Depot2";
                 break;
             case "1물류(02010810)":
                 databaseReferenceIn=database.getReference("Incargo1");
-                wareHouseDepot="Incargo1";
+                databaseReferenceOut=database.getReference("Outcargo2");
+                wareHouseDepotIn="Incargo1";
+                wareHouseDepotOut="Outcargo2";
                 alertDepot="Depot1";
 
                 break;
             case "(주)화인통상 창고사업부":
                 databaseReferenceIn=database.getReference("Incargo");
-                wareHouseDepot="Incargo";
+                databaseReferenceOut=database.getReference("Outcargo2");
+                wareHouseDepotIn="Incargo";
+                wareHouseDepotOut="Outcargo2";
                 alertDepot="Depot";
                 break;
+        }
+
+        if (sharedPref.getString("depotName", null) == null) {
+
+            putUserInformation();
+            return;
         }
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
@@ -290,6 +308,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 proCargo.setText(pCargo+"건");
                 TextView rateCargo=view.findViewById(R.id.dialog_titleProgressOutcargoRate);
                 rateCargo.setText(rCargo+"%");
+                if(rCargo==100){
+                    rateCargo.setTextColor(Color.RED);
+                }
 
                 TextView totalPlt=view.findViewById(R.id.dialog_titleTotalCargoPlt);
                 totalPlt.setText(intTotalPlt+"PLT");
@@ -297,6 +318,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 proPlt.setText(pPlt+"PLT");
                 TextView ratePlt=view.findViewById(R.id.dialog_titleProgressOutcargoPltRate);
                 ratePlt.setText(rPlt+"%");
+                if(rPlt==100){
+                    ratePlt.setTextColor(Color.RED);
+                }
 
                 TextView totalEa=view.findViewById(R.id.dialog_titleTotalCargoEa);
                 totalEa.setText(intTotalEa+"EA");
@@ -304,6 +328,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 proEa.setText(pEa+"EA");
                 TextView rateEa=view.findViewById(R.id.dialog_titleProgressOutcargoEaRate);
                 rateEa.setText(rEa+"%");
+                if(rEa==100){
+                    rateEa.setTextColor(Color.RED);
+                }
                 adapterOut.notifyDataSetChanged();
             }
 
@@ -341,6 +368,15 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     if(!str40.equals("0")||!str20.equals("0")||!strCargo.equals("0")){
                         listIn.add(mListIn);
                     }
+                    listIn.sort(new Comparator<Fine2IncargoList>() {
+                        @Override
+                        public int compare(Fine2IncargoList a, Fine2IncargoList b) {
+                            int compare=0;
+                            compare=a.working.compareTo(b.working);
+
+                            return compare;
+                        }
+                    });
 
                     eCon40=Integer.parseInt(str40);
                     eCon20=Integer.parseInt(str20);
@@ -381,9 +417,21 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 proIncargoI=(int)(((double)proIncargoI/(double)totalTeu)*100);
                 proIncargoW=(int)(((double)proIncargoW/(double)totalTeu)*100);
                 rateIncargoC.setText(proIncargoC+"%");
+                if(proIncargoC==100){
+                    rateIncargoC.setTextColor(Color.RED);
+                }
                 rateIncargo.setText(proIncargo+"%");
+                if(proIncargo==100){
+                    rateIncargo.setTextColor(Color.RED);
+                }
                 rateIncargoI.setText(proIncargoI+"%");
+                if(proIncargoI==100){
+                    rateIncargoI.setTextColor(Color.RED);
+                }
                 rateIncargoW.setText(proIncargoW+"%");
+                if(proIncargoW==100){
+                    rateIncargoW.setTextColor(Color.RED);
+                }
                 inContainer40.setText(con40+"대");
                 inContainer20.setText(con20+"대");
                 inCargo.setText(cargo+"EA");
@@ -397,7 +445,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
             }
         };
-        databaseReferenceOut=database.getReference("Outcargo2");
+
         Query sortByDateOutcargoData=databaseReferenceOut.orderByChild("date").equalTo(dateToday);
         sortByDateOutcargoData.addListenerForSingleValueEvent(outListener);
 
@@ -512,8 +560,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     return;
                 }
                 mShakeTime=currentTime;
-                Intent intent=new Intent(this,TitleActivity.class);
-                startActivity(intent);
+
+                initIntent();
             }
         }
 
@@ -583,7 +631,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     public void onClick(DialogInterface dialog, int which) {
                         switch(which){
                             case 0:
-                                DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
+                                DatabaseReference dataRef=database.getReference(wareHouseDepotOut+"/"+refPath);
                                 Map<String,Object> value=new HashMap<>();
                                 value.put("workprocess","완");
                                 dataRef.updateChildren(value);
@@ -624,7 +672,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 listIn.get(pos).getConsignee()+"_비엘:"+listIn.get(pos).getBl()+"_컨테이너:"+listIn.get(pos).getContainer();
 
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference(wareHouseDepot+"/"+keyValue);
+        DatabaseReference databaseReference=database.getReference(wareHouseDepotIn+"/"+keyValue);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
 
         ArrayList<String> incargoContent=new ArrayList<>();
@@ -689,8 +737,84 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     @Override
     public void itemLongClicked(OutCargoListAdapter.ListView listView, View v, int position) {
-        Intent intent=new Intent(this,Incargo.class);
+        Intent intent=new Intent(this,OutCargoActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
+    @Override
+    public int compare(Fine2IncargoList o1, Fine2IncargoList o2) {
+        return 0;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.title_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        putUserInformation();
+        return true;
+    }
+    public void putUserInformation() {
+        editor = sharedPref.edit();
+        final String[] depotName = {departmentName};
+        ArrayList<String> depotSort = new ArrayList<String>();
+        depotSort.add("1물류(02010810)");
+        depotSort.add("2물류(02010027)");
+        depotSort.add("(주)화인통상 창고사업부");
+
+        ArrayList selectedItems = new ArrayList();
+        int defaultItem = 0;
+        selectedItems.add(defaultItem);
+
+        String[] depotSortList = depotSort.toArray(new String[depotSort.size()]);
+        AlertDialog.Builder sortBuilder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.user_reg, null);
+        EditText reg_edit = view.findViewById(R.id.user_reg_Edit);
+
+        Button reg_button = view.findViewById(R.id.user_reg_button);
+        TextView reg_depot = view.findViewById(R.id.user_reg_depot);
+
+        reg_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nickName = reg_edit.getText().toString();
+                reg_depot.setText(depotName[0] + "_" + nickName + "으로 사용자 등록을" + "\n" + " 진행할려면 하단 confirm 버튼 클릭 바랍니다.");
+
+            }
+        });
+
+        sortBuilder.setView(view);
+        sortBuilder.setSingleChoiceItems(depotSortList, defaultItem, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                depotName[0] = depotSortList[which];
+                reg_depot.setText("부서명_" + depotName[0] + "로 확인");
+
+            }
+        });
+        sortBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                editor.putString("depotName", depotName[0]);
+                editor.putString("nickName", nickName);
+                editor.apply();
+                Toast.makeText(TitleActivity.this, depotName[0] + "__" + nickName + "로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
+                initIntent();
+            }
+        });
+        sortBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        sortBuilder.show();
+    }
+
 }
