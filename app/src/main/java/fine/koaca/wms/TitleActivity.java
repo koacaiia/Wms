@@ -97,6 +97,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     Button btnAnnual;
     Button btnWorkmessage;
     Button btnCamera;
+
+    String alertVersion;
+    TextView txtTitle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,8 +177,13 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
 
         getVersion();
+        if(nickName.equals("Test")){
+            FirebaseMessaging.getInstance().subscribeToTopic("Test");
+        }else{
+            FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
+        }
 
-        FirebaseMessaging.getInstance().subscribeToTopic(alertDepot);
+
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
@@ -248,8 +256,13 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         Button btnIncargo=view.findViewById(R.id.button4);
         Button btnOutcargo=view.findViewById(R.id.button3);
 
-        TextView textTitle=view.findViewById(R.id.dialog_title_txttile);
-        textTitle.setText(dateToday+" 입,출고 현황");
+        txtTitle=view.findViewById(R.id.dialog_title_txttile);
+
+            txtTitle.setText(dateToday+" 입,출고 현황");
+
+
+
+
         ArrayList<OutCargoList> listOutP=new ArrayList<>();
         ArrayList<OutCargoList> listOutTotal=new ArrayList<>();
         listOut.clear();
@@ -325,24 +338,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 if(rEa==100){
                     rateEa.setTextColor(Color.RED);
                 }
-//                if(rCargo==100&&rPlt==100&&rEa==100){
-//                    Animation flowAnim= AnimationUtils.loadAnimation(TitleActivity.this,R.anim.flow);
-//                    Button txtEndOut=findViewById(R.id.titleTextOutEnd);
-//                    txtEndOut.setText(dateToday+" 출고 작업 종료"+"\n"+"클릭시 출고목록창으로 이동");
-//                    txtEndOut.startAnimation(flowAnim);
-//                    txtEndOut.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            Intent intent=new Intent(TitleActivity.this,OutCargoActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                            intent.putExtra("depotName",departmentName);
-//                            intent.putExtra("nickName",nickName);
-//                            intent.putExtra("alertDepot",alertDepot);
-//
-//                            startActivity(intent);
-//                        }
-//                    });
-//                }
+
                 adapterOut.notifyDataSetChanged();
             }
 
@@ -509,6 +505,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         String dialogTitle=
                 consigneeName+"_"+listOut.get(position).getDescription()+listOut.get(position).getTotalQty();
         dialogOutCargoRecyclerItemClicked(refPath,dialogTitle,consigneeName);
+
     }
 
     private void putNewDataUpdateAlarm(String dialogTitle, String consigneeName, String out) {
@@ -613,11 +610,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                         e.printStackTrace();
                     }
                     if(versionCheck!=versioncode){
-                        String alertVersion="현재 버전:"+versioncode+"으로 "+""+"최신버전:"+versionCheck+" 로 업데이트 바랍니다.!";
-
-                        Intent intent=new Intent(getApplicationContext(),WebList.class);
-                        intent.putExtra("version",alertVersion);
-                        startActivity(intent);
+                        alertVersion="현재 버전:"+versioncode+"으로 "+""+"최신버전:"+versionCheck+" 로 업데이트 바랍니다.!";
+                        txtTitle.setText(dateToday+" 입,출고 현황"+"\n"+alertVersion);
+                        txtTitle.setTextColor(Color.RED);
+                        txtTitle.setTextSize(10);
 
                     }
                 }
@@ -647,7 +643,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                 Map<String,Object> value=new HashMap<>();
                                 value.put("workprocess","완");
                                 dataRef.updateChildren(value);
-                                adapterOut.notifyDataSetChanged();
+                                initIntent();
                                 Toast.makeText(getApplicationContext(),refPath+"건 출고 완료등록",Toast.LENGTH_SHORT).show();
                                 break;
                             case 1:

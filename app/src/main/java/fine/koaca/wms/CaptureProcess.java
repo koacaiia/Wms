@@ -144,16 +144,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                 camera.startPreview();
 
-//                captureImageList=queryAllPictures();
+
                 mainActivity.list=queryAllPictures();
-//                mainActivity.queryAllList(captureImageList);
                 mainActivity.adapter.notifyDataSetChanged();
-
-
-//
-//                adapter=new ImageViewListAdapter(queryAllPictures());
-//                adapter.notifyDataSetChanged();
-//               mainActivity.recyclerView.setAdapter(adapter);
             }
         };
         camera.takePicture(null, null, callback);
@@ -195,10 +188,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         StorageReference storageReference = storage.getReference();
         StorageReference recvRef = storageReference.child("images/" + strRef);
 
-        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
-        String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
-
-
         recvRef.putFile(imageUri)
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -239,6 +228,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i, int arSize,
                                      String context) {
+
+        Log.i("TestValue","ContextValue::::"+context);
         String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
         WorkingMessageList messageList= new WorkingMessageList();
@@ -297,12 +288,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                             Toast.LENGTH_SHORT).show();
                     break;
             }
-
-
             messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
         }
-
-
         messageList.setUri0(strUri0);
         messageList.setUri1(strUri1);
         messageList.setUri2(strUri2);
@@ -318,20 +305,21 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             if(arSize==uriString.size()){
 
                 switch(context){
-
                     case "OutCargoActivity":
-//                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                         Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         outCargoActivity.messageIntent();
                         break;
                     case "CameraCapture":
-//                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+
                         Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         mainActivity.messageIntent();
+                        break;
                     case "Incargo":
-//                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
+                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                         Toast.makeText(inCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         inCargoActivity.messageIntent();
@@ -344,19 +332,10 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 databaseReference.updateChildren(value);
                 Log.i("TestValue",
                         "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-
                 failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size(),context);
-
             }
-
         }
-
     }
-
-
-
-
-
     public void putMessage(String msg, String imageUri, String captureItem, String uploadItem){
         @SuppressLint("SimpleDateFormat")
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
@@ -371,7 +350,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);
         messageList.setMsg(msg);
-//        messageList.setUri(imageUri);
         messageList.setDate(date);
         messageList.setConsignee(captureItem);
         messageList.setInOutCargo(uploadItem);
@@ -422,139 +400,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         return captureImageList;
     }
 
-    public void receivedUri(StorageReference recvRef, String nick, String timeStamp, String msg, String timeStamp_date,
-                            String consigneeName, String inoutCargo, int i, int arSize, String context){
-
-
-        recvRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>(){
-
-                    @Override
-                    public void onSuccess(Uri uri) {
-
-
-                        String imageUri=String.valueOf(uri);
-                        uriString.add(imageUri);
-                        WorkingMessageList messageList= new WorkingMessageList();
-                        messageList.setNickName(nick);
-                        messageList.setTime(timeStamp);
-                        messageList.setMsg(msg);
-
-                        FirebaseDatabase database=FirebaseDatabase.getInstance();
-                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-                                "/"+nick+"_"+timeStamp);
-                            String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="";
-
-                            try{
-                                switch(i){
-
-                                    case 0:
-                                        strUri0=uriString.get(0);
-
-                                        break;
-                                    case 1:
-                                        strUri0=uriString.get(0);
-                                        strUri1=uriString.get(1);
-                                        break;
-                                    case 2:
-                                        strUri0=uriString.get(0);
-                                        strUri1=uriString.get(1);
-                                        strUri2=uriString.get(2);
-                                        break;
-                                    case 3:
-                                        strUri0=uriString.get(0);
-                                        strUri1=uriString.get(1);
-                                        strUri2=uriString.get(2);
-                                        strUri3=uriString.get(3);
-                                        break;
-                                    case 4:
-                                        strUri0=uriString.get(0);
-                                        strUri1=uriString.get(1);
-                                        strUri2=uriString.get(2);
-                                        strUri3=uriString.get(3);
-                                        strUri4=uriString.get(4);
-                                        break;
-
-                                }
-                            }catch(IndexOutOfBoundsException e){
-
-                                switch(context){
-                                    case "OutCargoActivity":
-                                        Toast.makeText(outCargoActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case "CameraCapture":
-                                        Toast.makeText(mainActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
-                                                Toast.LENGTH_SHORT).show();
-                                        break;
-                                    case "Incargo":
-                                        Toast.makeText(inCargoActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
-                                                Toast.LENGTH_SHORT).show();
-                                        break;
-                                }
-
-
-                                 messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
-                            }
-
-
-                            messageList.setUri0(strUri0);
-                            messageList.setUri1(strUri1);
-                            messageList.setUri2(strUri2);
-                            messageList.setUri3(strUri3);
-                            messageList.setUri4(strUri4);
-
-                        messageList.setDate(timeStamp_date);
-                        messageList.setConsignee(consigneeName);
-                        messageList.setInOutCargo(inoutCargo);
-
-                        databaseReference.setValue(messageList);
-                        if(arSize-1==i){
-                            if(arSize==uriString.size()){
-
-                                switch(context){
-
-                                    case "OutCargoActivity":
-                                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
-                                                Toast.LENGTH_SHORT).show();
-                                        outCargoActivity.initIntent();
-                                        break;
-                                    case "CameraCapture":
-                                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
-                                                Toast.LENGTH_SHORT).show();
-                                        mainActivity.messageIntent();
-                                    case "Incargo":
-                                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                                        inCargoActivity.initIntent();
-                                        break;
-                                }
-                            }else{
-                                Map<String,Object> value=new HashMap<>();
-                                value.put("msg",
-                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-                                databaseReference.updateChildren(value);
-                                Log.i("TestValue",
-                                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-
-                                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size(),context);
-
-                            }
-
-                        }
-
-                    }
-
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        putMessage("Failed Uri Received","",consigneeName,inoutCargo);
-
-
-                    }
-                });
-    }
 
     public void failedUpLoad(String nick, String consigneeName, String inoutCargo, int arSize, int size, String context){
 

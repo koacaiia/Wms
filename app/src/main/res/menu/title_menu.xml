@@ -5,9 +5,8 @@
 
     <item
         android:id="@+id/action_account"
-        android:icon="@android:drawable/ic_input_add"
-        android:title="Account"
-        android:tooltipText="사용자등록"
+
+        android:title="사용자등록"
         app:showAsAction="always" />
 
 </menu>

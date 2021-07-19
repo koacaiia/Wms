@@ -59,6 +59,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CameraCapture extends AppCompatActivity implements CameraCaptureInAdapter.CameraCaptureInAdapterClick, CameraCaptureOutAdapter.CameraCaptureOutAdapterClick {
     SurfaceView surfaceView;
@@ -104,6 +106,8 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
+
+    FirebaseDatabase database;
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +116,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         requestPermissions(permission_list,0);
         intentGetItems();
 
-        FirebaseMessaging.getInstance().subscribeToTopic("testUp");
+        database=FirebaseDatabase.getInstance();
 
 
         depotName=getIntent().getStringExtra("depotName");
@@ -260,7 +264,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
     }
 
     private void dialogOutCamera() {
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
+
         DatabaseReference databaseReferenceOut=database.getReference("Outcargo2");
         DatabaseReference databaseReferenceIn=database.getReference("Incargo2");
 
@@ -292,7 +296,10 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     OutCargoList mList=data.getValue(OutCargoList.class);
-                    listOut.add(mList);
+                    if(!mList.getWorkprocess().equals("완")){
+                        listOut.add(mList);
+                    }
+
                 }
                adapterOut.notifyDataSetChanged();
 
@@ -308,7 +315,10 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                    listIn.add(mList);
+                    if(mList.getWorking().equals("")){
+                        listIn.add(mList);
+                    }
+
                 }
                 adapterIn.notifyDataSetChanged();
 
@@ -353,222 +363,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
     }
 
 
-    public void consigneeSelected(){
-        AlertDialog.Builder dialogConsignee=new AlertDialog.Builder(this);
-        dialogConsignee.setTitle("항목 선택");
-        View view=getLayoutInflater().inflate(R.layout.spinnerlist_consignee,null);
-        ArrayAdapter<String> consigneeAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
-                Incargo.shared_consigneeList);
-        Spinner spinner_spinner=view.findViewById(R.id.capture_spinner_consignee);
-        EditText spinner_edit=view.findViewById(R.id.capture_edit_consignee);
-        TextView spinner_text=view.findViewById(R.id.capture_text_consignee);
-        ImageView imageView0=view.findViewById(R.id.dialog_imageView0);
-        ImageView imageView1=view.findViewById(R.id.dialog_imageView1);
-        ImageView imageView2=view.findViewById(R.id.dialog_imageView2);
-        ImageView imageView3=view.findViewById(R.id.dialog_imageView3);
-        ImageView imageView4=view.findViewById(R.id.dialog_imageView4);
-        switch(upLoadUriString.size()){
-            case 1:
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(0))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                imageView0.setImageBitmap(resource);
-                            }});
-                break;
-            case 2:
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(0))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView0.setImageBitmap(resource);
-                            }
-                        });
 
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(1))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView1.setImageBitmap(resource);
-                            }
-                        });
-                break;
-            case 3:
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(0))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView0.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(1))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView1.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(2))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView2.setImageBitmap(resource);
-                            }
-                        });
-                break;
-            case 4:
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(0))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView0.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                    .load(upLoadUriString.get(1))
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                            imageView1.setImageBitmap(resource);
-                        }
-                    });
-                Glide.with(view).asBitmap()
-                    .load(upLoadUriString.get(2))
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                            imageView2.setImageBitmap(resource);
-                        }
-                    });
-                Glide.with(view).asBitmap()
-                    .load(upLoadUriString.get(3))
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                            imageView3.setImageBitmap(resource);
-                        }
-                    });
-                break;
-            case 5:
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(0))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView0.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(1))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView1.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(2))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView2.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(3))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView3.setImageBitmap(resource);
-                            }
-                        });
-                Glide.with(view).asBitmap()
-                        .load(upLoadUriString.get(4))
-                        .into(new SimpleTarget<Bitmap>() {
-                            @Override
-                            public void onResourceReady(@NonNull @NotNull Bitmap resource, @Nullable @org.jetbrains.annotations.Nullable Transition<? super Bitmap> transition) {
-                                imageView4.setImageBitmap(resource);
-                            }
-                        });
-                break;
-        }
-
-        spinner_edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spinner_text.setText(spinner_edit.getText().toString());
-            }
-        });
-        spinner_edit.setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if((event.getAction()==KeyEvent.ACTION_DOWN)&&(keyCode==KeyEvent.KEYCODE_ENTER)){
-                    InputMethodManager imm= (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(spinner_edit.getWindowToken(),0);
-                    spinner_text.setText(spinner_edit.getText().toString());
-                    return true;
-                }
-                return false;
-            }
-        });
-        spinner_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                spinner_text.setText(Incargo.shared_consigneeList[position]);
-                spinner_edit.setText("");
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                spinner_text.setText("Etc");
-            }
-        });
-
-
-        spinner_spinner.setAdapter(consigneeAdapter);
-        dialogConsignee.setView(view);
-        dialogConsignee.setMessage("하단의 업체명 선택후 전송 하기랍니다."+"\n"+"화주명 등록 여부 다시 한번 확인 바랍니다.");
-
-        dialogConsignee.setPositiveButton("출고사진 ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                uploadItem="OutCargo";
-                upCapturePictures("OutCargo",spinner_text.getText().toString());
-            }
-        });
-
-        dialogConsignee.setNegativeButton("입고사진 ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                uploadItem="InCargo";
-                upCapturePictures(uploadItem,spinner_text.getText().toString());
-            }
-        });
-        dialogConsignee.setNeutralButton("기타사진 ", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                uploadItem="Etc";
-                upCapturePictures(uploadItem,spinner_text.getText().toString());
-            }
-        });
-
-        dialogConsignee.show();
-
-    }
-    public void queryAllList(ArrayList<ImageViewList> captureImageList){
-
-        list=captureImageList;
-        adapter.notifyDataSetChanged();
-
-
-    }
     public void upCapturePictures(String inoutItems,String consigneeName){
         int arrsize=upLoadUriString.size();
         uploadItem=inoutItems;
@@ -602,6 +397,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
         push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+
     }
     @Override
     public void onBackPressed() {
@@ -628,15 +424,28 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
     @Override
     public void inAdapterClick(CameraCaptureInAdapter.ListViewHolder listViewHolder, View v, int position) {
+        String refPath=
+                "/"+listIn.get(position).getDate()+"_"+listIn.get(position).getBl()+"_"+listIn.get(position).getDescription()+
+                "_"+listIn.get(position).getCount()+"_"+listIn.get(position).getContainer();
+        DatabaseReference databaseReference=database.getReference("Incargo2"+refPath);
+        Map<String,Object> value=new HashMap<>();
+        value.put("working","컨테이너 진입");
+        databaseReference.updateChildren(value);
+        Toast.makeText(this,listIn.get(position).getConsignee()+"_"+listIn.get(position).getContainer()+"컨테이너 진입으로 등록",
+                Toast.LENGTH_LONG).show();
         upCapturePictures("InCargo",listIn.get(position).getConsignee());
-
-
-
 
     }
 
     @Override
     public void outAdapterClick(CameraCaptureOutAdapter.ListViewHolder listViewHolder, View v, int position) {
+        String refPath="/"+listOut.get(position).getKeypath();
+        DatabaseReference databaseReference=database.getReference("Outcargo2"+refPath);
+        Map<String,Object> value=new HashMap<>();
+        value.put("workprocess","완");
+        databaseReference.updateChildren(value);
+        Toast.makeText(this,listOut.get(position).getConsigneeName()+"_"+listOut.get(position).getTotalQty()+" 건 출고 완료등록",
+                Toast.LENGTH_LONG).show();
         upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
 
 

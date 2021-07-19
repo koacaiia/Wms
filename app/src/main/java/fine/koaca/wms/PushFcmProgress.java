@@ -34,7 +34,12 @@ public class PushFcmProgress {
             dataObj.put("message",message);
 
             requestData.put("data",dataObj);
-            requestData.put("to","/topics/"+depotName);
+            if(nickName.equals("Test")){
+                requestData.put("to","/topics/"+"Test");
+            }else{
+                requestData.put("to","/topics/"+depotName);
+            }
+
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -42,7 +47,7 @@ public class PushFcmProgress {
         sendData(requestData, new SendResponsedListener() {
             @Override
             public void onRequestStarted() {
-               Log.i("duatjsrb","send Push Message succeeded");
+
             }
 
             @Override
