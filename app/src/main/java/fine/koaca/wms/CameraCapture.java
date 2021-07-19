@@ -153,9 +153,12 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+//                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
+
+                PublicMethod test=new PublicMethod(upLoadUriString);
+                test.upLoadPictures(nickName,"Test","InCargo");
                 return true;
             }
         });
@@ -447,7 +450,5 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         Toast.makeText(this,listOut.get(position).getConsigneeName()+"_"+listOut.get(position).getTotalQty()+" 건 출고 완료등록",
                 Toast.LENGTH_LONG).show();
         upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
-
-
     }
 }

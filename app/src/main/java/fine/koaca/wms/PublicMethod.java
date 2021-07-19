@@ -12,8 +12,12 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -24,9 +28,12 @@ import java.util.Map;
 
 public class PublicMethod {
     Activity activity;
+    ArrayList<String> list=new ArrayList<>();
     public PublicMethod(Activity activity){
         this.activity=activity;
-
+    }
+    public PublicMethod(ArrayList<String> list){
+        this.list=list;
     }
     public void putContent(String pathValue){
         FirebaseDatabase database=FirebaseDatabase.getInstance();
@@ -105,7 +112,82 @@ public class PublicMethod {
         Intent intent=new Intent(activity,WorkingMessageData.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
         activity.startActivity(intent);
+    }
 
+    public void upLoadPictures(String nickName,String consigneeName,String inoutCargo){
+        ArrayList<String> uriList=new ArrayList<>();
+        int listSize=list.size();
+        String date=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+        String dateNtime=new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초").format(new Date());
+        String refPath;
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+
+        for(int i=0;i<listSize;i++){
+            Uri uriValue=Uri.fromFile(new File(list.get(i)));
+            refPath=date+"/"+consigneeName+"/"+inoutCargo+"/"+nickName+System.currentTimeMillis()+".jpg";
+            StorageReference storageReference=storage.getReference().child("image/"+refPath);
+            int finalI = i;
+            storageReference.putFile(uriValue)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                           storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                               @Override
+                               public void onSuccess(Uri uri) {
+                                   uriList.add(String.valueOf(uri));
+                                   WorkingMessageList messageList=new WorkingMessageList();
+
+                                   if((finalI +1)==listSize){
+                                       messageList.setNickName(nickName);
+                                       messageList.setTime(dateNtime);
+                                       messageList.setDate(date);
+                                       messageList.setMsg(consigneeName+"_"+inoutCargo+"_ 사진 업로드");
+                                       messageList.setInOutCargo(inoutCargo);
+
+                                       try {
+                                           switch (finalI) {
+                                               case 0:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   break;
+                                               case 1:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   break;
+                                               case 2:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   messageList.setUri2(uriList.get(2));
+                                                   break;
+                                               case 3:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   messageList.setUri2(uriList.get(2));
+                                                   messageList.setUri3(uriList.get(3));
+                                                   break;
+                                               case 4:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   messageList.setUri2(uriList.get(2));
+                                                   messageList.setUri3(uriList.get(3));
+                                                   messageList.setUri4(uriList.get(4));
+                                                   break;
+                                           }
+                                       }catch(IndexOutOfBoundsException e){
+                                           messageList.setMsg(e.toString());
+                                       }
+
+                                       FirebaseDatabase database=FirebaseDatabase.getInstance();
+                                       DatabaseReference databaseReference=
+                                               database.getReference("WorkingMessage" +"/"+nickName+"_"+dateNtime   );
+                                       databaseReference.setValue(messageList);
+                                   }
+
+                               }
+                           });
+                        }
+                    });
+
+        }
 
     }
 }

@@ -181,7 +181,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         }
     }
 
-    public synchronized void firebaseCameraUpLoad(Uri imageUri, String captureItem, String uploadItem, String nick,
+    public void firebaseCameraUpLoad(Uri imageUri, String captureItem, String uploadItem, String nick,
                                                   String message, String strRef, int i, int arSize, String context) {
 
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
@@ -192,7 +192,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                   receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem,i,arSize,context);
                    recvRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                        @Override
                        public void onSuccess(Uri uri) {
@@ -244,7 +243,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
         try{
             switch(i){
-
                 case 0:
                     strUri0=uriString.get(0);
 
@@ -295,11 +293,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setUri2(strUri2);
         messageList.setUri3(strUri3);
         messageList.setUri4(strUri4);
-
         messageList.setDate(timeStamp_date);
         messageList.setConsignee(consigneeName);
         messageList.setInOutCargo(inoutCargo);
-
         databaseReference.setValue(messageList);
         if(arSize-1==i){
             if(arSize==uriString.size()){
