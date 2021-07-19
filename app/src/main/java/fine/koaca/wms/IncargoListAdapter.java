@@ -137,10 +137,10 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
                         mLongListener.onLongItemClick(ListViewHolder.this,v,pos);
                         if(mSelectedItems.get(pos, false)){
                                 mSelectedItems.put(pos,false);
-                                cardView.setBackgroundColor(Color.WHITE);
+//                                cardView.setBackgroundColor(Color.WHITE);
                             }else{
                                 mSelectedItems.put(pos,true);
-                                cardView.setBackgroundColor(Color.LTGRAY);
+//                                cardView.setBackgroundColor(Color.LTGRAY);
                             }
                             notifyItemChanged(pos);
                 }

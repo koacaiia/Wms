@@ -24,6 +24,11 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
     Context context;
     OutCargoListAdapterClickListener listener;
     OutCargoListAdapterLongClickListener longListener;
+
+    public OutCargoListAdapter(ArrayList<OutCargoList> list) {
+        this.list=list;
+    }
+
     public interface OutCargoListAdapterClickListener{
         void itemClicked(OutCargoListAdapter.ListView listView,View v,int position);
     }

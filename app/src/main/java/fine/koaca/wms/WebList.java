@@ -21,13 +21,13 @@ public class WebList extends AppCompatActivity {
         webView=findViewById(R.id.web_list);
         Intent intent=getIntent();
         String blList=intent.getStringExtra("bl");
-        String alerVersion=intent.getStringExtra("version");
+
 
         webView.setWebViewClient(new WebViewClient());
         webSettings=webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        Log.i("koacaiia",blList);
-        if(blList.equals("version")){
+
+        if(blList==null){
             webView.loadUrl("https://play.google.com/store/apps/details?id=fine.koaca.wms");
 
         }else{

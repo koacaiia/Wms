@@ -73,6 +73,7 @@ implements OnListImageClickListener{
         String nickName=sharedPreferences.getString("nickName",null);
         LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
         if(messageLists.get(position).getNickName().equals(nickName)){
+
             mSelectedItems.put(position,true);}
         else {
             mSelectedItems.put(position,false);

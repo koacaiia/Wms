@@ -20,25 +20,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +44,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -331,6 +325,24 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 if(rEa==100){
                     rateEa.setTextColor(Color.RED);
                 }
+//                if(rCargo==100&&rPlt==100&&rEa==100){
+//                    Animation flowAnim= AnimationUtils.loadAnimation(TitleActivity.this,R.anim.flow);
+//                    Button txtEndOut=findViewById(R.id.titleTextOutEnd);
+//                    txtEndOut.setText(dateToday+" 출고 작업 종료"+"\n"+"클릭시 출고목록창으로 이동");
+//                    txtEndOut.startAnimation(flowAnim);
+//                    txtEndOut.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            Intent intent=new Intent(TitleActivity.this,OutCargoActivity.class);
+//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                            intent.putExtra("depotName",departmentName);
+//                            intent.putExtra("nickName",nickName);
+//                            intent.putExtra("alertDepot",alertDepot);
+//
+//                            startActivity(intent);
+//                        }
+//                    });
+//                }
                 adapterOut.notifyDataSetChanged();
             }
 
@@ -605,7 +617,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
                         Intent intent=new Intent(getApplicationContext(),WebList.class);
                         intent.putExtra("version",alertVersion);
-                       startActivity(intent);
+                        startActivity(intent);
 
                     }
                 }

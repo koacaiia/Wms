@@ -13,24 +13,10 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btn_textureView_Capture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:foregroundGravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/captureImageList"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.89"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/surfaceView"
-        app:layout_constraintVertical_bias="0.97"
-        app:srcCompat="@drawable/ic_menu_camera" />
 
     <TextView
         android:id="@+id/camera_textView_date"
@@ -93,23 +79,24 @@
         android:id="@+id/captureImageList"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/surfaceView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/surfaceView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.88" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabshare"
+    <Button
+        android:id="@+id/camera_textView_piccount"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:layout_constraintBottom_toTopOf="@+id/captureImageList"
-        app:layout_constraintEnd_toStartOf="@+id/btn_textureView_Capture"
-        app:layout_constraintHorizontal_bias="0.86"
-        app:layout_constraintStart_toStartOf="@+id/surfaceView"
-        app:layout_constraintTop_toTopOf="@+id/surfaceView"
-        app:layout_constraintVertical_bias="0.97"
-        app:srcCompat="@android:drawable/ic_menu_share" />
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="촬영"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captureImageList" />
 </androidx.constraintlayout.widget.ConstraintLayout>

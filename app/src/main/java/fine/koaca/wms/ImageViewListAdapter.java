@@ -33,7 +33,7 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
         this.listener=listener;
     }
 
-    public void onListItemLongSelected(OnListItemLongSelectedInterface longlistener){
+    public void onListItemLongSelectedInterface(OnListItemLongSelectedInterface longlistener){
         this.longlistener=longlistener;
     }
 
@@ -123,7 +123,7 @@ public class ImageViewListAdapter extends RecyclerView.Adapter<ImageViewListAdap
                 @Override
                 public boolean onLongClick(View v) {
                     int position=getAdapterPosition();
-//                    longlistener.onItemLongSelected(v,position);
+                    longlistener.onLongClick(ImageViewListAdapter.ListViewHolder.this,v,position);
                     return true;
                 }
             });

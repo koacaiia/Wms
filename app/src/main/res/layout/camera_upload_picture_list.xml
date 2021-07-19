@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cameralist_back"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/cameralist_consigneeName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="TextView"
+        android:textSize="10sp"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/cameralist_itemNo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="TextView"
+        android:textSize="10sp"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/cameralist_manageNo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="TextView"
+        android:textSize="10sp"
+        android:textStyle="bold|italic" />
+</LinearLayout>

@@ -273,7 +273,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 databaseReference=database.getReference(wareHouseDepot+"/"+keyValue);
                 databaseReference.updateChildren(putValue);
                 Toast.makeText(getApplicationContext(),"컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.",Toast.LENGTH_SHORT).show();
-                initIntent();
+//                initIntent();
 
             }
         });
@@ -759,7 +759,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         TextView textViewQty = view.findViewById(R.id.exQty);
         textViewQty.setText(qty + " PLT");
 
+        consignee_list=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
+        consigneeArrayList.add(0,"ALL");
+        shared_consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
         Button searchDetail = view.findViewById(R.id.btnDetailSearch);
 
@@ -1046,8 +1049,11 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
-                    consigneeArrayList.add(data.getConsignee());
+
                     arrConsignee.add(data.getConsignee());
+                    if(!consigneeArrayList.contains(data.getConsignee())){
+                        consigneeArrayList.add(data.getConsignee());
+                    }
                 }
                 getFirebaseData(dataMessage, dataMessage, "sort", sortConsignee);
             }
@@ -1222,14 +1228,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     @Override
     public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        selectLongClickDialog(pos);
+        String dialogTitle=listItems.get(pos).getConsignee()+"_"+listItems.get(pos).getDescription();
+        selectLongClickDialog(dialogTitle,pos);
 
     }
 
-    private void selectLongClickDialog(int pos) {
+    private void selectLongClickDialog(String dialogTitle, int pos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("입고화물 정보 수정")
-                .setMessage("입고화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정시에는 하단 정보수정 버큰 클릭후 메뉴 중간 버튼 " +
+                .setMessage(dialogTitle+" 화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정시에는 하단 " +
+                        "정보수정 버큰 " +
+                        "클릭후 메뉴 중간 버튼 " +
                         "클릭후 내용 수정 진행 바랍니다.")
                 .setPositiveButton("정보 수정", new DialogInterface.OnClickListener() {
                     @Override
@@ -1343,7 +1352,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         String clickedPictureCount = "(" + imageViewListsSelected.size() + "장 선택)";
         incargo_contents_date.setText(dia_dateInit + " 입고 목록" + clickedPictureCount);
 
-        Toast.makeText(getApplicationContext(), imageViewListsSelected.size() + "개 사진 선택", Toast.LENGTH_SHORT).show();
     }
 
     public void pickedUpItemClick(String value) {

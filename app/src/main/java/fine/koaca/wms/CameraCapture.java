@@ -10,7 +10,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,11 +21,14 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +45,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,8 +60,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class CameraCapture extends AppCompatActivity
-{
+public class CameraCapture extends AppCompatActivity implements CameraCaptureInAdapter.CameraCaptureInAdapterClick, CameraCaptureOutAdapter.CameraCaptureOutAdapterClick {
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     String [] permission_list={Manifest.permission.CAMERA,
@@ -66,10 +76,6 @@ public class CameraCapture extends AppCompatActivity
     String intent_camera_bl;
     String intent_camera_count;
     String intent_camera_des;
-    String selectedItem;
-
-    FloatingActionButton btn_capture;
-    FloatingActionButton btn_share;
 
     CaptureProcess captureProcess;
 
@@ -77,6 +83,8 @@ public class CameraCapture extends AppCompatActivity
 
     RecyclerView recyclerView;
     ImageViewListAdapter adapter;
+    CameraCaptureOutAdapter adapterOut;
+    CameraCaptureInAdapter adapterIn;
     ArrayList<ImageViewList> list=new ArrayList<ImageViewList>();
     ArrayList<String> upLoadUriString=new ArrayList<String>();
     SparseBooleanArray imageListSelected=new SparseBooleanArray(0);
@@ -87,8 +95,15 @@ public class CameraCapture extends AppCompatActivity
 
     static RequestQueue requestQueue;
 
+    ArrayList<OutCargoList> listOut=new ArrayList<>();
+    ArrayList<Fine2IncargoList> listIn=new ArrayList<>();
 
+    Button btnPicText;
 
+    AlertDialog dialog;
+
+    RecyclerView recyclerViewIn;
+    RecyclerView recyclerViewOut;
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,10 +112,7 @@ public class CameraCapture extends AppCompatActivity
         requestPermissions(permission_list,0);
         intentGetItems();
 
-
-
         FirebaseMessaging.getInstance().subscribeToTopic("testUp");
-
 
 
         depotName=getIntent().getStringExtra("depotName");
@@ -111,44 +123,8 @@ public class CameraCapture extends AppCompatActivity
 
         date_today=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-
-        btn_capture=findViewById(R.id.btn_textureView_Capture);
+        btnPicText=findViewById(R.id.camera_textView_piccount);
         captureProcess=new CaptureProcess(this,adapter);
-        btn_capture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                captureProcess.captureProcess(date_today);
-
-
-            }
-        });
-
-        btn_capture.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
-                startActivity(intent);
-                return true;
-            }
-        });
-        btn_share=findViewById(R.id.fabshare);
-        btn_share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-//                consigneeSelected();
-                sharedInOutCaro();
-            }
-        });
-        btn_share.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Intent intent=new Intent(CameraCapture.this,WorkingMessageData.class);
-                startActivity(intent);
-                return true;
-            }
-        });
-
 
         camera_date=findViewById(R.id.camera_textView_date);
         camera_date.setText(intent_camera_date);
@@ -167,6 +143,16 @@ public class CameraCapture extends AppCompatActivity
             public void onClick(View v) {
                 captureProcess.setmAutoFocus();
 
+            }
+        });
+
+        surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                return true;
             }
         });
 
@@ -208,12 +194,38 @@ public class CameraCapture extends AppCompatActivity
                                 }
                             }).show();
                 }
+
+                btnPicText.setText(upLoadUriString.size()+" 개의 사진이 선택 되었습니다."+"\n"+"해당 버튼길게 누르면 메세지창으로 넘어 갑니다."+"\n"+
+                        "사진 리스트 길게 누르면 공유선택으로 전환 됩니다.");
+               btnPicText.setTextSize(12);
+            }
+        });
+        adapter.onListItemLongSelectedInterface(new OnListItemLongSelectedInterface() {
+            @Override
+            public void onLongClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
+                dialogOutCamera();
             }
         });
 
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
+        btnPicText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                captureProcess.captureProcess(date_today);
+
+            }
+        });
+
+        btnPicText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Intent intent=new Intent(CameraCapture.this, WorkingMessageData.class);
+                startActivity(intent);
+                return true;
+            }
+        });
 
     }
 
@@ -224,9 +236,10 @@ public class CameraCapture extends AppCompatActivity
                 .setPositiveButton("출고", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(CameraCapture.this,OutCargoActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
+//                        Intent intent=new Intent(CameraCapture.this,OutCargoActivity.class);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+                        dialogOutCamera();
                     }
                 })
                 .setNegativeButton("입고", new DialogInterface.OnClickListener() {
@@ -244,6 +257,78 @@ public class CameraCapture extends AppCompatActivity
                     }
                 })
                 .show();
+    }
+
+    private void dialogOutCamera() {
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference databaseReferenceOut=database.getReference("Outcargo2");
+        DatabaseReference databaseReferenceIn=database.getReference("Incargo2");
+
+
+
+        View view=getLayoutInflater().inflate(R.layout.camera_upload_picture_adapter,null);
+
+        recyclerViewIn=view.findViewById(R.id.capture_adapter_in);
+        recyclerViewOut=view.findViewById(R.id.capture_adapter_out);
+        LinearLayoutManager managerIn=new LinearLayoutManager(this);
+        LinearLayoutManager managerOut=new LinearLayoutManager(this);
+        recyclerViewIn.setLayoutManager(managerIn);
+        recyclerViewOut.setLayoutManager(managerOut);
+        adapterOut=new CameraCaptureOutAdapter(listOut,this);
+        adapterIn=new CameraCaptureInAdapter(listIn,this);
+        recyclerViewIn.setAdapter(adapterIn);
+        recyclerViewOut.setAdapter(adapterOut);
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setTitle("사진전송 선택 창")
+                .setView(view)
+                .show();
+
+        dialog=builder.create();
+
+
+        ValueEventListener listenerOut=new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    OutCargoList mList=data.getValue(OutCargoList.class);
+                    listOut.add(mList);
+                }
+               adapterOut.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        ValueEventListener listenerIn= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
+                    listIn.add(mList);
+                }
+                adapterIn.notifyDataSetChanged();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+
+
+        Query sortDatabaseByDateOut=databaseReferenceOut.orderByChild("date").equalTo(date_today);
+        sortDatabaseByDateOut.addValueEventListener(listenerOut);
+
+        Query sortDatabaseByDateIn=databaseReferenceIn.orderByChild("date").equalTo(date_today);
+        sortDatabaseByDateIn.addValueEventListener(listenerIn);
+
+
+
     }
 
     @Override
@@ -541,5 +626,19 @@ public class CameraCapture extends AppCompatActivity
     }
 
 
+    @Override
+    public void inAdapterClick(CameraCaptureInAdapter.ListViewHolder listViewHolder, View v, int position) {
+        upCapturePictures("InCargo",listIn.get(position).getConsignee());
 
+
+
+
+    }
+
+    @Override
+    public void outAdapterClick(CameraCaptureOutAdapter.ListViewHolder listViewHolder, View v, int position) {
+        upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
+
+
+    }
 }
