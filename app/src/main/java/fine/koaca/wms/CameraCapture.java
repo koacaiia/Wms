@@ -153,12 +153,13 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-//                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(intent);
+                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
 
-                PublicMethod test=new PublicMethod(upLoadUriString);
-                test.upLoadPictures(nickName,"Test","InCargo");
+//                PublicMethod test=new PublicMethod();
+//                String nickName=test.getUserInformation().get("nickName");
+//                Log.i("TestValue","Test public Method get NickName:::"+nickName);
                 return true;
             }
         });
@@ -189,10 +190,10 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
                 }
 
-                if(upLoadUriString.size()>5){
+                if(upLoadUriString.size()>7){
                     AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
                     builder.setTitle("!사진전송 주의사항")
-                            .setMessage("한번에 전송할수 있는 사진은 최대 5장 입니다.")
+                            .setMessage("한번에 전송할수 있는 사진은 최대 7장 입니다.")
                             .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -286,12 +287,45 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         recyclerViewIn.setAdapter(adapterIn);
         recyclerViewOut.setAdapter(adapterOut);
 
+
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setTitle("사진전송 선택 창")
                 .setView(view)
                 .show();
 
         dialog=builder.create();
+        Button btnInit=view.findViewById(R.id.capture_adapter_btnInit);
+
+        btnInit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent=new Intent(CameraCapture.this,TitleActivity.class);
+                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+        Button btnIn=view.findViewById(R.id.capture_adapter_btnIn);
+        btnIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent=new Intent(CameraCapture.this,Incargo.class);
+                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+        Button btnOut=view.findViewById(R.id.capture_adapter_btnOut);
+        btnOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent=new Intent(CameraCapture.this,OutCargoActivity.class);
+                intent.setFlags( Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+
 
 
         ValueEventListener listenerOut=new ValueEventListener() {
@@ -319,29 +353,23 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                 for(DataSnapshot data:snapshot.getChildren()){
                     Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
                     if(mList.getWorking().equals("")){
-                        listIn.add(mList);
+                        if(!mList.getContainer40().equals("0")||!mList.getContainer20().equals("0")||!mList.getLclcargo().equals("0")){
+                            listIn.add(mList);
+                        }
                     }
-
                 }
                 adapterIn.notifyDataSetChanged();
-
             }
-
             @Override
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
             }
         };
-
-
         Query sortDatabaseByDateOut=databaseReferenceOut.orderByChild("date").equalTo(date_today);
         sortDatabaseByDateOut.addValueEventListener(listenerOut);
 
         Query sortDatabaseByDateIn=databaseReferenceIn.orderByChild("date").equalTo(date_today);
         sortDatabaseByDateIn.addValueEventListener(listenerIn);
-
-
-
     }
 
     @Override
@@ -353,7 +381,6 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                 return;
             }
         }
-
         captureProcess.preViewProcess();
     }
 

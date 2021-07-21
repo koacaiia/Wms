@@ -7,24 +7,44 @@ public class WorkingMessageList {
     String uri2;
     String uri3;
     String uri4;
+    String uri5;
+    String uri6;
     String nickName;
     String time;
     String date;
     String consignee;
     String InOutCargo;
 
-    public WorkingMessageList(String msg, String uri0, String uri1, String uri2, String uri3, String uri4, String nickName, String time, String date, String consignee, String inOutCargo) {
+    public String getUri5() {
+        return uri5;
+    }
+
+    public void setUri5(String uri5) {
+        this.uri5 = uri5;
+    }
+
+    public String getUri6() {
+        return uri6;
+    }
+
+    public void setUri6(String uri6) {
+        this.uri6 = uri6;
+    }
+
+    public WorkingMessageList(String msg, String uri0, String uri1, String uri2, String uri3, String uri4, String uri5, String uri6, String nickName, String time, String date, String consignee, String inOutCargo) {
         this.msg = msg;
         this.uri0 = uri0;
         this.uri1 = uri1;
         this.uri2 = uri2;
         this.uri3 = uri3;
         this.uri4 = uri4;
+        this.uri5 = uri5;
+        this.uri6 = uri6;
         this.nickName = nickName;
         this.time = time;
         this.date = date;
         this.consignee = consignee;
-        InOutCargo = inOutCargo;
+        this.InOutCargo = inOutCargo;
     }
 
     public WorkingMessageList() {

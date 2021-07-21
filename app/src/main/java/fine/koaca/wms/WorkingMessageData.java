@@ -428,6 +428,15 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+                    if(mList.getConsignee()==null){
+                        Log.i("TestValue","ConsigneeName Null Checked:::::"+mList.getTime());
+                        String nickName=mList.getNickName();
+                        String timeStamp=mList.getTime();
+                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nickName+"_"+timeStamp);
+                        Map<String,Object> value=new HashMap<>();
+                        value.put("msg","ConsigneeName Null Checked:::::"+mList.getTime());
+                        databaseReference.updateChildren(value);
+                    }
                     String consigneeName=mList.getConsignee();
                     if(!consigneeArrayList.contains(consigneeName)){
                         consigneeArrayList.add(consigneeName);

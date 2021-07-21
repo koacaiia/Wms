@@ -69,6 +69,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     FloatingActionButton fltBtn;
 
     static RequestQueue requestQueue;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -338,10 +340,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
            clickedArray.put(position,true);
            clickedImageViewLists.add(uriString);
        }
-       if(clickedImageViewLists.size()>5){
+       if(clickedImageViewLists.size()>7){
            AlertDialog.Builder builder=new AlertDialog.Builder(this);
            builder.setTitle("!사진전송 주의사항")
-                   .setMessage("한번에 전송할수 있는 사진은 최대 5장 입니다.")
+                   .setMessage("한번에 전송할수 있는 사진은 최대 7장 입니다.")
                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                        @Override
                        public void onClick(DialogInterface dialog, int which) {

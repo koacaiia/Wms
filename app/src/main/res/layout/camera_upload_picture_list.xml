@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/cameralist_back"
     android:layout_width="match_parent"
-    android:layout_height="30dp"
+    android:layout_height="40dp"
     android:layout_gravity="center">
 
     <TextView
@@ -12,7 +12,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="TextView"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="TextView"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -33,6 +33,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="TextView"
-        android:textSize="10sp"
+        android:textSize="12sp"
         android:textStyle="bold|italic" />
 </LinearLayout>

@@ -197,7 +197,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                        public void onSuccess(Uri uri) {
                            String strUri=String.valueOf(uri);
                            uriString.add(strUri);
-                           if(i==(arSize-1)){
+
+                           if(uriString.size()==arSize){
                                upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,arSize,context);
                            }
                        }
@@ -216,10 +217,10 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 .addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-//                    Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
-//                    String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
-//                    putMessage(msg, "", captureItem, uploadItem);
-//                    receivedUri(recvRef,nick,timeStamp,message,timeStamp_date,captureItem,uploadItem, i,arSize);
+                    Toast.makeText(mainActivity, "공용서버에" + captureItem + "사진이 UpLoad에 실패했습니다..", Toast.LENGTH_SHORT).show();
+                    String msg = captureItem + "_사진 서버에 업로드 실패후 재전송시도";
+                    putMessage(msg, "", captureItem, uploadItem);
+
                 }
             });
 
@@ -228,7 +229,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i, int arSize,
                                      String context) {
 
-        Log.i("TestValue","ContextValue::::"+context);
+
         String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
         WorkingMessageList messageList= new WorkingMessageList();
@@ -239,7 +240,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference("WorkingMessage"+
                 "/"+nick+"_"+timeStamp);
-        String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="";
+        String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="",strUri5="",strUri6="";
 
         try{
             switch(i){
@@ -269,6 +270,23 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     strUri3=uriString.get(3);
                     strUri4=uriString.get(4);
                     break;
+                case 5:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    strUri2=uriString.get(2);
+                    strUri3=uriString.get(3);
+                    strUri4=uriString.get(4);
+                    strUri5=uriString.get(5);
+                    break;
+                case 6:
+                    strUri0=uriString.get(0);
+                    strUri1=uriString.get(1);
+                    strUri2=uriString.get(2);
+                    strUri3=uriString.get(3);
+                    strUri4=uriString.get(4);
+                    strUri5=uriString.get(5);
+                    strUri6=uriString.get(6);
+                    break;
 
             }
         }catch(IndexOutOfBoundsException e){
@@ -293,14 +311,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         messageList.setUri2(strUri2);
         messageList.setUri3(strUri3);
         messageList.setUri4(strUri4);
+        messageList.setUri5(strUri5);
+        messageList.setUri6(strUri6);
         messageList.setDate(timeStamp_date);
         messageList.setConsignee(consigneeName);
         messageList.setInOutCargo(inoutCargo);
         databaseReference.setValue(messageList);
-        if(arSize-1==i){
-            if(arSize==uriString.size()){
-
-                switch(context){
+           switch(context){
                     case "OutCargoActivity":
                         outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
                         Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
@@ -321,17 +338,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                         inCargoActivity.messageIntent();
                         break;
                 }
-            }else{
-                Map<String,Object> value=new HashMap<>();
-                value.put("msg",
-                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-                databaseReference.updateChildren(value);
-                Log.i("TestValue",
-                        "DEV_value/putArrayListSize:"+arSize+"but SortingArrayList AddArrayListSize:"+uriString.size());
-                failedUpLoad(nick,consigneeName,inoutCargo,arSize,uriString.size(),context);
-            }
+
         }
-    }
+
     public void putMessage(String msg, String imageUri, String captureItem, String uploadItem){
         @SuppressLint("SimpleDateFormat")
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());

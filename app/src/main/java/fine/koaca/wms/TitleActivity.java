@@ -732,6 +732,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
         Intent intent=new Intent(this,Incargo.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         startActivity(intent);
 
     }
@@ -747,6 +748,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     public void itemLongClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         Intent intent=new Intent(this,OutCargoActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("depotName",departmentName);
+        intent.putExtra("nickName",nickName);
+        intent.putExtra("alertDepot",alertDepot);
         startActivity(intent);
     }
 

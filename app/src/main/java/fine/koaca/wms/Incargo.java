@@ -155,8 +155,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
-
-
         depotName = sharedPref.getString("depotName", null);
         dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
         day_start = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
@@ -171,6 +169,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         listItems = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
+        sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
+        depotName = sharedPref.getString("depotName", null);
         if (depotName != null) {
             switch (depotName) {
                 case "2물류(02010027)":
@@ -1337,10 +1337,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             selectedSortItems.put(position, true);
             imageViewListsSelected.remove(imageViewLists.get(position));
         }
-        if (imageViewListsSelected.size() > 5) {
+        if (imageViewListsSelected.size() > 7) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("!사진전송 주의사항")
-                    .setMessage("한번에 전송할수 있는 사진은 최대 5장 입니다.")
+                    .setMessage("한번에 전송할수 있는 사진은 최대 7장 입니다.")
                     .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

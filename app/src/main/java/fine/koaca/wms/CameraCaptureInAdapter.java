@@ -28,6 +28,7 @@ public class CameraCaptureInAdapter extends RecyclerView.Adapter<CameraCaptureIn
         void inAdapterClick(CameraCaptureInAdapter.ListViewHolder listViewHolder,View v,int position);
     }
 
+
     public CameraCaptureInAdapter(ArrayList<Fine2IncargoList> list,CameraCaptureInAdapterClick listener) {
         this.list=list;
         this.listener=listener;
@@ -45,7 +46,6 @@ public class CameraCaptureInAdapter extends RecyclerView.Adapter<CameraCaptureIn
         holder.consigneeName.setText(list.get(position).getConsignee());
         holder.itemNo.setText(list.get(position).getBl());
         holder.manageNo.setText(list.get(position).getContainer());
-//        holder.itemView.setSelected();
         if(mSelectedItems.get(position,false)){
 
            holder.layout.setBackgroundColor(Color.WHITE);
@@ -81,7 +81,7 @@ public class CameraCaptureInAdapter extends RecyclerView.Adapter<CameraCaptureIn
 
                     }else{
                         mSelectedItems.put(pos,true);
-//                      layout.setBackgroundColor(Color.WHITE);
+
                    }
                     notifyItemChanged(pos);
                     }

@@ -461,7 +461,7 @@ if(add){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStampDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        String nick=sharedPreferences.getString("nickName","FineWareHouseDepot");
+        String nick=sharedPreferences.getString("nickName",null);
         WorkingMessageList messageList=new WorkingMessageList();
         messageList.setNickName(nick);
         messageList.setTime(timeStamp);

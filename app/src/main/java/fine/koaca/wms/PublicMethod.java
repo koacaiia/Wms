@@ -2,8 +2,10 @@ package fine.koaca.wms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -29,12 +31,19 @@ import java.util.Map;
 public class PublicMethod {
     Activity activity;
     ArrayList<String> list=new ArrayList<>();
+    SharedPreferences sharedPreferences;
     public PublicMethod(Activity activity){
         this.activity=activity;
     }
     public PublicMethod(ArrayList<String> list){
         this.list=list;
     }
+
+
+    public PublicMethod(){
+
+    }
+
     public void putContent(String pathValue){
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference(pathValue);
@@ -137,7 +146,8 @@ public class PublicMethod {
                                    uriList.add(String.valueOf(uri));
                                    WorkingMessageList messageList=new WorkingMessageList();
 
-                                   if((finalI +1)==listSize){
+
+                                   if((uriList.size())==listSize){
                                        messageList.setNickName(nickName);
                                        messageList.setTime(dateNtime);
                                        messageList.setDate(date);
@@ -188,6 +198,17 @@ public class PublicMethod {
                     });
 
         }
+    }
 
+    public Map<String,String> getUserInformation(){
+    Map<String,String> userInformation=new HashMap<>();
+
+    SharedPreferences sharedPreferences=TitleActivity.sharedPref;
+    String nickName=sharedPreferences.getString("nickName",null);
+    String depotName=sharedPreferences.getString("depotName",null);
+    userInformation.put("nickName",nickName);
+    userInformation.put("depotName",depotName);
+
+    return userInformation;
     }
 }

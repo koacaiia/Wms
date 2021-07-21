@@ -69,6 +69,12 @@ implements OnListImageClickListener{
         Glide.with(holder.itemView)
                 .load(messageLists.get(position).getUri4())
                 .into(holder.image4);
+        Glide.with(holder.itemView)
+                .load(messageLists.get(position).getUri5())
+                .into(holder.image5);
+        Glide.with(holder.itemView)
+                .load(messageLists.get(position).getUri6())
+                .into(holder.image6);
         sharedPreferences=context.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nickName=sharedPreferences.getString("nickName",null);
         LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
@@ -118,6 +124,8 @@ implements OnListImageClickListener{
         ImageView image2;
         ImageView image3;
         ImageView image4;
+        ImageView image5;
+        ImageView image6;
         CardView cardView;
         LinearLayout linearLayout;
 
@@ -132,6 +140,8 @@ implements OnListImageClickListener{
             this.image2=itemView.findViewById(R.id.work_image2);
             this.image3=itemView.findViewById(R.id.work_image3);
             this.image4=itemView.findViewById(R.id.work_image4);
+            this.image5=itemView.findViewById(R.id.work_image5);
+            this.image6=itemView.findViewById(R.id.work_image6);
             this.cardView=itemView.findViewById(R.id.workinglistcardview);
             this.linearLayout=itemView.findViewById(R.id.workinglayout);
 
