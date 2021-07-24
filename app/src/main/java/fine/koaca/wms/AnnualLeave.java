@@ -730,22 +730,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     @Override
     public void onBackPressed() {
 
-        android.app.AlertDialog.Builder builder=new android.app.AlertDialog.Builder(AnnualLeave.this);
-        builder.setTitle("화면 선택")
-                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(AnnualLeave.this,TitleActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
+       PublicMethod publicMethod=new PublicMethod(this);
+       publicMethod.intentSelect();
     }
 }

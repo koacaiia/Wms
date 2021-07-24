@@ -1401,23 +1401,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
-        builder.setTitle("화면 선택")
-                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(Incargo.this,TitleActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
+       PublicMethod publicMethod=new PublicMethod(this);
+       publicMethod.intentSelect();
     }
 
     @Override

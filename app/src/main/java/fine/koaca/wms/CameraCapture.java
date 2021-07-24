@@ -2,6 +2,7 @@ package fine.koaca.wms;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -108,6 +109,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
     RecyclerView recyclerViewOut;
 
     FirebaseDatabase database;
+    Activity activity;
     @SuppressLint("SimpleDateFormat")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +120,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
         database=FirebaseDatabase.getInstance();
 
-
+        activity=this;
         depotName=getIntent().getStringExtra("depotName");
         nickName=getIntent().getStringExtra("nickName");
         alertDepot=getIntent().getStringExtra("alertDepot");
@@ -271,9 +273,6 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
         DatabaseReference databaseReferenceOut=database.getReference("Outcargo2");
         DatabaseReference databaseReferenceIn=database.getReference("Incargo2");
-
-
-
         View view=getLayoutInflater().inflate(R.layout.camera_upload_picture_adapter,null);
 
         recyclerViewIn=view.findViewById(R.id.capture_adapter_in);
@@ -432,50 +431,87 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
-        builder.setTitle("화면 선택")
-                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(CameraCapture.this,TitleActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
+//        AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
+//        builder.setTitle("화면 선택")
+//                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        Intent intent=new Intent(CameraCapture.this,TitleActivity.class);
+//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        startActivity(intent);
+//                    }
+//                })
+//                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        finish();
+//                    }
+//                })
+//                .show();
+
+        PublicMethod publicMethod=new PublicMethod(this);
+        publicMethod.intentSelect();
     }
 
 
     @Override
     public void inAdapterClick(CameraCaptureInAdapter.ListViewHolder listViewHolder, View v, int position) {
-        String refPath=
-                "/"+listIn.get(position).getDate()+"_"+listIn.get(position).getBl()+"_"+listIn.get(position).getDescription()+
-                "_"+listIn.get(position).getCount()+"_"+listIn.get(position).getContainer();
-        DatabaseReference databaseReference=database.getReference("Incargo2"+refPath);
-        Map<String,Object> value=new HashMap<>();
-        value.put("working","컨테이너 진입");
-        databaseReference.updateChildren(value);
-        Toast.makeText(this,listIn.get(position).getConsignee()+"_"+listIn.get(position).getContainer()+"컨테이너 진입으로 등록",
-                Toast.LENGTH_LONG).show();
-        upCapturePictures("InCargo",listIn.get(position).getConsignee());
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage(upLoadUriString.size()+" 장의 사진을 "+listIn.get(position).getConsignee()+"_"+listIn.get(position).getContainer()+
+                "컨테이너 " +
+                "진입으로 등록 " +
+                "진행 합니다."+
+                "\n"+"내용이 맞으면 하단 확인버튼으로 공유 바랍니다.")
+
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String refPath=
+                                "/"+listIn.get(position).getDate()+"_"+listIn.get(position).getBl()+"_"+listIn.get(position).getDescription()+
+                                        "_"+listIn.get(position).getCount()+"_"+listIn.get(position).getContainer();
+                        DatabaseReference databaseReference=database.getReference("Incargo2"+refPath);
+                        Map<String,Object> value=new HashMap<>();
+                        value.put("working","컨테이너 진입");
+                        databaseReference.updateChildren(value);
+                        upCapturePictures("InCargo",listIn.get(position).getConsignee());
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+
 
     }
 
     @Override
     public void outAdapterClick(CameraCaptureOutAdapter.ListViewHolder listViewHolder, View v, int position) {
-        String refPath="/"+listOut.get(position).getKeypath();
-        DatabaseReference databaseReference=database.getReference("Outcargo2"+refPath);
-        Map<String,Object> value=new HashMap<>();
-        value.put("workprocess","완");
-        databaseReference.updateChildren(value);
-        Toast.makeText(this,listOut.get(position).getConsigneeName()+"_"+listOut.get(position).getTotalQty()+" 건 출고 완료등록",
-                Toast.LENGTH_LONG).show();
-        upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
+        AlertDialog.Builder builder= new AlertDialog.Builder(this);
+        builder.setMessage(upLoadUriString.size()+" 장의 사진을 "+listOut.get(position).getConsigneeName()+"_"+listOut.get(position).getTotalQty()+
+                "건 출고완료로 등록 진행 합니다." +"\n"+"내용이 맞으면 하단 확인버튼으로 공유 바랍니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String refPath="/"+listOut.get(position).getKeypath();
+                        DatabaseReference databaseReference=database.getReference("Outcargo2"+refPath);
+                        Map<String,Object> value=new HashMap<>();
+                        value.put("workprocess","완");
+                        databaseReference.updateChildren(value);
+                        upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+
     }
 }

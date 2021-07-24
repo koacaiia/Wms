@@ -362,6 +362,17 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nick=sharedPreferences.getString("nickName","Fine");
 
+        if(consigneeName==null){
+            AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+            builder.setMessage("!출고 목록 선택이 되질 않았습니다."+"\n"+"상단의 출고목록 틀릭후 전송 바랍니다.!")
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            return;
+        }
         String message=consigneeName+"_"+inoutItems+"_사진 업로드";
         CaptureProcess captureProcess=new CaptureProcess(this);
         String activityName=this.getClass().getSimpleName();
@@ -390,24 +401,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     @Override
     public void onBackPressed() {
-
-        AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
-        builder.setTitle("화면 선택")
-                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(OutCargoActivity.this,TitleActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
+        PublicMethod publicMethod=new PublicMethod(this);
+        publicMethod.intentSelect();
     }
 
     @Override

@@ -199,7 +199,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                            uriString.add(strUri);
 
                            if(uriString.size()==arSize){
-                               upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,arSize,context);
+                               upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,context);
                            }
                        }
                    })
@@ -226,9 +226,11 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     }
 
-    private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i, int arSize,
+    private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i,
                                      String context) {
-
+        if(consigneeName==null){
+            consigneeName="화주:재확인 요망";
+        }
 
         String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
@@ -320,20 +322,20 @@ public class CaptureProcess implements SurfaceHolder.Callback {
            switch(context){
                     case "OutCargoActivity":
                         outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         outCargoActivity.messageIntent();
                         break;
                     case "CameraCapture":
                         mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
 
-                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         mainActivity.messageIntent();
                         break;
                     case "Incargo":
                         inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                        Toast.makeText(inCargoActivity.getApplicationContext(),msg+"("+arSize+")"+"개의 사진을 전송 했습니다",
+                        Toast.makeText(inCargoActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
                                 Toast.LENGTH_SHORT).show();
                         inCargoActivity.messageIntent();
                         break;

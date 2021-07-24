@@ -7,10 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -206,9 +212,83 @@ public class PublicMethod {
     SharedPreferences sharedPreferences=TitleActivity.sharedPref;
     String nickName=sharedPreferences.getString("nickName",null);
     String depotName=sharedPreferences.getString("depotName",null);
+    String deptName=null;
+    String alertDepot=null;
+    switch(depotName){
+        case "2물류(02010027)":
+            deptName="WareHouseDept2";
+            alertDepot="Depot2";
+            break;
+        case "1물류(02010810)":
+            deptName="WareHouseDept1";
+            alertDepot="Depot1";
+            break;
+
+    }
     userInformation.put("nickName",nickName);
     userInformation.put("depotName",depotName);
+    userInformation.put("deptName",deptName);
+    userInformation.put("alertDepot",alertDepot);
 
     return userInformation;
+    }
+
+    public void intentSelect(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        View view=activity.getLayoutInflater().inflate(R.layout.dialog_select_intent,null);
+        Button btnIn=view.findViewById(R.id.dialog_select_intent_btnIn);
+
+        btnIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             Intent intent=new Intent(activity,Incargo.class);
+             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+             activity.startActivity(intent);
+            }
+        });
+        Button btnOut=view.findViewById(R.id.dialog_select_intent_btnOut);
+        btnOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+           Intent intent=new Intent(activity,OutCargoActivity.class);
+           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+           activity.startActivity(intent);
+            }
+        });
+        Button btnCamera=view.findViewById(R.id.dialog_select_intent_btnCamera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
+
+        Button btnFinish=view.findViewById(R.id.dialog_select_intent_btnFinish);
+        btnFinish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            activity.finish();
+            }
+        });
+
+        builder.setView(view);
+
+        AlertDialog dialog=builder.create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+        WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
+        Log.i("TestValue","Layout Params width::::"+params.width);
+        float density=activity.getResources().getDisplayMetrics().density;
+        int pxValue=Math.round((float)300*density);
+        int widthPx=activity.getResources().getDisplayMetrics().widthPixels;
+        Log.i("TestValue","Put 300Dp convert Pixel to:::::"+pxValue +"Device widthPx::::"+widthPx);
+
+        params.width=(widthPx*2)/3;
+        dialog.getWindow().setAttributes(params);
+//        dialog.show();
+//        dialog.show();가 끝에 위치하면 Attributes 반영이 안됨
+
     }
 }

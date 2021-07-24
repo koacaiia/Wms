@@ -26,8 +26,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -199,6 +197,15 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 startActivity(intentAnnual);
             }
         });
+
+        btnAnnual.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                String topicValue=FirebaseMessaging.getInstance().toString();
+
+                return true;
+            }
+        });
         btnWorkmessage=findViewById(R.id.titleWorkmessage);
         btnWorkmessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -251,7 +258,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     public void titleDialog() {
         AlertDialog.Builder titleBuilder=new AlertDialog.Builder(this);
-        View view= getLayoutInflater().inflate(R.layout.title_dialog,null);
+        View view= getLayoutInflater().inflate(R.layout.dialog_title,null);
         Button btnConfirm=view.findViewById(R.id.button2);
         Button btnIncargo=view.findViewById(R.id.button4);
         Button btnOutcargo=view.findViewById(R.id.button3);
