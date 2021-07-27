@@ -210,7 +210,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                                }
                            });
 
-
                 }
 
             })

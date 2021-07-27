@@ -55,7 +55,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-       Log.i("koacaiia","onMessageReceived");
+       Log.i("TestValue","onMessageReceived");
 
         Map<String, String> data = remoteMessage.getData();
         String contents = data.get("contents");

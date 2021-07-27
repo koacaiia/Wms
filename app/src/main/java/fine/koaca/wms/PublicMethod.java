@@ -19,13 +19,24 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -38,6 +49,7 @@ public class PublicMethod {
     Activity activity;
     ArrayList<String> list=new ArrayList<>();
     SharedPreferences sharedPreferences;
+
     public PublicMethod(Activity activity){
         this.activity=activity;
     }
@@ -290,5 +302,92 @@ public class PublicMethod {
 //        dialog.show();
 //        dialog.show();가 끝에 위치하면 Attributes 반영이 안됨
 
+    }
+
+    public void sendPushMessage(String deptName,String nickName,String message,String contents){
+        JSONObject requestData=new JSONObject();
+        try{
+            requestData.put("priority","high");
+            JSONObject dataObj=new JSONObject();
+            dataObj.put("contents",contents);
+            dataObj.put("nickName",nickName);
+            dataObj.put("message",message);
+            requestData.put("data",dataObj);
+
+            if(nickName.equals("Test")){
+                requestData.put("to","/topics/Test");
+            }else{
+                requestData.put("to","/topics/"+deptName);
+            }
+        }catch(JSONException e){
+            e.printStackTrace();
+        }
+        sendData(requestData, new SendResponsedListener() {
+            @Override
+            public void onRequestStarted() {
+
+            }
+
+            @Override
+            public void onRequestCompleted() {
+
+            }
+
+            @Override
+            public void onRequestWithError(VolleyError error) {
+
+            }
+        });
+
+    }
+
+    private void sendData(JSONObject requestData, SendResponsedListener sendResponsedListener) {
+        RequestQueue requestQueue= Volley.newRequestQueue(activity.getApplicationContext());
+        JsonObjectRequest request=new JsonObjectRequest(
+                Request.Method.POST,"https://fcm.goolgleapis.com/fcm/send",requestData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                sendResponsedListener.onRequestCompleted();
+            }
+        },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        sendResponsedListener.onRequestWithError(error);
+                    }
+                }
+        ) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params=new HashMap<String,String>();
+                return params;
+            }
+
+            @Nullable
+            @org.jetbrains.annotations.Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> headers=new HashMap<String,String>();
+                headers.put("Authorization","key=AAAAYLjTacM:APA91bEfxvEgfzLykmd3YAu-WAI6VW64Ol8TdmGC0GIKao0EB9c3OMAsJNpPCDEUVsMgUkQjbWCpP_Dw2CNpF2u-4u3xuUF30COZslRIqqbryAAhQu0tGLdtFsTXU5EqsMGaMnGK8jpQ");
+                return headers;
+            }
+
+            @Override
+            public String getBodyContentType() {
+                return "application/json";
+            }
+
+        };
+        request.setShouldCache(false);
+        sendResponsedListener.onRequestStarted();
+        requestQueue.add(request);
+
+    }
+
+    public interface SendResponsedListener{
+        void onRequestStarted();
+        void onRequestCompleted();
+        void onRequestWithError(VolleyError error);
     }
 }
