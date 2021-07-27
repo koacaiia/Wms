@@ -43,6 +43,15 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/dialog_select_intent_init"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:layout_weight="1"
+            android:text="초기화면" />
+
+        <Button
             android:id="@+id/dialog_select_intent_btnCamera"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

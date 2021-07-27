@@ -285,6 +285,16 @@ public class PublicMethod {
             }
         });
 
+        Button btnInit=view.findViewById(R.id.dialog_select_intent_init);
+        btnInit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,TitleActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
+
         builder.setView(view);
 
         AlertDialog dialog=builder.create();
@@ -316,6 +326,7 @@ public class PublicMethod {
 
             if(nickName.equals("Test")){
                 requestData.put("to","/topics/Test");
+
             }else{
                 requestData.put("to","/topics/"+deptName);
             }
@@ -325,7 +336,7 @@ public class PublicMethod {
         sendData(requestData, new SendResponsedListener() {
             @Override
             public void onRequestStarted() {
-
+            Log.i("TestValue","Request Started");
             }
 
             @Override
@@ -344,16 +355,18 @@ public class PublicMethod {
     private void sendData(JSONObject requestData, SendResponsedListener sendResponsedListener) {
         RequestQueue requestQueue= Volley.newRequestQueue(activity.getApplicationContext());
         JsonObjectRequest request=new JsonObjectRequest(
-                Request.Method.POST,"https://fcm.goolgleapis.com/fcm/send",requestData, new Response.Listener<JSONObject>() {
+                Request.Method.POST,"https://fcm.googleapis.com/fcm/send",requestData, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 sendResponsedListener.onRequestCompleted();
+                Log.i("TestValue","Data Responsed Successed");
             }
         },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         sendResponsedListener.onRequestWithError(error);
+                        Log.i("TestValue","Data Responsed Failed:::"+error);
                     }
                 }
         ) {
@@ -385,7 +398,7 @@ public class PublicMethod {
 
     }
 
-    public interface SendResponsedListener{
+    private interface SendResponsedListener{
         void onRequestStarted();
         void onRequestCompleted();
         void onRequestWithError(VolleyError error);
