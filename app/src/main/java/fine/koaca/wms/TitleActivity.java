@@ -20,6 +20,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -98,6 +99,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     String alertVersion;
     TextView txtTitle;
+
+    ArrayList<String> arrAnnualLeaveStaff=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,11 +111,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         requestPermissions(permission_list,0);
         sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
-        if(sharedPref.getString("depotName",null)==null){
-            NickCheckProcess nickcheckProcess=new NickCheckProcess(this);
-            nickcheckProcess.putUserInformation();
+        if(sharedPref.getString("deptName",null)==null){
+            PublicMethod publicMethod=new PublicMethod(this);
+            publicMethod.checkUserInfo();
             return;
         }
+
 
         departmentName=sharedPref.getString("depotName",null);
         nickName=sharedPref.getString("nickName",null);
@@ -232,6 +236,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     }
 
+    private void annualLeaveStaffCheck() {
+
+    }
+
     private void initIntent() {
         Intent intent=new Intent(this,TitleActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -257,6 +265,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
 
     public void titleDialog() {
+
         AlertDialog.Builder titleBuilder=new AlertDialog.Builder(this);
         View view= getLayoutInflater().inflate(R.layout.dialog_title,null);
         Button btnConfirm=view.findViewById(R.id.button2);
@@ -268,7 +277,39 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             txtTitle.setText(dateToday+" 입,출고 현황");
 
 
+        DatabaseReference databaseReference=database.getReference("AnnualData");
+        ValueEventListener listener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                for(DataSnapshot data:snapshot.getChildren()){
+                    AnnualList list=data.getValue(AnnualList.class);
+                    if(!list.getAnnual().equals("")&&!list.getAnnual2().equals("")){
+                        arrAnnualLeaveStaff.add("휴가자:"+list.getName());
+                    }
+                    if(list.getAnnual().equals(date)||list.getAnnual2().equals(date)){
+                       if(!list.getAnnual().equals("")&&!list.getAnnual2().equals("")){
 
+                       }else{
+                           arrAnnualLeaveStaff.add("연차자:"+list.getName());
+                       }
+
+                    }
+                    if(list.getHalf1().equals(date)||list.getHalf2().equals(date)){
+                        arrAnnualLeaveStaff.add("반차자:"+list.getName());
+                    }
+                }
+                txtTitle.append("\n"+arrAnnualLeaveStaff);
+            }
+
+            @Override
+            public void onCancelled(@NonNull @NotNull DatabaseError error) {
+
+            }
+        };
+        String date=new SimpleDateFormat("yyyy_MM").format(new Date());
+        Query query=databaseReference.orderByChild("date").equalTo(date);
+        query.addListenerForSingleValueEvent(listener);
 
         ArrayList<OutCargoList> listOutP=new ArrayList<>();
         ArrayList<OutCargoList> listOutTotal=new ArrayList<>();

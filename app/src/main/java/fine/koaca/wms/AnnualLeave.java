@@ -72,7 +72,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_annual_leave);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("Test");
+
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
         }
