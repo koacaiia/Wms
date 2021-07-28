@@ -110,7 +110,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         display=((WindowManager)getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         requestPermissions(permission_list,0);
-        sharedPref=getSharedPreferences(SHARE_NAME,MODE_PRIVATE);
+        sharedPref=getSharedPreferences("Dept_Name",MODE_PRIVATE);
         if(sharedPref.getString("deptName",null)==null){
             PublicMethod publicMethod=new PublicMethod(this);
             publicMethod.checkUserInfo();
@@ -118,18 +118,18 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         }
 
 
-        departmentName=sharedPref.getString("depotName",null);
+        departmentName=sharedPref.getString("deptName",null);
         nickName=sharedPref.getString("nickName",null);
         database=FirebaseDatabase.getInstance();
         switch(departmentName){
-            case "2물류(02010027)":
-                databaseReferenceIn=database.getReference("Incargo2");
+            case "WareHouseDept2":
+                databaseReferenceIn=database.getReference("DeptName/"+departmentName+"/InCargo/");
                 databaseReferenceOut=database.getReference("Outcargo2");
                 wareHouseDepotIn="Incargo2";
                 wareHouseDepotOut="Outcargo2";
                 alertDepot="Depot2";
                 break;
-            case "1물류(02010810)":
+            case "WareHouseDept1":
                 databaseReferenceIn=database.getReference("Incargo1");
                 databaseReferenceOut=database.getReference("Outcargo2");
                 wareHouseDepotIn="Incargo1";
@@ -137,7 +137,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 alertDepot="Depot1";
 
                 break;
-            case "(주)화인통상 창고사업부":
+            case "WareHouseDivision":
                 databaseReferenceIn=database.getReference("Incargo");
                 databaseReferenceOut=database.getReference("Outcargo2");
                 wareHouseDepotIn="Incargo";
@@ -146,7 +146,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 break;
         }
 
-        if (sharedPref.getString("depotName", null) == null) {
+        if (sharedPref.getString("deptName", null) == null) {
 
             putUserInformation();
             return;
