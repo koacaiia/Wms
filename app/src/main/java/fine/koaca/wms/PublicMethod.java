@@ -17,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -50,8 +48,7 @@ import java.util.Map;
 public class PublicMethod {
     Activity activity;
     ArrayList<String> list=new ArrayList<>();
-    String deptName;
-    String nickName;
+    SharedPreferences sharedPreferences;
 
     public PublicMethod(Activity activity){
         this.activity=activity;
@@ -60,7 +57,9 @@ public class PublicMethod {
         this.list=list;
     }
 
+
     public PublicMethod(){
+
     }
 
     public void putContent(String pathValue){
@@ -88,6 +87,7 @@ public class PublicMethod {
 
                         Toast.makeText(activity,contentValue+"로 작업 현황 등록 합니다.",Toast.LENGTH_SHORT).show();
                         dialog.cancel();
+
                     }
                 })
                 .show();
@@ -120,6 +120,7 @@ public class PublicMethod {
         String timeDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
 
         WorkingMessageList messageList=new WorkingMessageList();
+
 
         messageList.setNickName(nickName);
         messageList.setTime(timeStamp);
@@ -324,7 +325,6 @@ public class PublicMethod {
         sendData(requestData, new SendResponsedListener() {
             @Override
             public void onRequestStarted() {
-            Log.i("TestValue","OnRequestStarted::::"    );
 
             }
 
@@ -344,123 +344,50 @@ public class PublicMethod {
     private void sendData(JSONObject requestData, SendResponsedListener sendResponsedListener) {
         RequestQueue requestQueue= Volley.newRequestQueue(activity.getApplicationContext());
         JsonObjectRequest request=new JsonObjectRequest(
-                Request.Method.POST,
-                "https://fcm.googleapis.com/fcm/send",
-                requestData,
-                new Response.Listener<JSONObject>(){
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        sendResponsedListener.onRequestCompleted();
-                    }},
-
-                new Response.ErrorListener(){
+                Request.Method.POST,"https://fcm.goolgleapis.com/fcm/send",requestData, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                sendResponsedListener.onRequestCompleted();
+            }
+        },
+                new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         sendResponsedListener.onRequestWithError(error);
                     }
-                })
-        {
+                }
+        ) {
+
             @Override
-            protected Map<String,String> getParams() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String,String> params=new HashMap<String,String>();
                 return params;
             }
+
+            @Nullable
+            @org.jetbrains.annotations.Nullable
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError{
+            protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> headers=new HashMap<String,String>();
                 headers.put("Authorization","key=AAAAYLjTacM:APA91bEfxvEgfzLykmd3YAu-WAI6VW64Ol8TdmGC0GIKao0EB9c3OMAsJNpPCDEUVsMgUkQjbWCpP_Dw2CNpF2u-4u3xuUF30COZslRIqqbryAAhQu0tGLdtFsTXU5EqsMGaMnGK8jpQ");
                 return headers;
             }
+
             @Override
-            public String getBodyContentType(){
+            public String getBodyContentType() {
                 return "application/json";
             }
 
         };
-
         request.setShouldCache(false);
         sendResponsedListener.onRequestStarted();
         requestQueue.add(request);
+
     }
 
     public interface SendResponsedListener{
         void onRequestStarted();
         void onRequestCompleted();
         void onRequestWithError(VolleyError error);
-    }
-
-    public void checkUserInfo(){
-        SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
-        if(sharedPreferences.getString("DeptName",null)==null){
-           ArrayList<String> deptSort=new ArrayList<>();
-
-            deptSort.add("1물류(02010810)");
-            deptSort.add("2물류(02010027)");
-            deptSort.add("(주)화인통상 창고사업부");
-
-            String[] deptList=deptSort.toArray(new String[deptSort.size()]);
-            AlertDialog.Builder builder=new AlertDialog.Builder(activity);
-            View view=activity.getLayoutInflater().inflate(R.layout.user_reg,null);
-            EditText reg_edit=view.findViewById(R.id.user_reg_Edit);
-            Button reg_button=view.findViewById(R.id.user_reg_button);
-            TextView reg_txt=view.findViewById(R.id.user_reg_depot);
-            reg_button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nickName=reg_edit.getText().toString();
-                    reg_txt.setText(deptName+"_"+nickName+"으로 사용자 등록을"+"\n"+" 진행할려면 하단 확인 버튼 클릭 바랍니다.");
-                }
-            });
-
-
-            builder.setView(view)
-                    .setSingleChoiceItems(deptList,0, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch(which){
-                                case 0:
-                                deptName="WareHouseDept1";
-
-                                    break;
-                                case 1:
-                                    deptName="WareHouseDept2";
-
-                                    break;
-                                case 2:
-                                    deptName="WareHouseDivision";
-                            }
-                            reg_txt.setText("부서명"+deptName+" 로 확인");
-                        }
-                    })
-                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if(deptName==null||nickName.equals("")){
-                                Toast.makeText(activity.getApplicationContext(), "사용자 정보 누락 확인됩니다.다시한번 확인 후 등록 바랍니다.",
-                                        Toast.LENGTH_SHORT).show();
-                                dialog.cancel();
-                                checkUserInfo();
-                            }else{
-                                sharedPreferences.edit().putString("deptName",deptName);
-                                sharedPreferences.edit().putString("nickName",nickName);
-                                sharedPreferences.edit().apply();
-                                Toast.makeText(activity.getApplicationContext(), deptName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent(activity.getApplicationContext(),TitleActivity.class);
-                                activity.startActivity(intent);
-                            }
-
-                        }
-                    })
-                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    })
-                    .show();
-
-
-            return;
-        }
     }
 }
