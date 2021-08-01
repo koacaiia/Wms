@@ -80,7 +80,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String[] consignee_list;
     static String[] shared_consigneeList;
 
-    String dataMessage;
+
     Button incargo_reset;
     Button incargo_mnf;
 
@@ -88,20 +88,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     TextView incargo_incargo;
     TextView incargo_contents_date;
     TextView incargo_contents_consignee;
-    TextView dia_date;
+
 
     String day_start;
     String day_end;
-    String dia_dateInit = "";
+    String dateToday;
 
-    String depotName;
+    String deptName;
     String nickName;
     String bl = "";
-
-
-    static private final String SHARE_NAME = "SHARE_DEPOT";
-    static SharedPreferences sharedPref;
-    static SharedPreferences.Editor editor;
 
     Button fltBtn_Capture;
     FloatingActionButton fltBtn_share;
@@ -126,8 +121,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     Query sortByData;
 
     String[] upDataRegList;
-    String wareHouseDepot = "Incargo";
-    String alertDepot = "Depot";
+
 
     String dateSelectCondition = "";
 
@@ -154,11 +148,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
-        depotName = sharedPref.getString("depotName", null);
-        dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        day_start = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-        day_end = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        PublicMethod publicMethod=new PublicMethod(this);
+        deptName=publicMethod.getUserInformation().get("deptName");
+        nickName=publicMethod.getUserInformation().get("nickName");
+
+//        dateToday= new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        dateToday="2021-07-29";
+
         incargo_incargo = findViewById(R.id.incargo_incargo);
         incargo_contents_date = findViewById(R.id.incargo_contents_date);
         incargo_contents_consignee = findViewById(R.id.incargo_contents_consignee);
@@ -169,34 +165,36 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         listItems = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
-        sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
-        depotName = sharedPref.getString("depotName", null);
-        if (depotName != null) {
-            switch (depotName) {
-                case "2물류(02010027)":
-                    databaseReference = database.getReference("Incargo2");
-                    wareHouseDepot = "Incargo2";
-                    alertDepot = "Depot2";
-                    break;
-                case "1물류(02010810)":
-                    databaseReference = database.getReference("Incargo1");
-                    wareHouseDepot = "Incargo1";
-                    alertDepot = "Depot1";
-
-                    break;
-                case "(주)화인통상 창고사업부":
-                    databaseReference = database.getReference("Incargo");
-                    wareHouseDepot = "Incargo";
-                    alertDepot = "Depot";
-                    break;
-            }
-            nickName = sharedPref.getString("nickName", "Guest");
-        } else {
-            Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
-            databaseReference = database.getReference("Incargo2");
-            alertDepot = "Depot2";
-            nickName = "Guest";
-        }
+        databaseReference=
+                database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +dateToday.substring(5,7) + "월/" + dateToday);
+//        sharedPref = getSharedPreferences(SHARE_NAME, MODE_PRIVATE);
+//        depotName = sharedPref.getString("depotName", null);
+//        if (depotName != null) {
+//            switch (depotName) {
+//                case "2물류(02010027)":
+//                    databaseReference = database.getReference("Incargo2");
+//                    wareHouseDepot = "Incargo2";
+//                    alertDepot = "Depot2";
+//                    break;
+//                case "1물류(02010810)":
+//                    databaseReference = database.getReference("Incargo1");
+//                    wareHouseDepot = "Incargo1";
+//                    alertDepot = "Depot1";
+//
+//                    break;
+//                case "(주)화인통상 창고사업부":
+//                    databaseReference = database.getReference("Incargo");
+//                    wareHouseDepot = "Incargo";
+//                    alertDepot = "Depot";
+//                    break;
+//            }
+//            nickName = sharedPref.getString("nickName", "Guest");
+//        } else {
+//            Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
+//            databaseReference = database.getReference("Incargo2");
+//            alertDepot = "Depot2";
+//            nickName = "Guest";
+//        }
 
         getFirebaseDataInit();
         adapter = new IncargoListAdapter(listItems, this, this);
@@ -218,7 +216,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         incargo_reset.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                dataMessage = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+
                 getFirebaseData(day_start, day_end, "all", sortConsignee);
                 return true;
             }
@@ -240,10 +238,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 return true;
             }
         });
-        dia_dateInit = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-        incargo_contents_date.setText(dia_dateInit);
-        incargo_contents_consignee.setText(depotName + " 전 화물 입고현황");
+
+        incargo_contents_date.setText(dateToday);
+        incargo_contents_consignee.setText(deptName + " 전 화물 입고현황");
 
 
         fltBtn_Capture = findViewById(R.id.incargo_camera);
@@ -270,7 +268,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 upCapturePictures("InCargo",listItems.get(0).getConsignee());
                 Map<String,Object> putValue=new HashMap<>();
                 putValue.put("working","컨테이너 진입");
-                databaseReference=database.getReference(wareHouseDepot+"/"+keyValue);
+                databaseReference=
+                        database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +dateToday.substring(5,7) + "월/" + dateToday+"/"+keyValue);
                 databaseReference.updateChildren(putValue);
                 Toast.makeText(getApplicationContext(),"컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.",Toast.LENGTH_SHORT).show();
 //                initIntent();
@@ -282,7 +281,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             public boolean onLongClick(View v) {
                 Intent intent = new Intent(Incargo.this, WorkingMessageData.class);
                 intent.putExtra("nickName", nickName);
-                intent.putExtra("alertDepot", alertDepot);
+                intent.putExtra("deptName", deptName);
                 startActivity(intent);
                 return true;
             }
@@ -298,9 +297,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     private void intentCameraActivity() {
         Intent intent = new Intent(Incargo.this, CameraCapture.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("depotName", depotName);
+        intent.putExtra("depotName", deptName);
         intent.putExtra("nickName", nickName);
-        intent.putExtra("alertDepot", alertDepot);
         startActivity(intent);
     }
 
@@ -428,10 +426,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 if (listSortItems.size() == 0) {
                     Intent intent = new Intent(Incargo.this, PutDataReg.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.putExtra("dataRef", wareHouseDepot);
+                    intent.putExtra("deptName", deptName);
                     intent.putExtra("list", upDataRegList);
                     intent.putExtra("consigneeList", shared_consigneeList);
-                    intent.putExtra("alertDepot", alertDepot);
+
 
                     startActivity(intent);
                 }
@@ -497,10 +495,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(Incargo.this, PutDataReg.class);
-                            intent.putExtra("dataRef", wareHouseDepot);
+                            intent.putExtra("deptName", deptName);
                             intent.putExtra("list", upDataRegList);
                             intent.putExtra("consigneeList", shared_consigneeList);
-                            intent.putExtra("alertDepot", alertDepot);
                             startActivity(intent);
 
 
@@ -511,7 +508,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             Intent intent = new Intent(Incargo.this, PutDataReg.class);
-                            intent.putExtra("dataRef", wareHouseDepot);
+                            intent.putExtra("deptName", deptName);
                             intent.putExtra("consigneeList", shared_consigneeList);
                             startActivity(intent);
 
@@ -645,7 +642,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             DatabaseReference databaseReference =
-                    database.getReference(wareHouseDepot + "/" + regDate + "_" + regBl + "_" + listSortItems.get(i).getDescription() +
+                    database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +day_start.substring(5,7) + "월/" + day_start+"/" + "/" + regDate + "_" + regBl + "_" + listSortItems.get(i).getDescription() +
                             "_" + listSortItems.get(i).getCount() + "_" + regContainer);
             DatabaseReference databaseRef =
                     database.getReference("Incargo" + "/" + listSortItems.get(i).getDate() + "_" + listSortItems.get(i).getBl() + "_" + listSortItems.get(i).getDescription() +
@@ -690,7 +687,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         DatabaseReference databaseReference = database.getReference("WorkingMessage" + "/" + nick + "_" + date + "_" + timeStamp);
         databaseReference.setValue(messageList);
         TitleActivity titleActivity = new TitleActivity();
-        titleActivity.pushMessage(alertDepot, nickName, msg, "WorkingMessage");
+        titleActivity.pushMessage(deptName, nickName, msg, "WorkingMessage");
 
     }
 
@@ -705,6 +702,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 arrConsignee.add(consigneeName);
             }
         }
+
+
         String consigneeName1, getConsigneeName;
         int cont40 = 0;
         int cont20 = 0;
@@ -829,6 +828,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             pickedUpItemClick(getIntent().getStringExtra("refPath"));
             dialog.dismiss();
         }
+
     }
 
     private void sortCargoDataDialog() {
@@ -971,56 +971,77 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
     public void getFirebaseData(String startDay, String endDay, String sortItems, String sortConsignee) {
-        ValueEventListener dataListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listItems.clear();
-                listSortList.clear();
+        int startDayRe=Integer.parseInt(startDay.replace("-",""));
+        int endDayRe=Integer.parseInt(endDay.replace("-",""));
 
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
-                    String forty = data.getContainer40();
-                    String twenty = data.getContainer20();
-                    String cargo = data.getLclcargo();
-                    if (sortItems.equals("all")) {
-                        if (sortConsignee.equals("ALL")) {
-                            listItems.add(data);
-                            listSortList.add(data);
-                        } else {
-                            if (sortConsignee.equals(data.getConsignee())) {
-                                listItems.add(data);
-                                listSortList.add(data);
-                            }
-                        }
+//        for (int i = (listOutSize - 1); 0 <= i; i--) {
+//            if (!refPath.equals(listOut.get(i).getKeypath())) {
+//                listOut.remove(i);
+//
+//            }
+        Log.i("TestValue","listitemsSize:"+listItems.size());
+        for(int i=(listItems.size()-1);0<=i;i--){
+            int startDayList=Integer.parseInt(listItems.get(i).getDate().replace("-",""));
+            int endDayList=Integer.parseInt(listItems.get(i).getDate().replace("-",""));
+            if(startDayList<=startDayRe||endDayList>=endDayRe){
+                listItems.remove(i);
+            }
+            Log.i("TestValue","listitemsSize:"+listItems.size());
+        }
+//        ValueEventListener dataListener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                listItems.clear();
+//                listSortList.clear();
+//                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                    Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
+//
+//                    assert data != null;
+//                    String forty = data.getContainer40();
+//                    String twenty = data.getContainer20();
+//                    String cargo = data.getLclcargo();
+//                    Log.i("TestValue","sortItems:"+sortItems+"/sortConsignee:"+sortConsignee);
+//                    if (sortItems.equals("all")) {
+//                        if (sortConsignee.equals("ALL")) {
+//                            listItems.add(data);
+//                            listSortList.add(data);
+//
+//                        } else {
+//                            if (sortConsignee.equals(data.getConsignee())) {
+//                                listItems.add(data);
+//                                listSortList.add(data);
+//                            }
+//                        }
+//
+//                    } else if (sortItems.equals("sort")) {
+//                        final boolean b = !forty.equals("0") || !twenty.equals("0") || !cargo.equals("0");
+//                        if (sortConsignee.equals("ALL")) {
+//                            if (b) {
+//                                listItems.add(data);
+//                                listSortList.add(data);
+//                            }
+//                        } else {
+//                            if (b) {
+//                                if (sortConsignee.equals(data.getConsignee())) {
+//                                    listItems.add(data);
+//                                    listSortList.add(data);
+//                                }
+//                            }
+//                        }
+//                    }
+//                    listItems.sort(new Comparator<Fine2IncargoList>() {
+//                        @Override
+//                        public int compare(Fine2IncargoList o1, Fine2IncargoList o2) {
+//                            int compare=o1.working.compareTo(o2.working);
+//                            return compare;
+//                        }
+//                    });
+//                    Collections.reverse(listItems);
+//                }
+//                Collections.reverse(listItems);
+//                adapter.notifyDataSetChanged();
 
-                    } else if (sortItems.equals("sort")) {
-                        final boolean b = !forty.equals("0") || !twenty.equals("0") || !cargo.equals("0");
-                        if (sortConsignee.equals("ALL")) {
-                            if (b) {
-                                listItems.add(data);
-                                listSortList.add(data);
-                            }
-                        } else {
-                            if (b) {
-                                if (sortConsignee.equals(data.getConsignee())) {
-                                    listItems.add(data);
-                                    listSortList.add(data);
-                                }
-                            }
-                        }
-                    }
-                    listItems.sort(new Comparator<Fine2IncargoList>() {
-                        @Override
-                        public int compare(Fine2IncargoList o1, Fine2IncargoList o2) {
-                            int compare=o1.working.compareTo(o2.working);
-                            return compare;
-                        }
-                    });
-                    Collections.reverse(listItems);
-                }
-                Collections.reverse(listItems);
-                adapter.notifyDataSetChanged();
-                sortDialog(startDay, endDay, listSortList);
+                sortDialog(startDay, endDay, listItems);
 //                sortDialogOld(startDay, endDay, listSortList);
                 String date;
                 if (startDay.equals(endDay)) {
@@ -1029,40 +1050,103 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     date = startDay + "~" + endDay;
                 }
                 incargo_contents_date.setText(date);
-            }
+//            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.i("TestValue","FirebaseDataReference Occured :"+error);
+//            }
+//        };
+//
+//        sortByData = databaseReference.orderByChild("date").startAt(startDay).endAt(endDay);
+//        sortByData.addListenerForSingleValueEvent(dataListener);
 
-            }
-        };
-
-        sortByData = databaseReference.orderByChild("date").startAt(startDay).endAt(endDay);
-        sortByData.addListenerForSingleValueEvent(dataListener);
 
     }
 
     public void getFirebaseDataInit() {
-        databaseReference = database.getReference(wareHouseDepot);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
+        for(int i=1;i<=12;i++){
+            Calendar calendar=Calendar.getInstance();
+            calendar.set(2021,i-1,1);
+            int monthOfLastDay=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                    arrConsignee.add(data.getConsignee());
-                    if(!consigneeArrayList.contains(data.getConsignee())){
-                        consigneeArrayList.add(data.getConsignee());
-                    }
+            for(int j=1;j<=monthOfLastDay;j++){
+                String date = null;
+                String month = null;
+                if (i + 1 < 10) {
+                    month = "0" + i;
+                } else {
+                    month = String.valueOf(i);
                 }
-                getFirebaseData(dataMessage, dataMessage, "sort", sortConsignee);
+                if (j < 10) {
+                    date = "0" + j;
+                } else {
+                    date = String.valueOf(j);
+                }
+                DatabaseReference databaseReference =
+                        database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +month+ "월/" + "2021-" + month+
+                                        "-" + date+"/"
+                                );
+                String finalMonth = month;
+                String finalDate = date;
+                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            String keyValue=dataSnapshot.getKey();
+                            assert keyValue != null;
+                            if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")){
+
+                                Fine2IncargoList data = dataSnapshot.getValue(Fine2IncargoList.class);
+                                assert data != null;
+                                arrConsignee.add(data.getConsignee());
+                                listItems.add(data);
+                                if(!consigneeArrayList.contains(data.getConsignee())){
+                                    consigneeArrayList.add(data.getConsignee());
+                                }
+                            }
+
+                            if(finalMonth.equals("12")&& finalDate.equals("31")){
+                                getFirebaseData(dateToday, dateToday, "all", sortConsignee,listItems);
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
 
+        }
+//        getFirebaseData(dateToday, dateToday, "all", sortConsignee);
+
+
+    }
+
+    private void getFirebaseData(String startDay, String endDay, String all, String sortConsignee,
+                                 ArrayList<Fine2IncargoList> listItems) {
+        int startDayRe=Integer.parseInt(startDay.replace("-",""));
+        int endDayRe=Integer.parseInt(endDay.replace("-",""));
+
+//        for (int i = (listOutSize - 1); 0 <= i; i--) {
+//            if (!refPath.equals(listOut.get(i).getKeypath())) {
+//                listOut.remove(i);
+//
+//            }
+
+        for(int i=(listItems.size()-1);0<=i;i--){
+            int startDayList=Integer.parseInt(listItems.get(i).getDate().replace("-",""));
+            int endDayList=Integer.parseInt(listItems.get(i).getDate().replace("-",""));
+            if(startDayList<startDayRe||endDayList>endDayRe){
+                Log.i("TestValue","List Date:::"+listItems.get(i).getDate());
+                listItems.remove(i);
             }
-        });
+        }
+
     }
 
 
@@ -1162,7 +1246,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                    Log.i("TestValue","dataKeyValue::::"+data.getKey()+"DepotName:::"+depotName+"///keyValue::::"+keyValue);
                     if(Objects.equals(data.getKey(), keyValue)){
                         listItems.add(mList);
                     }
@@ -1181,7 +1264,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference(wareHouseDepot + "/" + keyValue);
+        DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +day_start.substring(5,7) + "월/" + day_start+"/" + keyValue);
         AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
 
         ArrayList<String> incargoContent = new ArrayList<>();
@@ -1207,7 +1290,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
                         } else if(which==5){
                             PublicMethod publicMethod=new PublicMethod(Incargo.this);
-                            publicMethod.putNewDataUpdateAlarm(nickName,alertDepot,updateTitleValue+" 신규 등록",consigneeName,
+                            publicMethod.putNewDataUpdateAlarm(nickName,deptName,updateTitleValue+" 신규 등록",consigneeName,
                                     "InCargo",requestQueue);
 
                         }else{
@@ -1305,7 +1388,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 databaseReference.updateChildren(childUpdates);
 
                                 putMessage(msgWorking, "Etc", nickName);
-                                getFirebaseData(dataMessage, dataMessage, "sort", sortConsignee);
+                                getFirebaseData(dateToday, dateToday, "sort", sortConsignee);
                             }
                         });
                         deleteItem.setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -1350,7 +1433,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     }).show();
         }
         String clickedPictureCount = "(" + imageViewListsSelected.size() + "장 선택)";
-        incargo_contents_date.setText(dia_dateInit + " 입고 목록" + clickedPictureCount);
+        incargo_contents_date.setText(dateToday + " 입고 목록" + clickedPictureCount);
 
     }
 
@@ -1382,7 +1465,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         String activityName = this.getClass().getSimpleName();
         for (int i = 0; i < arrsize; i++) {
             Uri uri = Uri.fromFile(new File(imageViewListsSelected.get(i)));
-            String strRef = dia_dateInit + "/" + consigneeName + "/" + inoutItems + "/" + nick + System.currentTimeMillis() + ".jpg";
+            String strRef = dateToday + "/" + consigneeName + "/" + inoutItems + "/" + nick + System.currentTimeMillis() + ".jpg";
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, inoutItems, nick, message, strRef, i, arrsize, activityName);
         }
     }
@@ -1390,7 +1473,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
-        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+        push.sendAlertMessage(deptName,nickName,message,"CameraUpLoad");
     }
 
     public void messageIntent() {

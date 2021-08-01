@@ -37,8 +37,6 @@ public class CalendarPick {
             Calendar c=Calendar.getInstance();
 
 
-
-
             c.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
             date_mon=formatter.format(c.getTime());
             incargo.day_start=formatter.format(c.getTime());

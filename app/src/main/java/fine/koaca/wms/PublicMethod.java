@@ -222,24 +222,11 @@ public class PublicMethod {
 
     SharedPreferences sharedPreferences=TitleActivity.sharedPref;
     String nickName=sharedPreferences.getString("nickName",null);
-    String depotName=sharedPreferences.getString("depotName",null);
-    String deptName=null;
-    String alertDepot=null;
-    switch(depotName){
-        case "2물류(02010027)":
-            deptName="WareHouseDept2";
-            alertDepot="Depot2";
-            break;
-        case "1물류(02010810)":
-            deptName="WareHouseDept1";
-            alertDepot="Depot1";
-            break;
+    String deptName=sharedPreferences.getString("deptName",null);
 
-    }
     userInformation.put("nickName",nickName);
-    userInformation.put("depotName",depotName);
     userInformation.put("deptName",deptName);
-    userInformation.put("alertDepot",alertDepot);
+
 
     return userInformation;
     }
@@ -281,6 +268,16 @@ public class PublicMethod {
             @Override
             public void onClick(View v) {
             activity.finish();
+            }
+        });
+
+        Button btnInit=view.findViewById(R.id.dialog_select_intent_init);
+        btnInit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,TitleActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
             }
         });
 
