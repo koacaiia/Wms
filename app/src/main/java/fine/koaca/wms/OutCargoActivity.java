@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -48,6 +49,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class OutCargoActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener,
         OutCargoListAdapter.OutCargoListAdapterLongClickListener, ImageViewActivityAdapter.ImageViewClicked ,
@@ -56,10 +58,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     RecyclerView recyclerView;
     ArrayList<OutCargoList> list;
     OutCargoListAdapter adapter;
-    String departmentName,nickName,alertDepot;
+    String deptName,nickName;
 
     TextView txtTitle;
-    String dateToDay;
+    String dateToday;
     String refPath;
 
     ArrayList<String> imageViewLists=new ArrayList<>();
@@ -76,16 +78,19 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_cargo);
 
-        dateToDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-        nickName=getIntent().getStringExtra("nickName");
-        alertDepot=getIntent().getStringExtra("alertDepot");
+        PublicMethod publicMethod=new PublicMethod(this);
+        nickName=publicMethod.getUserInformation().get("nickName");
+        deptName=publicMethod.getUserInformation().get("deptName");
+
+
 
         fltBtn=findViewById(R.id.activity_list_outcargo_flb);
         fltBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                updateValue("완");
                 upCapturePictures("OutCargo",list.get(0).consigneeName);
 
             }
@@ -94,7 +99,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager=new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
-        departmentName="Outcargo2";
+
         database= FirebaseDatabase.getInstance();
         list=new ArrayList<>();
 
@@ -111,7 +116,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
 
         txtTitle=findViewById(R.id.activity_list_outcargo_title);
-        txtTitle.setText(dateToDay+" 출고 목록");
+        txtTitle.setText(dateToday+" 출고 목록");
 
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
@@ -122,22 +127,26 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     private void getOutcargoData() {
 
         list.clear();
-        DatabaseReference databaseReference=database.getReference(departmentName);
+        DatabaseReference databaseReference=
+                database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +dateToday.substring(5,7) + "월/" +dateToday);
         ValueEventListener listener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
-                    OutCargoList mList=data.getValue(OutCargoList.class);
-                    list.add(mList);
-                    list.sort(new Comparator<OutCargoList>() {
-                        @Override
-                        public int compare(OutCargoList a, OutCargoList b) {
-                            int compare=0;
-
-                            compare=a.workprocess.compareTo(b.workprocess);
-                            return compare;
-                        }
-                    });
+                    String keyValue=data.getKey();
+                    if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+                        OutCargoList mList = data.getValue(OutCargoList.class);
+                        Log.i("TestValue","KeyValue::::"+keyValue);
+                        list.add(mList);
+                        list.sort(new Comparator<OutCargoList>() {
+                            @Override
+                            public int compare(OutCargoList a, OutCargoList b) {
+                                int compare = 0;
+                                compare = a.workprocess.compareTo(b.workprocess);
+                                return compare;
+                            }
+                        });
+                    }
                 }
                 adapter.notifyDataSetChanged();
 
@@ -146,8 +155,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
             }
         };
-        Query sortByDateDatabase=databaseReference.orderByChild("date").equalTo(dateToDay);
-        sortByDateDatabase.addListenerForSingleValueEvent(listener);
+       databaseReference.addListenerForSingleValueEvent(listener);
 
     }
 
@@ -164,16 +172,21 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     private void getOutcargoData(String refPath) {
         list.clear();
-        DatabaseReference databaseReference=database.getReference(departmentName);
+        DatabaseReference databaseReference=
+                database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +refPath.substring(5,7) + "월/" +refPath.substring(0,10));
         ValueEventListener listener=new ValueEventListener() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
-                    OutCargoList mList=data.getValue(OutCargoList.class);
-                    if(mList.getKeypath().equals(refPath)){
-                        list.add(mList);
-                    }
 
+                    if(!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")) {
+                        OutCargoList mList=data.getValue(OutCargoList.class);
+                        assert mList != null;
+                        if (Objects.equals(mList.getKeypath(), refPath)) {
+                            list.add(mList);
+                        }
+                    }
                 }
                 adapter.notifyDataSetChanged();
 
@@ -182,8 +195,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             public void onCancelled(@NonNull @NotNull DatabaseError error) {
             }
         };
-        Query sortByDateDatabase=databaseReference.orderByChild("date").equalTo(dateToDay);
-        sortByDateDatabase.addListenerForSingleValueEvent(listener);
+       databaseReference.addListenerForSingleValueEvent(listener);
     }
 
     public void itemClickedDialog(String consigneeName, String dialogTitle){
@@ -217,7 +229,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
                     case 3:
                         PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
-                        publicMethod.putNewDataUpdateAlarm(nickName,alertDepot,dialogTitle+" 신규 등록",consigneeName,"OutCargo",requestQueue);
+                        publicMethod.putNewDataUpdateAlarm(nickName,deptName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",
+                                requestQueue);
 
                         break;
                 }
@@ -253,7 +266,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
 
     public void updateValue(String updateValue){
-        DatabaseReference dataRef=database.getReference(departmentName+"/"+refPath);
+        DatabaseReference dataRef=database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +refPath.substring(5,7) +
+                "월/" +refPath.substring(0,10)+"/"+refPath);
 
         Map<String,Object> value=new HashMap<>();
         value.put("workprocess",updateValue);
@@ -297,8 +311,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 }else{
                     day=String.valueOf(dayOfMonth);
                 }
-                dateToDay=year+"-"+month+"-"+day;
-                Toast.makeText(getApplicationContext(),dateToDay+"을 지정",Toast.LENGTH_SHORT).show();
+                dateToday=year+"-"+month+"-"+day;
+                Toast.makeText(getApplicationContext(),dateToday+"을 지정",Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -307,15 +321,15 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 .setPositiveButton("지정일 검색", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        txtTitle.setText(dateToDay+" 모든 출고 목록");
+                        txtTitle.setText(dateToday+" 모든 출고 목록");
                         getOutcargoData();
                     }
                 })
                 .setNegativeButton("당일 검색", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dateToDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                        txtTitle.setText(dateToDay+" 모든 출고 목록");
+                        dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                        txtTitle.setText(dateToday+" 모든 출고 목록");
                         getOutcargoData();
                     }
                 })
@@ -353,7 +367,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                    }).show();
        }
        String clickedPictureCount="("+clickedImageViewLists.size()+"장 선택)";
-        txtTitle.setText(dateToDay+" 출고 목록"+clickedPictureCount);
+        txtTitle.setText(dateToday+" 출고 목록"+clickedPictureCount);
     }
 
     public void upCapturePictures(String inoutItems,String consigneeName){
@@ -378,7 +392,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         String activityName=this.getClass().getSimpleName();
         for(int i=0;i<arrsize;i++){
             Uri uri = Uri.fromFile(new File(clickedImageViewLists.get(i)));
-            String strRef = dateToDay + "/" + consigneeName+"/"+inoutItems+"/" + nick+System.currentTimeMillis() + ".jpg";
+            String strRef = dateToday + "/" + consigneeName+"/"+inoutItems+"/" + nick+System.currentTimeMillis() + ".jpg";
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, inoutItems, nick, message,strRef,i,arrsize,activityName);
         }
 
@@ -390,7 +404,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
-        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+        push.sendAlertMessage(deptName,nickName,message,"CameraUpLoad");
     }
 
     public void messageIntent() {

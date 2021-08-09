@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,8 +62,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     RecyclerView recyclerViewIn;
     RecyclerView recyclerViewOut;
     FirebaseDatabase database;
-    DatabaseReference databaseReferenceOut;
-    DatabaseReference databaseReferenceIn;
+
     ArrayList<OutCargoList> listOut = new ArrayList<>();
     ArrayList<Fine2IncargoList> listIn = new ArrayList<>();
     OutCargoListAdapter adapterOut;
@@ -126,33 +126,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         deptName = sharedPref.getString("deptName", null);
         nickName = sharedPref.getString("nickName", null);
         refMonth=dateToday.substring(5,7);
+
+
         database = FirebaseDatabase.getInstance();
-//        switch (departmentName) {
-//            case "WareHouseDept2":
-//                databaseReferenceIn = database.getReference("DeptName/" + departmentName + "/InCargo/");
-//                databaseReferenceOut = database.getReference("Outcargo2");
-//                wareHouseDepotIn = "Incargo2";
-//                wareHouseDepotOut = "Outcargo2";
-//                alertDepot = "Depot2";
-//                break;
-//            case "WareHouseDept1":
-//                databaseReferenceIn = database.getReference("Incargo1");
-//                databaseReferenceOut = database.getReference("Outcargo2");
-//                wareHouseDepotIn = "Incargo1";
-//                wareHouseDepotOut = "Outcargo2";
-//                alertDepot = "Depot1";
-//
-//                break;
-//            case "WareHouseDivision":
-//                databaseReferenceIn = database.getReference("Incargo");
-//                databaseReferenceOut = database.getReference("Outcargo2");
-//                wareHouseDepotIn = "Incargo";
-//                wareHouseDepotOut = "Outcargo2";
-//                alertDepot = "Depot";
-//                break;
-//        }
-
-
 
         btnTitle = findViewById(R.id.activity_title_btn);
 
@@ -686,6 +662,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
+                                String refMonth=refPath.substring(5,7);
+                                String dateToday=refPath.substring(0,10);
                                 DatabaseReference dataRef =
                                         database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" + refMonth + "월/" + dateToday + "/" + refPath);
                                 Map<String, Object> value = new HashMap<>();
@@ -760,6 +738,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                 initIntent();
                                 break;
                             case 4:
+                                intent.putExtra("date",listIn.get(pos).getDate());
                                 intent.putExtra("refPath", keyValue);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
@@ -862,7 +841,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     date = String.valueOf(j);
                 }
                 DatabaseReference databaseReference =
-                        database.getReference("/DeptName/" + deptName + "/"+refPath+"/" + month + month + "2021-" + month + "-" + date);
+                        database.getReference("DeptName/" + deptName + "/"+refPath+"/" + month +"월/"+ "2021-" + month + "-" + date);
                 Map<String, String> value = new HashMap<>();
                 value.put("json 등록시 덥어쓰기 바랍니다", "json 최초등록시 ` { `기호 다음  `,`기호 있으면 `,` 기호삭제후 최초 등록 바랍니다. ");
 
@@ -958,7 +937,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                     .setNegativeButton("Data Transfer", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            dataTrans("InCargo");
+                                            dataTrans("Incargo2","InCargo");
                                         }
                                     })
                                     .show();
@@ -976,7 +955,16 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                         public void onClick(DialogInterface dialog, int which) {
                                             putBasicData("OutCargo");
                                         }
-                                    }).show();
+
+                                    })
+                                    .setNegativeButton("Data Transfer", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dataTrans("Outcargo2","OutCargo");
+                                        }
+                                    })
+
+                                    .show();
                             dialog.cancel();
 
                         }
@@ -991,51 +979,51 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     .show();
         }
 
-    private void dataTrans(String refPath) {
+    private void dataTrans(String getRefPath,String refPath) {
 
-            DatabaseReference databaseInCargo=database.getReference("Incargo2");
+            DatabaseReference databaseInCargo=database.getReference(getRefPath);
             databaseInCargo.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                     for(DataSnapshot data:snapshot.getChildren()){
+                        switch(refPath){
+                            case "InCargo":
+                                Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
+                                assert mList != null;
+                                String keyValue =
+                                        mList.getDate() + "_" + mList.getBl() + "_" + mList.getDescription() +
+                                                "_" + mList.getCount() + "_" + mList.getContainer();
 
-                        Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                        assert mList != null;
-                        String keyValue =
-                                mList.getDate() + "_" + mList.getBl() + "_" + mList.getDescription() +
-                                "_" + mList.getCount() + "_" + mList.getContainer();
-
-                        String date="";
-                        if(mList.getDate()==null){
-                            date="null";
-                        }else{
-                            date=mList.getDate();
+                                String date="";
+                                if(mList.getDate()==null){
+                                    date="null";
+                                }else{
+                                    date=mList.getDate();
+                                }
+                                String month="";
+                                if(mList.getDate()==null){
+                                    month="null";
+                                }else{
+                                    if(mList.getDate().length()<5){
+                                        month="null";
+                                    }else{
+                                        month=mList.getDate().substring(5,7);
+                                        DatabaseReference databaseReference =
+                                                database.getReference("DeptName/" + deptName + "/InCargo /" + month + "월/" + date+
+                                                        "/"+keyValue);
+                                        databaseReference.setValue(mList);
+                                    }
+                                }
+                                break;
+                            case "OutCargo":
+                                OutCargoList outList=data.getValue(OutCargoList.class);
+                                String keyPath=outList.getKeypath();
+                                DatabaseReference refOut=
+                                        database.getReference("DeptName/"+deptName+"/OutCargo/"+keyPath.substring(5,7)+"월/"+outList.getDate()+"/"+keyPath);
+                                refOut.setValue(outList);
                         }
-                        String month="";
-                        if(mList.getDate()==null){
-                            month="null";
-                        }else{
-                            if(mList.getDate().length()<5){
-                                month="null";
-                            }else{
-                                month=mList.getDate().substring(5,7);
-                                Log.i("TestValue","DateValue::::"+date);
-                            }
-
                         }
-                        Log.i("TestValue","KeyValue::::"+keyValue);
-                        DatabaseReference databaseReference =
-                                database.getReference("DeptName/" + deptName + "/" + refPath + "/" + month + "월/" + date+"/"+keyValue);
-                         databaseReference.setValue(mList);
-//                         if(!data.getKey().contains("월")||data.getKey()==null||data.getKey().length()>4){
-//
-//                             DatabaseReference databaseReferenceDelete =
-//                                     database.getReference("DeptName/" + departmentName + "/" + refPath );
-//                             Map<String,Object> value=new HashMap<>();
-//                             value.put(data.getKey()+"/",null);
-//                            databaseReferenceDelete.updateChildren(value);
-//                         }
-                    }
+
 
                 }
 

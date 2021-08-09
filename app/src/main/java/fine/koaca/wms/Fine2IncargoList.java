@@ -21,6 +21,7 @@ public class Fine2IncargoList implements Serializable {
     String working;
     String location;
     String consignee;
+    String keyValue;
 
     public Fine2IncargoList(){
 
@@ -28,7 +29,7 @@ public class Fine2IncargoList implements Serializable {
 
     public Fine2IncargoList(String bl, String description, String date, String count_seal, String container, String incargo,
                             String remark, String container40, String container20, String lclCargo, String working,
-                            String location,String consignee) {
+                            String location,String consignee,String keyValue) {
         this.bl = bl;
         this.description = description;
         this.date = date;
@@ -42,6 +43,7 @@ public class Fine2IncargoList implements Serializable {
         this.working = working;
         this.location=location;
         this.consignee=consignee;
+        this.keyValue=keyValue;
     }
 
 
@@ -147,7 +149,13 @@ public class Fine2IncargoList implements Serializable {
         this.container20 = container20;
     }
 
+    public String getKeyValue() {
+        return keyValue;
+    }
 
+    public void setKeyValue(String keyValue) {
+        this.keyValue = keyValue;
+    }
 
     public String getWorking() {
         return working;
@@ -172,6 +180,7 @@ public class Fine2IncargoList implements Serializable {
         result.put("working",working);
         result.put("incargo",incargo);
         result.put("consignee",consignee);
+        result.put("keyValue",keyValue);
         return result;
     }
 

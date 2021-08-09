@@ -195,12 +195,15 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                    recvRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                        @Override
                        public void onSuccess(Uri uri) {
+                           Log.i("TestValue","uriStringValue::::");
                            String strUri=String.valueOf(uri);
                            uriString.add(strUri);
 
-                           if(uriString.size()==arSize){
-                               upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,context);
-                           }
+
+
+//                           if(uriString.size()==arSize){
+//                               upLoadUriToDatabase(nick,message,captureItem,uploadItem,i,context);
+//                           }
                        }
                    })
                            .addOnFailureListener(new OnFailureListener() {

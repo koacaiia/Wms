@@ -140,18 +140,18 @@ public class PublicMethod {
         activity.startActivity(intent);
     }
 
-    public void upLoadPictures(String nickName,String consigneeName,String inoutCargo){
+    public void upLoadPictures(String nickName,String consigneeName,String inoutCargo,String keyValue,String deptName){
         ArrayList<String> uriList=new ArrayList<>();
         int listSize=list.size();
-        String date=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+        String date=keyValue.substring(0,10);
         String dateNtime=new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초").format(new Date());
         String refPath;
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
 
         for(int i=0;i<listSize;i++){
             Uri uriValue=Uri.fromFile(new File(list.get(i)));
-            refPath=date+"/"+consigneeName+"/"+inoutCargo+"/"+nickName+System.currentTimeMillis()+".jpg";
-            StorageReference storageReference=storage.getReference().child("image/"+refPath);
+            refPath=deptName+"/"+date+"/"+inoutCargo+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg";
+            StorageReference storageReference=storage.getReference().child("images/"+refPath);
             int finalI = i;
             storageReference.putFile(uriValue)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -160,9 +160,9 @@ public class PublicMethod {
                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                @Override
                                public void onSuccess(Uri uri) {
+                                   Log.i("TestValue","uriList:::"+uri.toString());
                                    uriList.add(String.valueOf(uri));
                                    WorkingMessageList messageList=new WorkingMessageList();
-
 
                                    if((uriList.size())==listSize){
                                        messageList.setNickName(nickName);
@@ -198,6 +198,22 @@ public class PublicMethod {
                                                    messageList.setUri3(uriList.get(3));
                                                    messageList.setUri4(uriList.get(4));
                                                    break;
+                                               case 5:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   messageList.setUri2(uriList.get(2));
+                                                   messageList.setUri3(uriList.get(3));
+                                                   messageList.setUri4(uriList.get(4));
+                                                   messageList.setUri5(uriList.get(5));
+                                               case 6:
+                                                   messageList.setUri0(uriList.get(0));
+                                                   messageList.setUri1(uriList.get(1));
+                                                   messageList.setUri2(uriList.get(2));
+                                                   messageList.setUri3(uriList.get(3));
+                                                   messageList.setUri4(uriList.get(4));
+                                                   messageList.setUri5(uriList.get(5));
+                                                   messageList.setUri6(uriList.get(6));
+                                                   break;
                                            }
                                        }catch(IndexOutOfBoundsException e){
                                            messageList.setMsg(e.toString());
@@ -219,14 +235,12 @@ public class PublicMethod {
 
     public Map<String,String> getUserInformation(){
     Map<String,String> userInformation=new HashMap<>();
-
-    SharedPreferences sharedPreferences=TitleActivity.sharedPref;
+    SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
     String nickName=sharedPreferences.getString("nickName",null);
     String deptName=sharedPreferences.getString("deptName",null);
 
     userInformation.put("nickName",nickName);
     userInformation.put("deptName",deptName);
-
 
     return userInformation;
     }
@@ -459,5 +473,18 @@ public class PublicMethod {
 
             return;
         }
+    }
+
+    public void getStorageUri(){
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+        String refPath=
+                deptName+"/"+"2021-08-05"+"/"+"InCargo"+"/"+"2021-08-05__몬 월남쌈(원형16cm) 200g_세계 83차_";
+        StorageReference storageReference=storage.getReference().child("images/"+refPath+"/*.jpg");
+        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.i("TestValue","getUri Value::"+uri.toString());
+            }
+        });
     }
 }

@@ -28,6 +28,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PutDataReg extends AppCompatActivity {
     Incargo incargo;
@@ -51,30 +53,20 @@ public class PutDataReg extends AppCompatActivity {
     int contCountSize;
     String nickName;
     String[] intentList;
-    String alertDepot;
+    String deptName;
 
-    String wareHouseDepotName;
-    static RequestQueue requestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_put_data_reg);
         Intent getIntent=getIntent();
-        if(requestQueue==null){
-            requestQueue= Volley.newRequestQueue(getApplicationContext());
-            Log.i("TestValue",requestQueue.toString());
-        }
+
         intentList=getIntent.getStringArrayExtra("list");
-        alertDepot=getIntent.getStringExtra("alertDepot");
+        PublicMethod publicMethod=new PublicMethod(this);
+        nickName=publicMethod.getUserInformation().get("nickName");
+        deptName=publicMethod.getUserInformation().get("deptName");
 
-
-//        String listLength=intentList[2];
-//        Log.i("koacaiia", "ListRef++++" +listLength );
-        wareHouseDepotName=getIntent.getStringExtra("dataRef");
-
-        SharedPreferences sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        nickName=sharedPreferences.getString("nickName","Fine");
 
         InputMethodManager imm=(InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
 
@@ -251,15 +243,9 @@ public class PutDataReg extends AppCompatActivity {
 
 
                 contCountSize=Integer.parseInt(contCount.getText().toString());
-
-            Log.i("koacaiia","arraysize++++"+contCountSize);
-
             postData(contCountSize);
-            Incargo incargo=new Incargo();
-            String msg=strConsignee+"화물 신규 정보 등록";
-            incargo.putMessage(msg,"Etc",nickName);
 
-            Log.i("TestValue","AlertDepotName+++"+alertDepot+"nickName++++"+nickName+"consigneeName++++"+strConsignee);
+
 
         });
         regUpload.setOnLongClickListener(v->{
@@ -267,7 +253,6 @@ public class PutDataReg extends AppCompatActivity {
             startActivity(intent);
             return true;
         });
-
 
 }
 
@@ -301,21 +286,38 @@ public void postData(int contCountSize){
                 list.setLclcargo("1");
                 break;
         }
+
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("Incargo"+"/"+strDate+"_"+strBl+"_"+strDes+"_"+i+"_"+strCont);
-        databaseReference.setValue(list);
-        DatabaseReference databaseReference1=
-                database.getReference(wareHouseDepotName+"/"+strDate+"_"+strBl+"_"+strDes+"_"+i+"_"+strCont);
-        databaseReference1.setValue(list);
+        if(contCountSize<=1){
+            strCount=intentList[11];
+        }else{
+            strCount=String.valueOf(i+1);
         }
-    PushFcmProgress push=new PushFcmProgress(requestQueue);
+
+        String keyValue=strDate+"_"+strBl+"_"+strDes+"_"+strCount+"_"+strCont;
+        DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +strDate.substring(5,7) + "월/" +strDate+"/"+keyValue);
+        DatabaseReference databaseRef=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +strDate.substring(5,
+                7) + "월/" +strDate);
+        Map<String,Object> value=new HashMap<>();
+
+        value.put(keyValue+"/",null);
+        databaseRef.updateChildren(value);
+//        databaseReference.setValue(list);
+        databaseReference.setValue(list);
+        }
+
+    Incargo incargo=new Incargo();
+    String msg=strConsignee+"_화물 신규 정보 등록";
+    incargo.putMessage(msg,"Etc",deptName,nickName);
         String message;
         if(contCountSize>0){
             message="_화물정보 업데이트 되었습니다.";
         }else{
             message="_신규 화물정보 업데이트 되었습니다.";
         }
-    push.sendAlertMessage(alertDepot,nickName,strConsignee+message,"WorkingMessage");
+
+        incargo.putMessage(strConsignee+message,"Etc",deptName,nickName );
+
         Intent intent=new Intent(PutDataReg.this,Incargo.class);
         startActivity(intent);
 

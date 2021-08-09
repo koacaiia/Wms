@@ -63,6 +63,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:415417723331:android:55248039bb892e3581b576",
+        "android_client_info": {
+          "package_name": "fine.koacaiia.test"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "415417723331-b6f3f7cmann1f33ttli16mnsbuauua42.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDujrm62Esg_giu7n0wG3C4R3MHFAz4cT8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "415417723331-b6f3f7cmann1f33ttli16mnsbuauua42.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

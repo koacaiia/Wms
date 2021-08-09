@@ -45,6 +45,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +54,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -82,7 +86,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
     CaptureProcess captureProcess;
 
-    String date_today;
+    String dateToday;
 
     RecyclerView recyclerView;
     ImageViewListAdapter adapter;
@@ -92,9 +96,9 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
     ArrayList<String> upLoadUriString=new ArrayList<String>();
     SparseBooleanArray imageListSelected=new SparseBooleanArray(0);
     String uploadItem;
-    String depotName;
+    String deptName;
     String nickName;
-    String alertDepot;
+
 
     static RequestQueue requestQueue;
 
@@ -121,13 +125,13 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         database=FirebaseDatabase.getInstance();
 
         activity=this;
-        depotName=getIntent().getStringExtra("depotName");
-        nickName=getIntent().getStringExtra("nickName");
-        alertDepot=getIntent().getStringExtra("alertDepot");
+
+        PublicMethod publicMethod=new PublicMethod(this);
+        nickName=publicMethod.getUserInformation().get("nickName");
+        deptName=publicMethod.getUserInformation().get("deptName");
 
 
-
-        date_today=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        dateToday=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
         btnPicText=findViewById(R.id.camera_textView_piccount);
         captureProcess=new CaptureProcess(this,adapter);
@@ -224,7 +228,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         btnPicText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                captureProcess.captureProcess(date_today);
+                captureProcess.captureProcess(dateToday);
 
             }
         });
@@ -232,48 +236,22 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         btnPicText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent=new Intent(CameraCapture.this, WorkingMessageData.class);
-                startActivity(intent);
+//                Intent intent=new Intent(CameraCapture.this, WorkingMessageData.class);
+//                startActivity(intent);
+                getStorageUri();
                 return true;
             }
         });
 
     }
 
-    private void sharedInOutCaro() {
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setTitle("입,출고 사진 공유 선택창")
-                .setMessage("하단 입,출고 항목을 선택하여 공유할 사진의 항목을 등록 바랍니다.")
-                .setPositiveButton("출고", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-//                        Intent intent=new Intent(CameraCapture.this,OutCargoActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(intent);
-                        dialogOutCamera();
-                    }
-                })
-                .setNegativeButton("입고", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(CameraCapture.this,Incargo.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .show();
-    }
 
     private void dialogOutCamera() {
 
-        DatabaseReference databaseReferenceOut=database.getReference("Outcargo2");
-        DatabaseReference databaseReferenceIn=database.getReference("Incargo2");
+        DatabaseReference databaseReferenceOut=
+                database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +dateToday.substring(5,7) + "월/" +dateToday);
+        DatabaseReference databaseReferenceIn=
+                database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +dateToday.substring(5,7) + "월/" +dateToday);
         View view=getLayoutInflater().inflate(R.layout.camera_upload_picture_adapter,null);
 
         recyclerViewIn=view.findViewById(R.id.capture_adapter_in);
@@ -332,11 +310,13 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
-                    OutCargoList mList=data.getValue(OutCargoList.class);
-                    if(!mList.getWorkprocess().equals("완")){
-                        listOut.add(mList);
+                    String keyValue=data.getKey();
+                    if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+                        OutCargoList mList = data.getValue(OutCargoList.class);
+                        if (!mList.getWorkprocess().equals("완")) {
+                            listOut.add(mList);
+                        }
                     }
-
                 }
                adapterOut.notifyDataSetChanged();
 
@@ -351,9 +331,10 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
-                    Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                    if(mList.getWorking().equals("")){
-                        if(!mList.getContainer40().equals("0")||!mList.getContainer20().equals("0")||!mList.getLclcargo().equals("0")){
+                    String keyValue=data.getKey();
+                    if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+                        Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
+                        if (!mList.getContainer40().equals("0") || !mList.getContainer20().equals("0") || !mList.getLclcargo().equals("0")) {
                             listIn.add(mList);
                         }
                     }
@@ -365,11 +346,8 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
             }
         };
-        Query sortDatabaseByDateOut=databaseReferenceOut.orderByChild("date").equalTo(date_today);
-        sortDatabaseByDateOut.addValueEventListener(listenerOut);
-
-        Query sortDatabaseByDateIn=databaseReferenceIn.orderByChild("date").equalTo(date_today);
-        sortDatabaseByDateIn.addValueEventListener(listenerIn);
+       databaseReferenceIn.addListenerForSingleValueEvent(listenerIn);
+       databaseReferenceOut.addListenerForSingleValueEvent(listenerOut);
     }
 
     @Override
@@ -404,7 +382,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         String activityName=this.getClass().getSimpleName();
         for(int i=0;i<arrsize;i++){
             Uri uri = Uri.fromFile(new File(upLoadUriString.get(i)));
-            String strRef = date_today + "/" + consigneeName+"/"+uploadItem+"/" + nick+System.currentTimeMillis() + ".jpg";
+            String strRef = dateToday + "/" + consigneeName+"/"+uploadItem+"/" + nick+System.currentTimeMillis() + ".jpg";
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, uploadItem, nick, message,strRef,i,arrsize, activityName);
         }
 
@@ -426,29 +404,11 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
         PushFcmProgress push=new PushFcmProgress(requestQueue);
 
-        push.sendAlertMessage(alertDepot,nickName,message,"CameraUpLoad");
+        push.sendAlertMessage(deptName,nickName,message,"CameraUpLoad");
 
     }
     @Override
     public void onBackPressed() {
-
-//        AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
-//        builder.setTitle("화면 선택")
-//                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        Intent intent=new Intent(CameraCapture.this,TitleActivity.class);
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                        startActivity(intent);
-//                    }
-//                })
-//                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        finish();
-//                    }
-//                })
-//                .show();
 
         PublicMethod publicMethod=new PublicMethod(this);
         publicMethod.intentSelect();
@@ -474,7 +434,10 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                         Map<String,Object> value=new HashMap<>();
                         value.put("working","컨테이너 진입");
                         databaseReference.updateChildren(value);
-                        upCapturePictures("InCargo",listIn.get(position).getConsignee());
+//                        upCapturePictures("InCargo",listIn.get(position).getConsignee());
+                        PublicMethod publicMethod=new PublicMethod(upLoadUriString);
+                        publicMethod.upLoadPictures(nickName,listIn.get(position).getConsignee(),"InCargo",
+                                listIn.get(position).getKeyValue(),deptName);
                         dialog.cancel();
                     }
                 })
@@ -514,5 +477,17 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                 })
                 .show();
 
+    }
+    public void getStorageUri(){
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+        String refPath=
+                deptName+"/"+"2021-08-05"+"/"+"InCargo"+"/"+"2021-08-05__몬 월남쌈(원형16cm) 200g_세계 83차_";
+        StorageReference storageReference=storage.getReference().child("image/"+refPath);
+        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult listResult) {
+                Log.i("TestValue","ListAll Value:::"+listResult.getItems().toString());
+            }
+        });
     }
 }

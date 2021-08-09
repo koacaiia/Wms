@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String consignee;
     String working;
     String lclCargo;
+    String keyValue;
 
     Button btn_databaseReg;
     Button btn_datalocation;
@@ -293,9 +294,10 @@ if(add){
             container20=listItems.get(i).getContainer20();
             lclCargo=listItems.get(i).getLclcargo();
             working=listItems.get(i).getWorking();
+            keyValue=listItems.get(i).getKeyValue();
             Fine2IncargoList list=new Fine2IncargoList(bl,description,date,count,container,incargo,remark,container40,container20,
                     lclCargo,working,
-                    location,consignee);
+                    location,consignee,keyValue);
 
             postValues=list.toMap();
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);}
@@ -350,7 +352,7 @@ if(add){
         if(add){
             Fine2IncargoList list=new Fine2IncargoList(bl,description,date,count,container,incargo,remark,container40,container20,
                     lclCargo,working,
-                    location,consignee);
+                    location,consignee,keyValue);
             postValues=list.toMap(); }
         childUpdates.put(bl+"_"+description+"_"+count+"/",postValues);
 
