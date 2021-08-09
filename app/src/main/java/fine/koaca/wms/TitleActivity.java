@@ -123,12 +123,12 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         }
 
 
+
+        database = FirebaseDatabase.getInstance();
+
         deptName = sharedPref.getString("deptName", null);
         nickName = sharedPref.getString("nickName", null);
         refMonth=dateToday.substring(5,7);
-
-
-        database = FirebaseDatabase.getInstance();
 
         btnTitle = findViewById(R.id.activity_title_btn);
 
@@ -969,11 +969,20 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
                         }
                     })
-                    .setNeutralButton("사용자자료 수정", new DialogInterface.OnClickListener() {
+                    .setNeutralButton("메세지창 수정", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                           PublicMethod publicMethod=new PublicMethod(TitleActivity.this);
-                           publicMethod.checkUserInfo();
+                            AlertDialog.Builder builderMessage=new AlertDialog.Builder(TitleActivity.this);
+                            builderMessage.setTitle("확인창")
+                                    .setMessage("메세지창 내역을 초기화 진행 시키겠습니다.초기화 전 메세지창 자료 목록에 대한 백업 다시 한번 확인 바랍니다.!!")
+                                    .setPositiveButton("Data Transfer", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dataTrans("WorkingMessage","WorkingMessage");
+                                        }
+                                    })
+                                    .show();
+
                         }
                     })
                     .show();
@@ -1009,7 +1018,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                     }else{
                                         month=mList.getDate().substring(5,7);
                                         DatabaseReference databaseReference =
-                                                database.getReference("DeptName/" + deptName + "/InCargo /" + month + "월/" + date+
+                                                database.getReference("DeptName/"+deptName+"/"+refPath+"/"+
+                                                                month + "월/" + date+
                                                         "/"+keyValue);
                                         databaseReference.setValue(mList);
                                     }
@@ -1019,8 +1029,15 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                 OutCargoList outList=data.getValue(OutCargoList.class);
                                 String keyPath=outList.getKeypath();
                                 DatabaseReference refOut=
-                                        database.getReference("DeptName/"+deptName+"/OutCargo/"+keyPath.substring(5,7)+"월/"+outList.getDate()+"/"+keyPath);
+                                        database.getReference("DeptName/"+deptName+"/"+refPath+"/"+keyPath.substring(5,7)+"월/"+outList.getDate()+"/"+keyPath);
                                 refOut.setValue(outList);
+                                break;
+                            case "WorkingMessage":
+                                WorkingMessageList messageList=data.getValue(WorkingMessageList.class);
+                                String keyMessage=messageList.getNickName()+"_"+messageList.getTime();
+                                DatabaseReference refMessage=
+                                        database.getReference("DeptName/"+deptName+"/WorkingMessage/"+keyMessage);
+                                refMessage.setValue(messageList);
                         }
                         }
 

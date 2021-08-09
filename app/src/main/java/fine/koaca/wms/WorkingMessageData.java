@@ -52,13 +52,10 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
     RecyclerView recyclerView;
     WorkingMessageAdapter adapter;
     ArrayList<WorkingMessageList> dataList;
-    private String nickName;
-    String depotName;
 
     EditText messageEdit;
     Button btn_send;
     String message;
-    SharedPreferences sharedPreferences;
     CalendarPick calendarPick;
     String sortItemName="date";
     FloatingActionButton fab_search;
@@ -70,39 +67,26 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
     String date;
     String[] consigneeList;
 
-    RequestQueue requestQueue;
-    String alertDepot;
     String pickedDate;
+
+    String nickName;
+    String deptName;
+
+    PublicMethod publicMethod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_working_message_data);
-        sharedPreferences=getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        nickName=sharedPreferences.getString("nickName","Fine");
-        depotName=sharedPreferences.getString("depotName",null);
-
-        if(depotName !=null){
-            switch(depotName){
-                case "2물류(02010027)":
-                    alertDepot="Depot2";
-                    break;
-                case "1물류(02010810)":
-                    alertDepot="Depot1";
-                    break;
-                case "(주)화인통상 창고사업부":
-                    alertDepot="Depot";
-                    break;
-            }}else{
-            Toast.makeText(this, "사용자등록 바랍니다.", Toast.LENGTH_SHORT).show();
-
-            return;
-        }
 
         recyclerView = findViewById(R.id.recyclerView_workingMessageData);
         messageEdit=findViewById(R.id.edit_workingMessageData);
         calendarPick=new CalendarPick();
         calendarPick.CalendarCall();
+
+        publicMethod=new PublicMethod(this);
+        nickName=publicMethod.getUserInformation().get("nickName");
+        deptName=publicMethod.getUserInformation().get("deptName");
 
         date=calendarPick.date_today;
         InputMethodManager imm= (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -125,7 +109,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 return true;
             }
         });
-        databaseReference = database.getReference("WorkingMessage");
+        databaseReference = database.getReference("DeptName/"+deptName+"/WorkingMessage");
 
         getWorkingMessageLists(date);
         recyclerView.setHasFixedSize(true);
@@ -179,9 +163,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     }
                 });
 
-        if(requestQueue==null){
-            requestQueue= Volley.newRequestQueue(getApplicationContext());
-        }
+
     }
 
     private void workingMessageListSortByDate() {
@@ -196,7 +178,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     public void onClick(DialogInterface dialog, int which) {
                         dataList.clear();
                         ArrayList<String> pathKey=new ArrayList<>();
-                        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+
                         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -400,14 +382,14 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         messageList.setDate(date);
         messageList.setConsignee(consignee);
         messageList.setInOutCargo(inOutCargo);
-//        messageList.setUri("");
 
-        databaseReference = database.getReference("WorkingMessage"+"/"+nick+"_"+timeStamp);
+
+        databaseReference = database.getReference("DeptName"+"/"+deptName+"/WorkingMessage/"+nickName+"_"+timeStamp);
         databaseReference.setValue(messageList);
 
-       PushFcmProgress push=new PushFcmProgress(requestQueue);
-       push.sendAlertMessage(alertDepot,nickName,message,"WorkingMessage");
-//        adapter.notifyDataSetChanged();
+
+       publicMethod.sendPushMessage(deptName,nickName,message,"WorkingMessage");
+
        intentWorkMessageActivity();
 
 
@@ -428,24 +410,30 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+
+//                    assert mList !=null:data.getKey();
                     if(mList.getConsignee()==null){
-                        Log.i("TestValue","ConsigneeName Null Checked:::::"+mList.getTime());
+
                         String nickName=mList.getNickName();
                         String timeStamp=mList.getTime();
-                        DatabaseReference databaseReference=database.getReference("WorkingMessage"+"/"+nickName+"_"+timeStamp);
+                        DatabaseReference databaseReference=database.getReference("DeptName"+"/"+deptName+"/WorkingMessage/"+nickName+"_"+timeStamp);
                         Map<String,Object> value=new HashMap<>();
                         value.put("msg","ConsigneeName Null Checked:::::"+mList.getTime());
+                        value.put("consignee","Null");
                         databaseReference.updateChildren(value);
                     }
                     String consigneeName=mList.getConsignee();
+
                     if(!consigneeArrayList.contains(consigneeName)){
                         consigneeArrayList.add(consigneeName);
+
                     }
                 }
-                consigneeArrayList.add(0,"ALL");
+
                 consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
                 dialog_date="All Time";
 
+                Log.i("TestValue","ConSigneeList:::"+consigneeList.length);
                 AlertDialog.Builder searchBuilder=new AlertDialog.Builder(WorkingMessageData.this);
                 searchBuilder.setTitle("검색 조건 설정창");
                 View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);
@@ -497,8 +485,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         upLoadItemsName="InCargo";
-                        Log.i("TestValue",
-                                "dataValue+++:"+dialog_date+"ConsigneeNameValue+++:"+dialog_consignee+"UpLoadValue+++:"+upLoadItemsName);
+
                         getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
                     }
@@ -569,22 +556,6 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
     @Override
     public void onBackPressed() {
 
-        AlertDialog.Builder builder=new AlertDialog.Builder(WorkingMessageData.this);
-        builder.setTitle("화면 선택")
-                .setPositiveButton("초기화면", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent=new Intent(WorkingMessageData.this,TitleActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                    }
-                })
-                .setNegativeButton("어플 종료", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .show();
+       publicMethod.intentSelect();
     }
 }

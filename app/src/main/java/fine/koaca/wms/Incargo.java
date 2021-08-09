@@ -492,50 +492,84 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
     public void searchFirebaseDatabaseToArray(String sortContents) {
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listItems.clear();
-                for (DataSnapshot searchsnapshot : snapshot.getChildren()) {
-                    Fine2IncargoList data = searchsnapshot.getValue(Fine2IncargoList.class);
-                    int containerNameLength = data.getContainer().length();
-                    int blNameLength = data.getBl().length();
 
-                    switch (searchContents) {
-                        case "container":
-                            if (containerNameLength == 11) {
-                                String sort_contentsName = data.getContainer().substring(data.getContainer().length() - 4,
-                                        data.getContainer().length());
-                                if (sortContents.equals(sort_contentsName)) {
-                                    listItems.add(data);
+        for(int i=(listItems.size()-1);0<=i;i--){
+            int containerNameLength=listItems.get(i).getContainer().length();
+            int blNameLength=listItems.get(i).getBl().length();
 
-                                } else {
-                                    ;
-                                }
-                            } else {
-                            }
-                            break;
-                        case "bl":
-                            if (blNameLength > 4) {
-                                String sort_contentsName = data.getBl().substring(data.getBl().length() - 4,
-                                        data.getBl().length());
-                                if (sortContents.equals(sort_contentsName)) {
-                                    listItems.add(data);
-                                } else {
-                                }
-                            } else {
-                            }
-                            break;
+            switch (searchContents) {
+                case "container":
+                    if (containerNameLength == 11) {
+                        String sort_contentsName = listItems.get(i).getContainer().substring(listItems.get(i).getContainer().length() - 4);
+                        if (!sortContents.equals(sort_contentsName)) {
+                            listItems.remove(i);
+
+                        } else {
+
+                        }
+                    } else {
                     }
-                }
-                adapter.notifyDataSetChanged();
+                    break;
+                case "bl":
+                    if (blNameLength > 4) {
+                        String sort_contentsName = listItems.get(i).getBl().substring(listItems.get(i).getBl().length() - 4);
+                        if (!sortContents.equals(sort_contentsName)) {
+                            listItems.remove(i);
+                        } else {
+                        }
+                    } else {
+                    }
+                    break;
             }
+            adapter.notifyDataSetChanged();
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-            }
-        };
-        databaseReference.addListenerForSingleValueEvent(listener);
+
+
+//        ValueEventListener listener = new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                listItems.clear();
+//                for (DataSnapshot searchsnapshot : snapshot.getChildren()) {
+//                    Fine2IncargoList data = searchsnapshot.getValue(Fine2IncargoList.class);
+//                    int containerNameLength = data.getContainer().length();
+//                    int blNameLength = data.getBl().length();
+//
+//                    switch (searchContents) {
+//                        case "container":
+//                            if (containerNameLength == 11) {
+//                                String sort_contentsName = data.getContainer().substring(data.getContainer().length() - 4,
+//                                        data.getContainer().length());
+//                                if (sortContents.equals(sort_contentsName)) {
+//                                    listItems.add(data);
+//
+//                                } else {
+//                                    ;
+//                                }
+//                            } else {
+//                            }
+//                            break;
+//                        case "bl":
+//                            if (blNameLength > 4) {
+//                                String sort_contentsName = data.getBl().substring(data.getBl().length() - 4,
+//                                        data.getBl().length());
+//                                if (sortContents.equals(sort_contentsName)) {
+//                                    listItems.add(data);
+//                                } else {
+//                                }
+//                            } else {
+//                            }
+//                            break;
+//                    }
+//                }
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//            }
+//        };
+//        databaseReference.addListenerForSingleValueEvent(listener);
     }
 
     public void webView(String bl) {
@@ -1208,11 +1242,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     private void selectLongClickDialog(String dialogTitle, int pos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("입고화물 정보 수정")
-                .setMessage(dialogTitle+" 화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정시에는 하단 " +
-                        "정보수정 버큰 " +
+                .setMessage(dialogTitle+" 화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정,또는 " +
+                        "화물조회시에는" +
+                        " " +
+                        "하단 " +
+                        "정보수정 버튼 " +
                         "클릭후 메뉴 중간 버튼 " +
                         "클릭후 내용 수정 진행 바랍니다.")
-                .setPositiveButton("정보 수정", new DialogInterface.OnClickListener() {
+                .setPositiveButton("정보 수정,화물조회", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();

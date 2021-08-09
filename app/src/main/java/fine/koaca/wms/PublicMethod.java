@@ -165,6 +165,7 @@ public class PublicMethod {
                                    WorkingMessageList messageList=new WorkingMessageList();
 
                                    if((uriList.size())==listSize){
+                                       messageList.setConsignee(consigneeName);
                                        messageList.setNickName(nickName);
                                        messageList.setTime(dateNtime);
                                        messageList.setDate(date);
@@ -221,7 +222,7 @@ public class PublicMethod {
 
                                        FirebaseDatabase database=FirebaseDatabase.getInstance();
                                        DatabaseReference databaseReference=
-                                               database.getReference("WorkingMessage" +"/"+nickName+"_"+dateNtime   );
+                                               database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
                                        databaseReference.setValue(messageList);
                                    }
 
