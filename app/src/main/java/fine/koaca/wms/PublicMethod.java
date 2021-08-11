@@ -107,15 +107,14 @@ public class PublicMethod {
             String strFile=String.valueOf(file);
             if(uriI.startsWith(strFile)){
                 imageViewLists.add(uriI);
-                Log.i("TestValue","ImageViewLists:::::"+strFile);
             }
         }
         cursor.close();
         return imageViewLists;
     }
 
-    public void putNewDataUpdateAlarm(String nickName,String alertDepot,String dialogTitle, String consigneeName, String out,
-                                      RequestQueue requestQueue) {
+    public void putNewDataUpdateAlarm(String nickName,String message, String consigneeName, String inOut,String deptName
+                                     ) {
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
         String timeDate=new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
 
@@ -123,17 +122,18 @@ public class PublicMethod {
 
         messageList.setNickName(nickName);
         messageList.setTime(timeStamp);
-        messageList.setMsg(dialogTitle);
+        messageList.setMsg(message);
         messageList.setDate(timeDate);
         messageList.setConsignee(consigneeName);
-        messageList.setInOutCargo(out);
+        messageList.setInOutCargo(inOut);
+
 
         FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("WorkingMessage"+"/"+nickName+"_"+timeStamp);
+        DatabaseReference databaseReference =
+                database.getReference("DeptName/"+deptName+"/WorkingMessage/"+nickName+"_"+timeStamp);
         databaseReference.setValue(messageList);
 
-        PushFcmProgress push=new PushFcmProgress(requestQueue);
-        push.sendAlertMessage(alertDepot,nickName,dialogTitle,"WorkingMessage");
+        sendPushMessage(deptName,nickName,message,"WorkingMessage");
 
         Intent intent=new Intent(activity,WorkingMessageData.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -141,6 +141,7 @@ public class PublicMethod {
     }
 
     public void upLoadPictures(String nickName,String consigneeName,String inoutCargo,String keyValue,String deptName){
+
         ArrayList<String> uriList=new ArrayList<>();
         int listSize=list.size();
         String date=keyValue.substring(0,10);
@@ -250,7 +251,6 @@ public class PublicMethod {
         AlertDialog.Builder builder=new AlertDialog.Builder(activity);
         View view=activity.getLayoutInflater().inflate(R.layout.dialog_select_intent,null);
         Button btnIn=view.findViewById(R.id.dialog_select_intent_btnIn);
-
         btnIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,6 +293,27 @@ public class PublicMethod {
                 Intent intent=new Intent(activity,TitleActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
+            }
+        });
+
+        Button btnAnnual=view.findViewById(R.id.dialog_select_intent_btnAnnual);
+        btnAnnual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+           Intent intent=new Intent(activity,AnnualLeave.class);
+           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+           activity.startActivity(intent);
+            }
+        });
+
+        Button btnMessage=view.findViewById(R.id.dialog_select_intent_btnMessage);
+        btnMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,WorkingMessageData.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+
             }
         });
 
@@ -403,7 +424,8 @@ public class PublicMethod {
 
     public void checkUserInfo(){
         SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
-        if(sharedPreferences.getString("DeptName",null)==null){
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+
            ArrayList<String> deptSort=new ArrayList<>();
 
             deptSort.add("1물류(02010810)");
@@ -432,11 +454,9 @@ public class PublicMethod {
                             switch(which){
                                 case 0:
                                 deptName="WareHouseDept1";
-
                                     break;
                                 case 1:
                                     deptName="WareHouseDept2";
-
                                     break;
                                 case 2:
                                     deptName="WareHouseDivision";
@@ -453,9 +473,9 @@ public class PublicMethod {
                                 dialog.cancel();
                                 checkUserInfo();
                             }else{
-                                sharedPreferences.edit().putString("deptName",deptName);
-                                sharedPreferences.edit().putString("nickName",nickName);
-                                sharedPreferences.edit().apply();
+                               editor.putString("deptName",deptName);
+                                editor.putString("nickName",nickName);
+                                editor.apply();
                                 Toast.makeText(activity.getApplicationContext(), deptName+"__"+nickName+"로 사용자 등록 성공 하였습니다.", Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(activity.getApplicationContext(),TitleActivity.class);
                                 activity.startActivity(intent);
@@ -472,8 +492,7 @@ public class PublicMethod {
                     .show();
 
 
-            return;
-        }
+
     }
 
     public void getStorageUri(){

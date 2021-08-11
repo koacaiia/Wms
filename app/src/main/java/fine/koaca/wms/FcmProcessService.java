@@ -54,14 +54,12 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-       Log.i("TestValue","onMessageReceived");
         Map<String, String> data = remoteMessage.getData();
         String contents = data.get("contents");
         String nickName=data.get("nickName");
         String message=data.get("message");
 
-        String alertTimeStamp = new SimpleDateFormat("HH시mm분").format(new Date());
-        Intent intent; 
+        Intent intent;
         switch(contents){
             case "Annual":
             intent=new Intent(this, AnnualLeave.class);

@@ -122,8 +122,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             return;
         }
 
-
-
         database = FirebaseDatabase.getInstance();
 
         deptName = sharedPref.getString("deptName", null);
@@ -801,7 +799,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_userInfo:
-                putUserInformation();
+               PublicMethod publicMethod=new PublicMethod(this);
+               publicMethod.checkUserInfo();
                 break;
             case R.id.action_settings:
 //                putBasicData();

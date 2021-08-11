@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +39,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -70,9 +74,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     SparseBooleanArray clickedArray=new SparseBooleanArray(0);
     FloatingActionButton fltBtn;
 
-    static RequestQueue requestQueue;
-
-
+    PublicMethod publicMethod;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +93,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             @Override
             public void onClick(View v) {
                 updateValue("완");
-                upCapturePictures("OutCargo",list.get(0).consigneeName);
+               PublicMethod publicMethod=new PublicMethod(clickedImageViewLists);
+               publicMethod.upLoadPictures(nickName,list.get(0).getConsigneeName(),"OutCargo",list.get(0).getKeypath(),deptName);
+
 
             }
         });
@@ -118,9 +122,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         txtTitle=findViewById(R.id.activity_list_outcargo_title);
         txtTitle.setText(dateToday+" 출고 목록");
 
-        if(requestQueue==null){
-            requestQueue= Volley.newRequestQueue(getApplicationContext());
-        }
+
 
     }
 
@@ -207,6 +209,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         clickValue.add("사진포함 출고완료 등록");
         clickValue.add("미출고 등록");
         clickValue.add("신규출고 항목으로 공유");
+        clickValue.add("항목 출고 사진 검색");
 
         String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
         builder.setTitle(dialogTitle+" 출고");
@@ -229,16 +232,61 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
                     case 3:
                         PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
-                        publicMethod.putNewDataUpdateAlarm(nickName,deptName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",
-                                requestQueue);
+                        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",
+                                deptName);
 
                         break;
+
+                    case 4:
+                        itemPictureList(list.get(0).getKeypath());
+                         break;
                 }
                 dialog.dismiss();
             }
         })
                 .show();
     }
+
+    public void itemPictureList(String keyValue) {
+
+        imageViewLists.clear();
+        RecyclerView imageRecyclerView = findViewById(R.id.activity_list_outcargo_imageviewRe);
+        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        imageRecyclerView.setLayoutManager(manager);
+        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+        StorageReference storageReference=
+                storage.getReference("images/"+deptName+"/"+keyValue.substring(0,10)+"/OutCargo/"+keyValue);
+        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(ListResult listResult) {
+
+                for(StorageReference item:listResult.getItems()){
+
+                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            imageViewLists.add(uri.toString());
+
+                            iAdapter = new ImageViewActivityAdapter(imageViewLists);
+                            if(imageViewLists.size()==listResult.getItems().size()){
+                                imageRecyclerView.setAdapter(iAdapter);
+                                iAdapter.notifyDataSetChanged();
+                            }
+
+
+                        }
+
+                    });
+
+                }
+
+            }
+        });
+
+    }
+
 
     private void pictureUpdate() {
         RecyclerView imageRecyclerView=findViewById(R.id.activity_list_outcargo_imageviewRe);
@@ -402,9 +450,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     public void sendMessage(String message){
 
-        PushFcmProgress push=new PushFcmProgress(requestQueue);
 
-        push.sendAlertMessage(deptName,nickName,message,"CameraUpLoad");
+        PublicMethod publicMethod=new PublicMethod(this);
+        publicMethod.sendPushMessage(deptName,nickName,message,"CameraUpLoad");
     }
 
     public void messageIntent() {

@@ -23,6 +23,10 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
     ImageViewClicked clickListener;
     SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
 
+    public ImageViewActivityAdapter(ArrayList<String> imageViewLists) {
+        this.list=imageViewLists;
+    }
+
 
     public interface ImageViewClicked {
         void imageViewClicked(ImageViewActivityAdapter.ListView listView,View v,int position);

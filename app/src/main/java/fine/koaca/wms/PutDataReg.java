@@ -306,9 +306,7 @@ public void postData(int contCountSize){
         databaseReference.setValue(list);
         }
 
-    Incargo incargo=new Incargo();
-    String msg=strConsignee+"_화물 신규 정보 등록";
-    incargo.putMessage(msg,"Etc",deptName,nickName);
+
         String message;
         if(contCountSize>0){
             message="_화물정보 업데이트 되었습니다.";
@@ -316,7 +314,9 @@ public void postData(int contCountSize){
             message="_신규 화물정보 업데이트 되었습니다.";
         }
 
-        incargo.putMessage(strConsignee+message,"Etc",deptName,nickName );
+    PublicMethod publicMethod=new PublicMethod(this);
+    publicMethod.putNewDataUpdateAlarm(nickName,strConsignee+message,strConsignee,"InCargo",deptName);
+
 
         Intent intent=new Intent(PutDataReg.this,Incargo.class);
         startActivity(intent);

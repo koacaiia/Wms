@@ -84,7 +84,7 @@ public class CalendarPick {
 
 
         date_tomorrow=year+"-"+month+"-"+tomorrow;
-        date_today=year+"년"+month+"월"+today+"일";
+        date_today=year+"-"+month+"-"+today;
 
 
     }

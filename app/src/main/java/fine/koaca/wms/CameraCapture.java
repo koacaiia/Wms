@@ -151,19 +151,19 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         surfaceView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                captureProcess.setmAutoFocus();
 
+                captureProcess.captureProcess(dateToday);
             }
         });
 
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+//                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                startActivity(intent);
 
-
+                captureProcess.setmAutoFocus();
                 return true;
             }
         });
@@ -424,14 +424,12 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String refPath=
-                                "/"+listIn.get(position).getDate()+"_"+listIn.get(position).getBl()+"_"+listIn.get(position).getDescription()+
-                                        "_"+listIn.get(position).getCount()+"_"+listIn.get(position).getContainer();
-                        DatabaseReference databaseReference=database.getReference("Incargo2"+refPath);
+                        String refPath=listIn.get(position).getKeyValue();
+                        DatabaseReference databaseReference=
+                                database.getReference("DeptName/"+deptName+"/"+"InCargo/"+refPath.substring(5,7)+"월/"+refPath.substring(0,10)+"/"+refPath);
                         Map<String,Object> value=new HashMap<>();
                         value.put("working","컨테이너 진입");
                         databaseReference.updateChildren(value);
-//                        upCapturePictures("InCargo",listIn.get(position).getConsignee());
                         PublicMethod publicMethod=new PublicMethod(upLoadUriString);
                         publicMethod.upLoadPictures(nickName,listIn.get(position).getConsignee(),"InCargo",
                                 listIn.get(position).getKeyValue(),deptName);
@@ -457,12 +455,15 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String refPath="/"+listOut.get(position).getKeypath();
-                        DatabaseReference databaseReference=database.getReference("Outcargo2"+refPath);
+                        String refPath=listOut.get(position).getKeypath();
+                        DatabaseReference databaseReference=
+                                database.getReference("DeptName/"+deptName+"/"+"OutCargo/"+refPath.substring(5,7)+"월/"+refPath.substring(0,10)+"/"+refPath);
                         Map<String,Object> value=new HashMap<>();
                         value.put("workprocess","완");
                         databaseReference.updateChildren(value);
-                        upCapturePictures("OutCargo",listOut.get(position).getConsigneeName());
+                        PublicMethod publicMethod=new PublicMethod(upLoadUriString);
+                        publicMethod.upLoadPictures(nickName,listOut.get(position).getConsigneeName(),"OutCargo",refPath,
+                                deptName);
                         dialog.cancel();
                     }
                 })

@@ -77,6 +77,7 @@ implements OnListImageClickListener{
                 .into(holder.image6);
         sharedPreferences=context.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
         String nickName=sharedPreferences.getString("nickName",null);
+
         LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
         if(messageLists.get(position).getNickName().equals(nickName)){
 
@@ -85,6 +86,7 @@ implements OnListImageClickListener{
             mSelectedItems.put(position,false);
         }
        if(mSelectedItems.get(position,true)){
+           Log.i("TestValue","Message Adapter Value:::"+nickName);
            params.gravity=Gravity.END;
        }else{
            params.gravity=Gravity.START;

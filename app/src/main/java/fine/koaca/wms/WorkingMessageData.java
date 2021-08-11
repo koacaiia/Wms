@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -130,12 +131,16 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
               String strUri2=dataList.get(position).getUri2();
               String strUri3=dataList.get(position).getUri3();
               String strUri4=dataList.get(position).getUri4();
+              String strUri5=dataList.get(position).getUri5();
+              String strUri6=dataList.get(position).getUri6();
               ArrayList<String> uriArrayList=new ArrayList<>();
               uriArrayList.add(strUri0);
               uriArrayList.add(strUri1);
               uriArrayList.add(strUri2);
               uriArrayList.add(strUri3);
               uriArrayList.add(strUri4);
+              uriArrayList.add(strUri5);
+              uriArrayList.add(strUri6);
 
               String message=
                       dataList.get(position).getNickName()+":"+dataList.get(position).getTime()+"\n"+dataList.get(position).getMsg();
@@ -164,22 +169,24 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 });
 
 
+
     }
+
 
     private void workingMessageListSortByDate() {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         DatePicker pickerDialog=new DatePicker(this);
 
         builder.setTitle("항목 삭제")
-                .setMessage("지정일 이후 메세지 항목 삭제진행"+"\n"+"기존 서버자료 필히 백업후 진행 바랍니다")
+                .setMessage("지정일 이전 메세지 항목 삭제진행"+"\n"+"기존 서버자료 필히 백업후 진행 바랍니다")
                 .setView(pickerDialog)
                 .setPositiveButton("목록삭제", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dataList.clear();
-                        ArrayList<String> pathKey=new ArrayList<>();
+                        dataList.clear();                      ArrayList<String> pathKey=new ArrayList<>();
 
                         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
 
@@ -195,15 +202,11 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                                 for(int i=0;i<dataListSize;i++){
                                     String transDate;
                                     String pickedDateRe;
-                                    String refPath="WorkingMessage"+"/"+dataList.get(i).getNickName()+"_"+dataList.get(i).getTime();
-                                    pickedDateRe=pickedDate.replace("년","")
-                                            .replace("월","")
-                                            .replace("일","");
+
+                                    pickedDateRe=pickedDate.replaceAll("-","");
                                     int intPickedDateRe=Integer.parseInt(pickedDateRe);
                                     if(dataList.get(i).getDate()!=null){
-                                        transDate=dataList.get(i).getDate().replace("년","")
-                                                .replace("월","")
-                                                .replace("일","");
+                                        transDate=dataList.get(i).getDate().replaceAll("-","");
                                     }else{
                                         transDate=("20210101");
                                     }
@@ -211,12 +214,12 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                                     int intTransDate=Integer.parseInt(transDate);
 
                                     if(intTransDate<intPickedDateRe){
-                                        Log.i("TestValue","DateInDataBase:::"+pathKey.get(i));
+
                                         Map<String,Object> value=new HashMap<>();
                                         value.put(pathKey.get(i)+"/",null);
-                                        DatabaseReference databaseReferenceIn=
-                                                database.getReference("WorkingMessage");
-                                        databaseReferenceIn.updateChildren(value);
+
+
+                                        databaseReference.updateChildren(value);
                                     }
 
                                 }
@@ -236,8 +239,9 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     public void onClick(DialogInterface dialog, int which) {
                         dataList.clear();
                         ArrayList<String> pathKey=new ArrayList<>();
-                        DatabaseReference databaseReference=database.getReference("WorkingMessage");
+
                         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @SuppressLint("NotifyDataSetChanged")
                             @Override
                             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
 
@@ -253,9 +257,8 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                                     if(nickName.equals("Test")){
                                         Map<String,Object> value=new HashMap<>();
                                         value.put(pathKey.get(i)+"/",null);
-                                        DatabaseReference databaseReferenceIn=
-                                                database.getReference("WorkingMessage");
-                                        databaseReferenceIn.updateChildren(value);
+                                        Log.i("TestValue","Time getValue::::"+dataList.get(i).getTime());
+                                        databaseReference.updateChildren(value);
                                     }
 
                                 }
@@ -279,14 +282,14 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 String month;
                 String date;
                 if((monthOfYear+1)<10){
-                    month="년0"+(monthOfYear+1)+"월";
+                    month="-0"+(monthOfYear+1)+"-";
                 }else{
-                    month="년"+(monthOfYear+1)+"월";
+                    month="-"+(monthOfYear+1)+"-";
                 }
                 if(dayOfMonth<10){
-                    date="0"+dayOfMonth+"일";
+                    date="0"+dayOfMonth;
                     }else{
-                    date=dayOfMonth+"일";
+                    date=String.valueOf(dayOfMonth);
                 }
                 pickedDate=year+month+date;
                 Toast.makeText(getApplicationContext(),pickedDate+"선택 되었습니다.",Toast.LENGTH_SHORT).show();
@@ -344,6 +347,14 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                 for(DataSnapshot data:snapshot.getChildren()){
                     WorkingMessageList mList=data.getValue(WorkingMessageList.class);
 
+                    assert mList != null;
+                    String dateRe=mList.getDate().replace("년","-").replace("월","-").replace("일","");
+                    DatabaseReference dataRefRe=
+                            database.getReference("DeptName/"+deptName+"/WorkingMessage/"+mList.getNickName()+"_"+mList.getTime());
+                    Map<String,Object> value=new HashMap<>();
+                    value.put("date",dateRe);
+
+                    dataRefRe.updateChildren(value);
                     if(mList.getDate()!=null&&mList.getDate().equals(date)){
                         dataList.add(mList);
                        }
