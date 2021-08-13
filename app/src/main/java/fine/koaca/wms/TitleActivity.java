@@ -155,7 +155,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         getVersion();
         if (nickName.equals("Test")) {
-            FirebaseMessaging.getInstance().subscribeToTopic("Test");
+            FirebaseMessaging.getInstance().subscribeToTopic("Test1");
         } else {
             FirebaseMessaging.getInstance().subscribeToTopic(deptName);
         }
@@ -250,21 +250,20 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         txtTitle.setText(dateToday + " 입,출고 현황");
 
-
         DatabaseReference databaseReferenceAnnual= database.getReference("AnnualData");
         ValueEventListener listener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
                 for (DataSnapshot data : snapshot.getChildren()) {
                     AnnualList list = data.getValue(AnnualList.class);
+                    Log.i("TestValue","Date Value::"+date+"///List Date Value::::"+list.getHalf1()  );
                     if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
                         arrAnnualLeaveStaff.add("휴가자:" + list.getName());
                     }
                     if (list.getAnnual().equals(date) || list.getAnnual2().equals(date)) {
                         if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
-
-                        } else {
                             arrAnnualLeaveStaff.add("연차자:" + list.getName());
                         }
 
@@ -282,7 +281,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             }
         };
 
-        Query query = databaseReferenceAnnual.orderByChild("date").equalTo(dateToday);
+        Query query = databaseReferenceAnnual.orderByChild("date").equalTo(dateToday.substring(0,7));
+     
         query.addListenerForSingleValueEvent(listener);
 
         ArrayList<OutCargoList> listOutP = new ArrayList<>();
@@ -528,25 +528,27 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     }
 
     private void putNewDataUpdateAlarm(String dialogTitle, String consigneeName, String out) {
-        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
-        String timeDate = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
-
-        WorkingMessageList messageList = new WorkingMessageList();
-
-
-        messageList.setNickName(nickName);
-        messageList.setTime(timeStamp);
-        messageList.setMsg(dialogTitle);
-        messageList.setDate(timeDate);
-        messageList.setConsignee(consigneeName);
-        messageList.setInOutCargo(out);
-
-
-        DatabaseReference databaseReference = database.getReference("WorkingMessage" + "/" + nickName + "_" + timeStamp);
-        databaseReference.setValue(messageList);
-
-        PushFcmProgress push = new PushFcmProgress(requestQueue);
-        push.sendAlertMessage(deptName, nickName, dialogTitle, "WorkingMessage");
+        PublicMethod publicMethod=new PublicMethod(this);
+//        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
+//        String timeDate = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
+//
+//        WorkingMessageList messageList = new WorkingMessageList();
+//
+//
+//        messageList.setNickName(nickName);
+//        messageList.setTime(timeStamp);
+//        messageList.setMsg(dialogTitle);
+//        messageList.setDate(timeDate);
+//        messageList.setConsignee(consigneeName);
+//        messageList.setInOutCargo(out);
+//
+//
+//        DatabaseReference databaseReference = database.getReference("WorkingMessage" + "/" + nickName + "_" + timeStamp);
+//        databaseReference.setValue(messageList);
+        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle,consigneeName,out,deptName);
+//        publicMethod.sendPushMessage(deptName,nickName,dialogTitle,"WorkingMessage")
+//        PushFcmProgress push = new PushFcmProgress(requestQueue);
+//        push.sendAlertMessage(deptName, nickName, dialogTitle, "WorkingMessage");
 
         Intent intent = new Intent(this, WorkingMessageData.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -742,7 +744,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                 startActivity(intent);
                                 break;
                             case 5:
-                                putNewDataUpdateAlarm(updateTitleValue + " 신규 등록", listIn.get(pos).getConsignee(), "OutCargo");
+                                putNewDataUpdateAlarm(updateTitleValue + " 신규 등록", listIn.get(pos).getConsignee(), "InCargo");
 
                                 break;
 

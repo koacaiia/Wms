@@ -323,11 +323,9 @@ public class PublicMethod {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
         WindowManager.LayoutParams params=dialog.getWindow().getAttributes();
-        Log.i("TestValue","Layout Params width::::"+params.width);
         float density=activity.getResources().getDisplayMetrics().density;
         int pxValue=Math.round((float)300*density);
         int widthPx=activity.getResources().getDisplayMetrics().widthPixels;
-        Log.i("TestValue","Put 300Dp convert Pixel to:::::"+pxValue +"Device widthPx::::"+widthPx);
 
         params.width=(widthPx*2)/3;
         dialog.getWindow().setAttributes(params);
@@ -347,7 +345,7 @@ public class PublicMethod {
             requestData.put("data",dataObj);
 
             if(nickName.equals("Test")){
-                requestData.put("to","/topics/Test");
+                requestData.put("to","/topics/Test1");
             }else{
                 requestData.put("to","/topics/"+deptName);
             }
@@ -491,20 +489,7 @@ public class PublicMethod {
                     })
                     .show();
 
-
-
     }
 
-    public void getStorageUri(){
-        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
-        String refPath=
-                deptName+"/"+"2021-08-05"+"/"+"InCargo"+"/"+"2021-08-05__몬 월남쌈(원형16cm) 200g_세계 83차_";
-        StorageReference storageReference=storage.getReference().child("images/"+refPath+"/*.jpg");
-        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Log.i("TestValue","getUri Value::"+uri.toString());
-            }
-        });
-    }
+
 }

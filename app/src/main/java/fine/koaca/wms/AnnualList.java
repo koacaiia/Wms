@@ -8,11 +8,13 @@ public class AnnualList {
     String half2;
     Double totaldate;
     String date;
+    String deptName;
 
     public AnnualList(){
 
     }
-    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate,String date) {
+    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate,String date,
+                      String deptName) {
         this.name = name;
         this.annual = annual;
         this.annual2=annual2;
@@ -20,6 +22,7 @@ public class AnnualList {
         this.half2 = half2;
         this.totaldate=totaldate;
         this.date=date;
+        this.deptName=deptName;
     }
 
     public String getDate() {
@@ -76,5 +79,13 @@ public class AnnualList {
 
     public void setAnnual2(String annual2) {
         this.annual2 = annual2;
+    }
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
     }
 }

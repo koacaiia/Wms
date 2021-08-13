@@ -74,9 +74,6 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         publicMethod=new PublicMethod(this);
         nickName=publicMethod.getUserInformation().get("nickName");
         deptName=publicMethod.getUserInformation().get("deptName");
-        if(deptName.equals("WareHouseDept1")||deptName.equals("WareHouseDept2")){
-            deptName="WareHouseDivision";
-        }
 
 
         recyclerview=findViewById(R.id.recyclerViewAnnual);
@@ -277,6 +274,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             dialog.dismiss();
         });
 
+
     }
 
     private void alertDialogVacation(String staffName) {
@@ -341,19 +339,19 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 String annual2month=annual2.substring(5,7);
                 if(annualmonth.equals(annual2month)){
                     DatabaseReference databaseReference=
-                            database.getReference("DeptName/"+deptName+"/AnnualData/2021-"+annualmonth+"-"+staffName );
+                            database.getReference("AnnualData/2021-"+annualmonth+"-"+staffName );
                     Map<String,Object> value=new HashMap<>();
                     value.put("annual",annual);
                     value.put("annual2",annual2);
                     databaseReference.updateChildren(value);
                 }else{
-                    DatabaseReference databaseAnnual=database.getReference("DeptName/"+deptName+"/AnnualData/2021-"
+                    DatabaseReference databaseAnnual=database.getReference("AnnualData/2021-"
                             +annualmonth+"-"+staffName);
                     Map<String,Object> valueAnnual=new HashMap<>();
                     valueAnnual.put("annual",annual);
                     databaseAnnual.updateChildren(valueAnnual);
                     DatabaseReference databaseAnnual2=
-                            database.getReference("DeptName/"+deptName+"/AnnualData/2021-"+annual2month+"-"+staffName);
+                            database.getReference("AnnualData/2021-"+annual2month+"-"+staffName);
                     Map<String,Object> valueAnnual2=new HashMap<>();
                     valueAnnual2.put("annual2",annual2);
                     databaseAnnual2.updateChildren(valueAnnual2);
@@ -367,7 +365,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     }
 
     private void getData(String strMonth) {
-        DatabaseReference databaseRef=database.getReference("DeptName/"+deptName+"/AnnualData/");
+        DatabaseReference databaseRef=database.getReference("AnnualData");
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
@@ -430,12 +428,12 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                         totalDate = annual + annual2 + half + half2;
                         Map<String, Object> value = new HashMap<>();
                         value.put("totaldate", totalDate);
-                        DatabaseReference dataRef = database.getReference("DeptName/"+deptName+"/AnnualData/" + path);
+
+                        DatabaseReference dataRef = database.getReference("AnnualData/" + path);
                         dataRef.updateChildren(value);
                         AnnualList dList = new AnnualList(mList.getName(), strAnnual, strAnnual2, strHalf, strHalf2, totalDate,
-                                mList.getDate());
+                                mList.getDate(),deptName);
                         list.add(dList);
-                        Log.i("TestValue","List Value:::"+dList );
 
                     }
                 }
@@ -484,8 +482,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                                 }
                                 path=putYear+"-"+monthP+"-"+staffList[i];
                                 DatabaseReference databaseReference=
-                                        database.getReference("DeptName/"+deptName+"/AnnualData/"+path);
-                                AnnualList list=new AnnualList(staffList[i],"","","","",0.0,putYear+"-"+monthP);
+                                        database.getReference("AnnualData/"+path);
+                                AnnualList list=new AnnualList(staffList[i],"","","","",0.0,putYear+"-"+monthP,"");
                                 databaseReference.setValue(list);
                             }
                         }
@@ -516,22 +514,37 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                                 switch(condition){
                                     case "월차":
                                         map.put("annual",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffDate+" 로 월차 등록 합니다.","Annual");
+                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+" 로 월차 등록 " +
+                                                        "됩니다" +
+                                                        "..",
+                                                "Annual");
+                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 월차 등록 됩니다",
+                                                "근태","Etc",
+                                                deptName);
 
                                         break;
                                     case "반차1":
                                         map.put("half1",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffDate+" 로 반차1 등록 합니다.","Annual");
+                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+" 로 반차1 등록 " +
+                                                "합니다.","Annual");
+                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 반차1 등록 합니다" +
+                                                        ".","근태","Etc",
+                                                deptName);
                                         break;
                                     case "반차2":
                                         map.put("half2",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffName+"로 반차2 등록 합니다.","Annual");
-
+                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+"로 반차2 등록 " +
+                                                "합니다.","Annual");
+                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+"로 반차2 등록 합니다."
+                                                ,"근태","Etc",
+                                                deptName);
 
                                         break;
                                 }
+                                map.put("deptName",deptName);
                                 databaseReference.updateChildren(map);
                                 getData(strMonth);
+
                             }
                         }
                 )
@@ -561,8 +574,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference data=
-                                        database.getReference("DeptName/"+deptName+"/AnnualData/"+strMonth+"-"+name);
-                                AnnualList mList=new AnnualList(name,"","","","",0.0,date);
+                                        database.getReference("AnnualData/"+strMonth+"-"+name);
+                                AnnualList mList=new AnnualList(name,"","","","",0.0,date,deptName);
                                 data.setValue(mList);
                                 publicMethod.sendPushMessage(deptName,nickName,"직원 근태상황을 초기화 진행 합니다.","Annual");
                             }
@@ -592,7 +605,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
         list.clear();
 
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+"/AnnualData/");
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("AnnualData/");
         ValueEventListener listener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
