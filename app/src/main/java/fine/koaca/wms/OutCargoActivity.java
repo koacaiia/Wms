@@ -93,7 +93,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             @Override
             public void onClick(View v) {
                 updateValue("완");
-               PublicMethod publicMethod=new PublicMethod(clickedImageViewLists);
+               PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this,clickedImageViewLists);
                publicMethod.upLoadPictures(nickName,list.get(0).getConsigneeName(),"OutCargo",list.get(0).getKeypath(),deptName);
 
 
@@ -313,6 +313,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateValue(String updateValue){
         DatabaseReference dataRef=database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +refPath.substring(5,7) +
                 "월/" +refPath.substring(0,10)+"/"+refPath);

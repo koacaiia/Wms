@@ -63,6 +63,11 @@ public class PublicMethod {
     public PublicMethod(){
     }
 
+    public PublicMethod(Activity activity, ArrayList<String> list) {
+        this.activity=activity;
+        this.list=list;
+    }
+
     public void putContent(String pathValue){
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference databaseReference=database.getReference(pathValue);
@@ -144,7 +149,7 @@ public class PublicMethod {
 
         ArrayList<String> uriList=new ArrayList<>();
         int listSize=list.size();
-        String date=keyValue.substring(0,10);
+        String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         String dateNtime=new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초").format(new Date());
         String refPath;
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
@@ -161,7 +166,6 @@ public class PublicMethod {
                            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                @Override
                                public void onSuccess(Uri uri) {
-                                   Log.i("TestValue","uriList:::"+uri.toString());
                                    uriList.add(String.valueOf(uri));
                                    WorkingMessageList messageList=new WorkingMessageList();
 
@@ -225,6 +229,8 @@ public class PublicMethod {
                                        DatabaseReference databaseReference=
                                                database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
                                        databaseReference.setValue(messageList);
+                                       String msg=nickName+":"+consigneeName+"_"+inoutCargo+" 사진을 등록 합니다.";
+                                      sendPushMessage(deptName,nickName,msg,"CameraUpLoad");
                                    }
 
                                }

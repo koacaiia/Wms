@@ -137,8 +137,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     PublicMethod publicMethod;
 
-    IncargoListAdapter.AdapterClickListener clickListener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,14 +234,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publicMethod=new PublicMethod(imageViewListsSelected);
+                publicMethod=new PublicMethod(Incargo.this,imageViewListsSelected);
                 publicMethod.upLoadPictures(nickName,listItems.get(0).getConsignee(),"InCargo",listItems.get(0).getKeyValue(),
                         deptName);
-//                upCapturePictures("InCargo",listItems.get(0).getConsignee());
+                String date=listItems.get(0).getDate();
                 Map<String,Object> putValue=new HashMap<>();
                 putValue.put("working","컨테이너 진입");
                 databaseReference=
-                        database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +dateToday.substring(5,7) + "월/" + dateToday+"/"+keyValue);
+                        database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +date.substring(5,7) + "월/" + date+
+                                "/"+keyValue);
                 databaseReference.updateChildren(putValue);
                 Toast.makeText(getApplicationContext(),"컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.",Toast.LENGTH_SHORT).show();
 //                initIntent();
@@ -1022,6 +1021,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                         "-" + finalDate +"/"+keyValue);
                                 databaseReference.updateChildren(value);
                             }
+
                             int dayReList=Integer.parseInt(mList.getDate().replace("-",""));
                             if(!consigneeArrayList.contains(mList.getConsignee())){
                                 consigneeArrayList.add(mList.getConsignee());
@@ -1240,24 +1240,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
                         }
 
-//                        if (which == 4) {
-//
-//                                            pickedUpItemClick(keyValue);
-//
-//                        } else if(which==5){
-//                            PublicMethod publicMethod=new PublicMethod(Incargo.this);
-//                            publicMethod.putNewDataUpdateAlarm(nickName,updateTitleValue+" 신규 등록",consigneeName,
-//                                    "InCargo",deptName);
-//
-//                        }else{
-//                            String contentValue = incargoContentList[which];
-//                            Map<String, Object> putValue = new HashMap<>();
-//                            putValue.put("working", contentValue);
-//                            databaseReference1.updateChildren(putValue);
-//                            initIntent();
-//                            }
-
-
                     }
                 })
                 .show();
@@ -1471,7 +1453,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             public void onSuccess(ListResult listResult) {
 
           for(StorageReference item:listResult.getItems()){
-              Log.i("TestValue","ListItems Size:::"+ listResult.getItems().size());
               item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                   @Override
                   public void onSuccess(Uri uri) {
@@ -1491,9 +1472,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
           }
 
-//                iAdapter = new ImageViewActivityAdapter(imageViewLists);
-//                imageRecyclerView.setAdapter(iAdapter);
-//                iAdapter.notifyDataSetChanged();
             }
         });
 

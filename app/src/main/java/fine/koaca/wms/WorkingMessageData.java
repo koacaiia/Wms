@@ -119,7 +119,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         dataList=new ArrayList<WorkingMessageList>();
         adapter=new WorkingMessageAdapter(dataList,WorkingMessageData.this,nickName);
         recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+
 
         
 
@@ -300,6 +300,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
     public void getWorkingMessageList(String dialog_date, String dialog_consignee, String upLoadItemsName) {
         ValueEventListener postListener=new ValueEventListener(){
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 dataList.clear();
@@ -439,12 +440,13 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                         consigneeArrayList.add(consigneeName);
 
                     }
+
                 }
 
+                consigneeArrayList.add(0,"ALL");
                 consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
                 dialog_date="All Time";
 
-                Log.i("TestValue","ConSigneeList:::"+consigneeList.length);
                 AlertDialog.Builder searchBuilder=new AlertDialog.Builder(WorkingMessageData.this);
                 searchBuilder.setTitle("검색 조건 설정창");
                 View view=getLayoutInflater().inflate(R.layout.spinnerlist_searchitem,null);
@@ -537,7 +539,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
         }
         String year_string=Integer.toString(year);
 
-          dialog_date=(year_string+"년"+month_string+"월"+day_string+"일");
+          dialog_date=(year_string+"-"+month_string+"-"+day_string);
           searchTextView.setText(dialog_date);
 
 

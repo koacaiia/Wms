@@ -430,7 +430,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                         Map<String,Object> value=new HashMap<>();
                         value.put("working","컨테이너 진입");
                         databaseReference.updateChildren(value);
-                        PublicMethod publicMethod=new PublicMethod(upLoadUriString);
+                        PublicMethod publicMethod=new PublicMethod(CameraCapture.this,upLoadUriString);
                         publicMethod.upLoadPictures(nickName,listIn.get(position).getConsignee(),"InCargo",
                                 listIn.get(position).getKeyValue(),deptName);
                         dialog.cancel();
@@ -461,7 +461,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
                         Map<String,Object> value=new HashMap<>();
                         value.put("workprocess","완");
                         databaseReference.updateChildren(value);
-                        PublicMethod publicMethod=new PublicMethod(upLoadUriString);
+                        PublicMethod publicMethod=new PublicMethod(CameraCapture.this,upLoadUriString);
                         publicMethod.upLoadPictures(nickName,listOut.get(position).getConsigneeName(),"OutCargo",refPath,
                                 deptName);
                         dialog.cancel();
