@@ -121,7 +121,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         txtTitle=findViewById(R.id.activity_list_outcargo_title);
         txtTitle.setText(dateToday+" 출고 목록");
-
+        refPath=getIntent().getStringExtra("refPath");
 
 
     }
@@ -315,6 +315,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     @SuppressLint("NotifyDataSetChanged")
     public void updateValue(String updateValue){
+
         DatabaseReference dataRef=database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" +refPath.substring(5,7) +
                 "월/" +refPath.substring(0,10)+"/"+refPath);
 

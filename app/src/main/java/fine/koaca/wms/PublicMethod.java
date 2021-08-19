@@ -2,11 +2,14 @@ package fine.koaca.wms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -18,9 +21,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.android.volley.AuthFailureError;
@@ -30,10 +35,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -41,6 +53,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -158,7 +173,17 @@ public class PublicMethod {
             Uri uriValue=Uri.fromFile(new File(list.get(i)));
             refPath=deptName+"/"+date+"/"+inoutCargo+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg";
             StorageReference storageReference=storage.getReference().child("images/"+refPath);
+
+            StorageReference consigneeReference=
+                    storage.getReference().child("ConsigneeValue/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg" );
             int finalI = i;
+
+            consigneeReference.putFile(uriValue).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                }
+            });
             storageReference.putFile(uriValue)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -229,8 +254,9 @@ public class PublicMethod {
                                        DatabaseReference databaseReference=
                                                database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
                                        databaseReference.setValue(messageList);
-                                       String msg=nickName+":"+consigneeName+"_"+inoutCargo+" 사진을 등록 합니다.";
-                                      sendPushMessage(deptName,nickName,msg,"CameraUpLoad");
+
+                                       sendPushMessage(deptName,nickName,consigneeName+"_"+inoutCargo+"_ 사진 업로드",inoutCargo);
+
                                    }
 
                                }
@@ -361,7 +387,6 @@ public class PublicMethod {
         sendData(requestData, new SendResponsedListener() {
             @Override
             public void onRequestStarted() {
-            Log.i("TestValue","OnRequestStarted::::"    );
 
             }
 
@@ -494,6 +519,68 @@ public class PublicMethod {
                         }
                     })
                     .show();
+
+    }
+
+    public void adapterPictureSavedMethod(String uriValue){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        View view=activity.getLayoutInflater().inflate(R.layout.imageview_list,null);
+        ImageView imageView=view.findViewById(R.id.captureimageview);
+
+        Glide.with(view).asBitmap()
+                .load(uriValue)
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                     imageView.setImageBitmap(resource);
+                    }
+                });
+
+        builder.setTitle("사진저장 확인")
+                .setView(view)
+                .setMessage("저장된 사진은 PICTURES/Fine/DownLoad 경로에 저장 됩니다."+"\n"+"업무에 참고 하시기 바랍니다."+"\n")
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Glide.with(activity).asBitmap()
+                                .load(uriValue)
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                     glideImageToSave(resource);
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+    }
+
+    public void glideImageToSave(Bitmap resource){
+        ContentResolver resolver=activity.getContentResolver();
+        ContentValues values=new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME,System.currentTimeMillis()+".jpg");
+        values.put(MediaStore.Images.Media.MIME_TYPE,"image/*");
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES+"/Fine/DownLoad");
+        Uri imageUri=resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values);
+        OutputStream fos=null;
+        try{
+            fos=resolver.openOutputStream(imageUri);
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
+        resource.compress(Bitmap.CompressFormat.JPEG,100,fos);
+        try {
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(activity,"Saved InPath PICTURES/Fine/DownLoad",Toast.LENGTH_SHORT).show();
 
     }
 

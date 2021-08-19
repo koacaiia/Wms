@@ -484,7 +484,6 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
             public void onSuccess(ListResult listResult) {
-                Log.i("TestValue","ListAll Value:::"+listResult.getItems().toString());
             }
         });
     }

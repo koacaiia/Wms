@@ -142,10 +142,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
               uriArrayList.add(strUri5);
               uriArrayList.add(strUri6);
 
-              String message=
-                      dataList.get(position).getNickName()+":"+dataList.get(position).getTime()+"\n"+dataList.get(position).getMsg();
-
-
+              String message=dataList.get(position).getNickName()+":"+dataList.get(position).getTime()+"\n"+dataList.get(position).getMsg();
                intentImageView(uriArrayList,message);
                    }
                 });
@@ -308,12 +305,23 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     WorkingMessageList data=dataSnapshot.getValue(WorkingMessageList.class);
                     if(dialog_consignee.equals("ALL")){
                         assert data != null;
-                        if(data.getInOutCargo().equals(upLoadItemsName)){
-                            dataList.add(data);}
+                        if(upLoadItemsName.equals("All")){
+                            dataList.add(data);
+                        }else if(data.getInOutCargo().equals(upLoadItemsName)){
+                            dataList.add(data);
+                        }
 
                     }else{
-                        if(data.getConsignee().equals(dialog_consignee) && data.getInOutCargo().equals(upLoadItemsName)){
-                            dataList.add(data);
+                        if(upLoadItemsName.equals("All")){
+                            assert data != null;
+                            if(data.getConsignee().equals(dialog_consignee)){
+                                dataList.add(data);
+                            }
+                        }else {
+                            assert data != null;
+                            if(data.getConsignee().equals(dialog_consignee) && data.getInOutCargo().equals(upLoadItemsName)){
+                                dataList.add(data);
+                            }
                         }
                     }
                     dataList.sort(new WorkingMessageListComparator("time"));
@@ -371,16 +379,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
             }
         };
         databaseReference.addListenerForSingleValueEvent(listener);
-
-
-
-
-
-
         }
-
-
-
    public void putWorkingMessageList(String msg,String date,String nick){
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
 
@@ -503,10 +502,10 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
                     }
                 });
-                searchBuilder.setNeutralButton("기타 검색", new DialogInterface.OnClickListener() {
+                searchBuilder.setNeutralButton("전체 검색", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        upLoadItemsName="Etc";
+                        upLoadItemsName="All";
                         getWorkingMessageList(dialog_date,dialog_consignee,upLoadItemsName);
 
                     }

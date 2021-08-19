@@ -12,7 +12,11 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Environment;
@@ -103,11 +107,23 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             public void onPictureTaken(byte[] data, Camera camera) {
                 OutputStream fos = null;
                 OutputStream fosRe=null;
-                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-
+                Bitmap src = BitmapFactory.decodeByteArray(data, 0, data.length);
                 windowDegree = new WindowDegree(mainActivity);
                 int degree = windowDegree.getDegree();
-                bitmap = rotate(bitmap, degree);
+                src = rotate(src, degree);
+                Bitmap bitmap=Bitmap.createBitmap(src.getWidth(),src.getHeight(),Bitmap.Config.ARGB_8888);
+                Canvas canvas=new Canvas(bitmap);
+                Paint paint=new Paint();
+                paint.setTextSize(15);
+                paint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.BOLD_ITALIC));
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL);
+                canvas.drawBitmap(src,0f,0f,null);
+                String timeStamp=new SimpleDateFormat("yyyy년 MM월 dd일  E요일 HH시mm분ss초").format(new Date());
+                canvas.drawText(timeStamp,20f,src.getHeight()-30f,paint);
+//                windowDegree = new WindowDegree(mainActivity);
+//                int degree = windowDegree.getDegree();
+//                bitmap = rotate(bitmap, degree);
                 contentResolver = mainActivity.getContentResolver();
                 contentValues = new ContentValues();
                 contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
@@ -227,122 +243,6 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     }
 
-    private void upLoadUriToDatabase(String nick, String msg, String consigneeName, String inoutCargo, int i,
-                                     String context) {
-        if(consigneeName==null){
-            consigneeName="화주:재확인 요망";
-        }
-
-        String timeStamp = new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());
-        String timeStamp_date = new SimpleDateFormat("yyyy년MM월dd일").format(new Date());
-        WorkingMessageList messageList= new WorkingMessageList();
-        messageList.setNickName(nick);
-        messageList.setTime(timeStamp);
-        messageList.setMsg(msg);
-
-        FirebaseDatabase database=FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference=database.getReference("WorkingMessage"+
-                "/"+nick+"_"+timeStamp);
-        String strUri0="",strUri1="",strUri2="",strUri3="",strUri4="",strUri5="",strUri6="";
-
-        try{
-            switch(i){
-                case 0:
-                    strUri0=uriString.get(0);
-
-                    break;
-                case 1:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    break;
-                case 2:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    strUri2=uriString.get(2);
-                    break;
-                case 3:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    strUri2=uriString.get(2);
-                    strUri3=uriString.get(3);
-                    break;
-                case 4:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    strUri2=uriString.get(2);
-                    strUri3=uriString.get(3);
-                    strUri4=uriString.get(4);
-                    break;
-                case 5:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    strUri2=uriString.get(2);
-                    strUri3=uriString.get(3);
-                    strUri4=uriString.get(4);
-                    strUri5=uriString.get(5);
-                    break;
-                case 6:
-                    strUri0=uriString.get(0);
-                    strUri1=uriString.get(1);
-                    strUri2=uriString.get(2);
-                    strUri3=uriString.get(3);
-                    strUri4=uriString.get(4);
-                    strUri5=uriString.get(5);
-                    strUri6=uriString.get(6);
-                    break;
-
-            }
-        }catch(IndexOutOfBoundsException e){
-
-            switch(context){
-                case "OutCargoActivity":
-                    Toast.makeText(outCargoActivity.getApplicationContext(),i+"번째 사진 전송오류 확인",Toast.LENGTH_SHORT).show();
-                    break;
-                case "CameraCapture":
-                    Toast.makeText(mainActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
-                            Toast.LENGTH_SHORT).show();
-                    break;
-                case "Incargo":
-                    Toast.makeText(inCargoActivity.getBaseContext(),i+"번째 사진 전송오류 확인",
-                            Toast.LENGTH_SHORT).show();
-                    break;
-            }
-            messageList.setMsg(i+"ArrayListCount Exception To Sorting ArrayList AddProcess");
-        }
-        messageList.setUri0(strUri0);
-        messageList.setUri1(strUri1);
-        messageList.setUri2(strUri2);
-        messageList.setUri3(strUri3);
-        messageList.setUri4(strUri4);
-        messageList.setUri5(strUri5);
-        messageList.setUri6(strUri6);
-        messageList.setDate(timeStamp_date);
-        messageList.setConsignee(consigneeName);
-        messageList.setInOutCargo(inoutCargo);
-        databaseReference.setValue(messageList);
-           switch(context){
-                    case "OutCargoActivity":
-                        outCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                        Toast.makeText(outCargoActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
-                                Toast.LENGTH_SHORT).show();
-                        outCargoActivity.messageIntent();
-                        break;
-                    case "CameraCapture":
-                        mainActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-
-                        Toast.makeText(mainActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
-                                Toast.LENGTH_SHORT).show();
-                        mainActivity.messageIntent();
-                        break;
-                    case "Incargo":
-                        inCargoActivity.sendMessage(nick+":"+consigneeName+"_"+inoutCargo+"사진 전송");
-                        Toast.makeText(inCargoActivity.getApplicationContext(),msg+"("+(i+1)+")"+"개의 사진을 전송 했습니다",
-                                Toast.LENGTH_SHORT).show();
-                        inCargoActivity.messageIntent();
-                        break;
-                }
-
-        }
 
     public void putMessage(String msg, String imageUri, String captureItem, String uploadItem){
         @SuppressLint("SimpleDateFormat")

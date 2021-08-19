@@ -104,6 +104,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     ArrayList<String> arrAnnualLeaveStaff = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -234,6 +235,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         intent.putExtra("deptName", deptName);
         intent.putExtra("nickName", nickName);
         intent.putExtra("listOut", listOut);
+
         startActivity(intent);
     }
 
@@ -258,11 +260,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
                 for (DataSnapshot data : snapshot.getChildren()) {
                     AnnualList list = data.getValue(AnnualList.class);
-                    Log.i("TestValue","Date Value::"+date+"///List Date Value::::"+list.getHalf1()  );
                     if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
                         arrAnnualLeaveStaff.add("휴가자:" + list.getName());
-                    }
-                    if (list.getAnnual().equals(date) || list.getAnnual2().equals(date)) {
+                    }else if (list.getAnnual().equals(date) || list.getAnnual2().equals(date)) {
                         if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
                             arrAnnualLeaveStaff.add("연차자:" + list.getName());
                         }
@@ -681,7 +681,14 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                     }
                                 }
 
-                                intentOutcargoActivity();
+                                Intent intent = new Intent(TitleActivity.this, OutCargoActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.putExtra("deptName", deptName);
+                                intent.putExtra("nickName", nickName);
+                                intent.putExtra("listOut", listOut);
+                                intent.putExtra("refPath",refPath);
+
+                                startActivity(intent);
                                 break;
 
                             case 2:

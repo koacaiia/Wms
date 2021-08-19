@@ -4,7 +4,8 @@
     android:layout_width="100dp"
     android:layout_height="100dp"
     android:background="@xml/item_selector"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/capturecardview"
