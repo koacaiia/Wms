@@ -261,7 +261,13 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 for (DataSnapshot data : snapshot.getChildren()) {
                     AnnualList list = data.getValue(AnnualList.class);
                     if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
-                        arrAnnualLeaveStaff.add("휴가자:" + list.getName());
+                        int toDay=Integer.parseInt(new SimpleDateFormat("yyyyMMdd").format(new Date()));
+                        int annualRe1=Integer.parseInt(list.getAnnual().replaceAll("-",""));
+                        int annualRe2=Integer.parseInt(list.getAnnual2().replaceAll("-",""));
+                        if(toDay>=annualRe1&&toDay<=annualRe2){
+                            arrAnnualLeaveStaff.add("휴가자:" + list.getName());
+                                                    }
+
                     }else if (list.getAnnual().equals(date) || list.getAnnual2().equals(date)) {
                         if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
                             arrAnnualLeaveStaff.add("연차자:" + list.getName());

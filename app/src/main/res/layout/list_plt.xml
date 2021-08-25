@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/list_plt_date"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="날짜"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/list_plt_in"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="입고"
+        android:textColor="#F80303"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/list_plt_out"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="출고"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/list_plt_stock"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="재고"
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/list_plt_bl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="비엘"
+        android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/list_plt_des"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="픔명"
+        android:textStyle="bold|italic" />
+</LinearLayout>

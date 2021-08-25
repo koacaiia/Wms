@@ -26,6 +26,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
+        <activity
+            android:name=".ActivityPallet"
+            android:exported="true" />
         <activity android:name=".Incargo" />
         <activity android:name=".OutCargoActivity" />
         <activity android:name=".AnnualLeave" />
@@ -34,9 +37,7 @@
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </service>
-
-        <!-- <activity android:name=".FcmProcess" /> -->
+        </service> <!-- <activity android:name=".FcmProcess" /> -->
         <activity android:name=".PutDataReg" />
         <activity
             android:name=".ImageViewActivity"

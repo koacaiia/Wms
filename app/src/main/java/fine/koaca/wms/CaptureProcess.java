@@ -114,13 +114,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 Bitmap bitmap=Bitmap.createBitmap(src.getWidth(),src.getHeight(),Bitmap.Config.ARGB_8888);
                 Canvas canvas=new Canvas(bitmap);
                 Paint paint=new Paint();
-                paint.setTextSize(15);
+                paint.setTextSize(src.getWidth()/20);
                 paint.setTypeface(Typeface.create(Typeface.DEFAULT,Typeface.BOLD_ITALIC));
                 paint.setColor(Color.WHITE);
                 paint.setStyle(Paint.Style.FILL);
                 canvas.drawBitmap(src,0f,0f,null);
                 String timeStamp=new SimpleDateFormat("yyyy년 MM월 dd일  E요일 HH시mm분ss초").format(new Date());
-                canvas.drawText(timeStamp,20f,src.getHeight()-30f,paint);
+                canvas.drawText(timeStamp,20f,src.getHeight()-50f,paint);
 //                windowDegree = new WindowDegree(mainActivity);
 //                int degree = windowDegree.getDegree();
 //                bitmap = rotate(bitmap, degree);

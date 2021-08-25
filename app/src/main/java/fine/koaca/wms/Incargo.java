@@ -1007,14 +1007,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
                     for(DataSnapshot data:snapshot.getChildren()){
                         String keyValue=data.getKey();
+                        if(keyValue.equals("null")){
+                            Map<String,Object> nullValue=new HashMap<>();
+                            nullValue.put("null",null);
+                            DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
+                                    "-" + finalDate );
+                            databaseReference.updateChildren(nullValue);
+                        }
                         if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")){
                             Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
                             if(mList.getKeyValue()==null){
                                 value.put("keyValue",keyValue);
-                                value.put("nickName",nickName);
-                                value.put("consigneeName",consigneeName);
-                                value.put("time",
-                                        new SimpleDateFormat("yyyy년 MM월 dd일  E요일 HH시mm분ss초").format(new Date()));
                                 DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
                                         "-" + finalDate +"/"+keyValue);
                                 databaseReference.updateChildren(value);
@@ -1027,16 +1030,11 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                             if(dayReList>=startDayRe&&dayReList<=endDayRe){
                                 switch(sortKey){
                                     case "all":
-                                        if(consigneeName==null){
+                                        if(consigneeName!=null){
                                             listItems.add(mList);
-                                        }else{
-                                            if(consigneeName.equals(mList.getConsignee())){
-                                                listItems.add(mList);
-                                            }
                                         }
                                             break;
                                             case "sort":
-
                                                     if(!mList.getContainer20().equals("0")||!mList.getContainer40().equals("0")||!mList.getLclcargo().equals("0")){
                                                         if(consigneeName.equals("ALL")){
 
@@ -1205,6 +1203,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         incargoContent.add("창고반입");
         incargoContent.add("입고관련 사진등록");
         incargoContent.add("신규입고 항목으로 공유");
+        incargoContent.add("Pallet 등록");
         incargoContent.add("항목 입고 관련사진 검색");
 
 
@@ -1215,9 +1214,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-
+                        PublicMethod publicMethod=new PublicMethod(Incargo.this);
                         switch(which){
-                            case 1: case 2: case 3:
+                            case 0:case 1: case 2: case 3:
                                 String contentValue = incargoContentList[which];
                                 Map<String, Object> putValue = new HashMap<>();
                                 putValue.put("working", contentValue);
@@ -1228,11 +1227,36 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 pickedUpItemClick(keyValue);
                                 break;
                             case 5:
-                                PublicMethod publicMethod=new PublicMethod(Incargo.this);
                                 publicMethod.putNewDataUpdateAlarm(nickName,updateTitleValue+" 신규 등록",consigneeName,
                                         "InCargo",deptName);
-                                break;
+                                 break;
                             case 6:
+                                String bl=listItems.get(0).getBl();
+                                String des=listItems.get(0).getDescription();
+
+                                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                                builder.setTitle("팔렛트 등록 확인창")
+                                        .setMessage("사용등록:"+"\n"+"리스트상의 화물에 대한 팔렛트적재 사용등록"+"\n"+"수기등록:"+"\n"+"리스트 무관하게 팔렛트 입고시 " +
+                                                "입고등록")
+
+                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                publicMethod.pltReg(consigneeName,keyValue,nickName,0,bl,des);
+
+                                            }
+                                        })
+
+                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                            manualPltReg();
+
+                                            }
+                                        })
+                                        .show();
+                                break;
+                            case 7:
                                 itemPictureList(keyValue);
                                 break;
 
@@ -1482,7 +1506,46 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
 
+    public void manualPltReg(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        Spinner spinner=new Spinner(this);
+        PublicMethod publicMethod=new PublicMethod(this);
+        final String[] consigneeName = new String[1];
+        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+                publicMethod.getConsigneeList());
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                consigneeName[0] =publicMethod.getConsigneeList().get(position);
+                Toast.makeText(Incargo.this,consigneeName[0]+" 으로 업체 선택 하였습니다.",Toast.LENGTH_SHORT).show();
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        builder.setTitle("팔렛트 입고 화주선택 창")
+                .setView(spinner)
+                .setMessage("입고 팔렛트 업체명 확인후 "+"\n"+"하단 등록버튼 클릭하면 세부등록창으로 전환 됩니다.")
+                .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        publicMethod.pltReg(consigneeName[0],dateToday+"입고",nickName,0,nickName,"");
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
+
+
+    }
 
 
 }

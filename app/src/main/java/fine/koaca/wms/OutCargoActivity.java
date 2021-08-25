@@ -18,6 +18,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,6 +78,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     FloatingActionButton fltBtn;
 
     PublicMethod publicMethod;
+    int listPosition;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -167,7 +171,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         String consigneeName=list.get(position).getConsigneeName();
         String dialogTitle=
                 consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
-
+        listPosition=position;
         getOutcargoData(refPath);
         itemClickedDialog(consigneeName,dialogTitle);
     }
@@ -209,6 +213,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         clickValue.add("사진포함 출고완료 등록");
         clickValue.add("미출고 등록");
         clickValue.add("신규출고 항목으로 공유");
+        clickValue.add("Pallet 등록");
         clickValue.add("항목 출고 사진 검색");
 
         String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
@@ -216,14 +221,15 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         builder.setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
                 switch(which){
+
                     case 0:
                         updateValue("완");
                         intentTitleActivity();
                         break;
                     case 1:
                         updateValue("완");
-//                        intentImageViewActivity();
                         pictureUpdate();
                         break;
                     case 2:
@@ -231,13 +237,32 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         intentTitleActivity();
                         break;
                     case 3:
-                        PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
-                        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",
-                                deptName);
+                        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",deptName);
+                        break;
+                    case 4:
+//                        putPalletReg(consigneeName);
+                        int totalQty=Integer.parseInt(list.get(0).getTotalQty().replace("PLT",""));
+
+                        AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+                        builder.setTitle("팔렛트 등록 확인창")
+                                .setMessage("출고 팔렛트가 재고관리 되는 팔렛트 인 경우"+"\n"+"하단의 등록 버튼을 눌러 재고관리 진행 바랍니다.!")
+                                .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+//                                        publicMethod.pltReg(consigneeName,list.get(0).getKeypath(),nickName,totalQty);
+                                    }
+                                })
+                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
 
                         break;
 
-                    case 4:
+                    case 5:
                         itemPictureList(list.get(0).getKeypath());
                          break;
                 }
@@ -245,6 +270,60 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             }
         })
                 .show();
+    }
+
+    private void putPalletReg(String consigneeName) {
+        ArrayList<String> palletArrayList=new ArrayList<>();
+        palletArrayList.add("KPP");
+        palletArrayList.add("AJ");
+        palletArrayList.add("ETC");
+
+        String[] palletList=palletArrayList.toArray(new String[palletArrayList.size()]);
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+
+        builder.setTitle("등록팔렛트 관리")
+
+                .setSingleChoiceItems(palletList,0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        switch(which){
+                            case 0:
+                                AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+                                EditText editText=new EditText(OutCargoActivity.this);
+                                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                editText.setText(list.get(0).getTotalQty());
+
+                                builder.setTitle(palletArrayList.get(which)+"Pallet"+list.get(0).getTotalQty()+" 장을 팔렛트 등록합니다.")
+                                .setMessage("수정사항 있으면 하단 입력창에 수정사항 입력후 등록 바랍니다")
+                                .setView(editText);
+
+                                builder.setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        int pltQty=Integer.parseInt(editText.getText().toString());
+                                        String pltDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                                        String keyValue=list.get(0).getKeypath();
+                                        DatabaseReference pltRef=
+                                                database.getReference("DeptName/"+deptName+"/PltManagement/"+consigneeName+"/"+
+                                                                "KPP"+"/"+nickName+"_"+keyValue);
+                                        Map<String,Object> value=new HashMap<>();
+                                        value.put("nickName",nickName);
+                                        value.put("date",pltDate);
+                                        value.put("outQty",pltQty);
+                                        value.put("keyValue",keyValue);
+
+                                        pltRef.updateChildren(value);
+
+
+                                    }
+                                })
+                                .show();
+
+                                break;
+                        }
+                    }
+                }).show();
     }
 
     public void itemPictureList(String keyValue) {
@@ -274,6 +353,13 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                 imageRecyclerView.setAdapter(iAdapter);
                                 iAdapter.notifyDataSetChanged();
                             }
+                            iAdapter.clickListener=new ImageViewActivityAdapter.ImageViewClicked() {
+                                @Override
+                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+                                    PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
+                                }
+                            };
 
 
                         }
@@ -298,6 +384,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
         imageRecyclerView.setAdapter(iAdapter);
+
 
     }
 

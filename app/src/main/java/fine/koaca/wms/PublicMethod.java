@@ -15,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,6 +50,7 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -349,6 +351,16 @@ public class PublicMethod {
             }
         });
 
+        Button btnPallet=view.findViewById(R.id.dialog_select_intent_btnPallet);
+        btnPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,ActivityPallet.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+            }
+        });
+
         builder.setView(view);
 
         AlertDialog dialog=builder.create();
@@ -584,5 +596,146 @@ public class PublicMethod {
 
     }
 
+    public void pltReg(String consigneeName, String keyValue, String nickName, int totalQty,String bl,String des){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        final String[] pltS = new String[1];
+        final String[] inOut = new String[1];
+        final int[] pltQty = new int[1];
+        View view=activity.getLayoutInflater().inflate(R.layout.dialog_plt_reg,null);
+        TextView pltTxt=view.findViewById(R.id.plt_txtTitle);
+        TextView pltTxtBl=view.findViewById(R.id.plt_txtBl);
+        pltTxtBl.setText("비엘:"+bl);
+        TextView pltTxtDes=view.findViewById(R.id.plt_txtDes);
+        pltTxtDes.setText("품명:"+des);
+        pltTxt.setText("화주명:"+consigneeName+" 팔렛트 재고등록");
+        Button pltBtnKpp=view.findViewById(R.id.plt_btnKPP);
+        Button pltBtnAj=view.findViewById(R.id.plt_btnAJ);
+        Button pltBtnEtc=view.findViewById(R.id.plt_btnETC);
+        pltBtnKpp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltS[0] ="KPP";
+                pltBtnKpp.setTextColor(Color.RED);
+                pltBtnAj.setTextColor(Color.WHITE);
+                pltBtnEtc.setTextColor(Color.WHITE);
+                pltTxt.setText(consigneeName+" "+pltS[0]);
+            }
+        });
 
+        pltBtnAj.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltS[0]="AJ";
+                pltBtnKpp.setTextColor(Color.WHITE);
+                pltBtnAj.setTextColor(Color.RED);
+                pltBtnEtc.setTextColor(Color.WHITE);
+                pltTxt.setText(consigneeName+" "+pltS[0]);
+            }
+        });
+
+        pltBtnEtc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltS[0]="ETC";
+                pltBtnKpp.setTextColor(Color.WHITE);
+                pltBtnAj.setTextColor(Color.WHITE);
+                pltBtnEtc.setTextColor(Color.RED);
+                pltTxt.setText(consigneeName+" "+pltS[0]);
+            }
+        });
+        EditText pltEdit=view.findViewById(R.id.plt_editQty);
+        pltEdit.setText(String.valueOf(totalQty));
+        pltEdit.setInputType(InputType.TYPE_CLASS_NUMBER);
+        pltEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltEdit.setText("");
+            }
+        });
+        Button pltIn=view.findViewById(R.id.plt_btnIn);
+        Button pltOut=view.findViewById(R.id.plt_btnOut);
+        pltIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltIn.setTextColor(Color.RED);
+                pltOut.setTextColor(Color.WHITE);
+                inOut[0] ="In";
+                pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
+                pltTxt.setText(consigneeName+" 입고 "+pltS[0]+" 팔렛트 "+pltQty[0]+" 장 등록");
+
+            }
+        });
+
+        pltOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pltIn.setTextColor(Color.WHITE);
+                pltOut.setTextColor(Color.RED);
+                inOut[0]="Out";
+                pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
+                pltTxt.setText(consigneeName+" 출고 "+pltS[0]+" 팔렛트 "+pltQty[0]+" 장 등록");
+            }
+        });
+        builder.setTitle("팔렛트 재고 등록 확인 창")
+                .setView(view)
+                .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
+                        String pltDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                        SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+                        String deptName=sharedPreferences.getString("deptName",null);
+                        DatabaseReference consigneeRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                "/PltManagement/consigneeValue");
+                        Map<String,Object> consigneeValue=new HashMap<>();
+                        consigneeValue.put(consigneeName,consigneeName);
+                        consigneeRef.updateChildren(consigneeValue);
+                        DatabaseReference pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+nickName+"_"+keyValue);
+                        Map<String,Object> value=new HashMap<>();
+                        value.put("nickName",nickName);
+                        value.put("date",pltDate);
+                        value.put("keyValue",keyValue);
+                        value.put("bl",bl);
+                        value.put("des",des);
+                        switch(inOut[0]){
+                            case "In":
+                                value.put("inQty",pltQty[0]);
+                                value.put("outQty",0);
+                                break;
+                            case "Out":
+                                value.put("inQty",0);
+                                value.put("outQty",pltQty[0]);
+                        }
+                        pltRef.updateChildren(value);
+                        Toast.makeText(activity,consigneeName+"_"+pltS[0]+"_"+inOut[0]+"_"+pltQty[0]+"장으로 서버 등록 되었습니다.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .show();
+    }
+    public ArrayList<String> getConsigneeList(){
+        SharedPreferences preferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+        String consigneeStr=preferences.getString("consigneeList",null);
+        ArrayList<String> consigneeList=new ArrayList<String>();
+        if(consigneeStr !=null){
+            try {
+                JSONArray jsonArray=new JSONArray(consigneeStr);
+                for(int i=0;i<jsonArray.length();i++){
+                    String consigneeName=jsonArray.optString(i);
+                    consigneeList.add(consigneeName);
+                    Log.i("TestValue","consigneeName:::"+consigneeName);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return consigneeList;
+    }
 }

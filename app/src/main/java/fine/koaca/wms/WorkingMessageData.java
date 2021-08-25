@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,6 +38,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -441,7 +443,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     }
 
                 }
-
+                setStringArrayPref(consigneeArrayList);
                 consigneeArrayList.add(0,"ALL");
                 consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
                 dialog_date="All Time";
@@ -523,6 +525,23 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
 
 
    }
+
+    private void setStringArrayPref(ArrayList<String> consigneeArrayList) {
+        SharedPreferences preferences=getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=preferences.edit();
+        JSONArray jsonArray=new JSONArray();
+
+        for(int i=0;i<consigneeArrayList.size();i++){
+            jsonArray.put(consigneeArrayList.get(i));
+        }
+        if(!consigneeArrayList.isEmpty()){
+            editor.putString("consigneeList",jsonArray.toString());
+        }else{
+            editor.putString("consigneeList",null);
+        }
+        editor.apply();
+    }
+
     public void processDatePickerResult(int year, int month, int dayOfMonth) {
         String month_string;
         if(month<10){
