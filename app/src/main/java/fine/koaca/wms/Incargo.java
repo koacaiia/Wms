@@ -146,14 +146,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        publicMethod=new PublicMethod(this);
-        deptName=publicMethod.getUserInformation().get("deptName");
-        nickName=publicMethod.getUserInformation().get("nickName");
+        publicMethod = new PublicMethod(this);
+        deptName = publicMethod.getUserInformation().get("deptName");
+        nickName = publicMethod.getUserInformation().get("nickName");
 
-        dateToday= new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+        dateToday = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 
-        day_start=dateToday;
-        day_end=dateToday;
+        day_start = dateToday;
+        day_end = dateToday;
 
         checkWeekend();
         incargo_incargo = findViewById(R.id.incargo_incargo);
@@ -168,7 +168,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         database = FirebaseDatabase.getInstance();
 
 
-        getFirebaseData(day_start,day_end,"sort", "ALL");
+        getFirebaseData(day_start, day_end, "sort", "ALL");
         adapter = new IncargoListAdapter(listItems, this, this);
         recyclerView.setAdapter(adapter);
 
@@ -189,7 +189,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             @Override
             public boolean onLongClick(View v) {
 
-                getFirebaseData(day_start,day_end, "all", "ALL");
+                getFirebaseData(day_start, day_end, "all", "ALL");
                 return true;
             }
         });
@@ -237,19 +237,19 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                publicMethod=new PublicMethod(Incargo.this,imageViewListsSelected);
-                publicMethod.upLoadPictures(nickName,listItems.get(0).getConsignee(),"InCargo",listItems.get(0).getKeyValue(),
+                publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
+                publicMethod.upLoadPictures(nickName, listItems.get(0).getConsignee(), "InCargo", listItems.get(0).getKeyValue(),
                         deptName);
-                String date=listItems.get(0).getDate();
-                Map<String,Object> putValue=new HashMap<>();
-                putValue.put("working","컨테이너 진입");
-                databaseReference=
-                        database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +date.substring(5,7) + "월/" + date+
-                                "/"+keyValue);
+                String date = listItems.get(0).getDate();
+                Map<String, Object> putValue = new HashMap<>();
+                putValue.put("working", "컨테이너 진입");
+                databaseReference =
+                        database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
+                                "/" + keyValue);
                 databaseReference.updateChildren(putValue);
-                Log.i("TestValue","DeptName/" + deptName + "/" +"InCargo" + "/" +date.substring(5,7) + "월/" + date+
-                        "/"+keyValue);
-                Toast.makeText(getApplicationContext(),"컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.",Toast.LENGTH_SHORT).show();
+                Log.i("TestValue", "DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
+                        "/" + keyValue);
+                Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
 //                initIntent();
 
             }
@@ -268,25 +268,25 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
     private void checkWeekend() {
-        Calendar calendar=Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        calendar.set(Calendar.DAY_OF_WEEK,Calendar.SATURDAY);
-        String satDay=simpleDateFormat.format(calendar.getTime());
-        calendar.set(Calendar.DAY_OF_WEEK,Calendar.SUNDAY);
-        String sunDay=simpleDateFormat.format(calendar.getTime());
-        if(dateToday.equals(sunDay)){
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
-            day_start=simpleDateFormat.format(calendar.getTime());
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
-            day_end=simpleDateFormat.format(calendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+        String satDay = simpleDateFormat.format(calendar.getTime());
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+        String sunDay = simpleDateFormat.format(calendar.getTime());
+        if (dateToday.equals(sunDay)) {
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            day_start = simpleDateFormat.format(calendar.getTime());
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            day_end = simpleDateFormat.format(calendar.getTime());
         }
 
-        if(dateToday.equals(satDay)){
-            calendar.add(Calendar.DATE,7);
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
-            day_start=simpleDateFormat.format(calendar.getTime());
-            calendar.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
-            day_end=simpleDateFormat.format(calendar.getTime());
+        if (dateToday.equals(satDay)) {
+            calendar.add(Calendar.DATE, 7);
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+            day_start = simpleDateFormat.format(calendar.getTime());
+            calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+            day_end = simpleDateFormat.format(calendar.getTime());
         }
 
     }
@@ -360,9 +360,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         searchBuilder.setNeutralButton("ALL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String sortContents=editText.getText().toString();
-                searchContents="ALL";
-                getFirebaseData("2021-01-01","2021-12-31","all",sortContents);
+                String sortContents = editText.getText().toString();
+                searchContents = "ALL";
+                getFirebaseData("2021-01-01", "2021-12-31", "all", sortContents);
                 searchFirebaseDatabaseToArray(sortContents);
 
             }
@@ -529,9 +529,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     public void searchFirebaseDatabaseToArray(String sortContents) {
 
-        for(int i=(listItems.size()-1);0<=i;i--){
-            int containerNameLength=listItems.get(i).getContainer().length();
-            int blNameLength=listItems.get(i).getBl().length();
+        for (int i = (listItems.size() - 1); 0 <= i; i--) {
+            int containerNameLength = listItems.get(i).getContainer().length();
+            int blNameLength = listItems.get(i).getBl().length();
 
             switch (searchContents) {
                 case "container":
@@ -551,14 +551,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     }
                     break;
                 case "ALL":
-                    if(containerNameLength ==11&& blNameLength >4){
-                      String sort_containerName=
-                              listItems.get(i).getContainer().substring(listItems.get(i).getContainer().length() -4 );
-                      String sort_blName=
-                              listItems.get(i).getBl().substring(listItems.get(i).getBl().length() -4);
-                      if(!sortContents.equals(sort_containerName) ||sortContents.equals(sort_blName)){
-                          listItems.remove(i);
-                      }
+                    if (containerNameLength == 11 && blNameLength > 4) {
+                        String sort_containerName =
+                                listItems.get(i).getContainer().substring(listItems.get(i).getContainer().length() - 4);
+                        String sort_blName =
+                                listItems.get(i).getBl().substring(listItems.get(i).getBl().length() - 4);
+                        if (!sortContents.equals(sort_containerName) || sortContents.equals(sort_blName)) {
+                            listItems.remove(i);
+                        }
 
                     }
 
@@ -566,7 +566,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         }
         adapter.notifyDataSetChanged();
-
 
 
     }
@@ -589,9 +588,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             contNO = listSortItems.get(i).getContainer();
             Map<String, Object> childUpdates = new HashMap<>();
             childUpdates.put(dateO + "_" + blO + "_" + desO + "_" + countO + "_" + contNO + "/", null);
-            String keyValue=listSortItems.get(i).getKeyValue();
-            DatabaseReference databaseReference=
-                    database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +keyValue.substring(5,7) + "월/" +keyValue.substring(0,10));
+            String keyValue = listSortItems.get(i).getKeyValue();
+            DatabaseReference databaseReference =
+                    database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0, 10));
             databaseReference.updateChildren(childUpdates);
             String chBl;
 
@@ -643,7 +642,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
             FirebaseDatabase database = FirebaseDatabase.getInstance();
             databaseReference =
-                    database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +regDate.substring(5,7) + "월/" + regDate+
+                    database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + regDate.substring(5, 7) + "월/" + regDate +
                             "/" + regDate + "_" + regBl + "_" + listSortItems.get(i).getDescription() +
                             "_" + listSortItems.get(i).getCount() + "_" + regContainer);
 
@@ -653,15 +652,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     "(" + listSortItems.get(i).getDate() + ")_" + listSortItems.get(i).getConsignee() + "_" + "비엘: " + listSortItems.get(i).getBl() +
                             "를";
             String msg1 = chDate + chBl + chContainer + chRemark + "로 변경 진행 합니다.";
-            publicMethod=new PublicMethod(this);
-            publicMethod.putNewDataUpdateAlarm(nickName,msg+"\n"+msg1,listSortItems.get(i).getConsignee(),"InCargo",deptName);
+            publicMethod = new PublicMethod(this);
+            publicMethod.putNewDataUpdateAlarm(nickName, msg + "\n" + msg1, listSortItems.get(i).getConsignee(), "InCargo", deptName);
 
 
         }
         sort_dialog = "dialogsort";
         getFirebaseData(day_start, day_end, "sort", sortConsignee);
     }
-
 
 
     public void putMessage(String msg, String etc, String nick) {
@@ -682,8 +680,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference = database.getReference("WorkingMessage" + "/" + nick + "_" + date + "_" + timeStamp);
         databaseReference.setValue(messageList);
-        PublicMethod publicMethod=new PublicMethod(this);
-        publicMethod.sendPushMessage(deptName,nickName,msg,"WorkingMessage");
+        PublicMethod publicMethod = new PublicMethod(this);
+        publicMethod.sendPushMessage(deptName, nickName, msg, "WorkingMessage");
 
 
     }
@@ -755,10 +753,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         TextView textViewQty = view.findViewById(R.id.exQty);
         textViewQty.setText(qty + " PLT");
 
-        consignee_list=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
+        consignee_list = consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
-        consigneeArrayList.add(0,"ALL");
-        shared_consigneeList=consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
+        consigneeArrayList.add(0, "ALL");
+        shared_consigneeList = consigneeArrayList.toArray(new String[consigneeArrayList.size()]);
 
         Button searchDetail = view.findViewById(R.id.btnDetailSearch);
 
@@ -823,7 +821,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         if (getIntent().getStringExtra("refPath") != null) {
             selectedItemGetDatabase(getIntent().getStringExtra("date"), getIntent().getStringExtra("refPath"));
             pickedUpItemClick(getIntent().getStringExtra("refPath"));
-            keyValue=getIntent().getStringExtra("refPath");
+            keyValue = getIntent().getStringExtra("refPath");
             dialog.dismiss();
         }
     }
@@ -968,33 +966,32 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
 
-
-    private void getFirebaseData(String startDay, String endDay,String sortKey,String consigneeName) {
+    private void getFirebaseData(String startDay, String endDay, String sortKey, String consigneeName) {
 
         consigneeArrayList.clear();
         listItems.clear();
-        int startDayRe=Integer.parseInt(startDay.replace("-",""));
-        int endDayRe=Integer.parseInt(endDay.replace("-",""));
-        for(int i=1;i<=12;i++){
-            Calendar calendar=Calendar.getInstance();
-            calendar.set(2021,i-1,1);
-            int monthOfLastDay=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int startDayRe = Integer.parseInt(startDay.replace("-", ""));
+        int endDayRe = Integer.parseInt(endDay.replace("-", ""));
+        for (int i = 1; i <= 12; i++) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(2021, i - 1, 1);
+            int monthOfLastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-            for(int j=1;j<=monthOfLastDay;j++){
-                String date=null;
-                String month=null;
-                if(i+1<10){
-                    month="0"+i;
-                }else{
-                    month=String.valueOf(i);
+            for (int j = 1; j <= monthOfLastDay; j++) {
+                String date = null;
+                String month = null;
+                if (i + 1 < 10) {
+                    month = "0" + i;
+                } else {
+                    month = String.valueOf(i);
                 }
-                if(j<10){
-                    date="0"+j;
-                }else{
-                    date=String.valueOf(j);
+                if (j < 10) {
+                    date = "0" + j;
+                } else {
+                    date = String.valueOf(j);
                 }
-            DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +month+ "월/" + "2021-" + month+
-                    "-" + date+"/");
+                DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month + "월/" + "2021-" + month +
+                        "-" + date + "/");
 
                 String finalMonth = month;
                 String finalDate = date;
@@ -1003,60 +1000,60 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     @SuppressLint("NotifyDataSetChanged")
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Map<String,Object> value=new HashMap<>();
+                        Map<String, Object> value = new HashMap<>();
 
-                    for(DataSnapshot data:snapshot.getChildren()){
-                        String keyValue=data.getKey();
-                        if(keyValue.equals("null")){
-                            Map<String,Object> nullValue=new HashMap<>();
-                            nullValue.put("null",null);
-                            DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
-                                    "-" + finalDate );
-                            databaseReference.updateChildren(nullValue);
-                        }
-                        if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")){
-                            Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                            if(mList.getKeyValue()==null){
-                                value.put("keyValue",keyValue);
-                                DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
-                                        "-" + finalDate +"/"+keyValue);
-                                databaseReference.updateChildren(value);
+                        for (DataSnapshot data : snapshot.getChildren()) {
+                            String keyValue = data.getKey();
+                            if (keyValue.equals("null")) {
+                                Map<String, Object> nullValue = new HashMap<>();
+                                nullValue.put("null", null);
+                                DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
+                                        "-" + finalDate);
+                                databaseReference.updateChildren(nullValue);
                             }
+                            if (!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+                                Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
+                                if (mList.getKeyValue() == null) {
+                                    value.put("keyValue", keyValue);
+                                    DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + finalMonth + "월/" + "2021-" + finalMonth +
+                                            "-" + finalDate + "/" + keyValue);
+                                    databaseReference.updateChildren(value);
+                                }
 
-                            int dayReList=Integer.parseInt(mList.getDate().replace("-",""));
-                            if(!consigneeArrayList.contains(mList.getConsignee())){
-                                consigneeArrayList.add(mList.getConsignee());
-                            }
-                            if(dayReList>=startDayRe&&dayReList<=endDayRe){
-                                switch(sortKey){
-                                    case "all":
-                                        if(consigneeName!=null){
-                                            listItems.add(mList);
-                                        }
+                                int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
+                                if (!consigneeArrayList.contains(mList.getConsignee())) {
+                                    consigneeArrayList.add(mList.getConsignee());
+                                }
+                                if (dayReList >= startDayRe && dayReList <= endDayRe) {
+                                    switch (sortKey) {
+                                        case "all":
+                                            if (consigneeName != null) {
+                                                listItems.add(mList);
+                                            }
                                             break;
-                                            case "sort":
-                                                    if(!mList.getContainer20().equals("0")||!mList.getContainer40().equals("0")||!mList.getLclcargo().equals("0")){
-                                                        if(consigneeName.equals("ALL")){
+                                        case "sort":
+                                            if (!mList.getContainer20().equals("0") || !mList.getContainer40().equals("0") || !mList.getLclcargo().equals("0")) {
+                                                if (consigneeName.equals("ALL")) {
 
-                                                            listItems.add(mList);
-                                                        }else{
-                                                            if(consigneeName.equals(mList.getConsignee())){
-                                                                listItems.add(mList);
-                                                            }
-                                                        }
+                                                    listItems.add(mList);
+                                                } else {
+                                                    if (consigneeName.equals(mList.getConsignee())) {
+                                                        listItems.add(mList);
                                                     }
+                                                }
+                                            }
+                                    }
+
                                 }
 
                             }
 
+
                         }
-
-
-                    }
-                        if(finalMonth.equals("12")&& finalDate.equals("31")){
+                        if (finalMonth.equals("12") && finalDate.equals("31")) {
 
                             adapter.notifyDataSetChanged();
-                            sortDialog(startDay,endDay,listItems);
+                            sortDialog(startDay, endDay, listItems);
                             String date;
                             if (startDay.equals(endDay)) {
                                 date = startDay;
@@ -1132,7 +1129,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
 
-      @Override
+    @Override
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -1145,16 +1142,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
 
-
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        String consigneeName=listItems.get(pos).getConsignee();
-        keyValue=listItems.get(pos).getKeyValue();
-        String updateTitleValue=
-                consigneeName+"_비엘:"+listItems.get(pos).getBl()+"_컨테이너:"+listItems.get(pos).getContainer();
-        selectedItemGetDatabase(listItems.get(pos).getDate(),keyValue);
+        String consigneeName = listItems.get(pos).getConsignee();
+        keyValue = listItems.get(pos).getKeyValue();
+        String updateTitleValue =
+                consigneeName + "_비엘:" + listItems.get(pos).getBl() + "_컨테이너:" + listItems.get(pos).getContainer();
+        selectedItemGetDatabase(listItems.get(pos).getDate(), keyValue);
 
-        pickedUpItemClickDialog(keyValue,updateTitleValue,consigneeName);
+        pickedUpItemClickDialog(keyValue, updateTitleValue, consigneeName);
 
 
     }
@@ -1162,15 +1158,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     private void selectedItemGetDatabase(String date, String keyValue) {
         listItems.clear();
 
-        databaseReference=
-                database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +date.substring(5,7) + "월/" + date);
+        databaseReference =
+                database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                for(DataSnapshot data:snapshot.getChildren()){
-                    if(!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")){
-                        Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
-                        if(Objects.equals(data.getKey(), keyValue)){
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    if (!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")) {
+                        Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
+                        if (Objects.equals(data.getKey(), keyValue)) {
                             listItems.add(mList);
                         }
                     }
@@ -1191,7 +1187,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference1 =
-                database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" +keyValue.substring(5,7) + "월/" +keyValue.substring(0,10)+
+                database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0, 10) +
 
                         "/" + keyValue);
         AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
@@ -1209,14 +1205,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         String[] incargoContentList = incargoContent.toArray(new String[incargoContent.size()]);
 
-        builder.setTitle(updateTitleValue+" 입고")
+        builder.setTitle(updateTitleValue + " 입고")
                 .setSingleChoiceItems(incargoContentList, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        PublicMethod publicMethod=new PublicMethod(Incargo.this);
-                        switch(which){
-                            case 0:case 1: case 2: case 3:
+                        PublicMethod publicMethod = new PublicMethod(Incargo.this);
+                        switch (which) {
+                            case 0:
+                            case 1:
+                            case 2:
+                            case 3:
                                 String contentValue = incargoContentList[which];
                                 Map<String, Object> putValue = new HashMap<>();
                                 putValue.put("working", contentValue);
@@ -1227,22 +1226,22 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 pickedUpItemClick(keyValue);
                                 break;
                             case 5:
-                                publicMethod.putNewDataUpdateAlarm(nickName,updateTitleValue+" 신규 등록",consigneeName,
-                                        "InCargo",deptName);
-                                 break;
+                                publicMethod.putNewDataUpdateAlarm(nickName, updateTitleValue + " 신규 등록", consigneeName,
+                                        "InCargo", deptName);
+                                break;
                             case 6:
-                                String bl=listItems.get(0).getBl();
-                                String des=listItems.get(0).getDescription();
+                                String bl = listItems.get(0).getBl();
+                                String des = listItems.get(0).getDescription();
 
-                                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
                                 builder.setTitle("팔렛트 등록 확인창")
-                                        .setMessage("사용등록:"+"\n"+"리스트상의 화물에 대한 팔렛트적재 사용등록"+"\n"+"수기등록:"+"\n"+"리스트 무관하게 팔렛트 입고시 " +
+                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
                                                 "입고등록")
 
                                         .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                publicMethod.pltReg(consigneeName,keyValue,nickName,0,bl,des);
+                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
 
                                             }
                                         })
@@ -1250,7 +1249,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                         .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                            manualPltReg();
+                                                manualPltReg();
 
                                             }
                                         })
@@ -1271,15 +1270,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     @Override
     public void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        String dialogTitle=listItems.get(pos).getConsignee()+"_"+listItems.get(pos).getDescription();
-        selectLongClickDialog(dialogTitle,pos);
+        String dialogTitle = listItems.get(pos).getConsignee() + "_" + listItems.get(pos).getDescription();
+        selectLongClickDialog(dialogTitle, pos);
 
     }
 
     private void selectLongClickDialog(String dialogTitle, int pos) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("입고화물 정보 수정")
-                .setMessage(dialogTitle+" 화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정,또는 " +
+                .setMessage(dialogTitle + " 화물정보에 대한 수정,삭제 진행을 합니다." + "\n" + "화물정보 삭제시에는 하단 삭제 버튼 클릭" + "\n" + "화물정보 수정,또는 " +
                         "화물조회시에는" +
                         " " +
                         "하단 " +
@@ -1303,12 +1302,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         String incargoContainer20 = String.valueOf(listItems.get(pos).getContainer20());
                         String incargoContainer40 = String.valueOf(listItems.get(pos).getContainer40());
                         String incargoCargo = String.valueOf(listItems.get(pos).getLclcargo());
-                        String incargoCount=listItems.get(pos).getCount();
+                        String incargoCount = listItems.get(pos).getCount();
 
 
                         upDataRegList = new String[]{incargoWorking, incargoDate, incargoConsigneeName, incargoDescription,
                                 incargoContainer20, incargoContainer40, incargoCargo,
-                                incargoContainerNumber, incargoQty, incargoBl, incargoRemark,incargoCount};
+                                incargoContainerNumber, incargoQty, incargoBl, incargoRemark, incargoCount};
 
                         if (selectedSortItems.get(pos, false)) {
                             selectedSortItems.put(pos, false);
@@ -1348,15 +1347,15 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Map<String, Object> childUpdates = new HashMap<>();
-                                String keyValue=listItems.get(pos).getKeyValue();
-                                DatabaseReference databaseReference=database.getReference("DeptName/" + deptName + "/" +
-                                        "InCargo" + "/" +keyValue.substring(5,7) + "월/" +keyValue.substring(0,10));
-                                childUpdates.put(listItems.get(pos).getKeyValue()+ "/", null);
+                                String keyValue = listItems.get(pos).getKeyValue();
+                                DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +
+                                        "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0, 10));
+                                childUpdates.put(listItems.get(pos).getKeyValue() + "/", null);
                                 databaseReference.updateChildren(childUpdates);
 
-                                publicMethod=new PublicMethod(Incargo.this);
-                                publicMethod.putNewDataUpdateAlarm(nickName,msgWorking,deConsignee,
-                                        "InCargo",deptName);
+                                publicMethod = new PublicMethod(Incargo.this);
+                                publicMethod.putNewDataUpdateAlarm(nickName, msgWorking, deConsignee,
+                                        "InCargo", deptName);
                                 getFirebaseData(dateToday, dateToday, "sort", sortConsignee);
                             }
                         });
@@ -1415,7 +1414,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
         imageRecyclerView.setAdapter(iAdapter);
     }
-        public void initIntent() {
+
+    public void initIntent() {
         Intent intent = new Intent(Incargo.this, Incargo.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -1436,90 +1436,93 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             captureProcess.firebaseCameraUpLoad(uri, consigneeName, inoutItems, nick, message, strRef, i, arrsize, activityName);
         }
     }
-    public void sendMessage(String message){
 
-       publicMethod=new PublicMethod(this);
-       publicMethod.sendPushMessage(deptName,nickName,message,"CameraUpLoad");
+    public void sendMessage(String message) {
 
-       }
+        publicMethod = new PublicMethod(this);
+        publicMethod.sendPushMessage(deptName, nickName, message, "CameraUpLoad");
+
+    }
 
     public void messageIntent() {
-        Intent intent=new Intent(this,WorkingMessageData.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = new Intent(this, WorkingMessageData.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
+
     @Override
     public void onBackPressed() {
 
-       publicMethod=new PublicMethod(this);
-       publicMethod.intentSelect();
+        publicMethod = new PublicMethod(this);
+        publicMethod.intentSelect();
     }
 
     @Override
     public int compare(Fine2IncargoList a, Fine2IncargoList b) {
-        int compare=0;
-        compare=a.working.compareTo(b.working);
+        int compare = 0;
+        compare = a.working.compareTo(b.working);
         return 0;
     }
+
     public void itemPictureList(String keyValue) {
         imageViewLists.clear();
         RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
         GridLayoutManager manager = new GridLayoutManager(this, 2);
         imageRecyclerView.setLayoutManager(manager);
-        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
-        StorageReference storageReference=
-                storage.getReference("images/"+deptName+"/"+keyValue.substring(0,10)+"/InCargo/"+keyValue);
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+        StorageReference storageReference =
+                storage.getReference("images/" + deptName + "/" + keyValue.substring(0, 10) + "/InCargo/" + keyValue);
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onSuccess(ListResult listResult) {
 
-          for(StorageReference item:listResult.getItems()){
-              item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                  @Override
-                  public void onSuccess(Uri uri) {
+                for (StorageReference item : listResult.getItems()) {
+                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
 
-                 imageViewLists.add(uri.toString());
+                            imageViewLists.add(uri.toString());
 
-                      iAdapter = new ImageViewActivityAdapter(imageViewLists, Incargo.this);
+                            iAdapter = new ImageViewActivityAdapter(imageViewLists, Incargo.this);
 
-                      if(imageViewLists.size()==listResult.getItems().size()){
-                          imageRecyclerView.setAdapter(iAdapter);
-                          iAdapter.notifyDataSetChanged();
-                      }
-                      iAdapter.clickListener= new ImageViewActivityAdapter.ImageViewClicked() {
-                          @Override
-                          public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-                              PublicMethod publicMethod=new PublicMethod(Incargo.this);
-                              publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
-                          }
-                      };
+                            if (imageViewLists.size() == listResult.getItems().size()) {
+                                imageRecyclerView.setAdapter(iAdapter);
+                                iAdapter.notifyDataSetChanged();
+                            }
+                            iAdapter.clickListener = new ImageViewActivityAdapter.ImageViewClicked() {
+                                @Override
+                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+                                    PublicMethod publicMethod = new PublicMethod(Incargo.this);
+                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
+                                }
+                            };
 
-                  }
+                        }
 
-              });
+                    });
 
-          }
+                }
 
             }
         });
 
     }
 
-    public void manualPltReg(){
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        Spinner spinner=new Spinner(this);
-        PublicMethod publicMethod=new PublicMethod(this);
+    public void manualPltReg() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Spinner spinner = new Spinner(this);
+        PublicMethod publicMethod = new PublicMethod(this);
         final String[] consigneeName = new String[1];
-        ArrayAdapter<String> spinnerAdapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
                 publicMethod.getConsigneeList());
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                consigneeName[0] =publicMethod.getConsigneeList().get(position);
-                Toast.makeText(Incargo.this,consigneeName[0]+" 으로 업체 선택 하였습니다.",Toast.LENGTH_SHORT).show();
+                consigneeName[0] = publicMethod.getConsigneeList().get(position);
+                Toast.makeText(Incargo.this, consigneeName[0] + " 으로 업체 선택 하였습니다.", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -1529,11 +1532,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         });
         builder.setTitle("팔렛트 입고 화주선택 창")
                 .setView(spinner)
-                .setMessage("입고 팔렛트 업체명 확인후 "+"\n"+"하단 등록버튼 클릭하면 세부등록창으로 전환 됩니다.")
+                .setMessage("입고 팔렛트 업체명 확인후 " + "\n" + "하단 등록버튼 클릭하면 세부등록창으로 전환 됩니다.")
                 .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        publicMethod.pltReg(consigneeName[0],dateToday+"입고",nickName,0,nickName,"");
+                        getPalletStock(consigneeName[0]);
+
                     }
                 })
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -1547,7 +1551,64 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
 
+    private void getPalletStock(String consigneeName) {
+        String[] pltSlist = {"KPP", "AJ", "ETC"};
+        final int[] kppQty = new int[1];
+        final int[] ajQty = new int[1];
+        final int[] etcQty = new int[1];
+        for (String s : pltSlist) {
+            DatabaseReference pltRef = FirebaseDatabase.getInstance().getReference("DeptName/" + deptName +
+                    "/PltManagement/" + consigneeName + "/" + s);
+            pltRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        ActivityPalletList mList = data.getValue(ActivityPalletList.class);
+                        switch (s) {
+                            case "KPP":
+                                kppQty[0] = mList.getStockQty();
+                                break;
+                            case "AJ":
+                                ajQty[0] = mList.getStockQty();
+                                break;
+                            case "ETC":
+                                etcQty[0] = mList.getStockQty();
+                        }
+                    }
+                    if(s.equals("ETC")){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+                        builder.setTitle("입고 등록전 재고 확인")
+                                .setMessage("KPP재고:" + kppQty[0] + "\n" + "AJ재고:" + ajQty[0] + "\n" + "ETC재고:" + etcQty[0])
+                                .setPositiveButton("재고 확인후 등록", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        publicMethod.pltReg(consigneeName,dateToday+"입고",nickName,0,nickName,"");
 
+                                    }
+                                })
+                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .show();
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
+        }
+
+
+    }
 }
 
 

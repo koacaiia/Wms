@@ -685,11 +685,7 @@ public class PublicMethod {
                         String pltDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                         SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
                         String deptName=sharedPreferences.getString("deptName",null);
-                        DatabaseReference consigneeRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
-                                "/PltManagement/consigneeValue");
-                        Map<String,Object> consigneeValue=new HashMap<>();
-                        consigneeValue.put(consigneeName,consigneeName);
-                        consigneeRef.updateChildren(consigneeValue);
+
                         DatabaseReference pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
                                 "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+nickName+"_"+keyValue);
                         Map<String,Object> value=new HashMap<>();

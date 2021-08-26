@@ -10,6 +10,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="날짜"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -20,6 +21,7 @@
         android:gravity="center"
         android:text="입고"
         android:textColor="#F80303"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -29,6 +31,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="출고"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -38,6 +41,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="재고"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
 
     <TextView
@@ -47,7 +51,9 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="비엘"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
+
     <TextView
         android:id="@+id/list_plt_des"
         android:layout_width="match_parent"
@@ -55,5 +61,6 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="픔명"
+        android:textSize="10sp"
         android:textStyle="bold|italic" />
 </LinearLayout>

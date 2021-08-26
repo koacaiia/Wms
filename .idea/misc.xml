@@ -5,10 +5,18 @@
       <map>
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_pallet.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_put_data_reg.xml" value="0.21388888888888888" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/annual_datepicker.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/datepicker_calendar.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/datepicker_spinner.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_datepicker.xml" value="0.2111111111111111" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_plt_correctvalue.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_plt_reg.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_select_intent.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_title.xml" value="0.2111111111111111" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/fragment_date_picker.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/imageview_list.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/incargolist.xml" value="0.21654749744637386" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_plt.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/spinnerlist_searchitem.xml" value="0.10364583333333334" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/workinglist.xml" value="0.22083333333333333" />
