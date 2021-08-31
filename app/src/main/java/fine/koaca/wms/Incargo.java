@@ -1186,10 +1186,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
+        String refPath="DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0, 10) +
+                "/" + keyValue;
         DatabaseReference databaseReference1 =
-                database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0, 10) +
-
-                        "/" + keyValue);
+                database.getReference(refPath);
         AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
 
         ArrayList<String> incargoContent = new ArrayList<>();
@@ -1572,6 +1572,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 ajQty[0] = mList.getStockQty();
                                 break;
                             case "ETC":
+                                assert mList != null;
                                 etcQty[0] = mList.getStockQty();
                         }
                     }

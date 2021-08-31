@@ -719,7 +719,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 listIn.get(pos).getConsignee() + "_비엘:" + listIn.get(pos).getBl() + "_컨테이너:" + listIn.get(pos).getContainer();
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + refMonth + "월/" + dateToday + keyValue);
+        DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + refMonth +
+                "월/" + dateToday+"/" + keyValue);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         ArrayList<String> incargoContent = new ArrayList<>();

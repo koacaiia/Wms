@@ -27,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
         <activity
+            android:name=".ActivityWorkingStaff"
+            android:exported="true" />
+        <activity
             android:name=".ActivityPallet"
             android:exported="true" />
         <activity android:name=".Incargo" />

@@ -6,13 +6,15 @@ public class ActivityPalletList {
     String nickName;
     String bl;
     String des;
+    String refPath;
     int inQty;
     int outQty;
     int stockQty;
     public ActivityPalletList(){
 
     }
-    public ActivityPalletList(String date, String keyValue, String nickName, int inQty, int outQty, int stockQty,String bl,String des) {
+    public ActivityPalletList(String date, String keyValue, String nickName, int inQty, int outQty, int stockQty,String bl,
+                              String des,String refPath) {
         this.date = date;
         this.keyValue = keyValue;
         this.nickName = nickName;
@@ -21,6 +23,7 @@ public class ActivityPalletList {
         this.stockQty = stockQty;
         this.bl=bl;
         this.des=des;
+        this.refPath=refPath;
     }
 
     public String getDate() {
@@ -85,5 +88,13 @@ public class ActivityPalletList {
 
     public void setDes(String des) {
         this.des = des;
+    }
+
+    public String getRefPath() {
+        return refPath;
+    }
+
+    public void setRefPath(String refPath) {
+        this.refPath = refPath;
     }
 }
