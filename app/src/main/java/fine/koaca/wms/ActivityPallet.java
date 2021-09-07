@@ -295,7 +295,7 @@ ActivityPalletResultList listResult;
                     if(yearMonth.equals("ALL")){
                         list.add(mList);
                     }else{
-                        String tYearMonth=mList.getDate().substring(7);
+                        String tYearMonth=mList.getDate().substring(0,7);
                         if(yearMonth.equals(tYearMonth)){
                             list.add(mList);
                         }

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/list_workingstaff_date"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="날짜"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/list_workingstaff_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="업체명"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/list_workingstaff_oursourcingMale"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="인원(남)"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/list_workingstaff_outsourcingFemale"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="인원(여)"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
+</LinearLayout>

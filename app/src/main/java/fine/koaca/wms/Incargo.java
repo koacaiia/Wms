@@ -980,7 +980,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             for (int j = 1; j <= monthOfLastDay; j++) {
                 String date = null;
                 String month = null;
-                if (i + 1 < 10) {
+                if (i  < 10) {
                     month = "0" + i;
                 } else {
                     month = String.valueOf(i);
@@ -990,6 +990,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 } else {
                     date = String.valueOf(j);
                 }
+                Log.i("TestValue","TestValue:::"+month  );
                 DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month + "월/" + "2021-" + month +
                         "-" + date + "/");
 

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialg_date_select_txttitle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:textSize="10sp"
+        android:text="업체명 지정 안하면 모든 업체로 검색 됩니다.\n 날짜 지정후 하단 검색 버튼 클릭 바랍니다.\n 시작,종료일 하나만 선택하면 동일날짜 1일 검색 ." />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_date_select_btnstartday"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="시작일"
+            android:textStyle="bold|italic" />
+
+        <Button
+            android:id="@+id/dialog_date_select_btnendday"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="종료일"
+            android:textStyle="bold|italic" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_date_select_btnyear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="올해"
+            android:textStyle="bold|italic" />
+
+        <Button
+            android:id="@+id/dialog_date_select_btnmonth"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="이번달"
+            android:textStyle="bold|italic" />
+
+        <Button
+            android:id="@+id/dialog_date_select_btnweek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="이번주"
+            android:textStyle="bold|italic" />
+
+        <Button
+            android:id="@+id/dialog_date_select_btntomorrow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="내일"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/dialog_date_select_spinnername"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_margin="3dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="업체명"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="시작일"
+            android:textStyle="bold|italic" />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="종료일"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/dialog_date_select_txtName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="업체명"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/dialog_date_select_txtstartday"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="TextView"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/dialog_date_select_txtendday"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="3dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="TextView"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

@@ -35,14 +35,14 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 public class FcmProcessService extends FirebaseMessagingService implements Serializable{
 
-    public Vibrator vibrator;
+
     public Incargo incargo;
-    public Ringtone ringtone;
     int id;
 
 
@@ -60,12 +60,12 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         String message=data.get("message");
 
         Intent intent;
-        switch(contents){
+        switch(Objects.requireNonNull(contents)){
             case "Annual":
             intent=new Intent(this, AnnualLeave.class);
             id=0;
             break;
-            case "CameraUpLoad":
+            case "CameraUpLoad": case "InCaro": case "OutCargo":
                 intent=new Intent(this,WorkingMessageData.class);
                 id=1;
                 break;
@@ -77,7 +77,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
                 throw new IllegalStateException("Unexpected value: " + contents);
         } 
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert")
                 .setSmallIcon(R.drawable.logo3)

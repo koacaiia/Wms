@@ -17,7 +17,6 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -40,13 +39,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -257,7 +252,7 @@ public class PublicMethod {
                                                database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
                                        databaseReference.setValue(messageList);
 
-                                       sendPushMessage(deptName,nickName,consigneeName+"_"+inoutCargo+"_ 사진 업로드",inoutCargo);
+                                       sendPushMessage(deptName,nickName,consigneeName+"_"+inoutCargo+"_ 사진 업로드","CameraUpLoad");
 
                                    }
 
@@ -317,6 +312,16 @@ public class PublicMethod {
             @Override
             public void onClick(View v) {
             activity.finish();
+            }
+        });
+
+        Button btnWorkingStaff=view.findViewById(R.id.dialog_select_intent_btnWorkingstaff);
+        btnWorkingStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent(activity,ActivityWorkingStaff.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
             }
         });
 
@@ -387,7 +392,7 @@ public class PublicMethod {
             dataObj.put("nickName",nickName);
             dataObj.put("message",message);
             requestData.put("data",dataObj);
-
+            Log.i("TestValue","contents::"+contents);
             if(nickName.equals("Test")){
                 requestData.put("to","/topics/Test1");
             }else{

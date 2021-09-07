@@ -109,12 +109,16 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
+
+        Intent intent=new Intent(this,ActivityEquipFacility.class);
+        startActivity(intent);
+
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         dateToday = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
+//        dateToday="2021-09-03";
         requestPermissions(permission_list, 0);
         sharedPref = getSharedPreferences("Dept_Name", MODE_PRIVATE);
         if (sharedPref.getString("deptName", null) == null) {
@@ -237,6 +241,14 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         intent.putExtra("listOut", listOut);
 
         startActivity(intent);
+    }  private void workingStaffActivity() {
+        Intent intent = new Intent(this, ActivityWorkingStaff.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("deptName", deptName);
+        intent.putExtra("nickName", nickName);
+        intent.putExtra("listOut", listOut);
+
+        startActivity(intent);
     }
 
 
@@ -247,6 +259,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         Button btnConfirm = view.findViewById(R.id.button2);
         Button btnIncargo = view.findViewById(R.id.button4);
         Button btnOutcargo = view.findViewById(R.id.button3);
+        Button btnStaff=view.findViewById(R.id.button5);
 
         txtTitle = view.findViewById(R.id.dialog_title_txttile);
 
@@ -276,6 +289,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                     }
                     if (list.getHalf1().equals(date) || list.getHalf2().equals(date)) {
                         arrAnnualLeaveStaff.add("반차자:" + list.getName());
+
                     }
                 }
                 txtTitle.append("\n" + arrAnnualLeaveStaff);
@@ -486,6 +500,36 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         Query sortByDateIncargoData = databaseReferenceIn.orderByChild("date").equalTo(dateToday);
         sortByDateIncargoData.addListenerForSingleValueEvent(inListener);
 
+        TextView txtFineStaff=view.findViewById(R.id.dialog_title_finestaff);
+        TextView txtFineStaffWomen=view.findViewById(R.id.dialog_title_finewomen);
+        TextView txtOutsourcingMale=view.findViewById(R.id.dialog_title_outsourcingmen);
+        TextView txtOutsourcingFemale=view.findViewById(R.id.dialog_title_outsourcingwomen);
+
+        DatabaseReference databaseReferenceStaff=database.getReference("DeptName/"+deptName+"/WorkingStaff");
+        ValueEventListener listenerStaff=new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int fineStaff = 0,fineStaffWomen = 0,outsourcingMale = 0,outsourcingFemale = 0;
+                for(DataSnapshot data:snapshot.getChildren()){
+                    ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
+                    fineStaff=fineStaff+Integer.parseInt(mList.getFineStaff());
+                    fineStaffWomen=fineStaffWomen+Integer.parseInt(mList.getFineWomenStaff());
+                    outsourcingMale=outsourcingMale+Integer.parseInt(mList.getOutsourcingMale());
+                    outsourcingFemale=outsourcingFemale+Integer.parseInt(mList.getOutsourcingFemale());
+                }
+                txtFineStaff.setText(fineStaff+" 명");
+                txtFineStaffWomen.setText(fineStaffWomen+" 명");
+                txtOutsourcingMale.setText(outsourcingMale+" 명");
+                txtOutsourcingFemale.setText(outsourcingFemale+" 명");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        };
+        Query sortByDateStaff=databaseReferenceStaff.orderByChild("date").equalTo(dateToday);
+        sortByDateStaff.addListenerForSingleValueEvent(listenerStaff);
 
         titleBuilder.setView(view);
 
@@ -518,6 +562,14 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 dialog.dismiss();
                 listOut = null;
                 intentOutcargoActivity();
+            }
+        });
+        btnStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                workingStaffActivity();
             }
         });
     }
@@ -845,7 +897,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
                 String date = null;
                 String month = null;
-                if (i + 1 < 10) {
+                if (i < 10) {
                     month = "0" + i;
                 } else {
                     month = String.valueOf(i);
@@ -855,6 +907,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 } else {
                     date = String.valueOf(j);
                 }
+
                 DatabaseReference databaseReference =
                         database.getReference("DeptName/" + deptName + "/"+refPath+"/" + month +"월/"+ "2021-" + month + "-" + date);
                 Map<String, String> value = new HashMap<>();
