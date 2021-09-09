@@ -11,11 +11,14 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -26,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class ActivityEquipFacility extends AppCompatActivity implements ImageViewActivityAdapter.ImageViewClicked{
 Spinner spName,spContents;
@@ -42,6 +46,10 @@ ArrayList<ActivityEquipFacilityList> list;
 ActivityEquipFacilityAdapter historyAdapter;
 
 String refPath;
+
+ArrayList<String> nameList=new ArrayList<>();
+ArrayList<String> contentsList=new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +85,7 @@ String refPath;
         txtContent=findViewById(R.id.activity_equip_facility_txtContent);
 
         spName=findViewById(R.id.activity_equip_facility_spname);
+
         spName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -101,6 +110,22 @@ String refPath;
                         .show();
 
                 return true;
+            }
+        });
+        spName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position!=0){
+                    txtName.setText(nameList.get(position));
+                }else{
+                    txtName.setText("장비,시설물 종류");
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
         spContents=findViewById(R.id.activity_equip_facility_spcontents);
@@ -129,9 +154,27 @@ String refPath;
                 return true;
             }
         });
+        spContents.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position!=0){
+                    txtContent.setText(contentsList.get(position));
+                }else{
+                    txtContent.setText("점검항목");
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        getSpinnerAdapter();
+
 
         btnDate=findViewById(R.id.activity_equip_facility_btndate);
-//        btnDate.setText(date);
+        btnDate.setText(date);
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,6 +191,7 @@ String refPath;
                             day="0"+dayOfMonth;
                         }
                         date=year+"-"+month+"-"+day;
+                        btnDate.setText(date);
                     }
                 });
                 builder.setTitle("장비,시설물 관리항목에 대한 날짜 지정")
@@ -170,6 +214,70 @@ String refPath;
 
             }
         });
+        btnReg=findViewById(R.id.activity_equip_facility_btnReg);
+        btnReg.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onClick(View v) {
+                list.clear();
+                String date=btnDate.getText().toString();
+                String name=txtName.getText().toString();
+                String content=txtContent.getText().toString();
+                String process="점검요청";
+                String remark="";
+
+                int estimateAmount=0;
+                int confirmAmount=0;
+
+                String keyValue=date+"_"+name+"_"+content;
+                databaseReference=database.getReference(refPath+keyValue+"_"+process);
+                ActivityEquipFacilityList mList=new ActivityEquipFacilityList(date,name,content,remark,process,estimateAmount,
+                        confirmAmount);
+                databaseReference.setValue(mList);
+                historyAdapter.notifyDataSetChanged();
+                getHistoryDatabase();
+                Toast.makeText(ActivityEquipFacility.this,keyValue+" "+process+" 로 서버에 등록 되었습니다",Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void getSpinnerAdapter() {
+        databaseReference=database.getReference(refPath);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    ActivityEquipFacilityList mList=data.getValue(ActivityEquipFacilityList.class);
+                    String name=mList.geteFName();
+                    String contents=mList.getManageContent();
+                    if(!nameList.contains(name)){
+                        nameList.add(name);
+                    }
+                    if(!contentsList.contains(contents)){
+                        contentsList.add(contents);
+                    }
+                }
+                nameList.add(0,"");
+                nameList.add(nameList.size(),"시설물 점검");
+                contentsList.add(0,"");
+                ArrayAdapter<String> nameAdapter=new ArrayAdapter<String>(ActivityEquipFacility.this,
+                        android.R.layout.simple_spinner_dropdown_item,nameList);
+                nameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spName.setAdapter(nameAdapter);
+
+                ArrayAdapter<String> contentsAdapter=new ArrayAdapter<String>(ActivityEquipFacility.this,
+                        android.R.layout.simple_spinner_dropdown_item,contentsList);
+                contentsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spContents.setAdapter(contentsAdapter);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private void getHistoryDatabase() {

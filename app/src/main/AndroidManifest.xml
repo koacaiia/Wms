@@ -27,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
         <activity
+            android:name=".ActivityEquipNFacilityPutData"
+            android:exported="true" />
+        <activity
             android:name=".ActivityEquipFacility"
             android:exported="true" />
         <activity

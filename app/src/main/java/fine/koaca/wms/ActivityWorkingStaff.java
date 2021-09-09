@@ -424,26 +424,56 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         View view=getLayoutInflater().inflate(R.layout.dialog_putworkingstaff,null);
-        DatePicker datePicker=view.findViewById(R.id.dialog_putworkingstaff_datePicker);
-        TextView textDate=view.findViewById(R.id.dialog_putworkingstaff_txtDate);
-        textDate.setText(date);
+
+        Button btnDate=view.findViewById(R.id.dialog_putworkingstaff_btnDate);
+        btnDate.setText(date);
         EditText editStaffCount=view.findViewById(R.id.dialog_putworkingstaff_editstaffcount);
         TextView textView=view.findViewById(R.id.dialog_putworkingstaff_txtscroll);
-        datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 
-                String month = String.valueOf(monthOfYear+1),day = String.valueOf(dayOfMonth);
-                if(monthOfYear+1<10){
-                    month="0"+(monthOfYear+1);
-                }
-                if(dayOfMonth<10){
-                    day="0"+dayOfMonth;
-                }
+        btnDate.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           final String[] date = new String[1];
+                                           AlertDialog.Builder builder=new AlertDialog.Builder(ActivityWorkingStaff.this);
+                                           DatePicker datePicker=new DatePicker(ActivityWorkingStaff.this);
+                                           datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                                               @Override
+                                               public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                                   String month = String.valueOf(monthOfYear+1),day = String.valueOf(dayOfMonth);
+                                                   if(monthOfYear+1<10){
+                                                       month="0"+(monthOfYear+1);
+                                                   }
+                                                   if(dayOfMonth<10){
+                                                       day="0"+dayOfMonth;
+                                                   }
+                                                   date[0] =year+"-"+month+"-"+day;
+                                               }
+                                           });
+                                           builder.setTitle("날짜 선택창")
+                                                   .setMessage("날짜 선택후 하단 등록 버튼으로 등록 바랍니다.")
+                                                   .setView(datePicker)
+                                                   .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                                                               @Override
+                                                               public void onClick(DialogInterface dialog, int which) {
+                                                                   btnDate.setText(date[0]);
+                                                                   textView.append(date[0]+" 로 날짜 등록");
+                                                               }
+                                                           }
+                                                   )
+                                                   .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                                       @Override
+                                                       public void onClick(DialogInterface dialog, int which) {
 
-                textDate.setText(year+"-"+month+"-"+day);
-            }
-        });
+                                                       }
+                                                   })
+                                                   .show();
+                                       }
+                                   }
+        );
+
+
+
+
 
         Spinner spOutsourcingValue=view.findViewById(R.id.dialog_putworkingstaff_spinneroutsourcing);
         databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue");
@@ -491,13 +521,13 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     return;
                 }
                 int count= Integer.parseInt(editStaffCount.getText().toString());
-                editStaffCount.setText("0");
+                editStaffCount.setText("");
                 if(textView.getText().toString().equals("")){
-                    textView.setText(deptName+" 출근인원:"+count+"명");
+                    textView.setText(deptName+" 출근인원:"+count+"명으로 서버 등록");
                 }else{
-                    textView.append("\n"+deptName+" 출근인원:"+count+"명");
+                    textView.append("\n"+deptName+" 출근인원:"+count+"명으로 서버 등록");
                 }
-               putDialogRegStaff("fineStaff", textDate.getText().toString(),count);
+//               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
 
 
             }
@@ -511,13 +541,13 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     return;
                 }
                 int count= Integer.parseInt(editStaffCount.getText().toString());
-                putDialogRegStaff("fineWomenStaff", textDate.getText().toString(),count);
+                putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
-                    textView.setText("화인주부사원 출근인원:"+count+"명");
+                    textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
                 }else{
-                    textView.append("\n"+"화인주부사원 출근인원:"+count+"명");
+                    textView.append("\n"+"화인주부사원 출근인원:"+count+"명으로 서버 등록");
                 }
-                editStaffCount.setText("0");
+                editStaffCount.setText("");
             }
         });
         Button btnOutsourcingMale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingmale);
@@ -533,13 +563,13 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"아웃소싱업체 공란 입니다.확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                putDialogRegStaff("M_"+outsourcingValue, textDate.getText().toString(),count);
+                putDialogRegStaff("M_"+outsourcingValue, btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
-                    textView.setText(outsourcingValue+"(남):"+count+"명");
+                    textView.setText(outsourcingValue+"(남):"+count+"명으로 서버 등록");
                 }else{
-                    textView.append("\n"+outsourcingValue+"(남):"+count+"명");
+                    textView.append("\n"+outsourcingValue+"(남):"+count+"명으로 서버 등록");
                 }
-                editStaffCount.setText("0");
+                editStaffCount.setText("");
             }
         });
         Button btnOutsourcingFemale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingfemale);
@@ -551,17 +581,24 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     return;
                 }
                 int count= Integer.parseInt(editStaffCount.getText().toString());
-                putDialogRegStaff("FE_"+outsourcingValue, textDate.getText().toString(),count);
+                putDialogRegStaff("FE_"+outsourcingValue, btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
-                    textView.setText(outsourcingValue+"(여):"+count+"명");
+                    textView.setText(outsourcingValue+"(여):"+count+"명으로 서버 등록");
                 }else{
-                    textView.append("\n"+outsourcingValue+"(여):"+count+"명");
+                    textView.append("\n"+outsourcingValue+"(여):"+count+"명으로 서버 등록");
                 }
-                editStaffCount.setText("0");
+                editStaffCount.setText("");
             }
         });
         builder.setTitle("출근 인원 등록창")
                 .setView(view)
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+
                 .show();
 
     }

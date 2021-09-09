@@ -1,65 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="90dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/list_equipnfacility_txtDate"
+    <androidx.cardview.widget.CardView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        app:cardBackgroundColor="#D9DCEC"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="날짜"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/list_equipnfacility_txtName"
+        <TextView
+            android:id="@+id/list_equipnfacility_txtDate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="날짜"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/list_equipnfacility_txtName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="장비,시설물"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="장비,시설물"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/list_equipnfacility_contents"
+        <TextView
+            android:id="@+id/list_equipnfacility_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="점검사항"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/list_equipnfacility_process"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="진행상황"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="점검사항"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/list_equipnfacility_process"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="진행상황"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
+        <TextView
+            android:id="@+id/list_equipnfacility_amount"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="비용"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
 
-    <TextView
-        android:id="@+id/list_equipnfacility_amount"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="비용"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
-
-    <TextView
-        android:id="@+id/list_equipnfacility_remark"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="비고"
-        android:textSize="10sp"
-        android:textStyle="bold|italic" />
+        <TextView
+            android:id="@+id/list_equipnfacility_remark"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="비고"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
+    </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 </LinearLayout>
