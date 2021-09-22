@@ -170,9 +170,19 @@ public class PublicMethod {
             Uri uriValue=Uri.fromFile(new File(list.get(i)));
             refPath=deptName+"/"+date+"/"+inoutCargo+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg";
             StorageReference storageReference=storage.getReference().child("images/"+refPath);
+            StorageReference consigneeReference;
 
-            StorageReference consigneeReference=
-                    storage.getReference().child("ConsigneeValue/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg" );
+            if(inoutCargo.equals("장비_시설물")){
+                consigneeReference=
+                        storage.getReference().child(deptName+"/"+
+                                inoutCargo+"/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg");
+
+            }else{
+                consigneeReference=
+                        storage.getReference().child("ConsigneeValue/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg" );
+            }
+
+
             int finalI = i;
 
             consigneeReference.putFile(uriValue).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -198,6 +208,7 @@ public class PublicMethod {
                                        messageList.setDate(date);
                                        messageList.setMsg(consigneeName+"_"+inoutCargo+"_ 사진 업로드");
                                        messageList.setInOutCargo(inoutCargo);
+                                       messageList.setKeyValue(keyValue);
 
                                        try {
                                            switch (finalI) {
@@ -315,11 +326,11 @@ public class PublicMethod {
             }
         });
 
-        Button btnWorkingStaff=view.findViewById(R.id.dialog_select_intent_btnWorkingstaff);
+        Button btnWorkingStaff=view.findViewById(R.id.dialog_select_intent_btnEquipFacility);
         btnWorkingStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(activity,ActivityWorkingStaff.class);
+                Intent intent=new Intent(activity,ActivityEquipFacility.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
             }
@@ -339,9 +350,33 @@ public class PublicMethod {
         btnAnnual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-           Intent intent=new Intent(activity,AnnualLeave.class);
-           intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-           activity.startActivity(intent);
+                ArrayList<String> intentValue=new ArrayList<>();
+                intentValue.add("연차,반차,휴가자 등록,조회");
+                intentValue.add("출근 인원 등록,조회");
+                String[] intentValueList=intentValue.toArray(new String[intentValue.size()]);
+                AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+                builder.setTitle("근태 관련 화면 선택창")
+                        .setSingleChoiceItems(intentValueList,1, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent;
+                                switch(which){
+                                    case 0:
+                                        intent=new Intent(activity,AnnualLeave.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        activity.startActivity(intent);
+                                        break;
+                                    case 1:
+                                        intent=new Intent(activity,ActivityWorkingStaff.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        activity.startActivity(intent);
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+
+
             }
         });
 
@@ -392,7 +427,6 @@ public class PublicMethod {
             dataObj.put("nickName",nickName);
             dataObj.put("message",message);
             requestData.put("data",dataObj);
-            Log.i("TestValue","contents::"+contents);
             if(nickName.equals("Test")){
                 requestData.put("to","/topics/Test1");
             }else{

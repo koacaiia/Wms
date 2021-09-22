@@ -25,7 +25,8 @@
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
-            android:text="근태" />
+            android:textSize="8dp"
+            android:text="근태,츨근 관련" />
 
         <Button
             android:id="@+id/dialog_select_intent_btnMessage"
@@ -101,13 +102,13 @@
             android:text="팔렛트" />
 
         <Button
-            android:id="@+id/dialog_select_intent_btnWorkingstaff"
+            android:id="@+id/dialog_select_intent_btnEquipFacility"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
-            android:text="출근인원" />
+            android:text="장비,시설물" />
     </LinearLayout>
 
     <LinearLayout

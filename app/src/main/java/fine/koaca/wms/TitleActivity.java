@@ -110,8 +110,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
 
-        Intent intent=new Intent(this,ActivityEquipFacility.class);
-        startActivity(intent);
+//        Intent intent=new Intent(this,WorkingMessageData.class);
+//        startActivity(intent);
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -259,7 +259,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         Button btnConfirm = view.findViewById(R.id.button2);
         Button btnIncargo = view.findViewById(R.id.button4);
         Button btnOutcargo = view.findViewById(R.id.button3);
-        Button btnStaff=view.findViewById(R.id.button5);
+
 
         txtTitle = view.findViewById(R.id.dialog_title_txttile);
 
@@ -282,7 +282,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                                                     }
 
                     }else if (list.getAnnual().equals(date) || list.getAnnual2().equals(date)) {
-                        if (!list.getAnnual().equals("") && !list.getAnnual2().equals("")) {
+                        if (!list.getAnnual().equals("") || !list.getAnnual2().equals("")) {
                             arrAnnualLeaveStaff.add("연차자:" + list.getName());
                         }
 
@@ -564,14 +564,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 intentOutcargoActivity();
             }
         });
-        btnStaff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
 
-                workingStaffActivity();
-            }
-        });
     }
 
 
@@ -1121,4 +1114,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        PublicMethod publicMethod=new PublicMethod(TitleActivity.this);
+        publicMethod.intentSelect();
+    }
 }

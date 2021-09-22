@@ -1,83 +1,101 @@
 package fine.koaca.wms;
 
+import android.widget.TextView;
+
 public class ActivityEquipFacilityList {
-    String date;
-    String eFName;
-    String manageContent;
-    String remark;
-    String process;
-
-    int estimateAmount;
-    int confirmAmount;
-
+    String name;
+    String content;
+    String askDate;
+    String estAmountDate;
+    int estAmount;
+    String confirmDate;
+    String repairDate;
+    String conAmountDate;
+    int conAmount;
     public ActivityEquipFacilityList(){
 
     }
-    public ActivityEquipFacilityList(String date, String eFName, String manageContent, String remark, String process,
-                                    int estimateAmount, int confirmAmount) {
-        this.date = date;
-        this.eFName = eFName;
-        this.manageContent = manageContent;
-        this.remark = remark;
-        this.process = process;
-        this.estimateAmount = estimateAmount;
-        this.confirmAmount = confirmAmount;
-
+    public ActivityEquipFacilityList(String name, String content, String askDate, String estAmountDate, int estAmount, String confirmDate, String repairDate, String conAmountDate, int conAmount) {
+        this.name = name;
+        this.content = content;
+        this.askDate = askDate;
+        this.estAmountDate = estAmountDate;
+        this.estAmount = estAmount;
+        this.confirmDate = confirmDate;
+        this.repairDate = repairDate;
+        this.conAmountDate = conAmountDate;
+        this.conAmount = conAmount;
     }
 
-    public String getDate() {
-        return date;
+    public String getName() {
+        return name;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String geteFName() {
-        return eFName;
+    public String getContent() {
+        return content;
     }
 
-    public void seteFName(String eFName) {
-        this.eFName = eFName;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public String getManageContent() {
-        return manageContent;
+    public String getAskDate() {
+        return askDate;
     }
 
-    public void setManageContent(String manageContent) {
-        this.manageContent = manageContent;
+    public void setAskDate(String askDate) {
+        this.askDate = askDate;
     }
 
-    public String getRemark() {
-        return remark;
+    public String getEstAmountDate() {
+        return estAmountDate;
     }
 
-    public void setRemark(String remark) {
-        this.remark = remark;
+    public void setEstAmountDate(String estAmountDate) {
+        this.estAmountDate = estAmountDate;
     }
 
-    public String getProcess() {
-        return process;
+    public int getEstAmount() {
+        return estAmount;
     }
 
-    public void setProcess(String process) {
-        this.process = process;
+    public void setEstAmount(int estAmount) {
+        this.estAmount = estAmount;
     }
 
-    public int getEstimateAmount() {
-        return estimateAmount;
+    public String getConfirmDate() {
+        return confirmDate;
     }
 
-    public void setEstimateAmount(int estimateAmount) {
-        this.estimateAmount = estimateAmount;
+    public void setConfirmDate(String confirmDate) {
+        this.confirmDate = confirmDate;
     }
 
-    public int getConfirmAmount() {
-        return confirmAmount;
+    public String getRepairDate() {
+        return repairDate;
     }
 
-    public void setConfirmAmount(int confirmAmount) {
-        this.confirmAmount = confirmAmount;
+    public void setRepairDate(String repairDate) {
+        this.repairDate = repairDate;
+    }
+
+    public String getConAmountDate() {
+        return conAmountDate;
+    }
+
+    public void setConAmountDate(String conAmountDate) {
+        this.conAmountDate = conAmountDate;
+    }
+
+    public int getConAmount() {
+        return conAmount;
+    }
+
+    public void setConAmount(int conAmount) {
+        this.conAmount = conAmount;
     }
 }

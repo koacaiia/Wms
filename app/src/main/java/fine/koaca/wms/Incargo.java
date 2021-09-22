@@ -247,8 +247,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
                                 "/" + keyValue);
                 databaseReference.updateChildren(putValue);
-                Log.i("TestValue", "DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
-                        "/" + keyValue);
+
                 Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
 //                initIntent();
 

@@ -12,9 +12,16 @@ import java.util.ArrayList;
 
 public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityEquipFacilityAdapter.ListViewHolder>{
     ArrayList<ActivityEquipFacilityList> list;
+    ActivityEquipFacilityAdapterClicked itemClicked;
 
-    public ActivityEquipFacilityAdapter(ArrayList<ActivityEquipFacilityList> list) {
+    public interface ActivityEquipFacilityAdapterClicked{
+        void itemClick(ActivityEquipFacilityAdapter.ListViewHolder listViewHolder,View v,int position);
+    }
+
+    public ActivityEquipFacilityAdapter(ArrayList<ActivityEquipFacilityList> list,
+                                        ActivityEquipFacilityAdapterClicked itemClicked) {
         this.list = list;
+        this.itemClicked=itemClicked;
     }
 
     @NonNull
@@ -26,12 +33,15 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-        holder.txtDate.setText(list.get(position).getDate());
-        holder.txtName.setText(list.get(position).geteFName());
-        holder.txtContents.setText(list.get(position).getManageContent());
-        holder.txtProcess.setText(list.get(position).getProcess());
-        holder.txtAmount.setText(String.valueOf(list.get(position).getConfirmAmount()));
-        holder.txtRemark.setText(list.get(position).getRemark());
+        holder.name.setText(list.get(position).getName());
+        holder.content.setText(list.get(position).getContent());
+        holder.askDate.setText(list.get(position).getAskDate());
+        holder.estAmountDate.setText(list.get(position).getEstAmountDate());
+        holder.estAmount.setText(String.valueOf(list.get(position).getEstAmount()));
+        holder.confirmDate.setText(list.get(position).getConfirmDate());
+        holder.repairDate.setText(list.get(position).getRepairDate());
+        holder.conAmountDate.setText(list.get(position).getConAmountDate());
+        holder.conAmount.setText(String.valueOf(list.get(position).getConAmount()));
 
     }
 
@@ -41,20 +51,41 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
-        TextView txtDate;
-        TextView txtName;
-        TextView txtContents;
-        TextView txtProcess;
-        TextView txtAmount;
-        TextView txtRemark;
+       TextView name;
+       TextView content;
+       TextView askDate;
+       TextView ask;
+       TextView estAmountDate;
+       TextView estAmount;
+       TextView confirmDate;
+       TextView confirm;
+       TextView repairDate;
+       TextView repair;
+       TextView conAmountDate;
+       TextView conAmount;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.txtDate=itemView.findViewById(R.id.list_equipnfacility_txtDate);
-            this.txtName=itemView.findViewById(R.id.list_equipnfacility_txtName);
-            this.txtContents=itemView.findViewById(R.id.list_equipnfacility_contents);
-            this.txtProcess=itemView.findViewById(R.id.list_equipnfacility_process);
-            this.txtAmount=itemView.findViewById(R.id.list_equipnfacility_amount);
-            this.txtRemark=itemView.findViewById(R.id.list_equipnfacility_remark);
+            this.name=itemView.findViewById(R.id.list_equipnfacility_txtName);
+            this.content=itemView.findViewById(R.id.list_equipnfacility_contents);
+            this.askDate=itemView.findViewById(R.id.list_equipnfacility_txtAskDate);
+            this.ask=itemView.findViewById(R.id.list_equipnfacility_txtAsk);
+            this.estAmountDate=itemView.findViewById(R.id.list_equipnfacility_txtEstDate);
+            this.estAmount=itemView.findViewById(R.id.list_equipnfacility_txtEstAmount);
+            this.confirmDate=itemView.findViewById(R.id.list_equipnfacility_txtConfirmDate);
+            this.confirm=itemView.findViewById(R.id.list_equipnfacility_txtConfirm);
+            this.repairDate=itemView.findViewById(R.id.list_equipnfacility_txtRepairedDate);
+            this.repair=itemView.findViewById(R.id.list_equipnfacility_txtRepaied);
+            this.conAmountDate=itemView.findViewById(R.id.list_equipnfacility_txtConfirmAmountDate);
+            this.conAmount=itemView.findViewById(R.id.list_equipnfacility_txtConfirmAmount);
+
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClicked.itemClick(ListViewHolder.this,v,getAdapterPosition());
+                }
+            }
+            );
         }
     }
 }

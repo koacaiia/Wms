@@ -1,8 +1,10 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.net.Uri;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Gravity;
@@ -13,12 +15,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +36,7 @@ import java.util.Collections;
 import static android.content.Context.MODE_PRIVATE;
 
 public class WorkingMessageAdapter extends RecyclerView.Adapter<WorkingMessageAdapter.ListViewHolder>
-implements OnListImageClickListener{
+implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
     ArrayList<WorkingMessageList> messageLists;
     OnListImageClickListener listener;
     String myNickname;
@@ -34,6 +44,7 @@ implements OnListImageClickListener{
     SharedPreferences sharedPreferences;
 
     private SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
+
 
     public WorkingMessageAdapter(ArrayList<WorkingMessageList> messageLists, Context context, String myNickname) {
         this.messageLists = messageLists;
@@ -48,8 +59,13 @@ implements OnListImageClickListener{
         return new ListViewHolder(view);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
-    public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListViewHolder holder, @SuppressLint("RecyclerView") int position) {
+
+        sharedPreferences=context.getSharedPreferences("Dept_Name",MODE_PRIVATE);
+        String nickName=sharedPreferences.getString("nickName",null);
+
         holder.msg.setText(messageLists.get(position).getMsg());
         holder.nickName.setText(messageLists.get(position).getNickName());
         String time=messageLists.get(position).getTime();
@@ -75,8 +91,7 @@ implements OnListImageClickListener{
         Glide.with(holder.itemView)
                 .load(messageLists.get(position).getUri6())
                 .into(holder.image6);
-        sharedPreferences=context.getSharedPreferences("SHARE_DEPOT",MODE_PRIVATE);
-        String nickName=sharedPreferences.getString("nickName",null);
+
 
         LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
         if(messageLists.get(position).getNickName().equals(nickName)){
@@ -86,7 +101,6 @@ implements OnListImageClickListener{
             mSelectedItems.put(position,false);
         }
        if(mSelectedItems.get(position,true)){
-           Log.i("TestValue","Message Adapter Value:::"+nickName);
            params.gravity=Gravity.END;
        }else{
            params.gravity=Gravity.START;
@@ -117,6 +131,11 @@ implements OnListImageClickListener{
 
     }
 
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        Toast.makeText(context,"ImageView Clicked",Toast.LENGTH_SHORT).show();
+    }
+
     public class ListViewHolder extends RecyclerView.ViewHolder {
         TextView msg;
         TextView nickName;
@@ -130,6 +149,7 @@ implements OnListImageClickListener{
         ImageView image6;
         CardView cardView;
         LinearLayout linearLayout;
+        RecyclerView recyclerView;
 
 
         public ListViewHolder(@NonNull View itemView) {
@@ -146,8 +166,9 @@ implements OnListImageClickListener{
             this.image6=itemView.findViewById(R.id.work_image6);
             this.cardView=itemView.findViewById(R.id.workinglistcardview);
             this.linearLayout=itemView.findViewById(R.id.workinglayout);
-
-
+//
+//
+//            this.recyclerView=itemView.findViewById(R.id.recycler_work_recycler);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,6 +184,7 @@ implements OnListImageClickListener{
 
 
         }
+
     }
 
     public void addWorkingMessage(WorkingMessageList messageData){

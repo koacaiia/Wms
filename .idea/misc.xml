@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_equip_facility.xml" value="0.17685185185185184" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_equip_nfacility_put_data.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_pallet.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_put_data_reg.xml" value="0.21388888888888888" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_title.xml" value="0.22083333333333333" />
@@ -23,10 +24,11 @@
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_title.xml" value="0.2111111111111111" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_workingstaff.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/fragment_date_picker.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/imageactivityview_list.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/imageview_list.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/incargolist.xml" value="0.21654749744637386" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list.xml" value="0.22083333333333333" />
-        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_equipnfacility.xml" value="0.2" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_equipnfacility.xml" value="0.264" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_plt.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_plt_result.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/list_workingstaff.xml" value="0.22083333333333333" />

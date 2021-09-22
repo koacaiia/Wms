@@ -13,6 +13,8 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.ListResult;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +29,7 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
         this.list=imageViewLists;
     }
 
-
-    public interface ImageViewClicked {
+       public interface ImageViewClicked {
         void imageViewClicked(ImageViewActivityAdapter.ListView listView,View v,int position);
 
     }

@@ -14,6 +14,7 @@ public class WorkingMessageList {
     String date;
     String consignee;
     String InOutCargo;
+    String keyValue;
 
     public String getUri5() {
         return uri5;
@@ -31,7 +32,17 @@ public class WorkingMessageList {
         this.uri6 = uri6;
     }
 
-    public WorkingMessageList(String msg, String uri0, String uri1, String uri2, String uri3, String uri4, String uri5, String uri6, String nickName, String time, String date, String consignee, String inOutCargo) {
+    public String getKeyValue() {
+        return keyValue;
+    }
+
+    public void setKeyValue(String keyValue) {
+        this.keyValue = keyValue;
+    }
+
+    public WorkingMessageList(String msg, String uri0, String uri1, String uri2, String uri3, String uri4, String uri5,
+                              String uri6, String nickName, String time, String date, String consignee, String inOutCargo,
+                              String keyValue) {
         this.msg = msg;
         this.uri0 = uri0;
         this.uri1 = uri1;
@@ -45,6 +56,7 @@ public class WorkingMessageList {
         this.date = date;
         this.consignee = consignee;
         this.InOutCargo = inOutCargo;
+        this.keyValue=keyValue;
     }
 
     public WorkingMessageList() {
