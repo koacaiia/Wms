@@ -35,8 +35,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -136,13 +134,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String keyValue;
 
     PublicMethod publicMethod;
-
+    String sharedValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
 
-
+        sharedValue="";
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -237,19 +235,50 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String consigneeName=listItems.get(0).getConsignee();
                 publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
-                publicMethod.upLoadPictures(nickName, listItems.get(0).getConsignee(), "InCargo", listItems.get(0).getKeyValue(),
-                        deptName);
-                String date = listItems.get(0).getDate();
-                Map<String, Object> putValue = new HashMap<>();
-                putValue.put("working", "컨테이너 진입");
-                databaseReference =
-                        database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
-                                "/" + keyValue);
-                databaseReference.updateChildren(putValue);
+                if(sharedValue.equals("Pallet")){
+                                String bl = listItems.get(0).getBl();
+                                String des = listItems.get(0).getDescription();
 
-                Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
-//                initIntent();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+                                builder.setTitle("팔렛트 등록 확인창")
+                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
+                                                "입고등록")
+
+                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+//                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
+                                                    Log.i("TestValue","KeyValue::::"+keyValue);
+                                                    getPalletStock(consigneeName,bl,des);
+                                            }
+                                        })
+
+                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                manualPltReg();
+
+                                            }
+                                        })
+                                        .show();
+
+                }else{
+
+                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
+                            deptName);
+                    String date = listItems.get(0).getDate();
+                    Map<String, Object> putValue = new HashMap<>();
+                    putValue.put("working", "컨테이너 진입");
+                    databaseReference =
+                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
+                                    "/" + keyValue);
+                    databaseReference.updateChildren(putValue);
+
+                    Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
+
+                }
 
             }
         });
@@ -1230,30 +1259,32 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                         "InCargo", deptName);
                                 break;
                             case 6:
-                                String bl = listItems.get(0).getBl();
-                                String des = listItems.get(0).getDescription();
-
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
-                                builder.setTitle("팔렛트 등록 확인창")
-                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
-                                                "입고등록")
-
-                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
-
-                                            }
-                                        })
-
-                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                manualPltReg();
-
-                                            }
-                                        })
-                                        .show();
+                                sharedValue="Pallet";
+                                pickedUpItemClick(keyValue);
+//                                String bl = listItems.get(0).getBl();
+//                                String des = listItems.get(0).getDescription();
+//
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+//                                builder.setTitle("팔렛트 등록 확인창")
+//                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
+//                                                "입고등록")
+//
+//                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
+//
+//                                            }
+//                                        })
+//
+//                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                manualPltReg();
+//
+//                                            }
+//                                        })
+//                                        .show();
                                 break;
                             case 7:
                                 itemPictureList(keyValue);
@@ -1536,7 +1567,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        getPalletStock(consigneeName[0]);
+                        getPalletStock(consigneeName[0],nickName,"");
 
                     }
                 })
@@ -1551,7 +1582,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
 
-    private void getPalletStock(String consigneeName) {
+    private void getPalletStock(String consigneeName, String bl, String des) {
         String[] pltSlist = {"KPP", "AJ", "ETC"};
         final int[] kppQty = new int[1];
         final int[] ajQty = new int[1];
@@ -1578,12 +1609,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     }
                     if(s.equals("ETC")){
                         AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
-                        builder.setTitle("입고 등록전 재고 확인")
+                        builder.setTitle(consigneeName+"_입고 등록전 재고 확인")
                                 .setMessage("KPP재고:" + kppQty[0] + "\n" + "AJ재고:" + ajQty[0] + "\n" + "ETC재고:" + etcQty[0])
                                 .setPositiveButton("재고 확인후 등록", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        publicMethod.pltReg(consigneeName,dateToday+"입고",nickName,0,nickName,"");
+                                        PublicMethod publicMethod=new PublicMethod(Incargo.this,imageViewListsSelected);
+                                        publicMethod.pltReg(consigneeName, nickName,0, bl,des);
+                                        Log.i("TestValue","ImageView Selected Size:::"+imageViewListsSelected.size());
 
                                     }
                                 })

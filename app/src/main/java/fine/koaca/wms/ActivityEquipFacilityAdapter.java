@@ -37,11 +37,12 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
         holder.content.setText(list.get(position).getContent());
         holder.askDate.setText(list.get(position).getAskDate());
         holder.estAmountDate.setText(list.get(position).getEstAmountDate());
-        holder.estAmount.setText(String.valueOf(list.get(position).getEstAmount()));
+        holder.estAmount.setText("견적액:"+list.get(position).getEstAmount()+"원");
         holder.confirmDate.setText(list.get(position).getConfirmDate());
         holder.repairDate.setText(list.get(position).getRepairDate());
         holder.conAmountDate.setText(list.get(position).getConAmountDate());
-        holder.conAmount.setText(String.valueOf(list.get(position).getConAmount()));
+        holder.conAmount.setText("결재액:"+list.get(position).getConAmount()+"원");
+        holder.remark.setText(list.get(position).getRemark());
 
     }
 
@@ -63,6 +64,7 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
        TextView repair;
        TextView conAmountDate;
        TextView conAmount;
+       TextView remark;
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.name=itemView.findViewById(R.id.list_equipnfacility_txtName);
@@ -77,6 +79,7 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
             this.repair=itemView.findViewById(R.id.list_equipnfacility_txtRepaied);
             this.conAmountDate=itemView.findViewById(R.id.list_equipnfacility_txtConfirmAmountDate);
             this.conAmount=itemView.findViewById(R.id.list_equipnfacility_txtConfirmAmount);
+            this.remark=itemView.findViewById(R.id.list_equipnfacility_txtRemark);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {

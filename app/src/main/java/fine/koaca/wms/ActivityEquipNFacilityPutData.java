@@ -62,8 +62,6 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
         deptName = publicMethod.getUserInformation().get("deptName");
         nickName = publicMethod.getUserInformation().get("nickName");
         date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        efName = "FF02(인천04마1068)";
-        manageContents = "타이어수리";
         refPath = "DeptName/" + deptName + "/EquipNFacility/";
 
 
@@ -219,7 +217,7 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
                 String name = txtName.getText().toString();
                 String content = txtContent.getText().toString();
                 String process = "점검요청";
-                String remark = "";
+
 
                 int estimateAmount = 0;
                 int confirmAmount = 0;
@@ -229,12 +227,14 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
                         .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                publicMethod=new PublicMethod(ActivityEquipNFacilityPutData.this,selectedImageViewLists);
-                                publicMethod.upLoadPictures(nickName,name,"장비_시설물",date+"_"+name+"_"+content,deptName);
-
                                 String keyValue = date + "_" + name + "_" + content;
-                                databaseReference = database.getReference(refPath + keyValue + "_" + process);
-                                ActivityEquipFacilityList mList = new ActivityEquipFacilityList(name,content,date,"",estimateAmount,"","","",confirmAmount);
+                                publicMethod=new PublicMethod(ActivityEquipNFacilityPutData.this,selectedImageViewLists);
+                                publicMethod.upLoadPictures(nickName,name,"장비_시설물",keyValue,deptName);
+
+
+                                databaseReference = database.getReference(refPath + keyValue);
+                                ActivityEquipFacilityList mList = new ActivityEquipFacilityList(name,content,date,"",
+                                        estimateAmount,"","","",confirmAmount,keyValue,"");
                                 databaseReference.setValue(mList);
 
 

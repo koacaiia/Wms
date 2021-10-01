@@ -113,6 +113,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         Button btnEndDay=view.findViewById(R.id.dialog_date_select_btnendday);
         Button btnYear=view.findViewById(R.id.dialog_date_select_btnyear);
         Button btnMonth=view.findViewById(R.id.dialog_date_select_btnmonth);
+        Button btnBeforeWeek=view.findViewById(R.id.dialog_date_select_btnbeforeweek);
         Button btnWeek=view.findViewById(R.id.dialog_date_select_btnweek);
         Button btnTomorrow=view.findViewById(R.id.dialog_date_select_btntomorrow);
         TextView txtName=view.findViewById(R.id.dialog_date_select_txtName);
@@ -228,11 +229,23 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                 txtEndDay.setText(endDay[0]);
                 txtStartDay.setTextColor(Color.RED);
                 txtEndDay.setTextColor(Color.RED);
-
+            }
+        });
+        btnBeforeWeek.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE,-7);
+                calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+                startDay[0]=date.format(calendar.getTime());
+                calendar.add(Calendar.DATE,5);
+                endDay[0]=date.format(calendar.getTime());
+                txtStartDay.setText(startDay[0]);
+                txtEndDay.setText(endDay[0]);
+                txtStartDay.setTextColor(Color.RED);
+                txtEndDay.setTextColor(Color.RED);
 
             }
         });
-
         btnStartDay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -355,14 +368,14 @@ public class ActivityWorkingStaff extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int fineStaff=0,fineWomenStaff=0,outsourcingMale=0,outsourcingFemale=0;
+                double fineStaff=0,fineWomenStaff=0,outsourcingMale=0,outsourcingFemale=0;
                 ArrayList<String> consigneeListArr=new ArrayList<>();
                 for(DataSnapshot data:snapshot.getChildren()){
                     ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    fineStaff=fineStaff+Integer.parseInt(mList.getFineStaff());
-                    fineWomenStaff=fineWomenStaff+Integer.parseInt(mList.getFineWomenStaff());
-                    outsourcingMale=outsourcingMale+Integer.parseInt(mList.getOutsourcingMale());
-                    outsourcingFemale=outsourcingFemale+Integer.parseInt(mList.getOutsourcingFemale());
+                    fineStaff=fineStaff+Double.parseDouble(mList.getFineStaff());
+                    fineWomenStaff=fineWomenStaff+Double.parseDouble(mList.getFineWomenStaff());
+                    outsourcingMale=outsourcingMale+Double.parseDouble(mList.getOutsourcingMale());
+                    outsourcingFemale=outsourcingFemale+Double.parseDouble(mList.getOutsourcingFemale());
 
                     if(!mList.getOutsourcingValue().equals("")){
                         ActivityWorkingStaffList mList1=new ActivityWorkingStaffList(mList.getDate(),"","",
@@ -379,11 +392,11 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                 int listSize=list.size();
                 int consigneeListSize= consigneeListArr.size();
                 for(int i=0;i<consigneeListSize;i++) {
-                    int outMale=0,outFemale=0;
+                    double outMale=0,outFemale=0;
                     for (int j = 0; j < listSize; j++) {
                         if (consigneeListArr.get(i).equals(list.get(j).getOutsourcingValue())) {
-                            outMale=outMale+Integer.parseInt(list.get(j).getOutsourcingMale());
-                            outFemale=outFemale+Integer.parseInt(list.get(j).getOutsourcingFemale());
+                            outMale=outMale+Double.parseDouble(list.get(j).getOutsourcingMale());
+                            outFemale=outFemale+Double.parseDouble(list.get(j).getOutsourcingFemale());
                         }
                     }
                     ActivityWorkingStaffList mList2=new ActivityWorkingStaffList(startDay+"/"+endDay,"","",
@@ -520,7 +533,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int count= Integer.parseInt(editStaffCount.getText().toString());
+                double count= Double.parseDouble(editStaffCount.getText().toString());
                 editStaffCount.setText("");
                 if(textView.getText().toString().equals("")){
                     textView.setText(deptName+" 출근인원:"+count+"명으로 서버 등록");
@@ -540,7 +553,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int count= Integer.parseInt(editStaffCount.getText().toString());
+                Double count= Double.parseDouble(editStaffCount.getText().toString());
                 putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
                     textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
@@ -558,7 +571,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int count= Integer.parseInt(editStaffCount.getText().toString());
+                double count= Double.parseDouble(editStaffCount.getText().toString());
                 if(outsourcingValue==null||outsourcingValue.equals("")){
                     Toast.makeText(ActivityWorkingStaff.this,"아웃소싱업체 공란 입니다.확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
@@ -580,7 +593,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                int count= Integer.parseInt(editStaffCount.getText().toString());
+                double count= Double.parseDouble(editStaffCount.getText().toString());
                 putDialogRegStaff("FE_"+outsourcingValue, btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
                     textView.setText(outsourcingValue+"(여):"+count+"명으로 서버 등록");
@@ -603,7 +616,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
     }
 
-    private void putDialogRegStaff(String contents, String date, int count) {
+    private void putDialogRegStaff(String contents, String date, double count) {
 
         databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaff/"+date+"_"+contents);
         ActivityWorkingStaffList list=new ActivityWorkingStaffList(date,"0","0","0","0","");
@@ -694,18 +707,18 @@ public class ActivityWorkingStaff extends AppCompatActivity {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int intF=0;
-                int intWf=0;
-                int intoF=0;
-                int intoM=0;
+                double intF=0;
+                double intWf=0;
+                double intoF=0;
+                double intoM=0;
                 for(DataSnapshot data:snapshot.getChildren()){
                     ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
                     assert mList != null;
                     if(mList.getDate().equals(dateToDay)){
-                       intF=intF+Integer.parseInt(mList.getFineStaff());
-                       intWf=intWf+Integer.parseInt(mList.getFineWomenStaff());
-                       intoF=intoF+Integer.parseInt(mList.getOutsourcingFemale());
-                       intoM=intoM+Integer.parseInt(mList.getOutsourcingMale());
+                       intF=intF+Double.parseDouble(mList.getFineStaff());
+                       intWf=intWf+Double.parseDouble(mList.getFineWomenStaff());
+                       intoF=intoF+Double.parseDouble(mList.getOutsourcingFemale());
+                       intoM=intoM+Double.parseDouble(mList.getOutsourcingMale());
                         if(!mList.getOutsourcingValue().equals("")){
                             list.add(mList);
                         }

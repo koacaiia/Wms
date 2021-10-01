@@ -54,6 +54,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="올해"
+            android:textSize="10sp"
             android:textStyle="bold|italic" />
 
         <Button
@@ -64,7 +65,16 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="이번달"
+            android:textSize="10sp"
             android:textStyle="bold|italic" />
+
+        <Button
+            android:id="@+id/dialog_date_select_btnbeforeweek"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="저번주"
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/dialog_date_select_btnweek"
@@ -74,6 +84,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="이번주"
+            android:textSize="10sp"
             android:textStyle="bold|italic" />
 
         <Button

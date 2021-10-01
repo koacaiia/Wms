@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -172,11 +174,16 @@ public class PublicMethod {
             StorageReference storageReference=storage.getReference().child("images/"+refPath);
             StorageReference consigneeReference;
 
+
             if(inoutCargo.equals("장비_시설물")){
                 consigneeReference=
                         storage.getReference().child(deptName+"/"+
                                 inoutCargo+"/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg");
 
+            }else if(inoutCargo.equals("Pallet")){
+                consigneeReference=
+                        storage.getReference().child(deptName+"/"+
+                                inoutCargo+"/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg");
             }else{
                 consigneeReference=
                         storage.getReference().child("ConsigneeValue/"+consigneeName+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg" );
@@ -350,6 +357,7 @@ public class PublicMethod {
         btnAnnual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 ArrayList<String> intentValue=new ArrayList<>();
                 intentValue.add("연차,반차,휴가자 등록,조회");
                 intentValue.add("출근 인원 등록,조회");
@@ -362,11 +370,13 @@ public class PublicMethod {
                                 Intent intent;
                                 switch(which){
                                     case 0:
+                                        dialog.cancel();
                                         intent=new Intent(activity,AnnualLeave.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                         activity.startActivity(intent);
                                         break;
                                     case 1:
+                                        dialog.cancel();
                                         intent=new Intent(activity,ActivityWorkingStaff.class);
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         activity.startActivity(intent);
@@ -635,13 +645,28 @@ public class PublicMethod {
 
     }
 
-    public void pltReg(String consigneeName, String keyValue, String nickName, int totalQty,String bl,String des){
+    public void pltReg(String consigneeName,String nickName, int totalQty,String bl,String des){
         AlertDialog.Builder builder=new AlertDialog.Builder(activity);
         final String[] pltS = new String[1];
         final String[] inOut = new String[1];
         final int[] pltQty = new int[1];
         View view=activity.getLayoutInflater().inflate(R.layout.dialog_plt_reg,null);
         TextView pltTxt=view.findViewById(R.id.plt_txtTitle);
+        RecyclerView imageRecyclerView=view.findViewById(R.id.plt_imagerecyclerview);
+        LinearLayoutManager manager=new LinearLayoutManager(activity);
+        imageRecyclerView.setLayoutManager(manager);
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+        ArrayList<ImageViewList> adapterListArr=new ArrayList<>();
+        ImageViewList adapterList;
+        for(int i=0;i<list.size();i++){
+            adapterList=new ImageViewList(list.get(i));
+            adapterListArr.add(adapterList);
+
+        }
+        ImageViewListAdapter adapter=new ImageViewListAdapter(adapterListArr);
+        imageRecyclerView.setAdapter(adapter);
+
+
         TextView pltTxtBl=view.findViewById(R.id.plt_txtBl);
         pltTxtBl.setText("비엘:"+bl);
         TextView pltTxtDes=view.findViewById(R.id.plt_txtDes);
@@ -724,13 +749,14 @@ public class PublicMethod {
                         String pltDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
                         SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
                         String deptName=sharedPreferences.getString("deptName",null);
+                        String upLoadKeyValue=nickName+"_"+pltDate+"_"+pltS[0]+pltQty[0]+"장_"+inOut[0];
 
                         DatabaseReference pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
-                                "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+nickName+"_"+keyValue);
+                                "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+upLoadKeyValue);
                         Map<String,Object> value=new HashMap<>();
                         value.put("nickName",nickName);
                         value.put("date",pltDate);
-                        value.put("keyValue",keyValue);
+                        value.put("keyValue",upLoadKeyValue);
                         value.put("bl",bl);
                         value.put("des",des);
                         switch(inOut[0]){
@@ -743,7 +769,12 @@ public class PublicMethod {
                                 value.put("outQty",pltQty[0]);
                         }
                         pltRef.updateChildren(value);
-                        Toast.makeText(activity,consigneeName+"_"+pltS[0]+"_"+inOut[0]+"_"+pltQty[0]+"장으로 서버 등록 되었습니다.",
+
+                        upLoadPictures(nickName,consigneeName,"Pallet",upLoadKeyValue,deptName);
+                        Toast.makeText(activity,consigneeName+"_"+pltS[0]+"_"+inOut[0]+"_"+pltQty[0]+"장으로"+list.size() +" 장의 " +
+                                        "사진이 서버" +
+                                        " 등록 " +
+                                        "되었습니다.",
                                 Toast.LENGTH_LONG).show();
                     }
                 })

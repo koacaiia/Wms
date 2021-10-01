@@ -3,8 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_camera_capture.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_equip_facility.xml" value="0.17685185185185184" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_equip_nfacility_put_data.xml" value="0.22083333333333333" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_image_view.xml" value="0.21203703703703702" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_pallet.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/activity_put_data_reg.xml" value="0.21388888888888888" />
@@ -17,6 +19,7 @@
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/datepicker_spinner.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_date_select.xml" value="0.1" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_datepicker.xml" value="0.2111111111111111" />
+        <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_datepicker_equipfacility.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_plt_correctvalue.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_plt_reg.xml" value="0.20260416666666667" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/dialog_putworkingstaff.xml" value="0.20260416666666667" />

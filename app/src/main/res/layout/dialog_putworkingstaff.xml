@@ -36,8 +36,7 @@
             android:layout_weight="1"
             android:ems="10"
             android:gravity="center"
-            android:hint="출근인원 입력"
-            android:inputType="number" />
+            android:hint="출근인원 입력" />
 
     </LinearLayout>
 

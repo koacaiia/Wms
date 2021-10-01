@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -25,11 +26,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -181,13 +186,13 @@ ActivityPalletResultList listResult;
                             ActivityPalletList mList = data.getValue(ActivityPalletList.class);
                             switch (finalJ) {
                                 case 0:
-                                    kppQty[0] = kppQty[0] + mList.getStockQty();
+                                    kppQty[0] = mList.getStockQty();
                                     break;
                                 case 1:
-                                    ajQty[0] = ajQty[0] + mList.getStockQty();
+                                    ajQty[0] = mList.getStockQty();
                                     break;
                                 case 2:
-                                    etcQty[0] = etcQty[0] + mList.getStockQty();
+                                    etcQty[0] = mList.getStockQty();
                                     break;
                             }
 
@@ -394,18 +399,49 @@ ActivityPalletResultList listResult;
         ArrayList<String> contentValues=new ArrayList<String>();
         contentValues.add("날짜:"+date);
         contentValues.add("입고수량:"+inQty);
-        contentValues.add("출고수량:"+outQty);
+        contentValues.add("사용수량:"+outQty);
         contentValues.add("재고이관");
         contentValues.add("추가사용");
 
-        DatabaseReference databaseReference=database.getReference(keyValue);
+        DatabaseReference databaseReference=database.getReference(refPath+keyValue);
         DatePicker datePicker=new DatePicker(ActivityPallet.this);
 
+        RecyclerView recyclerView=new RecyclerView(ActivityPallet.this);
+        LinearLayoutManager manager=new LinearLayoutManager(ActivityPallet.this);
+        recyclerView.setLayoutManager(manager);
+        manager.setOrientation(RecyclerView.HORIZONTAL);
+
+        FirebaseStorage firebaseStorage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+
+
+        StorageReference storageReference=firebaseStorage.getReference(deptName+"/Pallet/"+consigneeName+"/"+keyValue);
+        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @SuppressLint("NotifyDataSetChanged")
+            @Override
+            public void onSuccess(ListResult listResult) {
+                ArrayList<ImageViewList> imageViewLists=new ArrayList<>();
+                for(StorageReference items:listResult.getItems()){
+                    items.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            ImageViewList imageViewList=new ImageViewList(uri.toString());
+                            imageViewLists.add(imageViewList);
+
+                            if(imageViewLists.size()==listResult.getItems().size()){
+                                ImageViewListAdapter adapter=new ImageViewListAdapter(imageViewLists);
+                                recyclerView.setAdapter(adapter);
+                            }
+                        }
+                    });
+                }
+
+            }
+        });
 
         String[] contentValuesList=contentValues.toArray(new String[contentValues.size()]);
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setTitle("팔렛트 등록창 수정")
-
+                .setView(recyclerView)
                 .setSingleChoiceItems(contentValuesList,0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which1) {
@@ -441,6 +477,7 @@ ActivityPalletResultList listResult;
                                            public void onClick(DialogInterface dialog, int which) {
 
                                             switch(which1){
+
                                                 case 0:
                                                     value.put("date",dateResult[0]);
                                                     break;
@@ -448,8 +485,10 @@ ActivityPalletResultList listResult;
                                                     value.put("tDate",dateResult[0]);
                                                     value.put("bl","재고");
                                                     value.put("des","이관");
+                                                    break;
+
                                             }
-                                           databaseReference.updateChildren(value);
+                                               databaseReference.updateChildren(value);
                                                Intent intent=new Intent(ActivityPallet.this,ActivityPallet.class);
                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                                ActivityPallet.this.startActivity(intent);
@@ -533,7 +572,7 @@ ActivityPalletResultList listResult;
                                                             value.put("nickName",list.get(position).getNickName());
                                                             value.put("keyValue",list.get(position).getKeyValue());
 
-                                                            DatabaseReference changedRef=database.getReference(keyValue+
+                                                            DatabaseReference changedRef=database.getReference(refPath+
                                                                     "_수정"+dateResult[0]);
                                                             changedRef.updateChildren(value);
                                                             Intent intent=new Intent(ActivityPallet.this,ActivityPallet.class);

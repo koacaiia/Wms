@@ -11,6 +11,10 @@ public class ImageViewList {
         this.uriName = uriName;
     }
 
+    public ImageViewList() {
+
+    }
+
     public String getUriName() {
         return uriName;
     }

@@ -12,10 +12,15 @@ public class ActivityEquipFacilityList {
     String repairDate;
     String conAmountDate;
     int conAmount;
+    String keyValue;
+    String remark;
     public ActivityEquipFacilityList(){
 
     }
-    public ActivityEquipFacilityList(String name, String content, String askDate, String estAmountDate, int estAmount, String confirmDate, String repairDate, String conAmountDate, int conAmount) {
+    public ActivityEquipFacilityList(String name, String content, String askDate, String estAmountDate, int estAmount,
+                                     String confirmDate, String repairDate, String conAmountDate,
+                                     int conAmount,String keyValue
+            ,String remark) {
         this.name = name;
         this.content = content;
         this.askDate = askDate;
@@ -25,6 +30,8 @@ public class ActivityEquipFacilityList {
         this.repairDate = repairDate;
         this.conAmountDate = conAmountDate;
         this.conAmount = conAmount;
+        this.keyValue=keyValue;
+        this.remark=remark;
     }
 
     public String getName() {
@@ -41,6 +48,14 @@ public class ActivityEquipFacilityList {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public String getAskDate() {
@@ -97,5 +112,13 @@ public class ActivityEquipFacilityList {
 
     public void setConAmount(int conAmount) {
         this.conAmount = conAmount;
+    }
+
+    public String getKeyValue() {
+        return keyValue;
+    }
+
+    public void setKeyValue(String keyValue) {
+        this.keyValue = keyValue;
     }
 }

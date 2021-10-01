@@ -56,6 +56,7 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
     @Override
     public void onBindViewHolder(@NonNull @NotNull ListView holder, int position) {
         String no,des,pQ,eQ;
+
         no=list.get(position).getManagementNo().replace(",","\n");
         des=list.get(position).getDescription().replace(",","\n");
         pQ=list.get(position).getPltQty().replace(",","\n");
