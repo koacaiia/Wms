@@ -121,14 +121,12 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 canvas.drawBitmap(src,0f,0f,null);
                 String timeStamp=new SimpleDateFormat("yyyy년 MM월 dd일  E요일 HH시mm분ss초").format(new Date());
                 canvas.drawText(timeStamp,20f,src.getHeight()-50f,paint);
-//                windowDegree = new WindowDegree(mainActivity);
-//                int degree = windowDegree.getDegree();
-//                bitmap = rotate(bitmap, degree);
+
                 contentResolver = mainActivity.getContentResolver();
                 contentValues = new ContentValues();
                 contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
                 contentValues.put(MediaStore.Images.Media.MIME_TYPE, "image/*");
-                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고");
+                contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고/Ori");
                 Uri imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
                 contentValues.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Fine/입,출고/Resize");

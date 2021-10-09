@@ -20,6 +20,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -249,16 +251,24 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                         .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
+
+                                                incargo_contents_consignee.setText(consigneeName+" 등록");
+
 //                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
-                                                    Log.i("TestValue","KeyValue::::"+keyValue);
                                                     getPalletStock(consigneeName,bl,des);
                                             }
                                         })
 
-                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+                                        .setNegativeButton("수기등록", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 manualPltReg();
+
+                                            }
+                                            })
+                                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
                                             }
                                         })
@@ -285,10 +295,33 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Intent intent = new Intent(Incargo.this, WorkingMessageData.class);
-                intent.putExtra("nickName", nickName);
-                intent.putExtra("deptName", deptName);
-                startActivity(intent);
+//                Intent intent = new Intent(Incargo.this, WorkingMessageData.class);
+//                intent.putExtra("nickName", nickName);
+//                intent.putExtra("deptName", deptName);
+//                startActivity(intent);
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                builder.setTitle("사진 검색 선택창")
+                        .setMessage("화질조정된,다른 사진 워하면 하단 버튼으로 다른 사진 "+"\n"+"으로 검색 진행 하기 바랍니다.")
+                        .setPositiveButton("원본사진", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pickedUpItemClick("Ori");
+                            }
+                        })
+                        .setNegativeButton("전체사진", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                pickedUpItemClick("All");
+                            }
+                        })
+                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .show();
+
                 return true;
             }
         });
@@ -848,7 +881,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         });
         if (getIntent().getStringExtra("refPath") != null) {
             selectedItemGetDatabase(getIntent().getStringExtra("date"), getIntent().getStringExtra("refPath"));
-            pickedUpItemClick(getIntent().getStringExtra("refPath"));
+            pickedUpItemClick("Resize");
             keyValue = getIntent().getStringExtra("refPath");
             dialog.dismiss();
         }
@@ -1240,6 +1273,11 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                         PublicMethod publicMethod = new PublicMethod(Incargo.this);
+                        Animation anim=new AlphaAnimation(0.0f,1.0f);
+                        anim.setDuration(100);
+                        anim.setStartOffset(20);
+                        anim.setRepeatMode(Animation.REVERSE);
+                        anim.setRepeatCount(Animation.INFINITE);
                         switch (which) {
                             case 0:
                             case 1:
@@ -1252,15 +1290,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 initIntent();
                                 break;
                             case 4:
-                                pickedUpItemClick(keyValue);
+                                pickedUpItemClick("Resize");
                                 break;
                             case 5:
                                 publicMethod.putNewDataUpdateAlarm(nickName, updateTitleValue + " 신규 등록", consigneeName,
                                         "InCargo", deptName);
                                 break;
                             case 6:
+                                incargo_contents_date.setText("팔렛트 등록");
+                                incargo_contents_date.startAnimation(anim);
                                 sharedValue="Pallet";
-                                pickedUpItemClick(keyValue);
+                                pickedUpItemClick("Resize");
+
 //                                String bl = listItems.get(0).getBl();
 //                                String des = listItems.get(0).getDescription();
 //
@@ -1437,13 +1478,33 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
     public void pickedUpItemClick(String value) {
-        RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
-        imageRecyclerView.setLayoutManager(manager);
-        PublicMethod pictures = new PublicMethod(this);
-        imageViewLists = pictures.getPictureLists();
-        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
-        imageRecyclerView.setAdapter(iAdapter);
+        PublicMethod publicMethod = new PublicMethod(this);
+        switch(value){
+            case "Resize":
+                RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
+                GridLayoutManager manager=new GridLayoutManager(this,2);
+                imageRecyclerView.setLayoutManager(manager);
+                iAdapter = new ImageViewActivityAdapter(publicMethod.getPictureLists(), this);
+                imageRecyclerView.setAdapter(iAdapter);
+                break;
+            case "Ori":
+                RecyclerView imageRecyclerViewOri=findViewById(R.id.incargo_recyclerView_image_ori);
+                GridLayoutManager managerOri=new GridLayoutManager(this,2);
+                imageRecyclerViewOri.setLayoutManager(managerOri);
+                iAdapter=new ImageViewActivityAdapter(publicMethod.getPictureListsOri(),this);
+                imageRecyclerViewOri.setAdapter(iAdapter);
+                break;
+            case "All":
+                RecyclerView imageRecyclerViewAll=findViewById(R.id.incargo_recyclerView_image_All);
+                GridLayoutManager managerAll=new GridLayoutManager(this,2);
+                imageRecyclerViewAll.setLayoutManager(managerAll);
+                iAdapter=new ImageViewActivityAdapter(publicMethod.getPictureListsAll(),this);
+                imageRecyclerViewAll.setAdapter(iAdapter);
+                break;
+        }
+
+
+
     }
 
     public void initIntent() {
@@ -1553,6 +1614,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 consigneeName[0] = publicMethod.getConsigneeList().get(position);
+                incargo_contents_consignee.setText(consigneeName[0]+" 등록");
                 Toast.makeText(Incargo.this, consigneeName[0] + " 으로 업체 선택 하였습니다.", Toast.LENGTH_SHORT).show();
             }
 

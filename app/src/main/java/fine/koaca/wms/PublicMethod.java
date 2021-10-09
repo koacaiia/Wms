@@ -132,6 +132,41 @@ public class PublicMethod {
         return imageViewLists;
     }
 
+    public ArrayList<String> getPictureListsOri(){
+        ArrayList<String> imageViewLists=new ArrayList<>();
+        Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection={MediaStore.MediaColumns.DATA};
+        Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
+        int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        while(cursor.moveToNext()){
+            String uriI=cursor.getString(columnsDataIndex);
+            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고/Ori");
+            String strFile=String.valueOf(file);
+            if(uriI.startsWith(strFile)){
+                imageViewLists.add(uriI);
+            }
+        }
+        cursor.close();
+        return imageViewLists;
+    }
+    public ArrayList<String> getPictureListsAll(){
+        ArrayList<String> imageViewLists=new ArrayList<>();
+        Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection={MediaStore.MediaColumns.DATA};
+        Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
+        int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        while(cursor.moveToNext()){
+            String uriI=cursor.getString(columnsDataIndex);
+            File file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
+            String strFile=String.valueOf(file);
+            if(uriI.startsWith(strFile)){
+                imageViewLists.add(uriI);
+            }
+        }
+        cursor.close();
+        return imageViewLists;
+    }
+
     public void putNewDataUpdateAlarm(String nickName,String message, String consigneeName, String inOut,String deptName
                                      ) {
         String timeStamp=new SimpleDateFormat("yyyy년MM월dd일E요일HH시mm분ss초").format(new Date());

@@ -110,7 +110,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
 
-//        Intent intent=new Intent(this,WorkingMessageData.class);
+//        Intent intent=new Intent(this,GalleryPictureList.class);
 //        startActivity(intent);
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
