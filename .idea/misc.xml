@@ -5,7 +5,10 @@
       <map>
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.17119565217391305" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_out_cargo.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_fragment_incargo.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_itemselected.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_select_intent.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_title.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/fragment_image_all.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/fragment_image_ori.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/fragment_image_picked.xml" value="0.175" />

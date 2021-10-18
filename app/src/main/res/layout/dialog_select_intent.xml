@@ -50,6 +50,7 @@
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
+            android:backgroundTint="#0248FF"
             android:text="출고" />
 
         <Button
@@ -59,6 +60,7 @@
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
+            android:backgroundTint="#0248FF"
             android:text="입고" />
     </LinearLayout>
 
@@ -74,7 +76,7 @@
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
-            android:backgroundTint="#FFF8E1"
+            android:backgroundTint="#93AEF4"
             android:text="초기화면"
             android:textColor="#000000" />
 
@@ -85,7 +87,7 @@
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
-            android:backgroundTint="#FFF8E1"
+            android:backgroundTint="#93AEF4"
             android:text="카메라"
             android:textColor="#000000" />
 

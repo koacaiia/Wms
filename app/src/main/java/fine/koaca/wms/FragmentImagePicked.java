@@ -113,18 +113,18 @@ public class FragmentImagePicked extends Fragment implements ImageViewActivityAd
 
               publicMethod.upLoadPictureOverCount_alertDialog();
             }
-        switch(activityValue){
-            case "Incargo":
-                publicMethod.adapterPictureSavedMethod(Incargo.keyValue);
-                break;
-            case "OutCargoActivity":
-                publicMethod.adapterPictureSavedMethod(imageList.get(position));
+                if(imageList.size()==0){
+                    Toast.makeText(getActivity(),"선택된 사진이 없습니다.",Toast.LENGTH_SHORT).show();
 
-                break;
+                }else{
+                    publicMethod.adapterPictureSavedMethod(imageList.get(position));
+                }
+
+
+
         }
 
 
 
 
     }
-}

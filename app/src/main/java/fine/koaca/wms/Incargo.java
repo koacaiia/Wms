@@ -1267,87 +1267,195 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         DatabaseReference databaseReference1 =
                 database.getReference(refPath);
         AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+        AlertDialog dialog=builder.create();
+        View view=getLayoutInflater().inflate(R.layout.dialog_fragment_incargo,null);
 
-        ArrayList<String> incargoContent = new ArrayList<>();
-        incargoContent.add("컨테이너 진입");
-        incargoContent.add("입고작업 완료");
-        incargoContent.add("검수완료");
-        incargoContent.add("창고반입");
-        incargoContent.add("입고관련 사진등록,검색");
-        incargoContent.add("신규입고 항목으로 공유");
-        incargoContent.add("Pallet 등록");
+//        ArrayList<String> incargoContent = new ArrayList<>();
+//        incargoContent.add("컨테이너 진입");
+//        incargoContent.add("입고작업 완료");
+//        incargoContent.add("검수완료");
+//        incargoContent.add("창고반입");
+//        incargoContent.add("입고관련 사진등록,검색");
+//        incargoContent.add("신규입고 항목으로 공유");
+//        incargoContent.add("Pallet 등록");
+//        String[] incargoContentList = incargoContent.toArray(new String[incargoContent.size()]);
+        TextView txtTitle=view.findViewById(R.id.dialog_fragment_incargo_txtTitle);
+        txtTitle.setText(updateTitleValue+" 입고정보");
 
-
-
-        String[] incargoContentList = incargoContent.toArray(new String[incargoContent.size()]);
-
-        builder.setTitle(updateTitleValue + " 입고")
-                .setSingleChoiceItems(incargoContentList, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        PublicMethod publicMethod = new PublicMethod(Incargo.this);
-                        Animation anim=new AlphaAnimation(0.0f,1.0f);
-                        anim.setDuration(100);
-                        anim.setStartOffset(20);
-                        anim.setRepeatMode(Animation.REVERSE);
-                        anim.setRepeatCount(Animation.INFINITE);
-                        switch (which) {
-                            case 0:
-                            case 1:
-                            case 2:
-                            case 3:
-                                String contentValue = incargoContentList[which];
+        Button btnConIn=view.findViewById(R.id.dialog_fragment_incargo_btnContainerIn);
+        btnConIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                                 Map<String, Object> putValue = new HashMap<>();
-                                putValue.put("working", contentValue);
+                                putValue.put("working", "컨테이너 진입");
                                 databaseReference1.updateChildren(putValue);
                                 initIntent();
-                                break;
-                            case 4:
-                                getFragmentImageList("Resize");
-                                break;
-                            case 5:
-                                publicMethod.putNewDataUpdateAlarm(nickName, updateTitleValue + " 신규 등록", consigneeName,
-                                        "InCargo", deptName);
-                                break;
-                            case 6:
-                                incargo_contents_date.setText("팔렛트 등록");
+            }
+        });
+        Button btnDeCom=view.findViewById(R.id.dialog_fragment_incargo_btnDevainningCom);
+        btnDeCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> putValue = new HashMap<>();
+                putValue.put("working", "입고작업 완료");
+                databaseReference1.updateChildren(putValue);
+                initIntent();
+            }
+        });
+        Button btnInsCom=view.findViewById(R.id.dialog_fragment_incargo_btnInspectionCom);
+        btnInsCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> putValue = new HashMap<>();
+                putValue.put("working", "검수완료");
+                databaseReference1.updateChildren(putValue);
+                initIntent();
+            }
+        });
+        Button btnIncargoCom=view.findViewById(R.id.dialog_fragment_incargo_btnIncargoCom);
+        btnIncargoCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Map<String, Object> putValue = new HashMap<>();
+                putValue.put("working", "창고반입");
+                databaseReference1.updateChildren(putValue);
+                initIntent();
+            }
+        });
+
+        Button btnPictures=view.findViewById(R.id.dialog_fragment_incargo_btnPicture);
+        btnPictures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                getFragmentImageList("Resize");
+
+            }
+        });
+
+
+        Button btnNew=view.findViewById(R.id.dialog_fragment_incargo_btnNewInformation);
+        btnNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                publicMethod.putNewDataUpdateAlarm(nickName, updateTitleValue + " 신규 등록", consigneeName,
+                        "InCargo", deptName);
+            }
+        });
+        Button btnPallet=view.findViewById(R.id.dialog_fragment_incargo_btnPalletReg);
+        btnPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+
+                        Animation anim=new AlphaAnimation(0.0f,1.0f);
+                        anim.setDuration(500);
+                        anim.setStartOffset(500);
+                        anim.setRepeatMode(Animation.REVERSE);
+                        anim.setRepeatCount(Animation.INFINITE);
+                        incargo_contents_date.setText("팔렛트 등록");
                                 incargo_contents_date.startAnimation(anim);
                                 sharedValue="Pallet";
                                 getFragmentImageList("Re");
 
-//                                String bl = listItems.get(0).getBl();
-//                                String des = listItems.get(0).getDescription();
-//
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
-//                                builder.setTitle("팔렛트 등록 확인창")
-//                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
-//                                                "입고등록")
-//
-//                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
-//
-//                                            }
-//                                        })
-//
-//                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                manualPltReg();
-//
-//                                            }
-//                                        })
-//                                        .show();
-                                break;
+                                String bl = listItems.get(0).getBl();
+                                String des = listItems.get(0).getDescription();
 
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+                                builder.setTitle("팔렛트 등록 확인창")
+                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
+                                                "입고등록")
 
-                        }
+                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                publicMethod.pltReg(consigneeName,nickName,0,bl,des);
 
-                    }
-                })
-                .show();
+                                            }
+                                        })
+
+                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                manualPltReg();
+
+                                            }
+                                        })
+                                        .show();
+
+            }
+        });
+
+        dialog.setTitle(updateTitleValue + " 입고");
+               dialog.setView(view);
+//                .setSingleChoiceItems(incargoContentList, 0, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.dismiss();
+//                        PublicMethod publicMethod = new PublicMethod(Incargo.this);
+//                        Animation anim=new AlphaAnimation(0.0f,1.0f);
+//                        anim.setDuration(100);
+//                        anim.setStartOffset(20);
+//                        anim.setRepeatMode(Animation.REVERSE);
+//                        anim.setRepeatCount(Animation.INFINITE);
+//                        switch (which) {
+//                            case 0:
+//                            case 1:
+//                            case 2:
+//                            case 3:
+//                                String contentValue = incargoContentList[which];
+//                                Map<String, Object> putValue = new HashMap<>();
+//                                putValue.put("working", contentValue);
+//                                databaseReference1.updateChildren(putValue);
+//                                initIntent();
+//                                break;
+//                            case 4:
+//                                getFragmentImageList("Resize");
+//                                break;
+//                            case 5:
+//                                publicMethod.putNewDataUpdateAlarm(nickName, updateTitleValue + " 신규 등록", consigneeName,
+//                                        "InCargo", deptName);
+//                                break;
+//                            case 6:
+//                                incargo_contents_date.setText("팔렛트 등록");
+//                                incargo_contents_date.startAnimation(anim);
+//                                sharedValue="Pallet";
+//                                getFragmentImageList("Re");
+//
+////                                String bl = listItems.get(0).getBl();
+////                                String des = listItems.get(0).getDescription();
+////
+////                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+////                                builder.setTitle("팔렛트 등록 확인창")
+////                                        .setMessage("사용등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 사용등록" + "\n" + "수기등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
+////                                                "입고등록")
+////
+////                                        .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+////                                            @Override
+////                                            public void onClick(DialogInterface dialog, int which) {
+////                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
+////
+////                                            }
+////                                        })
+////
+////                                        .setNeutralButton("수기등록", new DialogInterface.OnClickListener() {
+////                                            @Override
+////                                            public void onClick(DialogInterface dialog, int which) {
+////                                                manualPltReg();
+////
+////                                            }
+////                                        })
+////                                        .show();
+//                                break;
+//
+//
+//                        }
+//
+//                    }
+//                })
+                dialog.show();
+
 
 
     }
