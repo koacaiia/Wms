@@ -17,6 +17,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -202,9 +203,10 @@ public class PublicMethod {
         String dateNtime=new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초").format(new Date());
         String refPath;
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
-
+        Log.i("TestValue","consigneeName:"+consigneeName+"keyValue:"+keyValue+"deptNameValue:"+deptName);
         for(int i=0;i<listSize;i++){
             Uri uriValue=Uri.fromFile(new File(list.get(i)));
+            Log.i("TestValue","Uri Value:::"+uriValue.toString());
             refPath=deptName+"/"+date+"/"+inoutCargo+"/"+keyValue+"/"+nickName+System.currentTimeMillis()+".jpg";
             StorageReference storageReference=storage.getReference().child("images/"+refPath);
             StorageReference consigneeReference;
@@ -838,5 +840,18 @@ public class PublicMethod {
             }
         }
         return consigneeList;
+    }
+    public void upLoadPictureOverCount_alertDialog(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        builder.setTitle("!사진전송 주의사항")
+                .setMessage("한번에 전송할수 있는 사진은 최대 7 장 입니다.")
+                .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                      Toast.makeText(activity,"사진을 다시 선택하기 바랍니다.",Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+
     }
 }

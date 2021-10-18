@@ -61,7 +61,7 @@
                 android:textStyle="bold|italic" />
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/linearLayout7"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -70,62 +70,20 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/incargo_recyclerViewList"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="auto"
                 android:focusableInTouchMode="true"
-                android:nestedScrollingEnabled="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:nestedScrollingEnabled="true">
 
             </androidx.recyclerview.widget.RecyclerView>
 
-            <TextView
-                android:id="@+id/incargo_txtResize"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="리싸이즈(서버전송용)"
-                android:textStyle="bold|italic"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/incargo_recyclerViewList" />
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/incargo_viewPager2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/incargo_recyclerView_image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/incargo_txtResize">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/incargo_recyclerView_image_ori"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/incargo_txtResize">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/incargo_recyclerView_image_All"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/incargo_txtResize">
-
-            </androidx.recyclerview.widget.RecyclerView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

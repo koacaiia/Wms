@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -71,7 +72,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     String dateToday;
     String refPath;
 
-    ArrayList<String> imageViewLists=new ArrayList<>();
+    public static ArrayList<String> imageViewLists=new ArrayList<>();
     ArrayList<String> clickedImageViewLists=new ArrayList<>();
     ImageViewActivityAdapter iAdapter;
     SparseBooleanArray clickedArray=new SparseBooleanArray(0);
@@ -79,6 +80,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     PublicMethod publicMethod;
     int listPosition;
+    public static String keyValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +212,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         builder.setTitle("출고현황 변경사항");
         ArrayList<String> clickValue=new ArrayList<>();
         clickValue.add("사진제외 출고완료 등록");
-        clickValue.add("사진포함 출고완료 등록");
+        clickValue.add("사진포함 출고완료 등록,항목 사진검색");
         clickValue.add("미출고 등록");
         clickValue.add("신규출고 항목으로 공유");
         clickValue.add("Pallet 등록");
@@ -230,6 +232,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
                     case 1:
                         updateValue("완");
+                        keyValue=list.get(0).getKeypath();
                         pictureUpdate();
                         break;
                     case 2:
@@ -263,7 +266,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
 
                     case 5:
-                        itemPictureList(list.get(0).getKeypath());
+//                        itemPictureList(list.get(0).getKeypath());
                          break;
                 }
                 dialog.dismiss();
@@ -326,64 +329,87 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 }).show();
     }
 
-    public void itemPictureList(String keyValue) {
+//    public void itemPictureList(String keyValue) {
+//
+//        imageViewLists.clear();
+//        RecyclerView imageRecyclerView = findViewById(R.id.activity_list_outcargo_imageviewRe);
+//        GridLayoutManager manager = new GridLayoutManager(this, 2);
+//        imageRecyclerView.setLayoutManager(manager);
+//        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+//        StorageReference storageReference=
+//                storage.getReference("images/"+deptName+"/"+keyValue.substring(0,10)+"/OutCargo/"+keyValue);
+//        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onSuccess(ListResult listResult) {
+//
+//                for(StorageReference item:listResult.getItems()){
+//
+//                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//
+//                            imageViewLists.add(uri.toString());
+//
+//                            iAdapter = new ImageViewActivityAdapter(imageViewLists);
+//                            if(imageViewLists.size()==listResult.getItems().size()){
+//                                imageRecyclerView.setAdapter(iAdapter);
+//                                iAdapter.notifyDataSetChanged();
+//                            }
+//                            iAdapter.clickListener=new ImageViewActivityAdapter.ImageViewClicked() {
+//                                @Override
+//                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+//                                    PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+//                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
+//                                }
+//                            };
+//
+//
+//                        }
+//
+//                    });
+//
+//                }
+//
+//            }
+//        });
+//
+//    }
+//
 
-        imageViewLists.clear();
-        RecyclerView imageRecyclerView = findViewById(R.id.activity_list_outcargo_imageviewRe);
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
-        imageRecyclerView.setLayoutManager(manager);
-        FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
-        StorageReference storageReference=
-                storage.getReference("images/"+deptName+"/"+keyValue.substring(0,10)+"/OutCargo/"+keyValue);
-        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-            @SuppressLint("NotifyDataSetChanged")
+    private void pictureUpdate() {
+        ViewPager2 viewPager2=findViewById(R.id.activity_list_outcargo_viewpager2);
+        ViewPageStateAdapter adapter=new ViewPageStateAdapter(this,4);
+        viewPager2.setAdapter(adapter);
+        viewPager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
+        viewPager2.setCurrentItem(1000);
+        viewPager2.setOffscreenPageLimit(3);
+
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            public void onSuccess(ListResult listResult) {
-
-                for(StorageReference item:listResult.getItems()){
-
-                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            imageViewLists.add(uri.toString());
-
-                            iAdapter = new ImageViewActivityAdapter(imageViewLists);
-                            if(imageViewLists.size()==listResult.getItems().size()){
-                                imageRecyclerView.setAdapter(iAdapter);
-                                iAdapter.notifyDataSetChanged();
-                            }
-                            iAdapter.clickListener=new ImageViewActivityAdapter.ImageViewClicked() {
-                                @Override
-                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-                                    PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
-                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
-                                }
-                            };
-
-
-                        }
-
-                    });
-
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                if(positionOffset==0){
+                    viewPager2.setCurrentItem(position);
                 }
+            }
 
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
             }
         });
 
-    }
 
 
-    private void pictureUpdate() {
-        RecyclerView imageRecyclerView=findViewById(R.id.activity_list_outcargo_imageviewRe);
-        GridLayoutManager manager=new GridLayoutManager(this,2);
-        imageRecyclerView.setLayoutManager(manager);
 
-        PublicMethod getImageLists=new PublicMethod(this);
-        imageViewLists=getImageLists.getPictureLists();
 
-        iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
-        imageRecyclerView.setAdapter(iAdapter);
+
 
 
     }
