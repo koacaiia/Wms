@@ -101,8 +101,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 updateValue("완");
                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this,clickedImageViewLists);
                publicMethod.upLoadPictures(nickName,list.get(0).getConsigneeName(),"OutCargo",list.get(0).getKeypath(),deptName);
-
-
+                Toast.makeText(getApplicationContext(),list.get(0).getKeypath()+"서버에 출고완료 등록으로(사진"+clickedImageViewLists.size()+" 장을 " +
+                        "서버에 등록 진행 하였습니다.",Toast.LENGTH_LONG).show();
             }
         });
         recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
@@ -209,70 +209,122 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     public void itemClickedDialog(String consigneeName, String dialogTitle){
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         AlertDialog dialog=builder.create();
-        builder.setTitle("출고현황 변경사항");
-        ArrayList<String> clickValue=new ArrayList<>();
-        clickValue.add("사진제외 출고완료 등록");
-        clickValue.add("사진포함 출고완료 등록,항목 사진검색");
-        clickValue.add("미출고 등록");
-        clickValue.add("신규출고 항목으로 공유");
-        clickValue.add("Pallet 등록");
-        clickValue.add("항목 출고 사진 검색");
-
-        String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
-        builder.setTitle(dialogTitle+" 출고");
-        builder.setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
+        View view=getLayoutInflater().inflate(R.layout.dialog_fragment_outcargo,null);
+        Button btnRegExPic=view.findViewById(R.id.dialog_fragment_outcargo_RegExPic);
+        btnRegExPic.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
-                switch(which){
-
-                    case 0:
-                        updateValue("완");
-                        intentTitleActivity();
-                        break;
-                    case 1:
-                        updateValue("완");
-                        keyValue=list.get(0).getKeypath();
-                        pictureUpdate();
-                        break;
-                    case 2:
-                        updateValue("미");
-                        intentTitleActivity();
-                        break;
-                    case 3:
-                        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",deptName);
-                        break;
-                    case 4:
-//                        putPalletReg(consigneeName);
-                        int totalQty=Integer.parseInt(list.get(0).getTotalQty().replace("PLT",""));
-
-                        AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
-                        builder.setTitle("팔렛트 등록 확인창")
-                                .setMessage("출고 팔렛트가 재고관리 되는 팔렛트 인 경우"+"\n"+"하단의 등록 버튼을 눌러 재고관리 진행 바랍니다.!")
-                                .setPositiveButton("등록", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-//                                        publicMethod.pltReg(consigneeName,list.get(0).getKeypath(),nickName,totalQty);
-                                    }
-                                })
-                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-
-                                    }
-                                })
-                                .show();
-
-                        break;
-
-                    case 5:
-//                        itemPictureList(list.get(0).getKeypath());
-                         break;
-                }
+            public void onClick(View view) {
                 dialog.dismiss();
+                updateValue("완");
+                Toast.makeText(getApplicationContext(),dialogTitle+" 화물 출고 등록으로 진행 하였습니다",Toast.LENGTH_LONG).show();
+                        intentTitleActivity();
             }
-        })
-                .show();
+        });
+        Button btnConPic=view.findViewById(R.id.dialog_fragment_outcargo_RegComPic);
+        btnConPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            dialog.dismiss();
+                updateValue("완");
+                        keyValue=list.get(0).getKeypath();
+                pictureUpdate();
+            }
+        });
+        Button btnNotOutcargo=view.findViewById(R.id.dialog_fragment_outcargo_NotOutcargo);
+        btnNotOutcargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                updateValue("미");
+                Toast.makeText(getApplicationContext(),dialogTitle+" 화물 -미-출고 등록으로 진행 하였습니다.",Toast.LENGTH_LONG).show();
+                        intentTitleActivity();
+
+            }
+        });
+        Button btnNewOutcargo=view.findViewById(R.id.dialog_fragment_outcargo_NewOutcargo);
+        btnNewOutcargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Toast.makeText(getApplicationContext(),dialogTitle+" 화물 신규등록 진행 하였습니다.",Toast.LENGTH_LONG).show();
+                publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",deptName);
+                intentTitleActivity();
+                                   }
+        });
+        Button btnRegPallet=view.findViewById(R.id.dialog_fragment_outcargo_RegPallet);
+        btnRegPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+//
+
+//        builder.setTitle("출고현황 변경사항");
+//        ArrayList<String> clickValue=new ArrayList<>();
+//        clickValue.add("사진제외 출고완료 등록");
+//        clickValue.add("사진포함 출고완료 등록,항목 사진검색");
+//        clickValue.add("미출고 등록");
+//        clickValue.add("신규출고 항목으로 공유");
+//        clickValue.add("Pallet 등록");
+//        clickValue.add("항목 출고 사진 검색");
+//
+//        String[] clickValueList=clickValue.toArray(new String[clickValue.size()]);
+        dialog.setTitle(dialogTitle+" 출고");
+        dialog.setView(view);
+//        builder.setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+//                switch(which){
+//
+//                    case 0:
+//                        updateValue("완");
+//                        intentTitleActivity();
+//                        break;
+//                    case 1:
+//                        updateValue("완");
+//                        keyValue=list.get(0).getKeypath();
+//                        pictureUpdate();
+//                        break;
+//                    case 2:
+//                        updateValue("미");
+//                        intentTitleActivity();
+//                        break;
+//                    case 3:
+//                        publicMethod.putNewDataUpdateAlarm(nickName,dialogTitle+" 신규 등록",consigneeName,"OutCargo",deptName);
+//                        break;
+//                    case 4:
+////                        putPalletReg(consigneeName);
+//                        int totalQty=Integer.parseInt(list.get(0).getTotalQty().replace("PLT",""));
+//
+//                        AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+//                        builder.setTitle("팔렛트 등록 확인창")
+//                                .setMessage("출고 팔렛트가 재고관리 되는 팔렛트 인 경우"+"\n"+"하단의 등록 버튼을 눌러 재고관리 진행 바랍니다.!")
+//                                .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+////                                        publicMethod.pltReg(consigneeName,list.get(0).getKeypath(),nickName,totalQty);
+//                                    }
+//                                })
+//                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//
+//                                    }
+//                                })
+//                                .show();
+//
+//                        break;
+//
+//                    case 5:
+////                        itemPictureList(list.get(0).getKeypath());
+//                         break;
+//                }
+//                dialog.dismiss();
+//            }
+//        })
+                dialog.show();
     }
 
     private void putPalletReg(String consigneeName) {
