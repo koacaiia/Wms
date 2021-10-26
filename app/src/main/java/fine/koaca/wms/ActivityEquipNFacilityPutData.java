@@ -4,13 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AdapterView;
@@ -69,7 +67,7 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         imageRecyclerView.setLayoutManager(manager);
         PublicMethod pictures = new PublicMethod(this);
-        imageViewLists = pictures.getPictureLists();
+        imageViewLists = pictures.getPictureLists("Re");
         iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
         imageRecyclerView.setAdapter(iAdapter);
 

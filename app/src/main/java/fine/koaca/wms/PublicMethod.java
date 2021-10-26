@@ -113,7 +113,7 @@ public class PublicMethod {
 
 
     }
-    public ArrayList<String> getPictureLists(){
+    public ArrayList<String> getPictureLists(String sort){
         ArrayList<String> imageViewLists=new ArrayList<>();
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};
@@ -122,7 +122,20 @@ public class PublicMethod {
 
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
-            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고/Resize");
+            File file=null;
+            switch(sort){
+                case "Re":
+                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입," +
+                        "출고/Resize");
+                    break;
+                case "All":
+                    file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
+                    break;
+                case "Ori":
+                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입," +
+                            "출고/Ori");
+                    break;
+            }
             String strFile=String.valueOf(file);
             if(uriI.startsWith(strFile)){
                 imageViewLists.add(uriI);

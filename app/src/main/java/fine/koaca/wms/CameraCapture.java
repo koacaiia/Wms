@@ -172,7 +172,8 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         recyclerView=findViewById(R.id.captureImageList);
         LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         recyclerView.setLayoutManager(layoutManager);
-        list=captureProcess.queryAllPictures();
+        CaptureProcess captureProcessActivity=new CaptureProcess(this);
+        list=captureProcessActivity.queryAllPictures();
         adapter=new ImageViewListAdapter(list);
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);

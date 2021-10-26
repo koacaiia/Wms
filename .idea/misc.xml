@@ -41,6 +41,9 @@
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/layout/year_month_picker.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/menu/title_menu.xml" value="0.22083333333333333" />
         <entry key="..\:/AndroidStudioProjects/Wms/app/src/main/res/menu/workingstaff_menu.xml" value="0.22083333333333333" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_incargo_itemclickselect.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_itemclicked_titleactivity_incargo.xml" value="0.175" />
       </map>
     </option>
   </component>

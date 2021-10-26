@@ -77,6 +77,30 @@
 
             </androidx.recyclerview.widget.RecyclerView>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/incargo_picList"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textStyle="bold|italic"
+                    android:text="TextView" />
+
+                <TextView
+                    android:id="@+id/incargo_picCount"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:textStyle="bold|italic"
+                    android:gravity="center"
+                    android:text="TextView" />
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/incargo_recyclerView_image"
                 android:layout_width="match_parent"
