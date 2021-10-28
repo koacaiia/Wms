@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -67,6 +68,9 @@ implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
         String nickName=sharedPreferences.getString("nickName",null);
 
         holder.msg.setText(messageLists.get(position).getMsg());
+        if(messageLists.get(position).getMsg().contains("요청")){
+            holder.msg.setTextColor(Color.RED);
+        }
         holder.nickName.setText(messageLists.get(position).getNickName());
         String time=messageLists.get(position).getTime();
         holder.time.setText(time.substring(time.length()-9));

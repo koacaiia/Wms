@@ -10,13 +10,14 @@ android {
     defaultConfig {
         applicationId "fine.koaca.wms"
         minSdkVersion 29
-        targetSdkVersion 30
-        versionCode 50
-        versionName "1.50"
+        targetSdkVersion 29
+        versionCode 56
+        versionName "1.56"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
+
                 cppFlags ""
             }
         }

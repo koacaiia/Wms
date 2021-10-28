@@ -80,9 +80,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     public CaptureProcess(Incargo inCargoActivity) {
         this.inCargoActivity=inCargoActivity;
     }
-    public CaptureProcess(Activity activity){
-        this.activity=activity;
-    }
+
 
 
 
@@ -286,7 +284,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         captureImageList.clear();
         Uri uri =MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};
-        Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED +
+        Cursor cursor=mainActivity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED +
                  " desc");
         int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 

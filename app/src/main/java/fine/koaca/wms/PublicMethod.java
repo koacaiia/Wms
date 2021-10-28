@@ -120,6 +120,7 @@ public class PublicMethod {
         Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
         int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
+
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
             File file=null;
@@ -164,8 +165,12 @@ public class PublicMethod {
         DatabaseReference databaseReference =
                 database.getReference("DeptName/"+deptName+"/WorkingMessage/"+nickName+"_"+timeStamp);
         databaseReference.setValue(messageList);
+        if(message.contains("요청")){
+            sendPushMessage(deptName,nickName,message,"AskedWorkingMessage");
+        }else{
+            sendPushMessage(deptName,nickName,message,"WorkingMessage");
+        }
 
-        sendPushMessage(deptName,nickName,message,"WorkingMessage");
 
         Intent intent=new Intent(activity,WorkingMessageData.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -816,5 +821,24 @@ public class PublicMethod {
             }
         }
         return consigneeList;
+    }
+
+    public ArrayList<String> getPictureListsApplyThread(String sort){
+        ArrayList<String> imageViewLists=new ArrayList<>();
+        Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        String[] projection={MediaStore.MediaColumns.DATA};
+        Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
+        int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        while(cursor.moveToNext()){
+            String uriI=cursor.getString(columnsDataIndex);
+            File file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
+            String strFile=String.valueOf(file);
+            if (uriI.startsWith(strFile)) {
+
+                imageViewLists.add(uriI);
+            }
+        }
+        cursor.close();
+        return imageViewLists;
     }
 }

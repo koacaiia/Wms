@@ -514,13 +514,13 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         ValueEventListener listenerStaff=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int fineStaff = 0,fineStaffWomen = 0,outsourcingMale = 0,outsourcingFemale = 0;
+                double fineStaff = 0,fineStaffWomen = 0,outsourcingMale = 0,outsourcingFemale = 0;
                 for(DataSnapshot data:snapshot.getChildren()){
                     ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    fineStaff=fineStaff+Integer.parseInt(mList.getFineStaff());
-                    fineStaffWomen=fineStaffWomen+Integer.parseInt(mList.getFineWomenStaff());
-                    outsourcingMale=outsourcingMale+Integer.parseInt(mList.getOutsourcingMale());
-                    outsourcingFemale=outsourcingFemale+Integer.parseInt(mList.getOutsourcingFemale());
+                    fineStaff=fineStaff+Double.parseDouble(mList.getFineStaff());
+                    fineStaffWomen=fineStaffWomen+Double.parseDouble(mList.getFineWomenStaff());
+                    outsourcingMale=outsourcingMale+Double.parseDouble(mList.getOutsourcingMale());
+                    outsourcingFemale=outsourcingFemale+Double.parseDouble(mList.getOutsourcingFemale());
                 }
                 txtFineStaff.setText(fineStaff+" 명");
                 txtFineStaffWomen.setText(fineStaffWomen+" 명");
@@ -779,10 +779,10 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         incargoRecyclerView.setLayoutManager(manager);
 //        PublicMethod publicMethod=new PublicMethod(TitleActivity.this);
 //        ImageViewActivityAdapter iAdapter=new ImageViewActivityAdapter(publicMethod.getPictureLists("Re"));
-        CaptureProcess captureProcess=new CaptureProcess(this);
-        ImageViewListAdapter iAdapter=new ImageViewListAdapter(captureProcess.queryAllPictures());
-        incargoRecyclerView.setAdapter(iAdapter);
-        iAdapter.notifyDataSetChanged();
+//        CaptureProcess captureProcess=new CaptureProcess(this);
+//        ImageViewListAdapter iAdapter=new ImageViewListAdapter(captureProcess.queryAllPictures());
+//        incargoRecyclerView.setAdapter(iAdapter);
+//        iAdapter.notifyDataSetChanged();
 
         builder.setView(view)
                 .show();

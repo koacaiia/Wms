@@ -73,20 +73,30 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
                 id=2;
                 intent=new Intent(this,WorkingMessageData.class);
                 break;
+            case "AskedWorkingMessage":
+                id=3;
+                intent=new Intent(this,WorkingMessageData.class);
+                Log.i("TestValue","Notify Test::"+id);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + contents);
         } 
 
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert")
-                .setSmallIcon(R.drawable.logo3)
-                .setContentTitle(nickName)
-                .setContentText(message)
-                .setContentIntent(contentIntent)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setVibrate(new long[]{10000, 10000,})
-                .setAutoCancel(true)
+        NotificationCompat.Builder builder = getNotificationBuilder("Ask", "alert");
+        if(id==3){
+            builder.setSmallIcon(R.drawable.progress_image);
+        }else{
+            builder.setSmallIcon(R.drawable.logo3);
+        }
+
+                builder.setContentTitle(nickName);
+                builder.setContentText(message);
+                builder.setContentIntent(contentIntent);
+                builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                builder.setVibrate(new long[]{10000, 10000,});
+                builder.setAutoCancel(true)
                 ;
 
         NotificationManager notificationManager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
@@ -100,7 +110,7 @@ public class FcmProcessService extends FirebaseMessagingService implements Seria
         channel.enableLights(true);
         channel.setLightColor(Color.RED);
         channel.enableVibration(true);
-
+        channel.setShowBadge(true);
         manager.createNotificationChannel(channel);
 
         builder=new NotificationCompat.Builder(this,ask);
