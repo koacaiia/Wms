@@ -683,8 +683,6 @@ public class PublicMethod {
         }
         ImageViewListAdapter adapter=new ImageViewListAdapter(adapterListArr);
         imageRecyclerView.setAdapter(adapter);
-
-
         TextView pltTxtBl=view.findViewById(R.id.plt_txtBl);
         pltTxtBl.setText("비엘:"+bl);
         TextView pltTxtDes=view.findViewById(R.id.plt_txtDes);

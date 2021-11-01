@@ -2,6 +2,7 @@ package fine.koaca.wms;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,13 +22,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -35,7 +37,6 @@ import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +48,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -123,7 +123,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
         dateToday = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-//        dateToday="2021-09-03";
+//        dateToday="2021-10-27";
         requestPermissions(permission_list, 0);
         sharedPref = getSharedPreferences("Dept_Name", MODE_PRIVATE);
         if (sharedPref.getString("deptName", null) == null) {
@@ -261,11 +261,11 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         AlertDialog.Builder titleBuilder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_title, null);
-        Button btnConfirm = view.findViewById(R.id.button2);
-        Button btnIncargo = view.findViewById(R.id.button4);
-        Button btnOutcargo = view.findViewById(R.id.button3);
 
 
+        CardView cardViewIncargo=view.findViewById(R.id.title_cardview_incargo);
+        CardView cardViewOutcargo=view.findViewById(R.id.title_cardview_outcargo);
+        CardView cardViewWorkStaff=view.findViewById(R.id.title_cardview_workstaff);
         txtTitle = view.findViewById(R.id.dialog_title_txttile);
 
         txtTitle.setText(dateToday + " 입,출고 현황");
@@ -546,22 +546,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         dialog.getWindow().setAttributes(params);
 
-        btnConfirm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-        btnIncargo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                Intent intent = new Intent(getApplicationContext(), Incargo.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            }
-        });
-        btnOutcargo.setOnClickListener(new View.OnClickListener() {
+
+        cardViewOutcargo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
@@ -569,7 +555,35 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 intentOutcargoActivity();
             }
         });
+        cardViewIncargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Intent intent=new Intent(getApplicationContext(),Incargo.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
+        cardViewWorkStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+           dialog.dismiss();
+           Intent intent=new Intent(getApplicationContext(),ActivityWorkingStaff.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        });
 
+        Button btnCamera=view.findViewById(R.id.title_button_camera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                Intent intent=new Intent(getApplicationContext(),CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });
     }
 
 
@@ -693,6 +707,11 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                         txtTitle.setText(dateToday + " 입,출고 현황" + "\n" + alertVersion);
                         txtTitle.setTextColor(Color.RED);
                         txtTitle.setTextSize(10);
+                        Animation ani=new AlphaAnimation(0.0f,1.0f);
+                        ani.setRepeatMode(Animation.REVERSE);
+                        ani.setDuration(1000);
+                        ani.setRepeatCount(Animation.INFINITE);
+                        txtTitle.startAnimation(ani);
 
                     }
                 }
@@ -762,79 +781,86 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+        Intent intent=new Intent(getApplicationContext(),Incargo.class);
+        intent.putExtra("refPath",listIn.get(pos).getKeyValue());
+        intent.putExtra("date",listIn.get(pos).getDate());
+        intent.putExtra("bl",listIn.get(pos).getBl());
+        intent.putExtra("consigneeName",listIn.get(pos).getConsignee());
+        intent.putExtra("container",listIn.get(pos).getContainer());
+        startActivity(intent);
 
-        String keyValue = listIn.get(pos).getDate() + "_" + listIn.get(pos).getBl() + "_" + listIn.get(pos).getDescription() +
-                "_" + listIn.get(pos).getCount() + "_" + listIn.get(pos).getContainer();
-        String updateTitleValue =
-                listIn.get(pos).getConsignee() + "_비엘:" + listIn.get(pos).getBl() + "_컨테이너:" + listIn.get(pos).getContainer();
-
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + refMonth +
-                "월/" + dateToday+"/" + keyValue);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view=getLayoutInflater().inflate(R.layout.dialog_itemclicked_titleactivity_incargo,null);
-        RecyclerView incargoRecyclerView=view.findViewById(R.id.title_incargo_imageRecyclerView);
-        GridLayoutManager manager=new GridLayoutManager(TitleActivity.this,2);
-        manager.setOrientation(RecyclerView.HORIZONTAL);
-        incargoRecyclerView.setLayoutManager(manager);
-//        PublicMethod publicMethod=new PublicMethod(TitleActivity.this);
-//        ImageViewActivityAdapter iAdapter=new ImageViewActivityAdapter(publicMethod.getPictureLists("Re"));
-//        CaptureProcess captureProcess=new CaptureProcess(this);
-//        ImageViewListAdapter iAdapter=new ImageViewListAdapter(captureProcess.queryAllPictures());
-//        incargoRecyclerView.setAdapter(iAdapter);
-//        iAdapter.notifyDataSetChanged();
-
-        builder.setView(view)
-                .show();
-
-
-
-//        ArrayList<String> incargoContent = new ArrayList<>();
-//        incargoContent.add("컨테이너 진입");
-//        incargoContent.add("입고작업 완료");
-//        incargoContent.add("검수완료");
-//        incargoContent.add("창고반입");
-//        incargoContent.add("입고관련 사진등록");
-//        incargoContent.add("신규입고 항목으로 공유");
+//        String keyValue = listIn.get(pos).getDate() + "_" + listIn.get(pos).getBl() + "_" + listIn.get(pos).getDescription() +
+//                "_" + listIn.get(pos).getCount() + "_" + listIn.get(pos).getContainer();
+//        String updateTitleValue =
+//                listIn.get(pos).getConsignee() + "_비엘:" + listIn.get(pos).getBl() + "_컨테이너:" + listIn.get(pos).getContainer();
 //
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +"InCargo" + "/" + refMonth +
+//                "월/" + dateToday+"/" + keyValue);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        View view=getLayoutInflater().inflate(R.layout.dialog_itemclicked_titleactivity_incargo,null);
+//        RecyclerView incargoRecyclerView=view.findViewById(R.id.title_incargo_imageRecyclerView);
+//        GridLayoutManager manager=new GridLayoutManager(TitleActivity.this,2);
+//        manager.setOrientation(RecyclerView.HORIZONTAL);
+//        incargoRecyclerView.setLayoutManager(manager);
+////        PublicMethod publicMethod=new PublicMethod(TitleActivity.this);
+////        ImageViewActivityAdapter iAdapter=new ImageViewActivityAdapter(publicMethod.getPictureLists("Re"));
+////        CaptureProcess captureProcess=new CaptureProcess(this);
+////        ImageViewListAdapter iAdapter=new ImageViewListAdapter(captureProcess.queryAllPictures());
+////        incargoRecyclerView.setAdapter(iAdapter);
+////        iAdapter.notifyDataSetChanged();
 //
-//        String[] incargoContentList = incargoContent.toArray(new String[incargoContent.size()]);
-//
-//        builder.setTitle(updateTitleValue + " 입고")
-//                .setSingleChoiceItems(incargoContentList, 0, new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        dialog.dismiss();
-//                        Intent intent = new Intent(getApplicationContext(), Incargo.class);
-//                        switch (which) {
-//                            case 0:
-//                            case 1:
-//                            case 2:
-//                            case 3:
-//                                String contentValue = incargoContentList[which];
-//                                Map<String, Object> putValue = new HashMap<>();
-//                                putValue.put("working", contentValue);
-//                                databaseReference.updateChildren(putValue);
-//                                initIntent();
-//                                break;
-//                            case 4:
-//                                intent.putExtra("date",listIn.get(pos).getDate());
-//                                intent.putExtra("refPath", keyValue);
-//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                                startActivity(intent);
-//                                break;
-//                            case 5:
-//                                putNewDataUpdateAlarm(updateTitleValue + " 신규 등록", listIn.get(pos).getConsignee(), "InCargo");
-//
-//                                break;
-//
-//                        }
-//
-//
-//                    }
-//                })
+//        builder.setView(view)
 //                .show();
-
+//
+//
+//
+////        ArrayList<String> incargoContent = new ArrayList<>();
+////        incargoContent.add("컨테이너 진입");
+////        incargoContent.add("입고작업 완료");
+////        incargoContent.add("검수완료");
+////        incargoContent.add("창고반입");
+////        incargoContent.add("입고관련 사진등록");
+////        incargoContent.add("신규입고 항목으로 공유");
+////
+////
+////        String[] incargoContentList = incargoContent.toArray(new String[incargoContent.size()]);
+////
+////        builder.setTitle(updateTitleValue + " 입고")
+////                .setSingleChoiceItems(incargoContentList, 0, new DialogInterface.OnClickListener() {
+////                    @Override
+////                    public void onClick(DialogInterface dialog, int which) {
+////                        dialog.dismiss();
+////                        Intent intent = new Intent(getApplicationContext(), Incargo.class);
+////                        switch (which) {
+////                            case 0:
+////                            case 1:
+////                            case 2:
+////                            case 3:
+////                                String contentValue = incargoContentList[which];
+////                                Map<String, Object> putValue = new HashMap<>();
+////                                putValue.put("working", contentValue);
+////                                databaseReference.updateChildren(putValue);
+////                                initIntent();
+////                                break;
+////                            case 4:
+////                                intent.putExtra("date",listIn.get(pos).getDate());
+////                                intent.putExtra("refPath", keyValue);
+////                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+////                                startActivity(intent);
+////                                break;
+////                            case 5:
+////                                putNewDataUpdateAlarm(updateTitleValue + " 신규 등록", listIn.get(pos).getConsignee(), "InCargo");
+////
+////                                break;
+////
+////                        }
+////
+////
+////                    }
+////                })
+////                .show();
+//
 
     }
 

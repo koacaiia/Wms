@@ -46,9 +46,13 @@
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/drawable/progress_image.xml" value="0.19114583333333332" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_camera_capture.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.16574074074074074" />
-        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_incargo_itemclickselect.xml" value="0.16574074074074074" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_incargo_itemclickselect.xml" value="0.22" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pregressbar.xml" value="0.16041666666666668" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pregressbar2.xml" value="0.16041666666666668" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_select_intent.xml" value="0.16018518518518518" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_title.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/imageactivityview_list.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/workinglist.xml" value="0.175" />
       </map>
     </option>
   </component>

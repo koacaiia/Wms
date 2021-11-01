@@ -69,7 +69,11 @@ implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
 
         holder.msg.setText(messageLists.get(position).getMsg());
         if(messageLists.get(position).getMsg().contains("요청")){
-            holder.msg.setTextColor(Color.RED);
+            holder.msg.setTextColor(Color.WHITE);
+            holder.cardViewContent.setBackgroundColor(Color.BLACK);
+        }else{
+            holder.msg.setTextColor(Color.BLACK);
+            holder.cardViewContent.setBackgroundColor(Color.parseColor("#969292"));
         }
         holder.nickName.setText(messageLists.get(position).getNickName());
         String time=messageLists.get(position).getTime();
@@ -99,18 +103,12 @@ implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
 
         LinearLayout.LayoutParams params= (LinearLayout.LayoutParams) holder.linearLayout.getLayoutParams();
         if(messageLists.get(position).getNickName().equals(nickName)){
-
+            params.gravity=Gravity.END;
             mSelectedItems.put(position,true);}
         else {
+            params.gravity=Gravity.START;
             mSelectedItems.put(position,false);
         }
-       if(mSelectedItems.get(position,true)){
-           params.gravity=Gravity.END;
-       }else{
-           params.gravity=Gravity.START;
-       }
-
-
 
         holder.linearLayout.setLayoutParams(params);
 
@@ -152,6 +150,7 @@ implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
         ImageView image5;
         ImageView image6;
         CardView cardView;
+        CardView cardViewContent;
         LinearLayout linearLayout;
         RecyclerView recyclerView;
 
@@ -169,6 +168,8 @@ implements OnListImageClickListener,ImageViewActivityAdapter.ImageViewClicked{
             this.image5=itemView.findViewById(R.id.work_image5);
             this.image6=itemView.findViewById(R.id.work_image6);
             this.cardView=itemView.findViewById(R.id.workinglistcardview);
+            this.cardViewContent=itemView.findViewById(R.id.workinglistcardview_content);
+
             this.linearLayout=itemView.findViewById(R.id.workinglayout);
 //
 //

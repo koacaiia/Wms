@@ -540,7 +540,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                 }else{
                     textView.append("\n"+deptName+" 출근인원:"+count+"명으로 서버 등록");
                 }
-//               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
+               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
 
 
             }
@@ -553,7 +553,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                     Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Double count= Double.parseDouble(editStaffCount.getText().toString());
+                double count= Double.parseDouble(editStaffCount.getText().toString());
                 putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
                 if(textView.getText().toString().equals("")){
                     textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
@@ -608,7 +608,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                            getDatabaseData(dateToDay);
                     }
                 })
 

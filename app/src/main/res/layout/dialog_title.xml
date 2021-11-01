@@ -26,8 +26,10 @@
                 android:textStyle="bold|italic" />
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/title_cardview_incargo"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                app:cardBackgroundColor="#E3F2FD"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true">
@@ -266,8 +268,10 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/title_cardview_outcargo"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
+                app:cardBackgroundColor="#E1F5FE"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true">
@@ -455,12 +459,16 @@
 
 
             </androidx.cardview.widget.CardView>
+
             <androidx.cardview.widget.CardView
+                android:id="@+id/title_cardview_workstaff"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                app:cardBackgroundColor="#E0F7FA"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -618,13 +626,14 @@
                 </LinearLayout>
 
             </androidx.cardview.widget.CardView>
+
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="55dp"
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/title_button_camera"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginStart="3dp"
@@ -632,29 +641,8 @@
                     android:layout_marginEnd="3dp"
                     android:layout_marginRight="3dp"
                     android:layout_weight="1"
-                    android:text="확인" />
+                    android:text="카메라" />
 
-                <Button
-                    android:id="@+id/button3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight="1"
-                    android:text="출고" />
-
-                <Button
-                    android:id="@+id/button4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="3dp"
-                    android:layout_marginLeft="3dp"
-                    android:layout_marginEnd="3dp"
-                    android:layout_marginRight="3dp"
-                    android:layout_weight="1"
-                    android:text="입고" />
             </LinearLayout>
         </LinearLayout>
 

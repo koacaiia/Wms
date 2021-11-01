@@ -2,7 +2,6 @@ package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +16,6 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,7 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -144,10 +142,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     TextView txtPicList;
     TextView txtPicCount;
+
+    LinearLayout itemLayout;
+    Button btnConIn,btnDevCom,btnInsCom,btnIncargoCom,btnNewIncargo,btnRegPallet,btnRegPic;
+    String itemClickTitle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incargo);
+        /* ItemClick Listener
+        onItemClick reference
+        imageViewClicked imageViewClicked reference
+         */
 
         sharedValue="";
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -277,8 +283,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
                 }else{
 
-                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
-                            deptName);
+//                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
+//                            deptName);
+//                    ThreadPictureUpload threadPictureUpload=new ThreadPictureUpload(imageViewListsSelected,nickName,consigneeName,"InCargo",
+//                            listItems.get(0).getKeyValue(),deptName);
+//                    threadPictureUpload.start();
+                    synUpLoadPictures();
                     String date = listItems.get(0).getDate();
                     Map<String, Object> putValue = new HashMap<>();
                     putValue.put("working", "컨테이너 진입");
@@ -288,17 +298,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     databaseReference.updateChildren(putValue);
                     imageViewListsSelected.clear();
                     Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    if(keyValue==null){
+                        keyValue=getIntent().getStringExtra("refPath");
                     }
                     itemPictureList(keyValue);
+                    Log.i("TestValue","keyValue:::"+keyValue);
                 }
 
 
             }
         });
+        txtPicCount=findViewById(R.id.incargo_picCount);
         fltBtn_share.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -315,27 +325,41 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                           @Override
                           public void onClick(DialogInterface dialogInterface, int i) {
                               dialogInterface.dismiss();
+                              Animation ani=new AlphaAnimation(0.0f,1.0f);
+                              ani.setRepeatMode(Animation.REVERSE);
+                              ani.setDuration(1000);
+                              ani.setRepeatCount(Animation.INFINITE);
                                          switch(i){
                                              case 0:
                                                  pickedUpItemClick("Ori");
+                                                 txtPicCount.setText("전송사진을 선택 하세요");
+                                                 txtPicCount.startAnimation(ani);
                                                  break;
                                              case 1:
                                                  pickedUpItemClick("All");
+                                                 txtPicCount.setText("전송사진을 선택 하세요");
+                                                 txtPicCount.startAnimation(ani);
                                                  break;
                                              case 2:
                                                  pickedUpItemClick("Re");
+                                                 txtPicCount.setText("전송사진을 선택 하세요");
+                                                 txtPicCount.startAnimation(ani);
 
                                                  break;
                                              case 3:
+                                                 if(keyValue==null){
+                                                     keyValue= getIntent().getStringExtra("refPath");
+                                                 }
                                                  itemPictureList(keyValue);
+                                                 txtPicList.setText("서버 저장된 사진 검색");
+                                                 txtPicCount.setText("디바이스 저장 원하면 사진 클릭");
+                                                 txtPicCount.setTextColor(Color.RED);
+                                                 txtPicCount.startAnimation(ani);
                                                  break;
                                          }
                           }
                       })
                       .show();
-
-
-
                 return true;
             }
         });
@@ -343,9 +367,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         txtPicList=findViewById(R.id.incargo_picList);
         txtPicList.setVisibility(View.INVISIBLE);
 
-        txtPicCount=findViewById(R.id.incargo_picCount);
+
         txtPicCount.setVisibility(View.INVISIBLE);
 
+        itemLayout=findViewById(R.id.incargo_itemLayout);
+        itemLayout.setVisibility(View.INVISIBLE);
+
+        btnConIn=findViewById(R.id.incargo_btnConIn);
+        btnDevCom=findViewById(R.id.incargo_btnDevCom);
+        btnInsCom=findViewById(R.id.incargo_btnInsCom);
+        btnIncargoCom=findViewById(R.id.incargo_btnIncargoCom);
+        btnRegPallet=findViewById(R.id.incargo_btnRegPallet);
+        btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
     }
 
     private void checkWeekend() {
@@ -900,10 +933,16 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             }
         });
         if (getIntent().getStringExtra("refPath") != null) {
-            selectedItemGetDatabase(getIntent().getStringExtra("date"), getIntent().getStringExtra("refPath"));
-            pickedUpItemClick(getIntent().getStringExtra("refPath"));
-            keyValue = getIntent().getStringExtra("refPath");
+//
+            String keyValue = getIntent().getStringExtra("refPath");
             dialog.dismiss();
+
+            String consigneeNameI=getIntent().getStringExtra("consigneeName");
+            String bl=getIntent().getStringExtra("bl");
+            String container=getIntent().getStringExtra("container");
+            String date=getIntent().getStringExtra("date");
+
+            initLayout(consigneeNameI, keyValue, container, bl, date );
         }
     }
 
@@ -1071,7 +1110,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 } else {
                     date = String.valueOf(j);
                 }
-                Log.i("TestValue","TestValue:::"+month  );
+
                 DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month + "월/" + "2021-" + month +
                         "-" + date + "/");
 
@@ -1226,14 +1265,152 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
-        String consigneeName = listItems.get(pos).getConsignee();
-        keyValue = listItems.get(pos).getKeyValue();
-        String updateTitleValue =
-                consigneeName + "_비엘:" + listItems.get(pos).getBl() + "_컨테이너:" + listItems.get(pos).getContainer();
-        selectedItemGetDatabase(listItems.get(pos).getDate(), keyValue);
+        String consigneeNameValue=listItems.get(pos).getConsignee();
+        keyValue=listItems.get(pos).getKeyValue();
+        String containerValue=listItems.get(pos).getContainer();
+        String blValue=listItems.get(pos).getBl();
+        String dateValue=listItems.get(pos).getDate();
+        initLayout(consigneeNameValue,keyValue,containerValue,blValue,dateValue);
 
-        pickedUpItemClickDialog(keyValue, updateTitleValue, consigneeName);
 
+    }
+
+    private void initLayout(String consigneeNameValue, String keyValue, String containerValue, String blValue, String dateValue) {
+
+        itemClickTitle=
+                consigneeNameValue + "_비엘:" + blValue + "_컨테이너:" + containerValue;
+        selectedItemGetDatabase(dateValue, keyValue);
+
+//        pickedUpItemClickDialog(keyValue, updateTitleValue, consigneeName);
+        itemLayout.setVisibility(View.VISIBLE);
+        if(fltBtn_share.getVisibility()==View.INVISIBLE){
+            fltBtn_share.setVisibility(View.VISIBLE);
+        }
+
+        FirebaseDatabase itemClickDatabase=FirebaseDatabase.getInstance();
+        String refPath=
+                "DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0,10) +
+                        "/" + keyValue;
+        DatabaseReference itemClickReference=itemClickDatabase.getReference(refPath);
+        Map<String,Object> itemClickMap=new HashMap<>();
+        btnConIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickMap.put("working","컨테이너 진입");
+                itemClickReference.updateChildren(itemClickMap);
+                Toast.makeText(getApplicationContext(),itemClickTitle+"\n"+"화물 컨테이너 진입으로 서버 등록 되었습니다.",Toast.LENGTH_LONG).show();
+                initIntent();
+            }
+        });
+
+        btnDevCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                builder.setTitle("입고작업 완료+컨테이너 회수요청 선택창")
+                        .setMessage(itemClickTitle+" 화물정보"+"\n" +" 에 대한 컨테이너 회수가 필요하면 하단 컨테이너 회수 요청 버튼으로 알림등록 바랍니다.")
+                        .setPositiveButton("입고작업 완료+컨테이너 회수요청 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemClickMap.put("working","입고작업 완료");
+                                itemClickReference.updateChildren(itemClickMap);
+                                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + " 입고작업 완료 + 컨테이너 회수 요청",
+                                        consigneeNameValue,
+                                        "InCargo", deptName);
+
+                                initIntent();
+                            }
+                        })
+                        .setNegativeButton("입고작업 완료 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemClickMap.put("working","입고작업 완료");
+                                itemClickReference.updateChildren(itemClickMap);
+
+                                Toast.makeText(getApplicationContext(),itemClickTitle+"\n"+" 입고작업 완료  알림 등록 되었습니다.",
+                                        Toast.LENGTH_LONG).show();
+                                initIntent();
+                            }
+                        })
+                        .setNeutralButton("컨테이너 회수요청 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + " 컨테이너 회수요청",
+                                        consigneeNameValue,
+                                        "InCargo", deptName);
+
+                                initIntent();
+                            }
+                        })
+                        .show();
+            }
+        });
+        btnInsCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                builder.setTitle("검수완료+반입요청 확인 창")
+                        .setMessage(itemClickTitle+" 화물정보"+"\n" +"검수내용과 일치하면 하단 반입 요청 버튼 클릭하여 알림 등록 바랍니다.")
+                        .setPositiveButton("검수 완료+반입요청 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemClickMap.put("working","검수완료");
+                                itemClickReference.updateChildren(itemClickMap);
+                                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + "검수 완료+반입요청 등록", consigneeNameValue,
+                                        "InCargo", deptName);
+
+                                initIntent();
+                            }
+                        })
+                        .setNegativeButton("검수완료 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                itemClickMap.put("working","검수완료");
+                                itemClickReference.updateChildren(itemClickMap);
+
+                                Toast.makeText(getApplicationContext(),itemClickTitle+"\n"+"검수완료 등록 되었습니다.",
+                                        Toast.LENGTH_SHORT).show();
+                                initIntent();
+                            }
+                        })
+                        .setNeutralButton("반입요청 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + "재고반입 등록 요청", consigneeNameValue,
+                                        "InCargo", deptName);
+
+                                initIntent();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        btnIncargoCom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemClickMap.put("working","창고반입");
+                itemClickReference.updateChildren(itemClickMap);
+                Toast.makeText(getApplicationContext(),itemClickTitle+"\n"+"창고반입 으로 서버 등록 되었습니다.",Toast.LENGTH_SHORT).show();
+                initIntent();
+            }
+        });
+        btnRegPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),"기능 업데이트 중 입니다.",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnNewIncargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + " 신규 등록", consigneeNameValue,
+                        "InCargo", deptName);
+                initIntent();
+            }
+        });
+        pickedUpItemClick("Re");
 
     }
 
@@ -1279,7 +1456,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         View view=getLayoutInflater().inflate(R.layout.dialog_incargo_itemclickselect,null);
         Map<String,Object> putValue=new HashMap<>();
 
-        Button btnConIn=view.findViewById(R.id.incargo_btnConIn);
+        Button btnConIn=view.findViewById(R.id.incargo_dialog_btnConIn);
         btnConIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1290,7 +1467,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 initIntent();
             }
         });
-        Button btnDevCom=view.findViewById(R.id.incargo_btnDevCom);
+        Button btnDevCom=view.findViewById(R.id.incargo_dialog_btnDevCom);
         btnDevCom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1336,7 +1513,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                        .show();
             }
         });
-        Button btnInsCom=view.findViewById(R.id.incargo_btnInsCom);
+        Button btnInsCom=view.findViewById(R.id.incargo_dialog_btnInsCom);
         btnInsCom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1383,7 +1560,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
             }
         });
-        Button btnIncargoCom=view.findViewById(R.id.incargo_btnIncargoCom);
+        Button btnIncargoCom=view.findViewById(R.id.incargo_dialog_btnIncargoCom);
         btnIncargoCom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1393,14 +1570,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 initIntent();
             }
         });
-        Button btnRegPallet=view.findViewById(R.id.incargo_btnRegPallet);
+        Button btnRegPallet=view.findViewById(R.id.incargo_dialog_btnRegPallet);
         btnRegPallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
             Toast.makeText(getApplicationContext(),"기능 업데이트 중 입니다.",Toast.LENGTH_SHORT).show();
             }
         });
-        Button btnNewIncargo=view.findViewById(R.id.incargo_btnNewIncargo);
+        Button btnNewIncargo=view.findViewById(R.id.incargo_dialog_btnNewIncargo);
         btnNewIncargo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1410,7 +1587,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             }
         });
 
-        Button btnRegPic=view.findViewById(R.id.incargo_btnRegPicAndSearch);
+        Button btnRegPic=view.findViewById(R.id.incargo_dialog_btnRegPicAndSearch);
         btnRegPic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -1418,7 +1595,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 pickedUpItemClick("Re");
             }
         });
-        TextView txtTitle=view.findViewById(R.id.incargo_txtItemSelectTitle);
+        TextView txtTitle=view.findViewById(R.id.incargo_dialog_txtItemSelectTitle);
         txtTitle.setText(updateTitleValue+" 입고");
 
 //        ArrayList<String> incargoContent = new ArrayList<>();
@@ -1679,7 +1856,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         }
         RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
+
         imageRecyclerView.setLayoutManager(manager);
         PublicMethod pictures = new PublicMethod(this);
         if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
@@ -1698,6 +1876,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     public void initIntent() {
         Intent intent = new Intent(Incargo.this, Incargo.class);
+        intent.putExtra("refPath",keyValue);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -1760,7 +1939,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         txtPicCount.startAnimation(ani);
         imageViewLists.clear();
         RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
         imageRecyclerView.setLayoutManager(manager);
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference =
@@ -1771,7 +1950,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             public void onSuccess(ListResult listResult) {
 
                 for (StorageReference item : listResult.getItems()) {
-                    Log.i("TestValue","item size"+listResult.getItems().size());
                     item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
@@ -1904,6 +2082,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         }
 
 
+    }
+    public synchronized void synUpLoadPictures(){
+        publicMethod.upLoadPictures(nickName, listItems.get(0).getConsignee(), "InCargo", listItems.get(0).getKeyValue(),
+                deptName);
     }
 }
 

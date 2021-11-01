@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
     android:orientation="vertical">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -13,7 +12,7 @@
         app:cardUseCompatPadding="true">
 
     <TextView
-        android:id="@+id/incargo_txtItemSelectTitle"
+        android:id="@+id/incargo_dialog_txtItemSelectTitle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:textStyle="bold|italic"
@@ -39,23 +38,23 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/incargo_btnConIn"
+                android:id="@+id/incargo_dialog_btnConIn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
                 android:layout_marginHorizontal="5dp"
                 android:layout_weight="1"
-                android:text="화물 보세구역내 진입 "
+                android:text="화물 보세구역내 진입 등록 "
                 android:textStyle="bold|italic" />
 
             <Button
-                android:id="@+id/incargo_btnDevCom"
+                android:id="@+id/incargo_dialog_btnDevCom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
                 android:layout_marginHorizontal="5dp"
                 android:layout_weight="1"
-                android:text="입고작업 완료"
+                android:text="입고작업 완료 \n 컨테이너 회수 요청"
                 android:textStyle="bold|italic" />
         </LinearLayout>
 
@@ -67,22 +66,22 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/incargo_btnInsCom"
+                android:id="@+id/incargo_dialog_btnInsCom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
                 android:layout_marginHorizontal="5dp"
                 android:layout_weight="1"
-                android:text="검수완료"
+                android:text="검수완료 \n 반입요청 "
                 android:textStyle="italic|bold" />
 
             <Button
-                android:id="@+id/incargo_btnIncargoCom"
+                android:id="@+id/incargo_dialog_btnIncargoCom"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="5dp"
                 android:layout_weight="1"
-                android:text="창고반입 완료"
+                android:text="창고반입 완료 등록"
                 android:textStyle="italic|bold" />
         </LinearLayout>
    </LinearLayout>
@@ -90,7 +89,7 @@
 
 
     <Button
-        android:id="@+id/incargo_btnRegPicAndSearch"
+        android:id="@+id/incargo_dialog_btnRegPicAndSearch"
         android:layout_width="match_parent"
         android:layout_height="90dp"
 
@@ -117,18 +116,18 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/incargo_btnNewIncargo"
+                android:id="@+id/incargo_dialog_btnNewIncargo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
                 android:layout_marginHorizontal="5dp"
                 android:layout_weight="1"
                 android:backgroundTint="#32395E"
-                android:text="신규화물정보"
+                android:text="신규화물정보 알림"
                 android:textStyle="bold|italic" />
 
             <Button
-                android:id="@+id/incargo_btnRegPallet"
+                android:id="@+id/incargo_dialog_btnRegPallet"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
