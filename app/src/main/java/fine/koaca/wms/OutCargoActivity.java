@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -20,8 +21,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +73,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     PublicMethod publicMethod;
     int listPosition;
+
+    Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet;
+    LinearLayout linearLayout;
+    TextView txtPicList,txtPicCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,13 +84,14 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-        PublicMethod publicMethod=new PublicMethod(this);
+        publicMethod=new PublicMethod(this);
         nickName=publicMethod.getUserInformation().get("nickName");
         deptName=publicMethod.getUserInformation().get("deptName");
 
 
 
         fltBtn=findViewById(R.id.activity_list_outcargo_flb);
+        fltBtn.setVisibility(View.INVISIBLE);
         fltBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +102,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
             }
         });
+
+
         recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager manager=new LinearLayoutManager(this);
@@ -99,12 +111,13 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         database= FirebaseDatabase.getInstance();
         list=new ArrayList<>();
-
+        linearLayout=findViewById(R.id.outCargo_itemLayout);
+        linearLayout.setVisibility(View.INVISIBLE);
         if((ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut")==null){
             getOutcargoData();
         }else{
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
-            pictureUpdate();
+            pictureUpdate("Re");
 
         }
 
@@ -112,11 +125,97 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         recyclerView.setAdapter(adapter);
 
 
-        txtTitle=findViewById(R.id.activity_list_outcargo_title);
-        txtTitle.setText(dateToday+" 출고 목록");
+//        txtTitle.setText(dateToday+" 출고 목록");
         refPath=getIntent().getStringExtra("refPath");
 
 
+        btnRegExPic=findViewById(R.id.outCargo_btnRegExPic);
+        btnRegExPic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateValue("완");
+                Toast.makeText(getApplicationContext(),refPath+" 출고완료로 서버 등록 합니다.",Toast.LENGTH_LONG).show();
+            }
+        });
+        btnUnReg=findViewById(R.id.outCargo_btnUnReg);
+        btnUnReg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateValue("미");
+                Toast.makeText(getApplicationContext(),refPath+" 미출고로 서버 수정 등록 합니다",Toast.LENGTH_LONG).show();
+            }
+        });
+        btnNewOutCargo=findViewById(R.id.outCargo_btnNewOutCargo);
+        btnNewOutCargo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                publicMethod.putNewDataUpdateAlarm(nickName, refPath + " 신규 등록", list.get(0).getConsigneeName(),
+                        "InCargo", deptName);
+            }
+        });
+        btnRegPallet=findViewById(R.id.outCargo_btnRegPallet);
+        btnRegPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+           Toast.makeText(getApplicationContext(),"NOT YET",Toast.LENGTH_SHORT).show();;
+            }
+        });
+
+        txtPicList=findViewById(R.id.outCargo_picList);
+        txtPicCount=findViewById(R.id.outCargo_picCount);
+
+        fltBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+                ArrayList<String> picItemList=new ArrayList<>();
+                picItemList.add("업무 원본사진");
+                picItemList.add("갤러리 전체 사진");
+                picItemList.add("서버 전송용 조정사진");
+                picItemList.add("서버 저장된 사진 검색");
+
+                String[] picItemListArr=picItemList.toArray(new String[picItemList.size()]);
+                builder.setTitle("사진 저장소 선택창")
+                        .setSingleChoiceItems(picItemListArr,0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                Animation ani=new AlphaAnimation(0.0f,1.0f);
+                                ani.setRepeatMode(Animation.REVERSE);
+                                ani.setDuration(1000);
+                                ani.setRepeatCount(Animation.INFINITE);
+                                switch(i){
+                                    case 0:
+                                        pictureUpdate("Ori");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                    case 1:
+                                        pictureUpdate("All");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                    case 2:
+                                        pictureUpdate("Re");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+
+                                        break;
+                                    case 3:
+
+                                        itemPictureList(refPath);
+                                        txtPicList.setText("서버 저장된 사진 검색");
+                                        txtPicCount.setText("디바이스 저장 원하면 사진 클릭");
+                                        txtPicCount.setTextColor(Color.RED);
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
     }
 
     private void getOutcargoData() {
@@ -162,7 +261,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
         listPosition=position;
         getOutcargoData(refPath);
-        itemClickedDialog(consigneeName,dialogTitle);
+        pictureUpdate("Re");
+
+//        itemClickedDialog(consigneeName,dialogTitle);
     }
 
     private void getOutcargoData(String refPath) {
@@ -219,7 +320,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
                     case 1:
                         updateValue("완");
-                        pictureUpdate();
+                        pictureUpdate("Re");
                         break;
                     case 2:
                         updateValue("미");
@@ -318,8 +419,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     public void itemPictureList(String keyValue) {
 
         imageViewLists.clear();
-        RecyclerView imageRecyclerView = findViewById(R.id.activity_list_outcargo_imageviewRe);
-        GridLayoutManager manager = new GridLayoutManager(this, 2);
+        RecyclerView imageRecyclerView = findViewById(R.id.outCargo_recyclerView_image);
+        GridLayoutManager manager = new GridLayoutManager(this, 3);
         imageRecyclerView.setLayoutManager(manager);
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference=
@@ -363,13 +464,17 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     }
 
 
-    private void pictureUpdate() {
-        RecyclerView imageRecyclerView=findViewById(R.id.activity_list_outcargo_imageviewRe);
-        GridLayoutManager manager=new GridLayoutManager(this,2);
+    private void pictureUpdate(String sort) {
+        if(fltBtn.getVisibility()==View.INVISIBLE){
+            fltBtn.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.VISIBLE);
+        }
+        RecyclerView imageRecyclerView=findViewById(R.id.outCargo_recyclerView_image);
+        GridLayoutManager manager=new GridLayoutManager(this,3);
         imageRecyclerView.setLayoutManager(manager);
 
         PublicMethod getImageLists=new PublicMethod(this);
-        imageViewLists=getImageLists.getPictureLists("Re");
+        imageViewLists=getImageLists.getPictureLists(sort);
 
         iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
         imageRecyclerView.setAdapter(iAdapter);
@@ -399,7 +504,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         value.put("workprocess",updateValue);
         dataRef.updateChildren(value);
 
-        adapter.notifyDataSetChanged();
+        getOutcargoData(refPath);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -492,8 +597,14 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                        }
                    }).show();
        }
-       String clickedPictureCount="("+clickedImageViewLists.size()+"장 선택)";
-        txtTitle.setText(dateToday+" 출고 목록"+clickedPictureCount);
+       String clickedPictureCount="("+clickedImageViewLists.size()+") 장 선택";
+        txtPicCount.setText(clickedPictureCount);
+        txtPicCount.setTextColor(Color.RED);
+        Animation ani=new AlphaAnimation(0.0f,1.0f);
+        ani.setRepeatMode(Animation.REVERSE);
+        ani.setDuration(1000);
+        ani.setRepeatCount(Animation.INFINITE);
+        txtPicCount.startAnimation(ani);
     }
 
     public void upCapturePictures(String inoutItems,String consigneeName){

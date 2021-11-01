@@ -111,6 +111,7 @@
 
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:gravity="center|fill_vertical"
                                 android:text="화물 보세구역내 진입 등록 "
                                 android:textStyle="bold|italic" />
 
@@ -121,6 +122,7 @@
 
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:gravity="center|fill_vertical"
                                 android:text="입고작업 완료 \n 컨테이너 회수 요청"
                                 android:textStyle="bold|italic" />
                         </LinearLayout>
@@ -139,6 +141,7 @@
 
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:gravity="center|fill_vertical"
                                 android:text="검수완료 \n 반입요청 "
                                 android:textStyle="italic|bold" />
 
@@ -148,6 +151,7 @@
                                 android:layout_height="match_parent"
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:gravity="center|fill_vertical"
                                 android:text="창고반입 완료 등록"
                                 android:textStyle="italic|bold" />
                         </LinearLayout>

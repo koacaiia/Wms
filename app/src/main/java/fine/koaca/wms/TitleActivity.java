@@ -96,9 +96,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     static RequestQueue requestQueue;
     Display display;
 
-    Button btnAnnual;
-    Button btnWorkmessage;
-    Button btnCamera;
+
 
     String alertVersion;
     TextView txtTitle;
@@ -175,48 +173,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             requestQueue = Volley.newRequestQueue(getApplicationContext());
         }
 
-        btnAnnual = findViewById(R.id.titleAnnual);
-        btnAnnual.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentAnnual = new Intent(TitleActivity.this, AnnualLeave.class);
-                intentAnnual.putExtra("deptName", deptName);
-                intentAnnual.putExtra("nickName", nickName);
 
-                startActivity(intentAnnual);
-            }
-        });
-
-        btnAnnual.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                String topicValue = FirebaseMessaging.getInstance().toString();
-
-                return true;
-            }
-        });
-        btnWorkmessage = findViewById(R.id.titleWorkmessage);
-        btnWorkmessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TitleActivity.this, WorkingMessageData.class);
-                intent.putExtra("nickName", nickName);
-                intent.putExtra("deptName", deptName);
-                startActivity(intent);
-
-            }
-        });
-        btnCamera = findViewById(R.id.titleCamera);
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(TitleActivity.this, CameraCapture.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("deptName", deptName);
-                intent.putExtra("nickName", nickName);
-                startActivity(intent);
-            }
-        });
 
     }
 
@@ -725,56 +682,71 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     }
 
     private void dialogOutCargoRecyclerItemClicked(String refPath, String dialogTitle, String consigneeName) {
-        ArrayList<String> clickValue = new ArrayList<>();
-        clickValue.add("사진제외 출고완료 등록");
-        clickValue.add("사진포함 출고완료 등록");
-        clickValue.add("신규출고 항목으로 공유");
-        String[] clickValueList = clickValue.toArray(new String[clickValue.size()]);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(dialogTitle + " 출고")
-                .setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                String refMonth=refPath.substring(5,7);
-                                String dateToday=refPath.substring(0,10);
-                                DatabaseReference dataRef =
-                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" + refMonth + "월/" + dateToday + "/" + refPath);
-                                Map<String, Object> value = new HashMap<>();
-                                value.put("workprocess", "완");
-                                dataRef.updateChildren(value);
-                                initIntent();
-                                Toast.makeText(getApplicationContext(), refPath + "건 출고 완료등록", Toast.LENGTH_SHORT).show();
-                                break;
-                            case 1:
-                                int listOutSize = listOut.size();
+        int listOutSize = listOut.size();
                                 for (int i = (listOutSize - 1); 0 <= i; i--) {
                                     if (!refPath.equals(listOut.get(i).getKeypath())) {
                                         listOut.remove(i);
 
                                     }
                                 }
+        Intent intent = new Intent(TitleActivity.this, OutCargoActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("deptName", deptName);
+        intent.putExtra("nickName", nickName);
+        intent.putExtra("listOut", listOut);
+        intent.putExtra("refPath",refPath);
 
-                                Intent intent = new Intent(TitleActivity.this, OutCargoActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.putExtra("deptName", deptName);
-                                intent.putExtra("nickName", nickName);
-                                intent.putExtra("listOut", listOut);
-                                intent.putExtra("refPath",refPath);
-
-                                startActivity(intent);
-                                break;
-
-                            case 2:
-                                putNewDataUpdateAlarm(dialogTitle + " 신규 등록", consigneeName, "OutCargo");
-
-                                break;
-                        }
-                        dialog.cancel();
-                    }
-                })
-                .show();
+        startActivity(intent);
+//        ArrayList<String> clickValue = new ArrayList<>();
+//        clickValue.add("사진제외 출고완료 등록");
+//        clickValue.add("사진포함 출고완료 등록");
+//        clickValue.add("신규출고 항목으로 공유");
+//        String[] clickValueList = clickValue.toArray(new String[clickValue.size()]);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle(dialogTitle + " 출고")
+//                .setSingleChoiceItems(clickValueList, 0, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        switch (which) {
+//                            case 0:
+//                                String refMonth=refPath.substring(5,7);
+//                                String dateToday=refPath.substring(0,10);
+//                                DatabaseReference dataRef =
+//                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo" + "/" + refMonth + "월/" + dateToday + "/" + refPath);
+//                                Map<String, Object> value = new HashMap<>();
+//                                value.put("workprocess", "완");
+//                                dataRef.updateChildren(value);
+//                                initIntent();
+//                                Toast.makeText(getApplicationContext(), refPath + "건 출고 완료등록", Toast.LENGTH_SHORT).show();
+//                                break;
+//                            case 1:
+//                                int listOutSize = listOut.size();
+//                                for (int i = (listOutSize - 1); 0 <= i; i--) {
+//                                    if (!refPath.equals(listOut.get(i).getKeypath())) {
+//                                        listOut.remove(i);
+//
+//                                    }
+//                                }
+//
+//                                Intent intent = new Intent(TitleActivity.this, OutCargoActivity.class);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                                intent.putExtra("deptName", deptName);
+//                                intent.putExtra("nickName", nickName);
+//                                intent.putExtra("listOut", listOut);
+//                                intent.putExtra("refPath",refPath);
+//
+//                                startActivity(intent);
+//                                break;
+//
+//                            case 2:
+//                                putNewDataUpdateAlarm(dialogTitle + " 신규 등록", consigneeName, "OutCargo");
+//
+//                                break;
+//                        }
+//                        dialog.cancel();
+//                    }
+//                })
+//                .show();
 
     }
 

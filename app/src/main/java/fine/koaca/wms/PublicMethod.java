@@ -375,36 +375,20 @@ public class PublicMethod {
         btnAnnual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent=new Intent(activity,ActivityWorkingStaff.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                Toast.makeText(activity.getApplicationContext(),"길게누르면 연,월차,휴가 등록 창 으로 전황 됩니다",Toast.LENGTH_SHORT).show();
+                activity.startActivity(intent);
+            }
+        });
 
-                ArrayList<String> intentValue=new ArrayList<>();
-                intentValue.add("연차,반차,휴가자 등록,조회");
-                intentValue.add("출근 인원 등록,조회");
-                String[] intentValueList=intentValue.toArray(new String[intentValue.size()]);
-                AlertDialog.Builder builder=new AlertDialog.Builder(activity);
-                builder.setTitle("근태 관련 화면 선택창")
-                        .setSingleChoiceItems(intentValueList,1, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent;
-                                switch(which){
-                                    case 0:
-                                        dialog.cancel();
-                                        intent=new Intent(activity,AnnualLeave.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        activity.startActivity(intent);
-                                        break;
-                                    case 1:
-                                        dialog.cancel();
-                                        intent=new Intent(activity,ActivityWorkingStaff.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        activity.startActivity(intent);
-                                        break;
-                                }
-                            }
-                        })
-                        .show();
-
-
+        btnAnnual.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent=new Intent(activity,AnnualLeave.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+                return true;
             }
         });
 
