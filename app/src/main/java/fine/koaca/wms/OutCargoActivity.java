@@ -63,7 +63,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     TextView txtTitle;
     String dateToday;
-    String refPath;
+    String refPath,consigneeName;
 
     ArrayList<String> imageViewLists=new ArrayList<>();
     ArrayList<String> clickedImageViewLists=new ArrayList<>();
@@ -97,8 +97,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             public void onClick(View v) {
                 updateValue("완");
                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this,clickedImageViewLists);
-               publicMethod.upLoadPictures(nickName,list.get(0).getConsigneeName(),"OutCargo",list.get(0).getKeypath(),deptName);
-
+               publicMethod.upLoadPictures(nickName,consigneeName,"OutCargo",refPath,deptName);
 
             }
         });
@@ -149,7 +148,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         btnNewOutCargo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                publicMethod.putNewDataUpdateAlarm(nickName, refPath + " 신규 등록", list.get(0).getConsigneeName(),
+                publicMethod.putNewDataUpdateAlarm(nickName, refPath + " 신규 등록", consigneeName,
                         "InCargo", deptName);
             }
         });
@@ -187,16 +186,19 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                 switch(i){
                                     case 0:
                                         pictureUpdate("Ori");
+                                        txtPicList.setText("업무원본사진");
                                         txtPicCount.setText("전송사진을 선택 하세요");
                                         txtPicCount.startAnimation(ani);
                                         break;
                                     case 1:
                                         pictureUpdate("All");
+                                        txtPicList.setText("디바이스 전체 사진");
                                         txtPicCount.setText("전송사진을 선택 하세요");
                                         txtPicCount.startAnimation(ani);
                                         break;
                                     case 2:
                                         pictureUpdate("Re");
+                                        txtPicList.setText("서버전송용 조정사진");
                                         txtPicCount.setText("전송사진을 선택 하세요");
                                         txtPicCount.startAnimation(ani);
 
@@ -256,7 +258,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     @Override
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         refPath=list.get(position).getKeypath();
-        String consigneeName=list.get(position).getConsigneeName();
+        consigneeName=list.get(position).consigneeName;
+
         String dialogTitle=
                 consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
         listPosition=position;
@@ -552,15 +555,14 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 .setPositiveButton("지정일 검색", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        txtTitle.setText(dateToday+" 모든 출고 목록");
-                        getOutcargoData();
+                         getOutcargoData();
                     }
                 })
                 .setNegativeButton("당일 검색", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-                        txtTitle.setText(dateToday+" 모든 출고 목록");
+
                         getOutcargoData();
                     }
                 })
