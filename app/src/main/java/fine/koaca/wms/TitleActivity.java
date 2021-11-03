@@ -75,7 +75,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
     static SharedPreferences sharedPref;
     static SharedPreferences.Editor editor;
 
-    String deptName, nickName;
+    String deptName, nickName,imageViewListCount;
 
     SensorManager mSensorManager;
     Sensor mAccelerometer;
@@ -134,6 +134,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
         deptName = sharedPref.getString("deptName", null);
         nickName = sharedPref.getString("nickName", null);
+        imageViewListCount=sharedPref.getString("imageViewListCount","3");
         refMonth=dateToday.substring(5,7);
 
         btnTitle = findViewById(R.id.activity_title_btn);
@@ -998,7 +999,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             e.printStackTrace();}
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("기초자료 등록 창")
-                    .setMessage("물류센터명:" + deptName + "\n" + "사용자명:" + nickName + "\n" + "어플버전:" + versioncode + "\n" +
+                    .setMessage("물류센터명:" + deptName + "\n" + "사용자명:" + nickName + "\n" + "어플버전:" + versioncode + "\n" +"사진목록 " +
+                            "리스트:"+imageViewListCount+" 장"+
                             "\n"+
                             "하단 버튼의 목록자료 초기화 버튼 클릭시" +
                             " 목록의 데이터베이스 초기화 됩니다.주의 바랍니다.")

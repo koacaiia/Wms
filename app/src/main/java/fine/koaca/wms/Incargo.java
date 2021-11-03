@@ -2,6 +2,7 @@ package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,6 +50,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -146,6 +148,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     LinearLayout itemLayout;
     Button btnConIn,btnDevCom,btnInsCom,btnIncargoCom,btnNewIncargo,btnRegPallet,btnRegPic;
     String itemClickTitle;
+    int imageViewListCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,6 +171,95 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         day_start = dateToday;
         day_end = dateToday;
 
+
+        fltBtn_share = findViewById(R.id.incargo_floatBtn_share);
+        fltBtn_share.setVisibility(View.INVISIBLE);
+
+        itemLayout=findViewById(R.id.incargo_itemLayout);
+        itemLayout.setVisibility(View.INVISIBLE);
+        txtPicCount=findViewById(R.id.incargo_picCount);
+        fltBtn_share.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                ArrayList<String> picItemList=new ArrayList<>();
+                picItemList.add("업무 원본사진");
+                picItemList.add("갤러리 전체 사진");
+                picItemList.add("서버 전송용 조정사진");
+                picItemList.add("서버 저장된 사진 검색");
+
+                String[] picItemListArr=picItemList.toArray(new String[picItemList.size()]);
+                builder.setTitle("사진 저장소 선택창")
+                        .setSingleChoiceItems(picItemListArr,0, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                                Animation ani=new AlphaAnimation(0.0f,1.0f);
+                                ani.setRepeatMode(Animation.REVERSE);
+                                ani.setDuration(1000);
+                                ani.setRepeatCount(Animation.INFINITE);
+                                switch(i){
+                                    case 0:
+                                        pickedUpItemClick("Ori");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                    case 1:
+                                        pickedUpItemClick("All");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                    case 2:
+                                        pickedUpItemClick("Re");
+                                        txtPicCount.setText("전송사진을 선택 하세요");
+                                        txtPicCount.startAnimation(ani);
+
+                                        break;
+                                    case 3:
+                                        if(keyValue==null){
+                                            keyValue= getIntent().getStringExtra("refPath");
+                                        }
+                                        itemPictureList(keyValue);
+                                        txtPicList.setText("서버 저장된 사진 검색");
+                                        txtPicCount.setText("디바이스 저장 원하면 사진 클릭");
+                                        txtPicCount.setTextColor(Color.RED);
+                                        txtPicCount.startAnimation(ani);
+                                        break;
+                                }
+                            }
+                        })
+                        .show();
+                return true;
+            }
+        });
+
+        txtPicList=findViewById(R.id.incargo_picList);
+        txtPicList.setVisibility(View.INVISIBLE);
+        txtPicList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                publicMethod.imageViewListCount();
+            }
+        });
+
+        txtPicCount.setVisibility(View.INVISIBLE);
+
+
+
+        btnConIn=findViewById(R.id.incargo_btnConIn);
+        btnDevCom=findViewById(R.id.incargo_btnDevCom);
+        btnInsCom=findViewById(R.id.incargo_btnInsCom);
+        btnIncargoCom=findViewById(R.id.incargo_btnIncargoCom);
+        btnRegPallet=findViewById(R.id.incargo_btnRegPallet);
+        btnRegPallet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String bl=listItems.get(0).getBl();
+                String keyValue=listItems.get(0).getKeyValue();
+
+            }
+        });
+        btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
         checkWeekend();
         incargo_incargo = findViewById(R.id.incargo_incargo);
         incargo_contents_date = findViewById(R.id.incargo_contents_date);
@@ -177,11 +269,19 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         listItems = new ArrayList<>();
-
         database = FirebaseDatabase.getInstance();
+        if(getIntent().getStringExtra("refPath")==null){
+            getFirebaseData(day_start, day_end, "sort", "ALL");
+        }else{
+            String date=getIntent().getStringExtra("date");
+            String keyValue=getIntent().getStringExtra("refPath");
+            String consigneeNameI=getIntent().getStringExtra("consigneeName");
+            String bl=getIntent().getStringExtra("bl");
+            String container=getIntent().getStringExtra("container");
 
+            initLayout(consigneeNameI, keyValue, container, bl, date );
+        }
 
-        getFirebaseData(day_start, day_end, "sort", "ALL");
         adapter = new IncargoListAdapter(listItems, this, this);
         recyclerView.setAdapter(adapter);
 
@@ -247,8 +347,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 return true;
             }
         });
-        fltBtn_share = findViewById(R.id.incargo_floatBtn_share);
-        fltBtn_share.setVisibility(View.INVISIBLE);
+
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,83 +401,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         keyValue=getIntent().getStringExtra("refPath");
                     }
                     itemPictureList(keyValue);
-                    Log.i("TestValue","keyValue:::"+keyValue);
                 }
 
 
             }
         });
-        txtPicCount=findViewById(R.id.incargo_picCount);
-        fltBtn_share.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-              AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
-              ArrayList<String> picItemList=new ArrayList<>();
-              picItemList.add("업무 원본사진");
-              picItemList.add("갤러리 전체 사진");
-                picItemList.add("서버 전송용 조정사진");
-              picItemList.add("서버 저장된 사진 검색");
 
-              String[] picItemListArr=picItemList.toArray(new String[picItemList.size()]);
-              builder.setTitle("사진 저장소 선택창")
-                      .setSingleChoiceItems(picItemListArr,0, new DialogInterface.OnClickListener() {
-                          @Override
-                          public void onClick(DialogInterface dialogInterface, int i) {
-                              dialogInterface.dismiss();
-                              Animation ani=new AlphaAnimation(0.0f,1.0f);
-                              ani.setRepeatMode(Animation.REVERSE);
-                              ani.setDuration(1000);
-                              ani.setRepeatCount(Animation.INFINITE);
-                                         switch(i){
-                                             case 0:
-                                                 pickedUpItemClick("Ori");
-                                                 txtPicCount.setText("전송사진을 선택 하세요");
-                                                 txtPicCount.startAnimation(ani);
-                                                 break;
-                                             case 1:
-                                                 pickedUpItemClick("All");
-                                                 txtPicCount.setText("전송사진을 선택 하세요");
-                                                 txtPicCount.startAnimation(ani);
-                                                 break;
-                                             case 2:
-                                                 pickedUpItemClick("Re");
-                                                 txtPicCount.setText("전송사진을 선택 하세요");
-                                                 txtPicCount.startAnimation(ani);
-
-                                                 break;
-                                             case 3:
-                                                 if(keyValue==null){
-                                                     keyValue= getIntent().getStringExtra("refPath");
-                                                 }
-                                                 itemPictureList(keyValue);
-                                                 txtPicList.setText("서버 저장된 사진 검색");
-                                                 txtPicCount.setText("디바이스 저장 원하면 사진 클릭");
-                                                 txtPicCount.setTextColor(Color.RED);
-                                                 txtPicCount.startAnimation(ani);
-                                                 break;
-                                         }
-                          }
-                      })
-                      .show();
-                return true;
-            }
-        });
-
-        txtPicList=findViewById(R.id.incargo_picList);
-        txtPicList.setVisibility(View.INVISIBLE);
-
-
-        txtPicCount.setVisibility(View.INVISIBLE);
-
-        itemLayout=findViewById(R.id.incargo_itemLayout);
-        itemLayout.setVisibility(View.INVISIBLE);
-
-        btnConIn=findViewById(R.id.incargo_btnConIn);
-        btnDevCom=findViewById(R.id.incargo_btnDevCom);
-        btnInsCom=findViewById(R.id.incargo_btnInsCom);
-        btnIncargoCom=findViewById(R.id.incargo_btnIncargoCom);
-        btnRegPallet=findViewById(R.id.incargo_btnRegPallet);
-        btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
     }
 
     private void checkWeekend() {
@@ -1856,7 +1884,10 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         }
         RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
+        int imageViewListCount;
+        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
+        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
 
         imageRecyclerView.setLayoutManager(manager);
         PublicMethod pictures = new PublicMethod(this);
@@ -1939,7 +1970,11 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         txtPicCount.startAnimation(ani);
         imageViewLists.clear();
         RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
+        int imageViewListCount;
+
+        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
+        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
         imageRecyclerView.setLayoutManager(manager);
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference =
@@ -1955,8 +1990,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         public void onSuccess(Uri uri) {
 
                             imageViewLists.add(uri.toString());
+                            Log.i("TestValue","imageViewLists Size:::"+imageViewLists.size());
                             ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(imageViewLists, Incargo.this);
-
                             if (imageViewLists.size() == listResult.getItems().size()) {
                                 imageRecyclerView.setAdapter(iAdapter);
                                 iAdapter.notifyDataSetChanged();
@@ -2084,8 +2119,100 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
     public synchronized void synUpLoadPictures(){
-        publicMethod.upLoadPictures(nickName, listItems.get(0).getConsignee(), "InCargo", listItems.get(0).getKeyValue(),
-                deptName);
+//        publicMethod.upLoadPictures(nickName, listItems.get(0).getConsignee(), "InCargo", listItems.get(0).getKeyValue(),
+//                deptName);
+        String consigneeName=listItems.get(0).getConsignee();
+        String inoutCargo="InCargo";
+        ArrayList<String> uriList=new ArrayList<>();
+        String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        String dateNtime=new SimpleDateFormat("yyyy년MM월dd일HH시mm분ss초").format(new Date());
+        String refPath;
+        FirebaseStorage storage=FirebaseStorage.getInstance(("gs://fine-bondedwarehouse.appspot.com"));
+        for(int i =0;i< imageViewListsSelected.size();i++){
+            Uri uriValue=Uri.fromFile(new File(imageViewLists.get(i)));
+                refPath=deptName+"/"+date+"/InCargo/"+listItems.get(0).getKeyValue()+"/"+nickName+System.currentTimeMillis()+".jpg";
+                StorageReference storageReference=storage.getReference("images/"+refPath);
+            int finalI = i;
+            storageReference.putFile(uriValue)
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                    @Override
+                                    public void onSuccess(Uri uri) {
+                                       uriList.add(String.valueOf(uri));
+                                       WorkingMessageList messageList=new WorkingMessageList();
+
+                                        if((uriList.size())==imageViewListsSelected.size()){
+                                            messageList.setConsignee(consigneeName);
+                                            messageList.setNickName(nickName);
+                                            messageList.setTime(dateNtime);
+                                            messageList.setDate(date);
+                                            messageList.setMsg(consigneeName+"_"+inoutCargo+"_ 사진 업로드");
+                                            messageList.setInOutCargo(inoutCargo);
+                                            messageList.setKeyValue(keyValue);
+
+                                            try {
+                                                switch (finalI) {
+                                                    case 0:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        break;
+                                                    case 1:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        break;
+                                                    case 2:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        messageList.setUri2(uriList.get(2));
+                                                        break;
+                                                    case 3:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        messageList.setUri2(uriList.get(2));
+                                                        messageList.setUri3(uriList.get(3));
+                                                        break;
+                                                    case 4:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        messageList.setUri2(uriList.get(2));
+                                                        messageList.setUri3(uriList.get(3));
+                                                        messageList.setUri4(uriList.get(4));
+                                                        break;
+                                                    case 5:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        messageList.setUri2(uriList.get(2));
+                                                        messageList.setUri3(uriList.get(3));
+                                                        messageList.setUri4(uriList.get(4));
+                                                        messageList.setUri5(uriList.get(5));
+                                                    case 6:
+                                                        messageList.setUri0(uriList.get(0));
+                                                        messageList.setUri1(uriList.get(1));
+                                                        messageList.setUri2(uriList.get(2));
+                                                        messageList.setUri3(uriList.get(3));
+                                                        messageList.setUri4(uriList.get(4));
+                                                        messageList.setUri5(uriList.get(5));
+                                                        messageList.setUri6(uriList.get(6));
+                                                        break;
+                                                }
+                                            }catch(IndexOutOfBoundsException e){
+                                                messageList.setMsg(e.toString());
+                                            }
+
+                                            FirebaseDatabase database=FirebaseDatabase.getInstance();
+                                            DatabaseReference databaseReference=
+                                                    database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
+                                            databaseReference.setValue(messageList);
+                                            PublicMethod publicMethod=new PublicMethod(Incargo.this);
+                                            publicMethod.sendPushMessage(deptName,nickName,listItems.get(0).getConsignee()+"_InCargo_ 사진 업로드","CameraUpLoad");
+
+                                    }}
+                                });
+                            }
+                        });
+
+        }
     }
 }
 

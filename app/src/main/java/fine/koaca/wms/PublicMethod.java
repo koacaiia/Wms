@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.icu.text.StringPrepParseException;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -796,7 +797,6 @@ public class PublicMethod {
                 for(int i=0;i<jsonArray.length();i++){
                     String consigneeName=jsonArray.optString(i);
                     consigneeList.add(consigneeName);
-                    Log.i("TestValue","consigneeName:::"+consigneeName);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -805,22 +805,33 @@ public class PublicMethod {
         return consigneeList;
     }
 
-    public ArrayList<String> getPictureListsApplyThread(String sort){
-        ArrayList<String> imageViewLists=new ArrayList<>();
-        Uri uri=MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        String[] projection={MediaStore.MediaColumns.DATA};
-        Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
-        int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-        while(cursor.moveToNext()){
-            String uriI=cursor.getString(columnsDataIndex);
-            File file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
-            String strFile=String.valueOf(file);
-            if (uriI.startsWith(strFile)) {
+    public void imageViewListCount(){
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        ArrayList<String> imageViewListCountArr=new ArrayList<>();
+        imageViewListCountArr.add("1장씩");
+        imageViewListCountArr.add("2장씩");
+        imageViewListCountArr.add("3장씩");
+        imageViewListCountArr.add("4장씩");
 
-                imageViewLists.add(uriI);
-            }
-        }
-        cursor.close();
-        return imageViewLists;
+        String[] imageViewListCountList=imageViewListCountArr.toArray(new String[imageViewListCountArr.size()]);
+        builder.setTitle("사진리스트 수 조정창")
+                .setSingleChoiceItems(imageViewListCountList,2, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    putSharedPreference("imageViewListCount",String.valueOf(i+1));
+                    Toast.makeText(activity.getApplicationContext(),"다음 어플 구동부터 사진 목록"+(i+1)+" 장으로 표시 됩니다.",Toast.LENGTH_SHORT).show();
+                    }
+                }).show();
+
     }
+
+    public void putSharedPreference(String key,String value){
+        SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        editor.putString(key,value);
+        editor.apply();
+    }
+
+
 }
