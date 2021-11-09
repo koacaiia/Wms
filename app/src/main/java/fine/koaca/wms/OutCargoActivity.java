@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -74,9 +75,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     PublicMethod publicMethod;
     int listPosition;
 
-    Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet;
+    Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet,btnPicList,btnPicCount;
     LinearLayout linearLayout;
-    TextView txtPicList,txtPicCount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,31 +101,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
             }
         });
-
-
-        recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager manager=new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(manager);
-
-        database= FirebaseDatabase.getInstance();
-        list=new ArrayList<>();
-        linearLayout=findViewById(R.id.outCargo_itemLayout);
-        linearLayout.setVisibility(View.INVISIBLE);
-        if((ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut")==null){
-            getOutcargoData();
-        }else{
-            list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
-            pictureUpdate("Re");
-
-        }
-
-        adapter=new OutCargoListAdapter(list,this,this,this);
-        recyclerView.setAdapter(adapter);
-
-
-//        txtTitle.setText(dateToday+" 출고 목록");
-        refPath=getIntent().getStringExtra("refPath");
 
 
         btnRegExPic=findViewById(R.id.outCargo_btnRegExPic);
@@ -156,12 +131,20 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         btnRegPallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-           Toast.makeText(getApplicationContext(),"NOT YET",Toast.LENGTH_SHORT).show();;
+                Toast.makeText(getApplicationContext(),"NOT YET",Toast.LENGTH_SHORT).show();;
             }
         });
 
-        txtPicList=findViewById(R.id.outCargo_picList);
-        txtPicCount=findViewById(R.id.outCargo_picCount);
+        btnPicList=findViewById(R.id.outCargo_picList);
+
+        btnPicList.setText("서버전송용 조정사진");
+        btnPicList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                publicMethod.imageViewListCount();
+            }
+        });
+        btnPicCount=findViewById(R.id.outCargo_picCount);
 
         fltBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -186,30 +169,30 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                 switch(i){
                                     case 0:
                                         pictureUpdate("Ori");
-                                        txtPicList.setText("업무원본사진");
-                                        txtPicCount.setText("전송사진을 선택 하세요");
-                                        txtPicCount.startAnimation(ani);
+                                        btnPicList.setText("업무원본사진");
+                                        btnPicCount.setText("전송사진을 선택 하세요");
+                                        btnPicCount.startAnimation(ani);
                                         break;
                                     case 1:
                                         pictureUpdate("All");
-                                        txtPicList.setText("디바이스 전체 사진");
-                                        txtPicCount.setText("전송사진을 선택 하세요");
-                                        txtPicCount.startAnimation(ani);
+                                        btnPicList.setText("디바이스 전체 사진");
+                                        btnPicCount.setText("전송사진을 선택 하세요");
+                                        btnPicCount.startAnimation(ani);
                                         break;
                                     case 2:
                                         pictureUpdate("Re");
-                                        txtPicList.setText("서버전송용 조정사진");
-                                        txtPicCount.setText("전송사진을 선택 하세요");
-                                        txtPicCount.startAnimation(ani);
+                                        btnPicList.setText("서버전송용 조정사진");
+                                        btnPicCount.setText("전송사진을 선택 하세요");
+                                        btnPicCount.startAnimation(ani);
 
                                         break;
                                     case 3:
 
                                         itemPictureList(refPath);
-                                        txtPicList.setText("서버 저장된 사진 검색");
-                                        txtPicCount.setText("디바이스 저장 원하면 사진 클릭");
-                                        txtPicCount.setTextColor(Color.RED);
-                                        txtPicCount.startAnimation(ani);
+                                        btnPicList.setText("서버 저장된 사진 검색");
+                                        btnPicCount.setText("디바이스 저장 원하면 사진 클릭");
+                                        btnPicCount.setTextColor(Color.RED);
+                                        btnPicCount.startAnimation(ani);
                                         break;
                                 }
                             }
@@ -218,6 +201,32 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 return true;
             }
         });
+
+
+        recyclerView=findViewById(R.id.activity_list_outcargo_recyclerview);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager manager=new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(manager);
+        database= FirebaseDatabase.getInstance();
+        list=new ArrayList<>();
+        linearLayout=findViewById(R.id.outCargo_itemLayout);
+        linearLayout.setVisibility(View.INVISIBLE);
+        if((ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut")==null){
+            getOutcargoData();
+        }else{
+            list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
+            pictureUpdate("Re");
+
+        }
+
+        adapter=new OutCargoListAdapter(list,this,this,this);
+        recyclerView.setAdapter(adapter);
+
+
+//        txtTitle.setText(dateToday+" 출고 목록");
+        refPath=getIntent().getStringExtra("refPath");
+
+
     }
 
     private void getOutcargoData() {
@@ -232,7 +241,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                     String keyValue=data.getKey();
                     if(!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
                         OutCargoList mList = data.getValue(OutCargoList.class);
-                        Log.i("TestValue","KeyValue::::"+keyValue);
                         list.add(mList);
                         list.sort(new Comparator<OutCargoList>() {
                             @Override
@@ -281,9 +289,54 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
                     if(!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")) {
                         OutCargoList mList=data.getValue(OutCargoList.class);
+
                         assert mList != null;
                         if (Objects.equals(mList.getKeypath(), refPath)) {
                             list.add(mList);
+                            Log.i("TestValue",String.valueOf(mList.getKeypath().substring(mList.getKeypath().length()-2,
+                                    mList.getKeypath().length()-1)));
+                            if(mList.getKeypath().contains("_1건")){
+                                String bl;
+                                String des;
+                                String consigneeNameValue=mList.getConsigneeName();
+                                if(consigneeNameValue.equals("케이비켐㈜")){
+                                    des=consigneeNameValue;
+                                    bl=mList.getManagementNo().substring(3).replace(",","");
+                                }else{
+                                    bl=mList.getManagementNo().replace(",","");
+                                    des=mList.getDescription().replace(",","");
+                                }
+                                Log.i("TestValue","kb Remark Value:::"+bl+"_"+des);
+                                DatabaseReference databaseReference=
+                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference");
+                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for(DataSnapshot data:snapshot.getChildren()){
+
+                                            if(data.getKey().equals(bl+"_"+des)){
+
+                                                RemarkReference remarkReference=data.getValue(RemarkReference.class);
+                                                assert remarkReference != null;
+                                                String strRemarkReference=remarkReference.getRemarkValue();
+                                                btnPicCount.setText("비고 : "+strRemarkReference);
+                                                btnPicCount.setTextColor(Color.RED);
+                                                Animation ani=new AlphaAnimation(0.0f,1.0f);
+                                                ani.setRepeatMode(Animation.REVERSE);
+                                                ani.setDuration(1000);
+                                                ani.setRepeatCount(Animation.INFINITE);
+                                                btnPicCount.startAnimation(ani);
+                                            }
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+                            }
+
                         }
                     }
                 }
@@ -423,8 +476,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
         imageViewLists.clear();
         RecyclerView imageRecyclerView = findViewById(R.id.outCargo_recyclerView_image);
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
-        imageRecyclerView.setLayoutManager(manager);
+        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+        int imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount",null));
+        GridLayoutManager manager=new GridLayoutManager(this,imageViewListCount);
+             imageRecyclerView.setLayoutManager(manager);
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
         StorageReference storageReference=
                 storage.getReference("images/"+deptName+"/"+keyValue.substring(0,10)+"/OutCargo/"+keyValue);
@@ -473,7 +528,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             linearLayout.setVisibility(View.VISIBLE);
         }
         RecyclerView imageRecyclerView=findViewById(R.id.outCargo_recyclerView_image);
-        GridLayoutManager manager=new GridLayoutManager(this,3);
+        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+        int imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
+        GridLayoutManager manager=new GridLayoutManager(this,imageViewListCount);
         imageRecyclerView.setLayoutManager(manager);
 
         PublicMethod getImageLists=new PublicMethod(this);
@@ -600,13 +657,13 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                    }).show();
        }
        String clickedPictureCount="("+clickedImageViewLists.size()+") 장 선택";
-        txtPicCount.setText(clickedPictureCount);
-        txtPicCount.setTextColor(Color.RED);
+        btnPicCount.setText(clickedPictureCount);
+        btnPicCount.setTextColor(Color.RED);
         Animation ani=new AlphaAnimation(0.0f,1.0f);
         ani.setRepeatMode(Animation.REVERSE);
         ani.setDuration(1000);
         ani.setRepeatCount(Animation.INFINITE);
-        txtPicCount.startAnimation(ani);
+        btnPicCount.startAnimation(ani);
     }
 
     public void upCapturePictures(String inoutItems,String consigneeName){
@@ -667,4 +724,5 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     public int compare(OutCargoList o1, OutCargoList o2) {
         return 0;
     }
+
 }
