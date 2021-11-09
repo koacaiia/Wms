@@ -145,6 +145,51 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             }
         });
         btnPicCount=findViewById(R.id.outCargo_picCount);
+        btnPicCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
+                EditText editText=new EditText(OutCargoActivity.this);
+
+                String bl=list.get(0).getManagementNo().replace(",","");
+                String des=list.get(0).getDescription().replace(",","");
+                Map<String,Object> remarkMap=new HashMap<>();
+                String getRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference";
+                String putRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference/"+bl+"_"+des;
+                FirebaseDatabase database=FirebaseDatabase.getInstance();
+                DatabaseReference databasePutReference=database.getReference(putRemarkReference);
+                DatabaseReference databaseGetReference=database.getReference(getRemarkReference);
+
+                builder.setTitle("출고 특이사항 등록 창")
+                        .setMessage("덮어쓰기:기존 등록내용 삭제후 등록"+"\n"+"이어쓰기:기존 등록내용에 추가")
+                        .setView(editText)
+                        .setPositiveButton("덮어쓰기", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                remarkMap.put("remarkValue", editText.getText().toString());
+                                databasePutReference.updateChildren(remarkMap);
+                            }
+                        })
+                        .setNegativeButton("이어쓰기", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                remarkMap.put("remarkValue",
+                                        btnPicCount.getText().toString().replace("비고 : ","")+"||"+editText.getText().toString());
+                                databasePutReference.updateChildren(remarkMap);
+                            }
+                        })
+                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+
+            }
+        });
 
         fltBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -293,9 +338,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         assert mList != null;
                         if (Objects.equals(mList.getKeypath(), refPath)) {
                             list.add(mList);
-                            Log.i("TestValue",String.valueOf(mList.getKeypath().substring(mList.getKeypath().length()-2,
-                                    mList.getKeypath().length()-1)));
-                            if(mList.getKeypath().contains("_1건")){
+
+
                                 String bl;
                                 String des;
                                 String consigneeNameValue=mList.getConsigneeName();
@@ -306,7 +350,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                     bl=mList.getManagementNo().replace(",","");
                                     des=mList.getDescription().replace(",","");
                                 }
-                                Log.i("TestValue","kb Remark Value:::"+bl+"_"+des);
+
                                 DatabaseReference databaseReference=
                                         database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference");
                                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -335,7 +379,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
                                     }
                                 });
-                            }
+
 
                         }
                     }
