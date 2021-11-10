@@ -185,6 +185,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 String dateValue= getIntent().getStringExtra("date");
                 if(keyValue==null){
                     keyValue=listItems.get(0).getKeyValue();
+                    dateValue=listItems.get(0).getDate();
                 }
 
                 Map<String,Object> itemClickMap=new HashMap<>();
@@ -196,7 +197,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
                 EditText editText=new EditText(getApplicationContext());
                 String finalKeyValue = keyValue;
-                String finalKeyValue1 = keyValue;
+                String finalDateValue = dateValue;
                 builder.setTitle("선택 화물 추가 반입정보(로케이션) 입력창")
                         .setMessage("추가적인 반입정보 확인되면 입력후 하단 확인창클릭 하여 서버 전송 바랍니다."+"\n"+"기존 전달사항 추가 입력이면 이어쓰기 클릭"+"\n"+"기존 전달사항 " +
                                 "삭제또는 신규 전달사항이면 덮어쓰기 삭제면 입력하지말고 그냥 덮어쓰시 클릭하여 전송 바랍니다.")
@@ -234,7 +235,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 Toast.makeText(getApplicationContext(),
                                         itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
                                         Toast.LENGTH_LONG).show();
-                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue,dateValue);
+                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue, finalDateValue);
                             }
                         })
                         .setNeutralButton("이어쓰기", new DialogInterface.OnClickListener() {
@@ -263,7 +264,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 Toast.makeText(getApplicationContext(),
                                         itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
                                         Toast.LENGTH_LONG).show();
-                                initLayout(consigneeNameValue, finalKeyValue1,containerValue,blValue,dateValue);
+                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue,finalDateValue);
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -477,8 +478,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
                 }else{
 
-//                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
-//                            deptName);
+                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
+                            deptName);
 //                    ThreadPictureUpload threadPictureUpload=new ThreadPictureUpload(imageViewListsSelected,nickName,consigneeName,"InCargo",
 //                            listItems.get(0).getKeyValue(),deptName);
 //                    threadPictureUpload.start();
@@ -491,10 +492,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                     "/" + keyValue);
                     databaseReference.updateChildren(putValue);
                     imageViewListsSelected.clear();
+
                     Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
                     if(keyValue==null){
                         keyValue=getIntent().getStringExtra("refPath");
                     }
+
                     itemPictureList(keyValue);
                 }
 
@@ -1254,6 +1257,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 }
 
                                 int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
+
                                 if (!consigneeArrayList.contains(mList.getConsignee())) {
                                     consigneeArrayList.add(mList.getConsignee());
                                 }
@@ -1536,7 +1540,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     private void selectedItemGetDatabase(String date, String keyValue) {
         listItems.clear();
-
+        Log.i("TestValue","selectedItemsGetDatabase Date Value:"+date+"Key Value::"+keyValue);
         databaseReference =
                 database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {

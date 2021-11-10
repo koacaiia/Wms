@@ -155,11 +155,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 String bl=list.get(0).getManagementNo().replace(",","");
                 String des=list.get(0).getDescription().replace(",","");
                 Map<String,Object> remarkMap=new HashMap<>();
-                String getRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference";
                 String putRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference/"+bl+"_"+des;
                 FirebaseDatabase database=FirebaseDatabase.getInstance();
                 DatabaseReference databasePutReference=database.getReference(putRemarkReference);
-                DatabaseReference databaseGetReference=database.getReference(getRemarkReference);
 
                 builder.setTitle("출고 특이사항 등록 창")
                         .setMessage("덮어쓰기:기존 등록내용 삭제후 등록"+"\n"+"이어쓰기:기존 등록내용에 추가")
@@ -170,6 +168,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
                                 remarkMap.put("remarkValue", editText.getText().toString());
                                 databasePutReference.updateChildren(remarkMap);
+                                getOutcargoData(refPath);
                             }
                         })
                         .setNegativeButton("이어쓰기", new DialogInterface.OnClickListener() {
@@ -178,6 +177,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                 remarkMap.put("remarkValue",
                                         btnPicCount.getText().toString().replace("비고 : ","")+"||"+editText.getText().toString());
                                 databasePutReference.updateChildren(remarkMap);
+                                getOutcargoData(refPath);
                             }
                         })
                         .setNeutralButton("취소", new DialogInterface.OnClickListener() {

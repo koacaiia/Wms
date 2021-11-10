@@ -175,10 +175,11 @@
                             android:id="@+id/incargo_picList"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:autoSizeTextType="uniform"
                             android:layout_marginHorizontal="10dp"
+                            android:layout_weight="1"
+                            android:autoSizeTextType="uniform"
+                            android:backgroundTint="#32395E"
+                            android:gravity="center"
                             android:text="TextView"
                             android:textStyle="bold|italic" />
 
@@ -186,10 +187,11 @@
                             android:id="@+id/incargo_picCount"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:autoSizeTextType="uniform"
                             android:layout_marginHorizontal="10dp"
+                            android:layout_weight="1"
+                            android:autoSizeTextType="uniform"
+                            android:backgroundTint="#32395E"
+                            android:gravity="center"
                             android:text="입고 특이사항 등록"
                             android:textStyle="bold|italic" />
                     </LinearLayout>
