@@ -2,11 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="30dp">
+
     <TextView
         android:id="@+id/list_pltresult_consigneeName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
+        android:autoSizeMaxTextSize="14sp"
+        android:autoSizeMinTextSize="1sp"
+        android:autoSizeStepGranularity="2sp"
+        android:autoSizeTextType="uniform"
+        android:autoText="true"
         android:gravity="center"
         android:text="화주명"
         android:textStyle="bold|italic" />
@@ -14,7 +20,7 @@
     <TextView
         android:id="@+id/list_pltresult_kpp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
         android:text="KPP"
@@ -23,7 +29,7 @@
     <TextView
         android:id="@+id/list_pltresult_aj"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
         android:text="AJ"
@@ -32,7 +38,7 @@
     <TextView
         android:id="@+id/list_pltresult_etc"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
         android:text="ETC"

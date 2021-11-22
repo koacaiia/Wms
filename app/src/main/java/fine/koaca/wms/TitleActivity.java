@@ -22,6 +22,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -998,7 +999,42 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();}
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            Button btnPutVersion=new Button(this);
+            btnPutVersion.setText("버전등록");
+            btnPutVersion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder=new AlertDialog.Builder(TitleActivity.this);
+                    EditText editText=new EditText(TitleActivity.this);
+                    editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                    builder.setTitle("버전등록창")
+                            .setView(editText)
+                            .setMessage("업데이트 되거나 된 버전 입력 바랍니다.")
+                            .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Map<String,Object> versionMap=new HashMap<>();
+                                    int versionCheck=Integer.parseInt(editText.getText().toString());
+                                    DatabaseReference versionRef=database.getReference("Version/Version");
+                                    versionMap.put("versionChecked",versionCheck);
+                                    versionRef.updateChildren(versionMap);
+                                    Toast.makeText(TitleActivity.this,"입력 버전:"+versionCheck+" 으로 서버 등록 진행 되었습니다.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            })
+                            .show();
+
+                }
+            });
+
             builder.setTitle("기초자료 등록 창")
+                    .setView(btnPutVersion)
                     .setMessage("물류센터명:" + deptName + "\n" + "사용자명:" + nickName + "\n" + "어플버전:" + versioncode + "\n" +"사진목록 " +
                             "리스트:"+imageViewListCount+" 장"+
                             "\n"+

@@ -18,11 +18,16 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,8 +47,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -61,6 +69,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.security.auth.Destroyable;
 
 public class PublicMethod {
     Activity activity;
@@ -789,6 +799,7 @@ public class PublicMethod {
     }
     public ArrayList<String> getConsigneeList(){
         SharedPreferences preferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+
         String consigneeStr=preferences.getString("consigneeList",null);
         ArrayList<String> consigneeList=new ArrayList<String>();
         if(consigneeStr !=null){
@@ -832,6 +843,287 @@ public class PublicMethod {
         editor.putString(key,value);
         editor.apply();
     }
+    public void putRemarkValue(String bl,String des){
+
+        deptName=getUserInformation().get("deptName");
+        nickName=getUserInformation().get("nickName");
+        String activityName=activity.getLocalClassName();
+        ArrayList<String> arrBlDes=new ArrayList<>();
+        ArrayList<String> arrBl=new ArrayList<>();
+        ArrayList<String> arrDes=new ArrayList<>();
+        switch(activityName){
+            case "Incargo":
+                arrBl.add(bl);
+                arrDes.add(des);
+                arrBlDes.add(bl+"_"+des);
+                break;
+            case "OutCargoActivity":
+               arrBl=extractChar(bl,',');
+               arrDes=extractChar(des,',');
+                for(int i=0; i<arrBl.size();i++){
+                    arrBlDes.add(arrBl.get(i)+"_"+arrDes.get(i));
+                }
+                break;
+        }
+
+        String[] blDesList=arrBlDes.toArray(new String[arrBlDes.size()]);
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        View view=activity.getLayoutInflater().inflate(R.layout.dialog_putremark,null);
+        Spinner spinner=view.findViewById(R.id.dialog_remark_spinner);
+        TextView txtContent=view.findViewById(R.id.dialog_remark_txtRemark);
+        TextView txtBl=view.findViewById(R.id.dialog_remark_txtBl);
+        TextView txtDes=view.findViewById(R.id.dialog_remark_txtDes);
+        EditText editPutRemark=view.findViewById(R.id.dialog_remark_edit);
+        Button btnPutRemark=view.findViewById(R.id.dialog_reamrk_btnPutRemark);
+        ArrayAdapter<String> remarkAdapter=new ArrayAdapter<String>(activity,
+                android.R.layout.simple_spinner_dropdown_item,
+                blDesList);
+        remarkAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(remarkAdapter);
+        ArrayList<String> finalArrBl = arrBl;
+        ArrayList<String> finalArrDes = arrDes;
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+              txtBl.setText(finalArrBl.get(i)+"::");
+              txtDes.setText(finalArrDes.get(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+        btnPutRemark.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+              txtContent.setText(editPutRemark.getText().toString());
+            }
+        });
+
+        builder.setView(view)
+                .setPositiveButton("이어쓰기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String blValue=txtBl.getText().toString().replace("::","");
+                        String desValue=txtDes.getText().toString();
+                        String remarkValue=txtContent.getText().toString();
+
+                        if(txtContent.getText().toString().equals("")){
+                            Toast.makeText(activity.getApplicationContext(),"비고특이사항 공란 입니다.다시 확인후 등록 바랍니다.",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        FirebaseDatabase database=FirebaseDatabase.getInstance();
+                        DatabaseReference ref=database.getReference( "DeptName/" + deptName + "/" +"OutCargo/RemarkReference/");
+                        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                           @Override
+                           public void onDataChange(@NonNull DataSnapshot snapshot) {
+                               for(DataSnapshot data:snapshot.getChildren()){
+                                   if(data.getKey().equals(blValue)){
+                                       ListRemarkReference mList=data.getValue(ListRemarkReference.class);
+                                       String oldDes ="",oldNick="",oldRemark="";
+                                       String activityName=activity.getLocalClassName();
+                                       switch(activityName){
+                                           case "Incargo":
+                                               oldDes=
+                                                       mList.getInCargoDesValue();
+                                               oldNick=
+                                                       mList.getInCargoNickName();
+                                               oldRemark=
+                                                       mList.getInCargoRemarkValue();
+                                               break;
+                                           case "OutCargoActivity":
+                                               oldDes=
+                                                       mList.getOutCargoDesValue();
+                                               oldNick=
+                                                       mList.getOutCargoNickName();
+                                               oldRemark=
+                                                       mList.getOutCargoRemarkValue();
+                                               break;
+                                       }
+                                      updateRemarkValue(blValue,oldDes+desValue+",",oldRemark+remarkValue+",",
+                                              oldNick+nickName+",");
+
+                                   }
+                               }
+                           }
+
+                           @Override
+                           public void onCancelled(@NonNull DatabaseError error) {
+
+                           }
+                       });
+
+                    }
+                })
+                .setNegativeButton("덮어쓰기", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        String blValue=txtBl.getText().toString().replace("::","");
+                        String desValue=txtDes.getText().toString()+",";
+                        String remarkValue=txtContent.getText().toString()+",";
+                        updateRemarkValue(blValue,desValue,remarkValue,nickName+",");
+                    }
+                })
+                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
 
 
+    }
+
+    public void updateRemarkValue(String bl,String des,String remark,String nickName){
+
+        String putRefPath="DeptName/" + deptName + "/" +"OutCargo/RemarkReference/"+bl;
+        String activityName=activity.getLocalClassName();
+        FirebaseDatabase database= FirebaseDatabase.getInstance();
+        DatabaseReference remarkRef=database.getReference(putRefPath);
+        Map<String,Object> remarkMap=new HashMap<>();
+
+        switch(activityName){
+            case "Incargo":
+                remarkMap.put("inCargoRemarkValue",remark);
+                remarkMap.put("inCargoNickName",nickName);
+                remarkMap.put("inCargoDesValue",des);
+                break;
+            case "OutCargoActivity":
+                remarkMap.put("outCargoRemarkValue",remark);
+                remarkMap.put("outCargoNickName",nickName);
+                remarkMap.put("outCargoDesValue",des);
+        }
+
+        remarkRef.updateChildren(remarkMap);
+
+    }
+    public void getRemarkValue(String bl){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference getRemarkRef=database.getReference("DeptName/"+getUserInformation().get("deptName")+"/OutCargo" +
+                "/RemarkReference/");
+
+        getRemarkRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                View view=activity.getLayoutInflater().inflate(R.layout.dialog_getremark,null);
+                RecyclerView recyclerViewIn=view.findViewById(R.id.dialog_getremark_recyclerViewInCargo);
+                RecyclerView recyclerViewOut=view.findViewById(R.id.dialog_getremark_recyclerViewOutCargo);
+                LinearLayoutManager inManager=new LinearLayoutManager(activity);
+                LinearLayoutManager outManager=new LinearLayoutManager(activity);
+                recyclerViewOut.setLayoutManager(outManager);
+                recyclerViewIn.setLayoutManager(inManager);
+                ArrayList<ListRemarkRecyclerView> listIn=new ArrayList<>();
+                ArrayList<ListRemarkRecyclerView> listOut=new ArrayList<>();
+                for(DataSnapshot data:snapshot.getChildren()){
+                    String inNickName="",outNickName="",inRemark="",outRemark="",inDes="",outDes="";
+                    if(bl.contains(data.getKey())){
+                        ListRemarkReference mList=data.getValue(ListRemarkReference.class);
+                        assert mList != null;
+
+                        if(mList.getInCargoNickName()!=null){
+                            inNickName=mList.getInCargoNickName();
+                            inRemark=mList.getInCargoRemarkValue();
+                            inDes=mList.getInCargoDesValue();
+                            ArrayList<String> arrInNickName=extractChar(inNickName,',');
+                            ArrayList<String> arrInDes=extractChar(inDes,',');
+                            ArrayList<String> arrInRemark=extractChar(inRemark,',');
+
+                            for(int i=0;i<arrInNickName.size();i++){
+                                ListRemarkRecyclerView mListIn=new ListRemarkRecyclerView(arrInNickName.get(i),arrInDes.get(i),
+                                        arrInRemark.get(i));
+                                listIn.add(mListIn);
+                            }
+
+                        }
+                        if(mList.getOutCargoNickName()!=null){
+                            outNickName=mList.getOutCargoNickName();
+                            outRemark=mList.getOutCargoRemarkValue();
+                            outDes=mList.getOutCargoDesValue();
+                            ArrayList<String> arrOutNickName=extractChar(outNickName,',');
+                            ArrayList<String> arrOutDes=extractChar(outDes,',');
+                            ArrayList<String> arrOutRemark=extractChar(outRemark,',');
+
+                            for(int i=0;i<arrOutNickName.size();i++){
+                                ListRemarkRecyclerView mListOut=new ListRemarkRecyclerView(arrOutNickName.get(i),arrOutDes.get(i),
+                                        arrOutRemark.get(i));
+                                listOut.add(mListOut);
+                            }
+                        }
+
+                    }
+                }
+                RemarkRecyclerViewAdapter inAdapter=new RemarkRecyclerViewAdapter(listIn);
+                RemarkRecyclerViewAdapter outAdapter=new RemarkRecyclerViewAdapter(listOut);
+                recyclerViewOut.setAdapter(outAdapter);
+                recyclerViewIn.setAdapter(inAdapter);
+                AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+                builder.setTitle(bl+":화물에 대한 특이사항")
+                        .setView(view)
+                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dialogInterface.dismiss();
+                            }
+                        })
+                        .show();
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+public void extractData(String keyPath,String keyValue){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference dataRef=database.getReference(keyPath);
+        dataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String manageNo = null,desNo = null;
+                for(DataSnapshot data:snapshot.getChildren()){
+                    if(data.getKey().equals(keyValue)){
+                        OutCargoList mList=data.getValue(OutCargoList.class);
+                        manageNo= mList.getManagementNo();
+                        desNo=mList.getDescription();
+//                        int charCheck=0;
+//                        ArrayList<String> manageList=new ArrayList<>();
+//                        for(int i=0;i<mList.getManagementNo().length();i++){
+//                            if(manageNo.charAt(i)==','){
+//                                String manageNoEx=manageNo.substring(charCheck,i).replace(",","");
+//                                charCheck=i;
+//                               manageList.add(manageNoEx);
+//                            }
+//                        }
+
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+}
+public ArrayList<String> extractChar(String data,Character ch){
+        int charCheck=0;
+        ArrayList<String> extractList=new ArrayList<>();
+        for(int i =0;i<data.length();i++){
+            if(data.charAt(i)==ch){
+                String dataEx=data.substring(charCheck,i).replace(",","");
+                charCheck=i;
+                extractList.add(dataEx);
+            }
+        }
+        return extractList;
+}
 }

@@ -76,6 +76,7 @@ public class OutCargoListAdapter extends RecyclerView.Adapter<OutCargoListAdapte
         }else{
             holder.date.setText("출고 완료");
             holder.date.setTextColor(Color.RED);
+            holder.cardView.setBackgroundColor(Color.WHITE);
         }
     }
 

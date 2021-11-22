@@ -187,93 +187,101 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     keyValue=listItems.get(0).getKeyValue();
                     dateValue=listItems.get(0).getDate();
                 }
-
-                Map<String,Object> itemClickMap=new HashMap<>();
-                String refPath=
-                        "DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0,10) +
-                                "/" + keyValue;
-                FirebaseDatabase itemClickDatabase=FirebaseDatabase.getInstance();
-                DatabaseReference itemClickReference=itemClickDatabase.getReference(refPath);
-                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
-                EditText editText=new EditText(getApplicationContext());
-                String finalKeyValue = keyValue;
-                String finalDateValue = dateValue;
-                builder.setTitle("선택 화물 추가 반입정보(로케이션) 입력창")
-                        .setMessage("추가적인 반입정보 확인되면 입력후 하단 확인창클릭 하여 서버 전송 바랍니다."+"\n"+"기존 전달사항 추가 입력이면 이어쓰기 클릭"+"\n"+"기존 전달사항 " +
-                                "삭제또는 신규 전달사항이면 덮어쓰기 삭제면 입력하지말고 그냥 덮어쓰시 클릭하여 전송 바랍니다.")
-                        .setView(editText)
-                        .setPositiveButton("덮어쓰기", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String remarkLocation=editText.getText().toString();
-                                btnPicCount.setText(remarkLocation);
-                                btnPicCount.setTextColor(Color.RED);
-                                Animation ani=new AlphaAnimation(0.0f,1.0f);
-                                ani.setRepeatMode(Animation.REVERSE);
-                                ani.setDuration(1000);
-                                ani.setRepeatCount(Animation.INFINITE);
-                                btnPicCount.startAnimation(ani);
-                                itemClickMap.put("location",remarkLocation);
-                                itemClickReference.updateChildren(itemClickMap);
-                                String bl=listItems.get(0).getBl();
-                                String des=listItems.get(0).getDescription();
-                                String consigneeName=listItems.get(0).getConsignee();
-                                DatabaseReference databaseOutReference;
-                                if(listItems.get(0).getConsignee().equals("케이비켐㈜")){
-                                    databaseOutReference=
-                                            database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference/" +bl+
-                                                    "_"+consigneeName);
-                                }else{
-                                    databaseOutReference=
-                                            database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference/" +bl+
-                                                    "_"+des);
-                                }
-
-                                Map<String,Object> outReferenceMap=new HashMap<>();
-                                outReferenceMap.put("remarkValue",remarkLocation);
-                                databaseOutReference.updateChildren(outReferenceMap);
-                                Toast.makeText(getApplicationContext(),
-                                        itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
-                                        Toast.LENGTH_LONG).show();
-                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue, finalDateValue);
-                            }
-                        })
-                        .setNeutralButton("이어쓰기", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                String remarkLocationOld=btnPicCount.getText().toString();
-                                String remarkLocation=editText.getText().toString();
-                                String remarkLocationUpdate=remarkLocationOld+"||"+remarkLocation;
-                                btnPicCount.setText(remarkLocationUpdate);
-                                btnPicCount.setTextColor(Color.RED);
-                                Animation ani=new AlphaAnimation(0.0f,1.0f);
-                                ani.setRepeatMode(Animation.REVERSE);
-                                ani.setDuration(1000);
-                                ani.setRepeatCount(Animation.INFINITE);
-                                btnPicCount.startAnimation(ani);
-                                itemClickMap.put("location",remarkLocationUpdate);
-                                itemClickReference.updateChildren(itemClickMap);
-                                String bl=listItems.get(0).getBl();
-                                String des=listItems.get(0).getDescription();
-                                DatabaseReference databaseOutReference=
-                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference/" +bl+
-                                                "_"+des);
-                                Map<String,Object> outReferenceMap=new HashMap<>();
-                                outReferenceMap.put("remarkValue",remarkLocationUpdate);
-                                databaseOutReference.updateChildren(outReferenceMap);
-                                Toast.makeText(getApplicationContext(),
-                                        itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
-                                        Toast.LENGTH_LONG).show();
-                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue,finalDateValue);
-                            }
-                        })
-                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        })
-                        .show();
+                publicMethod.putRemarkValue(listItems.get(0).getBl(),listItems.get(0).getDescription());
+//                initLayout(consigneeNameValue, keyValue,containerValue,blValue, dateValue);
+////                                databaseOutReference.updateChildren(outReferenceMap);
+//                                Toast.makeText(getApplicationContext(),
+//                                        itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
+//                                        Toast.LENGTH_LONG).show();
+//
+//
+//                Map<String,Object> itemClickMap=new HashMap<>();
+//                String refPath=
+//                        "DeptName/" + deptName + "/" + "InCargo" + "/" + keyValue.substring(5, 7) + "월/" + keyValue.substring(0,10) +
+//                                "/" + keyValue;
+//                FirebaseDatabase itemClickDatabase=FirebaseDatabase.getInstance();
+//                DatabaseReference itemClickReference=itemClickDatabase.getReference(refPath);
+//                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+//                EditText editText=new EditText(getApplicationContext());
+//                String finalKeyValue = keyValue;
+//                String finalDateValue = dateValue;
+//                builder.setTitle("선택 화물 추가 반입정보(로케이션) 입력창")
+//                        .setMessage("추가적인 반입정보 확인되면 입력후 하단 확인창클릭 하여 서버 전송 바랍니다."+"\n"+"기존 전달사항 추가 입력이면 이어쓰기 클릭"+"\n"+"기존 전달사항 " +
+//                                "삭제또는 신규 전달사항이면 덮어쓰기 삭제면 입력하지말고 그냥 덮어쓰시 클릭하여 전송 바랍니다.")
+//                        .setView(editText)
+//                        .setPositiveButton("덮어쓰기", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                String remarkLocation=editText.getText().toString();
+//                                btnPicCount.setText(remarkLocation);
+//                                btnPicCount.setTextColor(Color.RED);
+//                                Animation ani=new AlphaAnimation(0.0f,1.0f);
+//                                ani.setRepeatMode(Animation.REVERSE);
+//                                ani.setDuration(1000);
+//                                ani.setRepeatCount(Animation.INFINITE);
+//                                btnPicCount.startAnimation(ani);
+//                                itemClickMap.put("location",remarkLocation);
+//                                itemClickReference.updateChildren(itemClickMap);
+//                                String bl=listItems.get(0).getBl();
+//                                String des=listItems.get(0).getDescription();
+//                                String consigneeName=listItems.get(0).getConsignee();
+//                                DatabaseReference databaseOutReference;
+//                                if(listItems.get(0).getConsignee().equals("케이비켐㈜")){
+//                                    databaseOutReference=
+//                                            database.getReference("DeptName/" + deptName + "/" +"OutCargo/ListRemarkReference/" +bl+
+//                                                    "_"+consigneeName);
+//                                }else{
+//                                    databaseOutReference=
+//                                            database.getReference("DeptName/" + deptName + "/" +"OutCargo/ListRemarkReference/" +bl+
+//                                                    "_"+des);
+//                                }
+//
+//                                Map<String,Object> outReferenceMap=new HashMap<>();
+//                                outReferenceMap.put("remarkValue",remarkLocation);
+//                                databaseOutReference.updateChildren(outReferenceMap);
+//                                Toast.makeText(getApplicationContext(),
+//                                        itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
+//                                        Toast.LENGTH_LONG).show();
+//                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue, finalDateValue);
+//                            }
+//                        })
+//                        .setNeutralButton("이어쓰기", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+////                                String remarkLocationOld=btnPicCount.getText().toString();
+////                                String remarkLocation=editText.getText().toString();
+////                                String remarkLocationUpdate=remarkLocationOld+"||"+remarkLocation;
+////                                btnPicCount.setText(remarkLocationUpdate);
+////                                btnPicCount.setTextColor(Color.RED);
+////                                Animation ani=new AlphaAnimation(0.0f,1.0f);
+////                                ani.setRepeatMode(Animation.REVERSE);
+////                                ani.setDuration(1000);
+////                                ani.setRepeatCount(Animation.INFINITE);
+////                                btnPicCount.startAnimation(ani);
+////                                itemClickMap.put("location",remarkLocationUpdate);
+////                                itemClickReference.updateChildren(itemClickMap);
+////                                String bl=listItems.get(0).getBl();
+////                                String des=listItems.get(0).getDescription();
+////                                DatabaseReference databaseOutReference=
+////                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo/ListRemarkReference/" +bl+
+////                                                "_"+des);
+////                                Map<String,Object> outReferenceMap=new HashMap<>();
+////                                outReferenceMap.put("remarkValue",remarkLocationUpdate);
+//                                publicMethod.putRemarkValue(listItems.get(0).getBl(),listItems.get(0).getDescription());
+////                                databaseOutReference.updateChildren(outReferenceMap);
+//                                Toast.makeText(getApplicationContext(),
+//                                        itemClickTitle+"_화물에 대한 추가정보:"+editText.getText().toString()+" 로 서버 등록 되었습니다.",
+//                                        Toast.LENGTH_LONG).show();
+//                                initLayout(consigneeNameValue, finalKeyValue,containerValue,blValue,finalDateValue);
+//                            }
+//                        })
+//                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                            }
+//                        })
+//                        .show();
 
             }
         });
@@ -348,14 +356,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnInsCom=findViewById(R.id.incargo_btnInsCom);
         btnIncargoCom=findViewById(R.id.incargo_btnIncargoCom);
         btnRegPallet=findViewById(R.id.incargo_btnRegPallet);
-        btnRegPallet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String bl=listItems.get(0).getBl();
-                String keyValue=listItems.get(0).getKeyValue();
 
-            }
-        });
         btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
         checkWeekend();
         incargo_incargo = findViewById(R.id.incargo_incargo);
@@ -1256,7 +1257,12 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                     databaseReference.updateChildren(value);
                                 }
 
-                                int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
+                                if(mList.getDate()==null){
+                                    Log.i("TestValue","Get date Value npe="+mList.getKeyValue());
+                                }
+                                    int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
+
+
 
                                 if (!consigneeArrayList.contains(mList.getConsignee())) {
                                     consigneeArrayList.add(mList.getConsignee());
@@ -1387,6 +1393,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         String blValue=listItems.get(pos).getBl();
         String dateValue=listItems.get(pos).getDate();
         initLayout(consigneeNameValue,keyValue,containerValue,blValue,dateValue);
+        publicMethod.getRemarkValue(blValue);
 
 
     }
@@ -1522,7 +1529,27 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnRegPallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getApplicationContext(),"기능 업데이트 중 입니다.",Toast.LENGTH_SHORT).show();
+                sharedValue="Pallet";
+                String bl=listItems.get(0).getBl();
+                String des=listItems.get(0).getDescription();
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                builder.setTitle("팔렛트 등록 확인창")
+                        .setMessage("목록내 등록:" + "\n" + "리스트상의 화물에 대한 팔렛트적재 입고등록" + "\n" + "목록외 등록:" + "\n" + "리스트 무관하게 팔렛트 입고시 " +
+                                "입고등록")
+                        .setPositiveButton("목록내 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                publicMethod.pltReg(consigneeNameValue,nickName,0,bl,des);
+                            }
+                        })
+                        .setNeutralButton("목록외 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                manualPltReg();
+                            }
+                        })
+                        .show();
+
             }
         });
 
@@ -1710,7 +1737,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnRegPallet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            Toast.makeText(getApplicationContext(),"기능 업데이트 중 입니다.",Toast.LENGTH_SHORT).show();
+
             }
         });
         Button btnNewIncargo=view.findViewById(R.id.incargo_dialog_btnNewIncargo);

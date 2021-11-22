@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.ListResult;
@@ -176,8 +177,6 @@ ActivityPalletResultList listResult;
                 DatabaseReference databaseReference=
                         database.getReference("DeptName/"+deptName+"/PltManagement/"+consigneeList.get(i)+"/"+plts);
                 int finalJ = j;
-
-                int finalI = i;
                 databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -285,9 +284,7 @@ ActivityPalletResultList listResult;
         refPath="DeptName/"+deptName+"/PltManagement/"+ consigneeName +"/"+ pltS+"/";
 
         DatabaseReference databaseReference=database.getReference(refPath);
-
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @SuppressLint("NotifyDataSetChanged")
+        ValueEventListener listener=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
@@ -310,7 +307,6 @@ ActivityPalletResultList listResult;
                     Map<String,Object> valueKey=new HashMap<>();
                     valueKey.put("stockQty", inQty[0] - outQty[0]);
                     valueKey.put("keyValue",keyValue);
-                    valueKey.putIfAbsent("tDate", "");
                     valueKey.putIfAbsent("refPath",refPath);
                     databaseKeyRef.updateChildren(valueKey);
                 }
@@ -321,7 +317,11 @@ ActivityPalletResultList listResult;
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+
+        Query sortbyDate=databaseReference.orderByChild("date");
+        sortbyDate.addListenerForSingleValueEvent(listener);
+
     }
 
     @Override
@@ -404,6 +404,8 @@ ActivityPalletResultList listResult;
         contentValues.add("추가사용");
 
         DatabaseReference databaseReference=database.getReference(refPath+keyValue);
+        DatabaseReference putStockReference=database.getReference(refPath);
+
         DatePicker datePicker=new DatePicker(ActivityPallet.this);
 
         RecyclerView recyclerView=new RecyclerView(ActivityPallet.this);
@@ -483,15 +485,16 @@ ActivityPalletResultList listResult;
                                                     break;
                                                 case 3:
                                                     value.put("tDate",dateResult[0]);
-                                                    value.put("bl","재고");
-                                                    value.put("des","이관");
+                                                    value.put("bl",dateResult[0]);
+                                                    value.put("des","재고이관");
                                                     break;
 
                                             }
                                                databaseReference.updateChildren(value);
                                                Intent intent=new Intent(ActivityPallet.this,ActivityPallet.class);
                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                               ActivityPallet.this.startActivity(intent);
+                                               getDatabase(yearMonth,consigneeName,pltS);
+//                                              ActivityPallet.this.startActivity(intent);
                                            }
                                        })
                                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -508,6 +511,7 @@ ActivityPalletResultList listResult;
                                 builder.setTitle("수량 변경창")
                                         .setView(editText)
                                         .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                                            @SuppressLint("NotifyDataSetChanged")
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 qty[0] = Integer.parseInt(editText.getText().toString());
@@ -523,7 +527,29 @@ ActivityPalletResultList listResult;
 
                                                 Intent intent=new Intent(ActivityPallet.this,ActivityPallet.class);
                                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                                ActivityPallet.this.startActivity(intent);
+
+                                                putStockReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        int inQty=0,outQty=0;
+                                                        for(DataSnapshot data:snapshot.getChildren()){
+                                                            ActivityPalletList mList=data.getValue(ActivityPalletList.class);
+                                                            inQty=inQty+mList.getInQty();
+                                                            outQty=outQty+mList.getOutQty();
+                                                        }
+                                                        Map<String,Object> stockMap=new HashMap<>();
+                                                        stockMap.put("stockQty",inQty-outQty);
+                                                        databaseReference.updateChildren(stockMap);
+                                                        getDatabase(yearMonth,consigneeName,pltS);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                                    }
+                                                });
+                                                adapter.notifyDataSetChanged();
+//                                                ActivityPallet.this.startActivity(intent);
                                             }
                                         })
                                         .show();

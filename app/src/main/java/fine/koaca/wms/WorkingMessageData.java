@@ -437,7 +437,7 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                     }
                     String consigneeName=mList.getConsignee();
 
-                    if(!consigneeArrayList.contains(consigneeName)){
+                    if(!consigneeArrayList.contains(consigneeName)&&consigneeName.length()<15&&!consigneeName.equals("Null")){
                         consigneeArrayList.add(consigneeName);
 
                     }

@@ -88,8 +88,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         nickName=publicMethod.getUserInformation().get("nickName");
         deptName=publicMethod.getUserInformation().get("deptName");
 
-
-
         fltBtn=findViewById(R.id.activity_list_outcargo_flb);
         fltBtn.setVisibility(View.INVISIBLE);
         fltBtn.setOnClickListener(new View.OnClickListener() {
@@ -152,41 +150,63 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 AlertDialog.Builder builder=new AlertDialog.Builder(OutCargoActivity.this);
                 EditText editText=new EditText(OutCargoActivity.this);
 
-                String bl=list.get(0).getManagementNo().replace(",","");
-                String des=list.get(0).getDescription().replace(",","");
+                String bl=list.get(0).getManagementNo();
+                String des=list.get(0).getDescription();
+                editText.setText(bl+"_"+des+":");
+                PublicMethod publicMethodArr=new PublicMethod();
+
+                ArrayList<String> arrBl=publicMethodArr.extractChar(bl,',' );
+                ArrayList<String> arrDes=publicMethodArr.extractChar(des,',');
+                ArrayList<String> arrBlDes=new ArrayList<>();
+                for(int i=0;i<arrBl.size();i++){
+                    arrBlDes.add(arrBl.get(i)+"_"+arrDes.get(i));
+                }
+
                 Map<String,Object> remarkMap=new HashMap<>();
-                String putRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference/"+bl+"_"+des;
-                FirebaseDatabase database=FirebaseDatabase.getInstance();
+                String putRemarkReference="DeptName/" + deptName + "/" +"OutCargo/RemarkReference/"+bl;
+                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+                publicMethod.putRemarkValue(bl,des);
                 DatabaseReference databasePutReference=database.getReference(putRemarkReference);
-
-                builder.setTitle("출고 특이사항 등록 창")
-                        .setMessage("덮어쓰기:기존 등록내용 삭제후 등록"+"\n"+"이어쓰기:기존 등록내용에 추가")
-                        .setView(editText)
-                        .setPositiveButton("덮어쓰기", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                remarkMap.put("remarkValue", editText.getText().toString());
-                                databasePutReference.updateChildren(remarkMap);
-                                getOutcargoData(refPath);
-                            }
-                        })
-                        .setNegativeButton("이어쓰기", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                remarkMap.put("remarkValue",
-                                        btnPicCount.getText().toString().replace("비고 : ","")+"||"+editText.getText().toString());
-                                databasePutReference.updateChildren(remarkMap);
-                                getOutcargoData(refPath);
-                            }
-                        })
-                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        })
-                        .show();
+//                builder.setTitle("출고 특이사항 등록 창")
+//                        .setMessage("덮어쓰기:기존 등록내용 삭제후 등록"+"\n"+"이어쓰기:기존 등록내용에 추가")
+//                        .setView(editText)
+//                        .setPositiveButton("덮어쓰기", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                publicMethod.putRemarkValue(bl,des);
+//                                getOutcargoData(refPath);
+//                                publicMethod.getRemarkValue(bl);
+//                            }
+//                        })
+//                        .setNegativeButton("이어쓰기", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                                databasePutReference.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                        ListRemarkReference mList=snapshot.getValue(ListRemarkReference.class);
+//                                        String oldNick=mList.getInCargoNickName();
+//                                        String oldRemark=mList.getInCargoRemarkValue();
+//                                        publicMethod.putRemarkValue(putRemarkReference,
+//                                                oldNick+"||"+nickName,oldRemark+"||"+editText.getText().toString());
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                    }
+//                                });
+//                                getOutcargoData(refPath);
+//                            }
+//                        })
+//                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                            }
+//                        })
+//                        .show();
 
             }
         });
@@ -312,12 +332,15 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     public void itemClicked(OutCargoListAdapter.ListView listView, View v, int position) {
         refPath=list.get(position).getKeypath();
         consigneeName=list.get(position).consigneeName;
-
+        String month=list.get(position).getDate().substring(5,7)+"월";
+        String extractRefPath="DeptName/"+deptName+"/OutCargo/"+month+"/"+list.get(position).getDate();
         String dialogTitle=
                 consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
         listPosition=position;
         getOutcargoData(refPath);
         pictureUpdate("Re");
+        PublicMethod publicMethod=new PublicMethod(this);
+
 
 //        itemClickedDialog(consigneeName,dialogTitle);
     }
@@ -338,47 +361,33 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         assert mList != null;
                         if (Objects.equals(mList.getKeypath(), refPath)) {
                             list.add(mList);
+                                String bl=mList.getManagementNo();
 
+//                                String consigneeNameValue=mList.getConsigneeName();
+//                                if(consigneeNameValue.equals("케이비켐㈜")){
+//                                    bl=mList.getManagementNo().substring(3).replace(",","");
+//                                }else{
+//                                    bl=mList.getManagementNo().replace(",","");
+//
+//                                }
+                                PublicMethod publicMethod=new PublicMethod(OutCargoActivity.this);
+                                publicMethod.getRemarkValue(bl);
 
-                                String bl;
-                                String des;
-                                String consigneeNameValue=mList.getConsigneeName();
-                                if(consigneeNameValue.equals("케이비켐㈜")){
-                                    des=consigneeNameValue;
-                                    bl=mList.getManagementNo().substring(3).replace(",","");
-                                }else{
-                                    bl=mList.getManagementNo().replace(",","");
-                                    des=mList.getDescription().replace(",","");
-                                }
-
-                                DatabaseReference databaseReference=
-                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference");
-                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                        for(DataSnapshot data:snapshot.getChildren()){
-
-                                            if(data.getKey().equals(bl+"_"+des)){
-
-                                                RemarkReference remarkReference=data.getValue(RemarkReference.class);
-                                                assert remarkReference != null;
-                                                String strRemarkReference=remarkReference.getRemarkValue();
-                                                btnPicCount.setText("비고 : "+strRemarkReference);
-                                                btnPicCount.setTextColor(Color.RED);
-                                                Animation ani=new AlphaAnimation(0.0f,1.0f);
-                                                ani.setRepeatMode(Animation.REVERSE);
-                                                ani.setDuration(1000);
-                                                ani.setRepeatCount(Animation.INFINITE);
-                                                btnPicCount.startAnimation(ani);
-                                            }
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
-
-                                    }
-                                });
+//                                DatabaseReference databaseReference=
+//                                        database.getReference("DeptName/" + deptName + "/" +"OutCargo/RemarkReference");
+//                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                    @Override
+//                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                        for(DataSnapshot data:snapshot.getChildren()){
+//
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                    }
+//                                });
 
 
                         }
