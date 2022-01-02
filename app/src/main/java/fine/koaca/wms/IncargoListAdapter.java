@@ -21,9 +21,9 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
 
     AdapterClickListener mListener=null;
     AdapterLongClickListener mLongListener=null;
+    ItemConsigneeClickListener itemConsigneeClickListener;
     ArrayList<Fine2IncargoList> list;
     SparseBooleanArray mSelectedItems=new SparseBooleanArray(0);
-    Context context;
 
     public interface AdapterClickListener {
         void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder,View v, int pos);
@@ -32,15 +32,16 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
     public interface AdapterLongClickListener {
         void onLongItemClick(IncargoListAdapter.ListViewHolder listViewHolder,View v, int pos);
     }
-    public  IncargoListAdapter(ArrayList<Fine2IncargoList> list, Context context) {
-        this.context=context;
-        this.list=list;
-    }
+   public interface ItemConsigneeClickListener{
+        void onItemConsigneeClick(IncargoListAdapter.ListViewHolder listViewHolder,View v,int pos);
+   }
 
-    public IncargoListAdapter(ArrayList<Fine2IncargoList> listItems,  AdapterClickListener mListener, AdapterLongClickListener mLongListener) {
+    public IncargoListAdapter(ArrayList<Fine2IncargoList> listItems,  AdapterClickListener mListener,
+                              AdapterLongClickListener mLongListener,ItemConsigneeClickListener itemConsigneeClickListener) {
         this.list=listItems;
         this.mListener=mListener;
         this.mLongListener=mLongListener;
+        this.itemConsigneeClickListener=itemConsigneeClickListener;
     }
 
     @NonNull
@@ -118,6 +119,13 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
             this.bl=itemView.findViewById(R.id.incargo_bl);
             this.des=itemView.findViewById(R.id.incargo_des);
             this.incargo=itemView.findViewById(R.id.incargo_incargo);
+
+            consignee.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    itemConsigneeClickListener.onItemConsigneeClick(ListViewHolder.this,view,getAdapterPosition());
+                }
+            });
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

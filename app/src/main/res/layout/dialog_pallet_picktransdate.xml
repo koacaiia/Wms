@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <DatePicker
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:id="@+id/dialog_pallet_picktransdate_datepicker"/>
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_pallet_datatransdate_btnInDate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:autoText="true"
+            android:text="반입월" />
+
+        <Button
+            android:id="@+id/dialog_pallet_datatransdate_btnTransDate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="2dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeMinTextSize="8sp"
+            android:autoSizeTextType="uniform"
+            android:autoText="true"
+            android:text="팔렛트 이관일" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="반입월은 정확한 날짜 특정하지 않고 월만 특정하여 진행 바랍니다.\n 반입월기준 입고된 화물정보만 검색 됩니다." />
+
+
+</LinearLayout>

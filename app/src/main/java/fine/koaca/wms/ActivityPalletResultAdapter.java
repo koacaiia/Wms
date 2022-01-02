@@ -12,10 +12,30 @@ import java.util.ArrayList;
 
 public class ActivityPalletResultAdapter extends RecyclerView.Adapter<ActivityPalletResultAdapter.ListViewHolder> {
     ArrayList<ActivityPalletResultList> list;
+    ConsigneeClicked consigneeClicked;
+    KppClicked kppClicked;
+    AjClicked ajClicked;
+    EtcClicked etcClicked;
 
-    public ActivityPalletResultAdapter(ArrayList<ActivityPalletResultList> list){
+    public ActivityPalletResultAdapter(ArrayList<ActivityPalletResultList> list,ConsigneeClicked consigneeClicked,KppClicked kppClicked,AjClicked ajClicked,EtcClicked etcClicked){
         this.list=list;
+        this.ajClicked=ajClicked;
+        this.consigneeClicked=consigneeClicked;
+        this.kppClicked=kppClicked;
+        this.etcClicked=etcClicked;
 
+    }
+    public interface ConsigneeClicked{
+        void clickConsignee(ActivityPalletResultAdapter.ListViewHolder holder,View v,int position);
+    }
+    public interface KppClicked{
+        void clickKpp(ActivityPalletResultAdapter.ListViewHolder holder,View v,int position);
+    }
+    public interface AjClicked{
+        void clickAj(ActivityPalletResultAdapter.ListViewHolder holder,View v,int position);
+    }
+    public interface EtcClicked{
+        void clickEtc(ActivityPalletResultAdapter.ListViewHolder holder,View v,int position);
     }
     @NonNull
     @Override
@@ -30,9 +50,6 @@ public class ActivityPalletResultAdapter extends RecyclerView.Adapter<ActivityPa
         holder.kpp.setText(String.valueOf(list.get(position).getKppQty()));
         holder.aj.setText(String.valueOf(list.get(position).getAjQty()));
         holder.etc.setText(String.valueOf(list.get(position).getEtcQty()));
-
-
-
     }
 
     @Override
@@ -52,6 +69,34 @@ public class ActivityPalletResultAdapter extends RecyclerView.Adapter<ActivityPa
             kpp=itemView.findViewById(R.id.list_pltresult_kpp);
             aj=itemView.findViewById(R.id.list_pltresult_aj);
             etc=itemView.findViewById(R.id.list_pltresult_etc);
+
+            consigneeName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                consigneeClicked.clickConsignee(ListViewHolder.this,view,getAdapterPosition());
+                }
+            });
+
+            kpp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                kppClicked.clickKpp(ListViewHolder.this,view,getAdapterPosition());
+                }
+            });
+
+            aj.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                ajClicked.clickAj(ListViewHolder.this,view,getAdapterPosition());
+                }
+            });
+
+            etc.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                etcClicked.clickEtc(ListViewHolder.this,view,getAdapterPosition());
+                }
+            });
 
 
 

@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -191,14 +190,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
-
         <Button
-            android:id="@+id/btnDetailSearch"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_weight="2"
-            android:text="특정일,화주 조건별 세부검색" />
+            android:layout_weight="1"
+            android:text="특정일 조회"
+            android:layout_marginHorizontal="5dp"
+            android:id="@+id/btnDateSearch"/>
+        <Button
+            android:id="@+id/btnUntilSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="5dp"
+            android:text="기간별 조회" />
     </LinearLayout>
+
+
 </LinearLayout>

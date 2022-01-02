@@ -37,14 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="반차1" />
-
-            <Button
-                android:id="@+id/btnhalf2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="반차2" />
+                android:text="반차" />
 
             <Button
                 android:id="@+id/btnvacation"

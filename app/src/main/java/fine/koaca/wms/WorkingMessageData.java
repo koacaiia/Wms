@@ -434,14 +434,14 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                         value.put("msg","ConsigneeName Null Checked:::::"+mList.getTime());
                         value.put("consignee","Null");
                         databaseReference.updateChildren(value);
+                    }else{
+                        String consigneeName=mList.getConsignee();
+
+                        if(!consigneeArrayList.contains(consigneeName)&&consigneeName.length()<15&&!consigneeName.equals("Null")){
+                            consigneeArrayList.add(consigneeName);
+
+                        }
                     }
-                    String consigneeName=mList.getConsignee();
-
-                    if(!consigneeArrayList.contains(consigneeName)&&consigneeName.length()<15&&!consigneeName.equals("Null")){
-                        consigneeArrayList.add(consigneeName);
-
-                    }
-
                 }
                 setStringArrayPref(consigneeArrayList);
                 consigneeArrayList.add(0,"ALL");
@@ -540,6 +540,16 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
             editor.putString("consigneeList",null);
         }
         editor.apply();
+
+        String consigneeValue="";
+        for(int i=0;i<consigneeArrayList.size();i++){
+            consigneeValue=consigneeValue+consigneeArrayList.get(i)+",";
+        }
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference consigneeRef=database.getReference("DeptName/"+deptName+"/BaseRef");
+        Map<String,Object> conMap=new HashMap<>();
+        conMap.put("consigneeRef",consigneeValue);
+        consigneeRef.updateChildren(conMap);
     }
 
     public void processDatePickerResult(int year, int month, int dayOfMonth) {

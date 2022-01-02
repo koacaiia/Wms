@@ -52,45 +52,29 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull ListViewHolder holder, int position) {
-        holder.txtName.setText(list.get(position).getDate()+"\n"+list.get(position).getName());
-
-        holder.txtAnnual.setText(list.get(position).getAnnual());
-        holder.txtAnnual2.setText(list.get(position).getAnnual2());
-        holder.half1.setText(list.get(position).getHalf1());
-        holder.half2.setText(list.get(position).getHalf2());
+        holder.txtName.setText(list.get(position).getName());
+        holder.txtAnnual.setText(list.get(position).getAnnual().replace(",","\n"));
+        holder.half1.setText(list.get(position).getHalf().replace(",","\n"));
         holder.totalDate.setText(String.valueOf(list.get(position).getTotaldate()));
-
         String annual;
-        String annual2;
         String half1;
-        String half2;
-        String toDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(8,10);
+        String toDay=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
 
         if(!list.get(position).getAnnual().equals("")){
-            annual=list.get(position).getAnnual().substring(8,10);
-            if(Integer.parseInt(annual)<=Integer.parseInt(toDay)){
+            annual=list.get(position).getAnnual();
+            if(annual.contains(toDay)){
                 holder.txtAnnual.setBackgroundColor(Color.GRAY);
             }
            }
-        if(!list.get(position).getAnnual2().equals("")){
-            annual2=list.get(position).getAnnual2().substring(8,10);
-            if(Integer.parseInt(annual2)<=Integer.parseInt(toDay)){
-                holder.txtAnnual2.setBackgroundColor(Color.GRAY);
-            }
-        }
-        if(!list.get(position).getHalf1().equals("")){
-            half1=list.get(position).getHalf1().substring(8,10);
-            if(Integer.parseInt(half1)<=Integer.parseInt(toDay)){
+
+        if(!list.get(position).getHalf().equals("")){
+            half1=list.get(position).getHalf();
+            if(half1.contains(toDay)){
                 holder.half1.setBackgroundColor(Color.LTGRAY);
             }
         }
-        if(!list.get(position).getHalf2().equals("")){
-            half2=list.get(position).getHalf2().substring(8,10);
-            if(Integer.parseInt(half2)<=Integer.parseInt(toDay)){
-                holder.half2.setBackgroundColor(Color.LTGRAY);
-            }
-        }
+
 
     }
     @Override
@@ -101,17 +85,13 @@ public class AnnualListAdapter extends RecyclerView.Adapter<AnnualListAdapter.Li
     public class ListViewHolder extends RecyclerView.ViewHolder {
         Button txtName;
         TextView txtAnnual;
-        TextView txtAnnual2;
         TextView half1;
-        TextView half2;
         TextView totalDate;
         public ListViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             this.txtName=itemView.findViewById(R.id.annualtxt_name);
             this.txtAnnual=itemView.findViewById(R.id.annualtxt_annual);
-            this.txtAnnual2=itemView.findViewById(R.id.annualtxt_annual2);
             this.half1=itemView.findViewById(R.id.annualtxt_half1);
-            this.half2=itemView.findViewById(R.id.annualtxt_half2);
             this.totalDate=itemView.findViewById(R.id.annualtxt_totaldate);
 
             itemView.setOnClickListener(new View.OnClickListener() {

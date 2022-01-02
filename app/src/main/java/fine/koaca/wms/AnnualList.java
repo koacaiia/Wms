@@ -3,34 +3,20 @@ package fine.koaca.wms;
 public class AnnualList {
     String name;
     String annual;
-    String annual2;
-    String half1;
-    String half2;
+    String half;
     Double totaldate;
-    String date;
     String deptName;
 
     public AnnualList(){
 
     }
-    public AnnualList(String name, String annual,String annual2, String half1, String half2,Double totaldate,String date,
-                      String deptName) {
+
+    public AnnualList(String name, String annual, String half, Double totaldate,String deptName) {
         this.name = name;
         this.annual = annual;
-        this.annual2=annual2;
-        this.half1 = half1;
-        this.half2 = half2;
-        this.totaldate=totaldate;
-        this.date=date;
-        this.deptName=deptName;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+        this.half = half;
+        this.totaldate = totaldate;
+        this.deptName = deptName;
     }
 
     public String getName() {
@@ -49,20 +35,12 @@ public class AnnualList {
         this.annual = annual;
     }
 
-    public String getHalf1() {
-        return half1;
+    public String getHalf() {
+        return half;
     }
 
-    public void setHalf1(String half1) {
-        this.half1 = half1;
-    }
-
-    public String getHalf2() {
-        return half2;
-    }
-
-    public void setHalf2(String half2) {
-        this.half2 = half2;
+    public void setHalf(String half) {
+        this.half = half;
     }
 
     public Double getTotaldate() {
@@ -73,13 +51,7 @@ public class AnnualList {
         this.totaldate = totaldate;
     }
 
-    public String getAnnual2() {
-        return annual2;
-    }
 
-    public void setAnnual2(String annual2) {
-        this.annual2 = annual2;
-    }
 
     public String getDeptName() {
         return deptName;

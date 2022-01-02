@@ -10,22 +10,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:layout_weight="2"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="5"
+            android:layout_weight="3"
             android:orientation="horizontal">
 
-            <TextView
+            <Button
                 android:id="@+id/textView11"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:autoSizeMaxTextSize="14sp"
+                android:autoSizeMinTextSize="6sp"
+                android:autoSizeTextType="uniform"
+                android:autoText="true"
                 android:gravity="center"
-                android:text="화주명"
+                android:text="기간검색"
                 android:textStyle="bold|italic" />
 
             <TextView
@@ -61,7 +65,7 @@
             android:id="@+id/pltrecyclereviewResult"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="0.7" />
 
     </LinearLayout>
 
@@ -71,52 +75,20 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/plt_Date"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginVertical="5dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="검색월" />
-
-            <Spinner
-                android:id="@+id/plt_spinnerConsignee"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginVertical="5dp"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <Spinner
-                android:id="@+id/plt_spinnerPltS"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="5dp"
-                android:layout_marginVertical="5dp"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/plt_btnSearch"
+        <TextView
+            android:id="@+id/plt_txtSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="5dp"
+            android:background="#000000"
             android:gravity="center"
-            android:text="검색" />
+            android:text="기간별 입출고 내역"
+            android:textColor="#FFFFFF" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:orientation="horizontal">
 
             <TextView

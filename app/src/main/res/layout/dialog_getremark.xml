@@ -6,7 +6,7 @@
     android:orientation="vertical">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="#E3F2FD"
         app:cardCornerRadius="5dp"
         app:cardElevation="3dp"
@@ -31,7 +31,7 @@
     </androidx.cardview.widget.CardView>
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="wrap_content"
         app:cardBackgroundColor="#E3F2FD"
         app:cardCornerRadius="5dp"
         app:cardElevation="3dp"

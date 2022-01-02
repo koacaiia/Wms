@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     String[] staffList={"염선규","정재철","김태근","배경직","방석동","주현숙","한기룡","장우원","박천행","신정식","조아름","김연자"};
     TextView txtTitle;
     String staffDate;
+    String strYear;
     String strMonth;
     String vDate;
     int intYear;
@@ -59,6 +61,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     String nickName;
 
     PublicMethod publicMethod;
+    String strSearchStartDate,strSearchEndDate;
+    String getAnnualData;
     public AnnualLeave(ArrayList<AnnualList> list) {
         this.list=list;
     }
@@ -81,19 +85,18 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         recyclerview.setLayoutManager(manager);
         list=new ArrayList<>();
         database=FirebaseDatabase.getInstance();
-        strMonth=new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0,7);
-        getData(strMonth);
+        strYear=new SimpleDateFormat("yyyy년MM월dd일").format(new Date()).substring(0,5);
+        strMonth=new SimpleDateFormat("yyyy년MM월dd일").format(new Date()).substring(5,8);
+        getData(strYear,strMonth);
         adapter=new AnnualListAdapter(list,this,this,this);
         recyclerview.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         txtTitle=findViewById(R.id.annualtxt_title);
-        txtTitle.setText(strMonth+" 근태상황");
+        txtTitle.setText(strYear+strMonth+" 근태상황");
         txtTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                numberPickerDate();
-
-
+                numberPickerDate("All");
             }
         });
         txtTitle.setOnLongClickListener(new View.OnLongClickListener() {
@@ -103,37 +106,26 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 return true;
             }
         });
-
-
-
     }
 
-    private void numberPickerDate() {
+    private void numberPickerDate(String name) {
+
         View view=getLayoutInflater().inflate(R.layout.datepicker_spinner,null);
         Button btnSearch=view.findViewById(R.id.btn_search);
         NumberPicker yearPicker=(NumberPicker)view.findViewById(R.id.picker_year);
-
-
         NumberPicker monthPicker=(NumberPicker)view.findViewById(R.id.picker_month);
-
         Calendar cal=Calendar.getInstance();
         monthPicker.setMinValue(1);
         monthPicker.setMaxValue(12);
         monthPicker.setValue(cal.get(Calendar.MONTH)+1);
         intMonth=cal.get(Calendar.MONTH)+1;
         String strMonth;
-
-
-
         Calendar cal2=Calendar.getInstance();
         int year=cal2.get(Calendar.YEAR);
         yearPicker.setMinValue(2020);
         yearPicker.setMaxValue(2022);
         yearPicker.setValue(year);
         intYear=cal2.get(Calendar.YEAR);
-
-
-
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         builder.setView(view);
         AlertDialog dialog=builder.create();
@@ -159,7 +151,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             strMonth=String.valueOf(intMonth);
         }
         Button btnS=view.findViewById(R.id.btn_searchS);
-        btnS.setText("시작월: "+intYear+"-"+strMonth);
+        btnS.setText("시작월: "+intYear+"년"+strMonth+"월");
         btnS.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,12 +161,13 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 }else{
                     strMonth=String.valueOf(intMonth);
                 }
-                btnS.setText("시작월: "+intYear+"-"+strMonth);
+                strSearchStartDate=intYear+"년"+strMonth+"월";
+                btnS.setText("시작월: "+strSearchStartDate);
             }
         });
 
         Button btnE=view.findViewById(R.id.btn_searchE);
-        btnE.setText("종료월: "+intYear+"-"+strMonth);
+        btnE.setText("종료월: "+intYear+"년"+strMonth+"월");
         btnE.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,7 +177,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 }else{
                     strMonth=String.valueOf(intMonth);
                 }
-                btnE.setText("종료월: "+intYear+"-"+strMonth);
+                strSearchEndDate=intYear+"년"+strMonth+"월";
+                btnE.setText("종료월: "+strSearchEndDate);
             }
         });
 
@@ -194,9 +188,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             public void onClick(View v) {
                 String s=btnS.getText().toString().substring(10,12);
                 String e=btnE.getText().toString().substring(10,12);
-                sortData("All",s,e);
-
-
+                sortData(name,s,e);
                 txtTitle.setText(s+"~"+e+" 근태상황");
                 dialog.dismiss();
             }
@@ -224,7 +216,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 }else{
                     strDay=String.valueOf(dayOfMonth);
                 }
-                staffDate=year+"-"+strMonth+"-"+strDay;
+                staffDate=year+"년"+strMonth+"월"+strDay+"일";
             }
         });
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
@@ -244,6 +236,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         });
         btnAnnual.setOnLongClickListener(v->{
             alertDialogVacation(staffName);
+            dialog.dismiss();
             return true;
         });
         Button btnhalf1=view.findViewById(R.id.btnhalf1);
@@ -251,23 +244,13 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
             if(staffDate==null){
                 Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
             }else{
-                condition[0] ="반차1";
+                condition[0] ="반차";
                 checkCondition(condition[0], staffName, staffDate);
                 dialog.dismiss();
             }
 
         });
-        Button btnhalf2=view.findViewById(R.id.btnhalf2);
-        btnhalf2.setOnClickListener(v->{
-            if(staffDate==null){
-                Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
-            }else{
-                condition[0] ="반차2";
-                checkCondition(condition[0], staffName, staffDate);
-                dialog.dismiss();
-            }
 
-        });
         Button btnVacation=view.findViewById(R.id.btnvacation);
         btnVacation.setOnClickListener(v->{
             alertDialogVacation(staffName);
@@ -278,6 +261,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     }
 
     private void alertDialogVacation(String staffName) {
+
         View view=getLayoutInflater().inflate(R.layout.annual_datepicker,null);
         DatePicker vDatePicker=view.findViewById(R.id.adatepicker_default);
         vDatePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
@@ -295,7 +279,7 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 }else{
                     day=String.valueOf(dayOfMonth);
                 }
-                vDate=year+"-"+month+"-"+day;
+                vDate=year+"년"+month+"월"+day+"일";
             }
         });
         Button btnDateStart=view.findViewById(R.id.aBtnSearchDate_start);
@@ -332,31 +316,32 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
         btnDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String path;
+
                 String annual=btnDateStart.getText().toString();
                 String annual2=btnDateEnd.getText().toString();
-                String annualmonth=annual.substring(5,7);
-                String annual2month=annual2.substring(5,7);
-                if(annualmonth.equals(annual2month)){
-                    DatabaseReference databaseReference=
-                            database.getReference("AnnualData/2021-"+annualmonth+"-"+staffName );
-                    Map<String,Object> value=new HashMap<>();
-                    value.put("annual",annual);
-                    value.put("annual2",annual2);
-                    databaseReference.updateChildren(value);
-                }else{
-                    DatabaseReference databaseAnnual=database.getReference("AnnualData/2021-"
-                            +annualmonth+"-"+staffName);
-                    Map<String,Object> valueAnnual=new HashMap<>();
-                    valueAnnual.put("annual",annual);
-                    databaseAnnual.updateChildren(valueAnnual);
-                    DatabaseReference databaseAnnual2=
-                            database.getReference("AnnualData/2021-"+annual2month+"-"+staffName);
-                    Map<String,Object> valueAnnual2=new HashMap<>();
-                    valueAnnual2.put("annual2",annual2);
-                    databaseAnnual2.updateChildren(valueAnnual2);
+                DateFormat dateFormat=new SimpleDateFormat("yyyy년MM월dd일");
+                Date dateBasic=null,dateTarget=null;
+                try{
+                    dateBasic=dateFormat.parse(annual);
+                    dateTarget=dateFormat.parse(annual2);
+                }catch(ParseException e){
+                    e.printStackTrace();
                 }
+                Calendar calBasic=Calendar.getInstance();
+                Calendar calTarget=Calendar.getInstance();
+                calBasic.setTime(dateBasic);
+                calTarget.setTime(dateTarget);
 
+                String vacationDate1="";
+                    DatabaseReference databaseReference=
+                            database.getReference("AnnualData/"+annual.substring(0,5)+"/"+staffName );
+                    while(!calBasic.after(calTarget)){
+                        vacationDate1=vacationDate1+dateFormat.format(calBasic.getTime()).substring(5)+",";
+                        calBasic.add(Calendar.DATE,1);
+                    }
+                    Map<String,Object> value=new HashMap<>();
+                    value.put("annual",getAnnualData+vacationDate1);
+                    databaseReference.updateChildren(value);
                 dialog.dismiss();
             }
         });
@@ -364,78 +349,98 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     }
 
-    private void getData(String strMonth) {
-        DatabaseReference databaseRef=database.getReference("AnnualData");
+    private void getData(String strYear,String strMonth) {
+        DatabaseReference databaseRef=database.getReference("AnnualData/"+strYear);
         databaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 list.clear();
+
+                PublicMethod publicMethod=new PublicMethod();
+
                 for(DataSnapshot data:snapshot.getChildren()){
-                    AnnualList mList=data.getValue(AnnualList.class);
+                    ArrayList<String> annualArr;
+                    ArrayList<String> halfArr;
+                    AnnualList getList=data.getValue(AnnualList.class);
                     String path=data.getKey();
+                    String strAnnual="",strHalf="";
+                    int intAnnual=0;
+                    double doubleHalf=0.0;
+                    if(!getList.getAnnual().equals("")){
+                        annualArr=publicMethod.extractChar(getList.getAnnual(),',');
+                        for(int i=0;i<annualArr.size();i++){
+                            if(annualArr.get(i).contains(strMonth)){
+                              strAnnual=strAnnual+annualArr.get(i)+",";
+                              intAnnual=publicMethod.extractCharCount(strAnnual,',');
 
-                    String sortPath=data.getKey().substring(0,7);
-                    if(strMonth.equals(sortPath)) {
-                        int annual = 0;
-                        int annual2 = 0;
-                        double half = 0.0;
-                        double half2 = 0.0;
-                        double totalDate = 0;
-
-                        String strAnnual, strAnnual2, strHalf, strHalf2;
-                        strAnnual = mList.getAnnual();
-                        strAnnual2 = mList.getAnnual2();
-                        strHalf = mList.getHalf1();
-                        strHalf2 = mList.getHalf2();
-
-                        if (strAnnual2.equals("")) {
-                            if (!strAnnual.equals("")) {
-                                annual = 1;
                             }
-                        } else {
-
-                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            DateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
-
-
-                            Date date = null;
-                            Date date2 = null;
-
-                            try {
-                                date = dateFormat.parse(strAnnual);
-                                date2 = dateFormat2.parse(strAnnual2);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(date);
-                            Calendar cal2 = Calendar.getInstance();
-                            cal2.setTime(date2);
-
-                            while (!cal.after(cal2)) {
-                                annual2++;
-                                cal.add(Calendar.DATE, 1);
-                            }
-
                         }
-                        if (!strHalf.equals("")) {
-                            half = 0.5;
-                        }
-                        if (!strHalf2.equals("")) {
-                            half2 = 0.5;
-                        }
-
-                        totalDate = annual + annual2 + half + half2;
-                        Map<String, Object> value = new HashMap<>();
-                        value.put("totaldate", totalDate);
-
-                        DatabaseReference dataRef = database.getReference("AnnualData/" + path);
-                        dataRef.updateChildren(value);
-                        AnnualList dList = new AnnualList(mList.getName(), strAnnual, strAnnual2, strHalf, strHalf2, totalDate,
-                                mList.getDate(),deptName);
-                        list.add(dList);
-
                     }
+                    if(!getList.getHalf().equals("")){
+                        halfArr=publicMethod.extractChar(getList.getHalf(),',');
+                        for(int i=0;i<halfArr.size();i++){
+                            if(halfArr.get(i).contains(strMonth)){
+                                strHalf=strHalf+halfArr.get(i)+',';
+                                doubleHalf=publicMethod.extractCharCount(strHalf,',')*0.5;
+                            }
+                        }
+                    }
+
+                    AnnualList putList=new AnnualList(getList.getName(),strAnnual,strHalf,intAnnual+doubleHalf,deptName);
+                    list.add(putList);
+
+
+//                    String sortPath=data.getKey().substring(0,7);
+//                    if(strMonth.equals(sortPath)) {
+//                        int annual = 0;
+//                        int annual2 = 0;
+//                        double half = 0.0;
+//                        double half2 = 0.0;
+//                        double totalDate = 0;
+//
+//                        String strAnnual, strAnnual2, strHalf, strHalf2;
+//                        assert mList != null;
+//                        strAnnual = mList.getAnnual();
+//                        strHalf = mList.getHalf();
+//                            if (!strAnnual.equals("")) {
+//                                annual = 1;}
+////                            } else {
+////                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+////                            Date date = null;
+////
+////                            try {
+////                                date = dateFormat.parse(strAnnual);
+////
+////                            } catch (ParseException e) {
+////                                e.printStackTrace();
+////                            }
+////                            Calendar cal = Calendar.getInstance();
+////                            cal.setTime(date);
+//////                            Calendar cal2 = Calendar.getInstance();
+//////                            cal2.setTime(date2);
+////
+////                            while (!cal.after(cal)) {
+////                                annual++;
+////                                cal.add(Calendar.DATE, 1);
+////                            }
+////
+////                        }
+//                        if (!strHalf.equals("")) {
+//                            half = 0.5;
+//                        }
+//
+//
+//                        totalDate = annual + half ;
+//                        Map<String, Object> value = new HashMap<>();
+//                        value.put("totaldate", totalDate);
+//
+//                        DatabaseReference dataRef = database.getReference("AnnualData/" + path);
+//                        dataRef.updateChildren(value);
+//                        AnnualList dList = new AnnualList(mList.getName(), strAnnual,  strHalf,  totalDate,
+//                                deptName);
+//                        list.add(dList);
+//
+//                    }
                 }
                 adapter.notifyDataSetChanged();
             }
@@ -449,13 +454,10 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
 
     }
 
-    private void putTotalDate() {
-
-    }
-
     @Override
     public void onItemClick(AnnualListAdapter.ListViewHolder holder, View view, int position) {
         String staffName=list.get(position).getName();
+        getAnnualData=list.get(position).getAnnual();
             putDateData(staffName);
     }
 
@@ -470,24 +472,18 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String putYear=editText.getText().toString();
+                        String putYear=editText.getText().toString()+"년";
                         String path;
-                        for(int j=1;j<13;j++){
-                            for(int i=0;i<staffList.length;i++){
-                                String monthP;
-                                if(j<10){
-                                    monthP="0"+j;
-                                }else{
-                                    monthP=String.valueOf(j);
-                                }
-                                path=putYear+"-"+monthP+"-"+staffList[i];
+                        for(int i=0;i<staffList.length;i++){
+
+                                path=putYear+"/"+staffList[i];
                                 DatabaseReference databaseReference=
                                         database.getReference("AnnualData/"+path);
-                                AnnualList list=new AnnualList(staffList[i],"","","","",0.0,putYear+"-"+monthP,"");
+                                AnnualList list=new AnnualList(staffList[i],"","",0.0,"WareHouseDepot2");
                                 databaseReference.setValue(list);
                             }
                         }
-                    }
+
                 })
                 .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
@@ -507,43 +503,53 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                 .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                String path=staffDate.substring(5,7)+"-"+staffName;
-                                DatabaseReference databaseReference=database.getReference("AnnualData/2021-"+path);
 
-                                Map<String,Object> map=new HashMap<>();
-                                switch(condition){
-                                    case "월차":
-                                        map.put("annual",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+" 로 월차 등록 " +
-                                                        "됩니다" +
-                                                        "..",
-                                                "Annual");
-                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 월차 등록 됩니다",
-                                                "근태","Etc",
-                                                deptName);
+                                String strYear=staffDate.substring(0,5);
 
-                                        break;
-                                    case "반차1":
-                                        map.put("half1",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+" 로 반차1 등록 " +
-                                                "합니다.","Annual");
-                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 반차1 등록 합니다" +
-                                                        ".","근태","Etc",
-                                                deptName);
-                                        break;
-                                    case "반차2":
-                                        map.put("half2",staffDate);
-                                        publicMethod.sendPushMessage(deptName,nickName,staffName+" 직원이 " +staffDate+"로 반차2 등록 " +
-                                                "합니다.","Annual");
-                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+"로 반차2 등록 합니다."
-                                                ,"근태","Etc",
-                                                deptName);
+                                DatabaseReference databaseReference=database.getReference("AnnualData/"+strYear);
+                                DatabaseReference putDataRef=database.getReference("AnnualData/"+strYear+"/"+staffName);
+                                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                        for(DataSnapshot data:snapshot.getChildren()){
 
-                                        break;
-                                }
-                                map.put("deptName",deptName);
-                                databaseReference.updateChildren(map);
-                                getData(strMonth);
+                                            if(data.getKey().equals(staffName)){
+                                                AnnualList mList=data.getValue(AnnualList.class);
+                                                String annual=mList.getAnnual();
+                                                String half=mList.getHalf();
+                                                Map<String,Object> map=new HashMap<>();
+                                                switch(condition){
+                                                    case "월차":
+                                                        map.put("annual",annual+staffDate.substring(5)+",");
+
+                                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 월차 등록 됩니다",
+                                                                "근태","Etc",
+                                                                deptName);
+
+                                                        break;
+                                                    case "반차":
+                                                        map.put("half",half+staffDate.substring(5)+",");
+
+                                                        publicMethod.putNewDataUpdateAlarm(nickName,staffName+" 직원이 " +staffDate+" 로 반차 등록 합니다" +
+                                                                        ".","근태","Etc",
+                                                                deptName);
+                                                        break;
+
+                                                }
+                                                map.put("deptName",deptName);
+                                                putDataRef.updateChildren(map);
+                                                getData(strYear,strMonth);
+                                            }
+
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
+                                    }
+                                });
+
 
                             }
                         }
@@ -561,9 +567,9 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     @Override
     public void longClick(AnnualListAdapter.ListViewHolder holder, View view, int position) {
         String name=list.get(position).getName();
-        String date=list.get(position).getDate();
+
         String condition1="월차:"+list.get(position).getAnnual();
-        String condition2="반차:"+list.get(position).getHalf1()+","+list.get(position).getHalf2();
+        String condition2="반차:"+list.get(position).getHalf();
 
 
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
@@ -574,8 +580,8 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseReference data=
-                                        database.getReference("AnnualData/"+strMonth+"-"+name);
-                                AnnualList mList=new AnnualList(name,"","","","",0.0,date,deptName);
+                                        database.getReference("AnnualData/"+strYear+"/"+name);
+                                AnnualList mList=new AnnualList(name,"","",0.0,deptName);
                                 data.setValue(mList);
                                 publicMethod.sendPushMessage(deptName,nickName,"직원 근태상황을 초기화 진행 합니다.","Annual");
                             }
@@ -601,24 +607,43 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     }
 
     public void sortData(String name, String dateS, String dateE) {
-
-
         list.clear();
-
-        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("AnnualData/");
+        String strYear=strSearchStartDate.substring(0,5);
+        PublicMethod publicMethod=new PublicMethod();
+        DatabaseReference databaseReference=FirebaseDatabase.getInstance().getReference("AnnualData/"+strYear);
         ValueEventListener listener= new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     AnnualList mList=data.getValue(AnnualList.class);
-                    int intMonth=Integer.parseInt(data.getKey().substring(5,7));
-                    int intdateSmonth=Integer.parseInt(dateS);
-                    int intdateEmonth=Integer.parseInt(dateE);
-                    if(intMonth>=intdateSmonth && intMonth<=intdateEmonth){
-
-                        list.add(mList);
+                   int intAnnualMonthCount=0;
+                   double doubleHalfMonthCount=0.0;
+                   String strAnnualMonth="",strHalfMonth="";
+                    if(!mList.getAnnual().equals("")){
+                        ArrayList<String> annualMonth=publicMethod.extractChar(mList.getAnnual(),',');
+                        for(int i=0;i<annualMonth.size();i++){
+                           int intAnnualMonth=Integer.parseInt(annualMonth.get(i).substring(0,2));
+                          if(intAnnualMonth>=Integer.parseInt(dateS)){
+                              strAnnualMonth=strAnnualMonth+annualMonth.get(i)+",";
+                              intAnnualMonthCount=publicMethod.extractCharCount(strAnnualMonth,',');
+                            }
+                        }
+                    }
+                    if(!mList.getHalf().equals("")){
+                        ArrayList<String> halfMonth=publicMethod.extractChar(mList.getHalf(),',');
+                        for(int i=0;i<halfMonth.size();i++){
+                            int intHalfMonth=Integer.parseInt(halfMonth.get(i).substring(0,2));
+                            if(intHalfMonth<=Integer.parseInt(dateE)){
+                                strHalfMonth=strHalfMonth+halfMonth.get(i)+",";
+                                doubleHalfMonthCount=publicMethod.extractCharCount(strHalfMonth,',')*0.5;
+                            }
+                        }
                     }
 
+                    AnnualList putList=new AnnualList(mList.getName(),strAnnualMonth,strHalfMonth,
+                            intAnnualMonthCount+doubleHalfMonthCount,
+                            mList.getDeptName());
+                    list.add(putList);
                 }
 
                 adapter.notifyDataSetChanged();
@@ -641,103 +666,104 @@ AnnualLeave extends AppCompatActivity implements AnnualListAdapter.AnnualOnClick
     @Override
     public void onTxtItemClick(AnnualListAdapter.ListViewHolder holder, View view, int position) {
         String name=list.get(position).getName();
-        staffDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        final String[] dateS = new String[1];
-        final String[] dateE = new String[1];
-        view= getLayoutInflater().inflate(R.layout.datepicker_spinner,null);
-        NumberPicker yearPicker=view.findViewById(R.id.picker_year);
-        NumberPicker monthPicker=view.findViewById(R.id.picker_month);
-
-        Calendar cal=Calendar.getInstance();
-        intYear=cal.get(Calendar.YEAR);
-        yearPicker.setMinValue(2020);
-        yearPicker.setMaxValue(2022);
-        yearPicker.setValue(intMonth);
-
-        intMonth=cal.get(Calendar.MONTH)+1;
-        monthPicker.setMinValue(1);
-        monthPicker.setMaxValue(12);
-        monthPicker.setValue(intYear);
-        String strMonth;
-        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                intYear=newVal;
-
-            }
-        });
-        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
-            @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-               intMonth=newVal;
-            }
-        });
-
-
-        if(intMonth<10){
-            strMonth="0"+intMonth;
-            }else{
-            strMonth=String.valueOf(intMonth);
-        }
-        staffDate=intYear+"-"+strMonth;
-        Button btnStart=view.findViewById(R.id.btn_searchS);
-        btnStart.setText("시작월: "+staffDate);
-        btnStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(staffDate==null){
-                    Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
-                }else{
-
-                }
-                String strMonth;
-                if(intMonth<10){
-                    strMonth="0"+intMonth;
-                }else{
-                    strMonth=String.valueOf(intMonth);
-                }
-                staffDate=intYear+"-"+strMonth;
-                btnStart.setText("시작월: "+staffDate);
-
-            }
-        });
-        Button btnEnd=view.findViewById(R.id.btn_searchE);
-        btnEnd.setText("종료월: "+staffDate);
-        btnEnd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(staffDate==null){
-                    Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
-                }else{
-                    String strMonth;
-                    if(intMonth<10){
-                        strMonth="0"+intMonth;
-                    }else{
-                        strMonth=String.valueOf(intMonth);
-                    }
-                    staffDate=intYear+"-"+strMonth;
-                    btnEnd.setText("종료월: "+staffDate);
-                }
-
-            }
-        });
-        Button btnDate=view.findViewById(R.id.btn_search);
-
-        btnDate.setText(name+" 직원 에 대한 기간별 근태상황 조회");
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
-
-        builder.setView(view);
-        AlertDialog dialog=builder.create();
-        dialog.show();
-        btnDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dateS[0] =btnStart.getText().toString().substring(10,12);
-                dateE[0] =btnEnd.getText().toString().substring(10,12);
-                sortData(name,dateS[0],dateE[0]);
-                dialog.dismiss();
-            }
-        });
+        numberPickerDate(name);
+//        staffDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+//        final String[] dateS = new String[1];
+//        final String[] dateE = new String[1];
+//        view= getLayoutInflater().inflate(R.layout.datepicker_spinner,null);
+//        NumberPicker yearPicker=view.findViewById(R.id.picker_year);
+//        NumberPicker monthPicker=view.findViewById(R.id.picker_month);
+//
+//        Calendar cal=Calendar.getInstance();
+//        intYear=cal.get(Calendar.YEAR);
+//        yearPicker.setMinValue(2020);
+//        yearPicker.setMaxValue(2022);
+//        yearPicker.setValue(intMonth);
+//
+//        intMonth=cal.get(Calendar.MONTH)+1;
+//        monthPicker.setMinValue(1);
+//        monthPicker.setMaxValue(12);
+//        monthPicker.setValue(intYear);
+//        String strMonth;
+//        yearPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//            @Override
+//            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+//                intYear=newVal;
+//
+//            }
+//        });
+//        monthPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+//            @Override
+//            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+//               intMonth=newVal;
+//            }
+//        });
+//
+//
+//        if(intMonth<10){
+//            strMonth="0"+intMonth;
+//            }else{
+//            strMonth=String.valueOf(intMonth);
+//        }
+//        staffDate=intYear+"-"+strMonth;
+//        Button btnStart=view.findViewById(R.id.btn_searchS);
+//        btnStart.setText("시작월: "+staffDate);
+//        btnStart.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(staffDate==null){
+//                    Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
+//                }else{
+//
+//                }
+//                String strMonth;
+//                if(intMonth<10){
+//                    strMonth="0"+intMonth;
+//                }else{
+//                    strMonth=String.valueOf(intMonth);
+//                }
+//                staffDate=intYear+"-"+strMonth;
+//                btnStart.setText("시작월: "+staffDate);
+//
+//            }
+//        });
+//        Button btnEnd=view.findViewById(R.id.btn_searchE);
+//        btnEnd.setText("종료월: "+staffDate);
+//        btnEnd.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(staffDate==null){
+//                    Toast.makeText(getApplicationContext(),"일자를 다시한번 선택 바랍니다.",Toast.LENGTH_SHORT).show();
+//                }else{
+//                    String strMonth;
+//                    if(intMonth<10){
+//                        strMonth="0"+intMonth;
+//                    }else{
+//                        strMonth=String.valueOf(intMonth);
+//                    }
+//                    staffDate=intYear+"-"+strMonth;
+//                    btnEnd.setText("종료월: "+staffDate);
+//                }
+//
+//            }
+//        });
+//        Button btnDate=view.findViewById(R.id.btn_search);
+//
+//        btnDate.setText(name+" 직원 에 대한 기간별 근태상황 조회");
+//        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+//
+//        builder.setView(view);
+//        AlertDialog dialog=builder.create();
+//        dialog.show();
+//        btnDate.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dateS[0] =btnStart.getText().toString().substring(10,12);
+//                dateE[0] =btnEnd.getText().toString().substring(10,12);
+//                sortData(name,dateS[0],dateE[0]);
+//                dialog.dismiss();
+//            }
+//        });
     }
 
 

@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -51,6 +52,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -66,9 +68,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.security.auth.Destroyable;
 
@@ -130,8 +134,6 @@ public class PublicMethod {
         String[] projection={MediaStore.MediaColumns.DATA};
         Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
         int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
-
-
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
             File file=null;
@@ -178,6 +180,8 @@ public class PublicMethod {
         databaseReference.setValue(messageList);
         if(message.contains("요청")){
             sendPushMessage(deptName,nickName,message,"AskedWorkingMessage");
+        }else if(consigneeName.equals("근태")){
+            sendPushMessage(deptName,nickName,message,"Annual");
         }else{
             sendPushMessage(deptName,nickName,message,"WorkingMessage");
         }
@@ -519,6 +523,31 @@ public class PublicMethod {
         requestQueue.add(request);
     }
 
+    public void updateBasicDataRef() {
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        DatabaseReference basicDataRef=database.getReference("DeptName/"+getUserInformation().get("deptName")+"/BaseRef");
+        basicDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot data:snapshot.getChildren()){
+                    if(data.getKey().equals("consigneeRef")){
+                        String strConRef=data.getValue().toString();
+                        SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor=sharedPreferences.edit();
+                        editor.putString("consigneeList",strConRef);
+                        editor.apply();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     public interface SendResponsedListener{
         void onRequestStarted();
         void onRequestCompleted();
@@ -659,12 +688,55 @@ public class PublicMethod {
     }
 
     public void pltReg(String consigneeName,String nickName, int totalQty,String bl,String des){
+        final String[] pltDate = {new SimpleDateFormat("yyyy-MM-dd").format(new Date())};
         AlertDialog.Builder builder=new AlertDialog.Builder(activity);
         final String[] pltS = new String[1];
         final String[] inOut = new String[1];
         final int[] pltQty = new int[1];
         View view=activity.getLayoutInflater().inflate(R.layout.dialog_plt_reg,null);
         TextView pltTxt=view.findViewById(R.id.plt_txtTitle);
+        Button btnDate=view.findViewById(R.id.plt_date);
+        btnDate.setText("팔렛트 수량 변경일:"+pltDate[0]);
+        btnDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+                DatePicker datePicker=new DatePicker(activity);
+                datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                    @Override
+                    public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                        String month,day;
+                        if(i1+1<10){
+                            month="0"+(i1+1);
+                        }else{
+                            month=String.valueOf(i1+1);
+                        }
+                        if(i2<10){
+                            day="0"+i2;
+                        }else{
+                            day=String.valueOf(i2);
+                        }
+                        pltDate[0] =i+"-"+month+"-"+day;
+
+                    }
+                });
+                builder.setTitle("수량변경일 수정창")
+                        .setView(datePicker)
+                        .setPositiveButton("변경일 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                btnDate.setText("팔렛트 수량 변경일:"+pltDate[0]);
+                            }
+                        })
+                        .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+            }
+        });
         RecyclerView imageRecyclerView=view.findViewById(R.id.plt_imagerecyclerview);
         LinearLayoutManager manager=new LinearLayoutManager(activity);
         imageRecyclerView.setLayoutManager(manager);
@@ -674,7 +746,6 @@ public class PublicMethod {
         for(int i=0;i<list.size();i++){
             adapterList=new ImageViewList(list.get(i));
             adapterListArr.add(adapterList);
-
         }
         ImageViewListAdapter adapter=new ImageViewListAdapter(adapterListArr);
         imageRecyclerView.setAdapter(adapter);
@@ -757,27 +828,32 @@ public class PublicMethod {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
-                        String pltDate=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
                         SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
                         String deptName=sharedPreferences.getString("deptName",null);
-                        String upLoadKeyValue=nickName+"_"+pltDate+"_"+pltS[0]+pltQty[0]+"장_"+inOut[0];
-
-                        DatabaseReference pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
-                                "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+upLoadKeyValue);
+                        String upLoadKeyValue=nickName+"_"+ pltDate[0] +"_"+pltS[0]+pltQty[0]+"장_"+inOut[0];
+                        DatabaseReference pltRef;
                         Map<String,Object> value=new HashMap<>();
                         value.put("nickName",nickName);
-                        value.put("date",pltDate);
-                        value.put("keyValue",upLoadKeyValue);
+                        value.put("date", pltDate[0]);
+                        value.put("keyValue",bl+"_"+des+"_"+upLoadKeyValue);
                         value.put("bl",bl);
                         value.put("des",des);
                         switch(inOut[0]){
                             case "In":
+                                pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                        "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+upLoadKeyValue);
                                 value.put("inQty",pltQty[0]);
                                 value.put("outQty",0);
                                 break;
                             case "Out":
+                                pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                        "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+bl+"_"+des+"_"+upLoadKeyValue);
                                 value.put("inQty",0);
                                 value.put("outQty",pltQty[0]);
+                                break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + inOut[0]);
                         }
                         pltRef.updateChildren(value);
 
@@ -844,7 +920,6 @@ public class PublicMethod {
         editor.apply();
     }
     public void putRemarkValue(String bl,String des){
-
         deptName=getUserInformation().get("deptName");
         nickName=getUserInformation().get("nickName");
         String activityName=activity.getLocalClassName();
@@ -897,8 +972,12 @@ public class PublicMethod {
         btnPutRemark.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-              txtContent.setText(editPutRemark.getText().toString());
-            }
+                String remarkValue=editPutRemark.getText().toString();
+
+                        remarkValue=remarkValue.replace(',','_');
+                        txtContent.setText(remarkValue);
+                }
+
         });
 
         builder.setView(view)
@@ -1055,20 +1134,23 @@ public class PublicMethod {
 
                     }
                 }
-                RemarkRecyclerViewAdapter inAdapter=new RemarkRecyclerViewAdapter(listIn);
-                RemarkRecyclerViewAdapter outAdapter=new RemarkRecyclerViewAdapter(listOut);
-                recyclerViewOut.setAdapter(outAdapter);
-                recyclerViewIn.setAdapter(inAdapter);
-                AlertDialog.Builder builder=new AlertDialog.Builder(activity);
-                builder.setTitle(bl+":화물에 대한 특이사항")
-                        .setView(view)
-                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                        .show();
+                if(listIn.size()>0||listOut.size()>0){
+                    RemarkRecyclerViewAdapter inAdapter=new RemarkRecyclerViewAdapter(listIn);
+                    RemarkRecyclerViewAdapter outAdapter=new RemarkRecyclerViewAdapter(listOut);
+                    recyclerViewOut.setAdapter(outAdapter);
+                    recyclerViewIn.setAdapter(inAdapter);
+                    AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+                    builder.setTitle(bl+":화물에 대한 특이사항")
+                            .setView(view)
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            })
+                            .show();
+                }
+
 
             }
 
@@ -1125,5 +1207,109 @@ public ArrayList<String> extractChar(String data,Character ch){
             }
         }
         return extractList;
+}
+public int extractCharCount(String data,Character ch){
+        int intCount=0;
+        for(int i=0;i<data.length();i++){
+            if(data.charAt(i)==ch){
+                intCount=intCount+1;
+            }
+        }
+        return intCount;
+}
+
+public void searchIncargoData(String key,String value){
+    ArrayList<Fine2IncargoList> list=new ArrayList<>();
+    FirebaseDatabase database=FirebaseDatabase.getInstance();
+    TitleActivity.list=new ArrayList<>();
+    DatabaseReference dataRef;
+    String refPath="DeptName/"+getUserInformation().get("deptName")+"/InCargo/";
+
+    for(int i=1;i<13;i++){
+        String month;
+        if(i<10){
+            month="0"+i;
+        }else{
+            month=String.valueOf(i);
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, i - 1, 1);
+        int monthOfLastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+        for (int j = 1; j <= monthOfLastDay; j++) {
+            String date = null;
+
+            if (j < 10) {
+                date = "0" + j;
+            } else {
+                date = String.valueOf(j);
+            }
+            dataRef=database.getReference(refPath+month+"월/2021-"+month+"-"+date);
+            ValueEventListener listener=new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot data:snapshot.getChildren()){
+                        if(!data.getKey().contains("json")){
+                            Fine2IncargoList mList=data.getValue(Fine2IncargoList.class);
+                            TitleActivity.list.add(mList);
+                        }
+
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            };
+            Query SortByKey=dataRef.orderByChild(key).equalTo(value);
+            SortByKey.addListenerForSingleValueEvent(listener);
+//            dataRef.addListenerForSingleValueEvent(listener);
+        }
+
+
+    }
+
+}
+  public void getConsigneeListFromWorkingMessage(){
+        FirebaseDatabase database=FirebaseDatabase.getInstance();
+        String getRef="DeptName/"+getUserInformation().get("deptName")+"/WorkingMessage/";
+        DatabaseReference databaseReference=database.getReference(getRef);
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                String consigneeList="";
+                String filterList;
+                for(DataSnapshot data:snapshot.getChildren()){
+                   WorkingMessageList mList=data.getValue(WorkingMessageList.class);
+                   if(mList.getConsignee()==null){
+                       Map<String,Object> map=new HashMap<>();
+                       map.put("consignee","Null");
+                       map.put("msg","Npe Checked");
+                       DatabaseReference dataRef=database.getReference(getRef+mList.getNickName()+"_"+mList.getTime());
+                       dataRef.updateChildren(map);
+                   }else{
+                       filterList=mList.getConsignee();
+                       if(!consigneeList.contains(mList.getConsignee())&&!filterList.equals("근태")&&!filterList.equals("Null")&&filterList.length()<15){
+                           consigneeList=consigneeList+mList.getConsignee()+",";
+                       }
+                       }
+                }
+                Log.i("TestValue","ConsigneeList sharedPref Checked="+consigneeList);
+                SharedPreferences preferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString("consigneeList",consigneeList);
+                editor.apply();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
 }
 }

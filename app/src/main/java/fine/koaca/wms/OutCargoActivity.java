@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
@@ -280,7 +281,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             getOutcargoData();
         }else{
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
+            consigneeName=getIntent().getStringExtra("consigneeName");
             pictureUpdate("Re");
+            publicMethod.getRemarkValue(getIntent().getStringExtra("refPath"));
 
         }
 
@@ -290,6 +293,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
 //        txtTitle.setText(dateToday+" 출고 목록");
         refPath=getIntent().getStringExtra("refPath");
+
 
 
     }
@@ -580,6 +584,9 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             fltBtn.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.VISIBLE);
         }
+        ViewGroup.LayoutParams params=recyclerView.getLayoutParams();
+        params.height=400;
+        recyclerView.setLayoutParams(params);
         RecyclerView imageRecyclerView=findViewById(R.id.outCargo_recyclerView_image);
         SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
         int imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));

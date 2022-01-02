@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.67
+"
+            android:id="@+id/dialog_pallet_datatransferview_btnIncargoDate"
+            android:text="반입일 선택"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dialog_pallet_datatransferview_txtIncargoYear"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            android:layout_weight="1"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textStyle="bold|italic"
+            android:id="@+id/dialog_pallet_datatransferview_txtIncargoDate"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal">
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/dialog_pallet_datatransferview_spinnerConsignee"
+        android:layout_weight="1"/>
+
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/dialog_pallet_datatransferview_txtDes"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+    android:layout_weight="1"/>
+</LinearLayout>
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="50dp"
+       android:orientation="horizontal">
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_weight="1">
+           <EditText
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:id="@+id/dialog_pallet_datatransferview_editIncarogCount"
+               android:hint="이관수량"
+               android:gravity="center"
+               android:inputType="number"
+               android:layout_weight="1"/>
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_weight="1"
+               android:id="@+id/dialog_pallet_datatransferview_btnRegIncargoCount"
+               android:gravity="center"
+               android:textStyle="bold|italic"
+               android:text="등록"/>
+       </LinearLayout>
+
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:id="@+id/dialog_pallet_datatransferview_txtIncargoCount"
+           android:gravity="center"
+           android:textStyle="bold|italic"
+           android:layout_weight="1"/>
+   </LinearLayout>
+       <LinearLayout
+           android:layout_width="match_parent"
+           android:layout_height="50dp"
+           android:orientation="horizontal">
+           <Button
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:layout_weight="1"
+               android:id="@+id/dialog_pallet_datatransferview_btnTransDate"
+               android:text="재고이관일"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="match_parent"
+               android:gravity="center"
+               android:textStyle="bold|italic"
+               android:id="@+id/dialog_pallet_datatransferview_txtTransDate"
+               android:layout_weight="1"/>
+       </LinearLayout>
+
+
+</LinearLayout>

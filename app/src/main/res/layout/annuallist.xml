@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
@@ -20,129 +20,35 @@
             android:textSize="12sp"
             android:textStyle="bold|italic" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/annualtxt_annual"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/back_annual"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#A2ACEE"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-                <TextView
-                    android:id="@+id/annualtxt_annual"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="10sp"
-                    android:textStyle="bold|italic" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/back_annual2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#A2ACEE"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-
-                <TextView
-                    android:id="@+id/annualtxt_annual2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="10sp"
-                    android:textStyle="bold|italic" />
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/annualtxt_half1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:text="TextView"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/back_half"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#A2ACEE"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-                <TextView
-                    android:id="@+id/annualtxt_half1"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="10sp"
-                    android:textStyle="bold|italic" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/back_half2"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:cardBackgroundColor="#a2acee"
-                app:cardCornerRadius="5dp"
-                app:cardElevation="3dp"
-                app:cardUseCompatPadding="true">
-
-
-                <TextView
-                    android:id="@+id/annualtxt_half2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="TextView"
-                    android:textSize="10sp"
-                    android:textStyle="bold|italic" />
-            </androidx.cardview.widget.CardView>
-
-        </LinearLayout>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/back_total"
+        <TextView
+            android:id="@+id/annualtxt_totaldate"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:cardBackgroundColor="#a2acee"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="3dp"
-            app:cardUseCompatPadding="true">
+            android:gravity="center"
+            android:text="Name"
+            android:textSize="10sp"
+            android:textStyle="bold|italic" />
 
-
-            <TextView
-                android:id="@+id/annualtxt_totaldate"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Name"
-                android:textSize="10sp"
-                android:textStyle="bold|italic" />
-
-        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </LinearLayout>
