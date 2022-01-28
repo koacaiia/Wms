@@ -108,9 +108,11 @@
                                 android:id="@+id/incargo_btnConIn"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:autoSizeTextType="uniform"
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
                                 android:gravity="center|fill_vertical"
                                 android:text="화물 보세구역내 진입 등록 "
                                 android:textStyle="bold|italic" />
@@ -119,11 +121,13 @@
                                 android:id="@+id/incargo_btnDevCom"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:autoSizeTextType="uniform"
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
                                 android:gravity="center|fill_vertical"
-                                android:text="입고작업 완료 \n 컨테이너 회수 요청"
+                                android:text="입고작업 완료 +컨테이너 회수 요청"
                                 android:textStyle="bold|italic" />
                         </LinearLayout>
 
@@ -138,11 +142,13 @@
                                 android:id="@+id/incargo_btnInsCom"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:autoSizeTextType="uniform"
                                 android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
                                 android:gravity="center|fill_vertical"
-                                android:text="검수완료 \n 반입요청 "
+                                android:text="검수완료+반입요청 "
                                 android:textStyle="italic|bold" />
 
                             <Button
@@ -150,10 +156,12 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_marginHorizontal="5dp"
-                                android:autoSizeTextType="uniform"
                                 android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
                                 android:gravity="center|fill_vertical"
-                                android:text="창고반입 완료 등록"
+                                android:text="창고반입 완료+Location 등록"
                                 android:textStyle="italic|bold" />
                         </LinearLayout>
                     </LinearLayout>
@@ -172,7 +180,7 @@
                         android:orientation="horizontal">
 
                         <Button
-                            android:id="@+id/incargo_picList"
+                            android:id="@+id/incargo_picCount"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="10dp"
@@ -184,7 +192,7 @@
                             android:textStyle="bold|italic" />
 
                         <Button
-                            android:id="@+id/incargo_picCount"
+                            android:id="@+id/incargo_regReamrk"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_marginHorizontal="10dp"

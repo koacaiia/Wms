@@ -12,7 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +40,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ActivityEquipFacility extends AppCompatActivity implements ImageViewActivityAdapter.ImageViewClicked, ActivityEquipFacilityAdapter.ActivityEquipFacilityAdapterClicked{
+public class ActivityEquipFacility extends AppCompatActivity implements ImageViewActivityAdapter.ImageViewClicked,
+        ActivityEquipFacilityAdapter.ActivityEquipFacilityAdapterClicked, ActivityEquipFacilityAdapter.ActivityEquipFacilityAdapterLongClicked {
 FirebaseDatabase database;
 DatabaseReference databaseReference;
 PublicMethod publicMethod;
@@ -73,7 +76,7 @@ Button btnSearch,btnRegAndSearch;
         list=new ArrayList<>();
         getHistoryDatabase("ALL");
 
-        historyAdapter=new ActivityEquipFacilityAdapter(list,this);
+        historyAdapter=new ActivityEquipFacilityAdapter(list,this,this);
         recyclerViewHistory.setAdapter(historyAdapter);
 
 
@@ -150,8 +153,15 @@ Button btnSearch,btnRegAndSearch;
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
                     ActivityEquipFacilityList mList=data.getValue(ActivityEquipFacilityList.class);
+                    String itemValue=data.getKey();
                     if(mList.getAskDate()!=null){
                         list.add(mList);
+                    }
+                    if(mList.getKeyValue()==null){
+                        DatabaseReference keyRef=database.getReference(refPath+itemValue);
+                        Map<String,Object> keyValue=new HashMap<>();
+                        keyValue.put("keyValue",itemValue);
+                        keyRef.updateChildren(keyValue);
                     }
 
 //                    String strDateSub=mList.getAskDate().replaceAll("-","");
@@ -238,13 +248,32 @@ Button btnSearch,btnRegAndSearch;
                             case 0:case 3:
 
                                 View view=getLayoutInflater().inflate(R.layout.dialog_datepicker_equipfacility,null);
-                                EditText editText=view.findViewById(R.id.dialog_datepicker_equipfacility_editText);
                                 TextView textViewDate=view.findViewById(R.id.dialog_datepicker_equipfacility_date);
                                 Button btnViewAmount=view.findViewById(R.id.dialog_datepicker_equipfacility_amount);
+                                final int[] amount = new int[1];
                                 btnViewAmount.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-                                    btnViewAmount.setText(editText.getText().toString()+" 원");
+                                        AlertDialog.Builder builder=new AlertDialog.Builder(ActivityEquipFacility.this);
+                                        EditText editText1=new EditText(ActivityEquipFacility.this);
+                                        editText1.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                        builder.setTitle("금액 입력창")
+                                                .setView(editText1)
+                                                .setPositiveButton("입력 등록", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                                        amount[0] =Integer.parseInt(editText1.getText().toString());
+                                                        btnViewAmount.setText(amount[0] +"원");
+                                                    }
+                                                })
+                                                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                    }
+                                                })
+                                                .show();
+
                                     }
                                 });
                                 DatePicker datePicker=view.findViewById(R.id.dialog_datepicker_equipfacility_datePicker);
@@ -266,6 +295,7 @@ Button btnSearch,btnRegAndSearch;
                                         textViewDate.setText(year+"-"+month+"-"+day);
                                     }
                                 });
+
                                 switch(which){
                                     case 0:
                                         builder.setTitle("견적진행 금액 입력 창")
@@ -282,7 +312,7 @@ Button btnSearch,btnRegAndSearch;
                                                         }else{
                                                             value.put("estAmountDate",textViewDate.getText().toString());
                                                             value.put("estAmount",
-                                                                    Integer.parseInt(editText.getText().toString()));
+                                                                    amount[0]);
                                                             dataRef.updateChildren(value);
                                                            getChangedData(keyValue);
                                                         }
@@ -310,7 +340,7 @@ Button btnSearch,btnRegAndSearch;
                                                         }else{
                                                             value.put("conAmountDate",textViewDate.getText().toString());
                                                             value.put("conAmount",
-                                                                    Integer.parseInt(editText.getText().toString()));
+                                                                    amount[0]);
                                                             dataRef.updateChildren(value);
                                                           getChangedData(keyValue);
                                                         }
@@ -582,5 +612,34 @@ Button btnSearch,btnRegAndSearch;
 
         PublicMethod publicMethod=new PublicMethod(ActivityEquipFacility.this);
         publicMethod.intentSelect();
+    }
+
+    @Override
+    public void longClick(ActivityEquipFacilityAdapter.ListViewHolder listViewHolder, View v, int position) {
+
+        String itemValue=list.get(position).getKeyValue();
+        AlertDialog.Builder builder=new AlertDialog.Builder(ActivityEquipFacility.this);
+        builder.setTitle("항목 삭제 선택 창")
+                .setMessage(itemValue+" 항목에 대한 내용 삭제를 진행 하려면 하단 삭제 진행 버튼을 클릭 바랍니다.")
+                .setPositiveButton("삭제 진행", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        FirebaseDatabase database=FirebaseDatabase.getInstance();
+                        DatabaseReference ref=database.getReference("DeptName/"+deptName+"/EquipNFacility/");
+                        ref.child(itemValue).removeValue();
+                        Intent intent=new Intent(ActivityEquipFacility.this,ActivityEquipFacility.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+
+
+
     }
 }

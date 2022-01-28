@@ -99,20 +99,16 @@
                 android:longClickable="true"
                 android:textStyle="bold" />
 
-            <Spinner
-                android:id="@+id/spinner_rack"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="1"
-                android:background="@color/material_on_primary_disabled"
-                android:dropDownWidth="match_parent"
-                android:foregroundGravity="center"
-                android:gravity="center"
-                android:popupBackground="@drawable/side_nav_bar"
-                android:spinnerMode="dropdown" />
+
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/location_btnRef"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Location 등록" />
 
     </LinearLayout>
 

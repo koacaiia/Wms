@@ -46,7 +46,11 @@
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/drawable/progress_image.xml" value="0.19114583333333332" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_annual_leave.xml" value="0.17708333333333334" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_camera_capture.xml" value="0.175" />
-        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.16666666666666666" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_detail_incargo.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_equip_facility.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_incargo.xml" value="0.3333333333333333" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_location_search.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_main_sub.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_out_cargo.xml" value="0.1527777777777778" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_pallet.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/activity_title.xml" value="0.175" />
@@ -61,6 +65,8 @@
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_getremark.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_incargo_itemclickselect.xml" value="0.22" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_itemclicked_titleactivity_incargo.xml" value="0.1527777777777778" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_location_search.xml" value="0.16041666666666668" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pallet_addoutqty.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pallet_datatrans.xml" value="0.16041666666666668" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pallet_datatransferview.xml" value="0.1" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pallet_picktransdate.xml" value="0.175" />
@@ -68,13 +74,20 @@
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pregressbar.xml" value="0.16041666666666668" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_pregressbar2.xml" value="0.16041666666666668" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_putremark.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_putworkingstaff.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_select_intent.xml" value="0.16018518518518518" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/dialog_title.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/imageactivityview_list.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/incargolist.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/list.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/list_plt.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/list_plt_result.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/list_recyclerview_getremark.xml" value="0.16041666666666668" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/location.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/location_a.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/location_b.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/location_backup.xml" value="0.175" />
+        <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/location_c.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/spinnerlist_searchitem.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/update_datepicker_spinner.xml" value="0.175" />
         <entry key="..\:/StudioProjects/Wms/app/src/main/res/layout/workinglist.xml" value="0.175" />

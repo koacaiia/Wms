@@ -112,8 +112,7 @@ String intent_des;
                 chk_cd1,chk_cd2,chk_cd3,chk_cd4,chk_d1,chk_d2,chk_d3,chk_d4,chk_e1,chk_e2,chk_e3,chk_e4,chk_ef1,chk_ef2,chk_ef3,chk_ef4
                 ,chk_f1,chk_f2,chk_f3,chk_f4};
         int chkCount=chkBox_list.length;
-//       String chkString=chkBox_list[2].getText().toString();
-//        Toast.makeText(this, String.valueOf(chkCount), Toast.LENGTH_SHORT).show();
+
         for(int i=0;i<chkCount;i++){
             if(chkBox_list[i].isChecked()){
                 String chkValue=chkBox_list[i].getText().toString();

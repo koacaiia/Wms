@@ -28,9 +28,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_F4"
                 android:textSize="12sp"
-                android:buttonTint="#FF0000"
                 android:textStyle="bold|italic" />
 
             <CheckBox
@@ -39,9 +39,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_F3"
                 android:textSize="12sp"
-                android:buttonTint="#FF0000"
                 android:textStyle="bold|italic" />
 
             <CheckBox
@@ -49,8 +49,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:buttonTint="#FF0000"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:onClick="on"
                 android:text="A_F2"
                 android:textSize="12sp"
                 android:textStyle="bold|italic" />
@@ -77,44 +78,44 @@
             <CheckBox
 
                 android:id="@+id/ef4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_EF4"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ef3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_EF3"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ef2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_EF2"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ef1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
 
                 android:text="A_EF1"
                 android:textStyle="bold" />
@@ -142,33 +143,33 @@
             <CheckBox
 
                 android:id="@+id/e3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_E3"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/e2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_E2"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/e1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_E1"
                 android:textStyle="bold|italic" />
         </LinearLayout>
@@ -183,44 +184,44 @@
             <CheckBox
 
                 android:id="@+id/d4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_D4"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/d3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_D3"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/d2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_D2"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/d1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_D1"
                 android:textStyle="bold|italic" />
         </LinearLayout>
@@ -234,44 +235,44 @@
             <CheckBox
 
                 android:id="@+id/cd4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_CD4"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/cd3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_CD3"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/cd2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_CD2"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/cd1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_CD1"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -286,44 +287,44 @@
             <CheckBox
 
                 android:id="@+id/c4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_C4"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/c3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_C3"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/c2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_C2"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/c1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_C1"
                 android:textStyle="bold|italic" />
         </LinearLayout>
@@ -338,44 +339,44 @@
             <CheckBox
 
                 android:id="@+id/b4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_B4"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/b3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_B3"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/b2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_B2"
                 android:textStyle="bold|italic" />
 
             <CheckBox
 
                 android:id="@+id/b1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_B1"
                 android:textStyle="bold|italic" />
         </LinearLayout>
@@ -389,44 +390,44 @@
             <CheckBox
 
                 android:id="@+id/ab4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_AB4"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ab3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_AB3"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ab2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_AB2"
                 android:textStyle="bold" />
 
             <CheckBox
 
                 android:id="@+id/ab1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_AB1"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -441,41 +442,41 @@
 
             <CheckBox
                 android:id="@+id/a4"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="A_A4"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="A_A4"
                 android:textStyle="bold|italic" />
 
             <CheckBox
                 android:id="@+id/a3"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="A_A3"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="A_A3"
                 android:textStyle="bold|italic" />
 
             <CheckBox
                 android:id="@+id/a2"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="A_A2"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
+                android:text="A_A2"
                 android:textStyle="bold|italic" />
 
             <CheckBox
                 android:id="@+id/a1"
-                android:buttonTint="#FF0000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/border"
+                android:buttonTint="#FF0000"
                 android:text="A_A1"
                 android:textStyle="bold|italic" />
 

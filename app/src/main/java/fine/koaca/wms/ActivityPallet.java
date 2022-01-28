@@ -226,6 +226,7 @@ Button btnDateSearch;
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         yearMonth=txtYear.getText().toString()+"-"+txtMonth.getText().toString();
+                        btnDateSearch.setText(yearMonth);
                         String searchMsg="기간:"+yearMonth+"\n"+"기간 설정 합니다.검색하고자 하는 항목을 클릭하여 추가 진행 바랍니다.";
                         Toast.makeText(getApplication(),searchMsg,Toast.LENGTH_LONG).show();
                     }
@@ -250,7 +251,6 @@ Button btnDateSearch;
         final int[] inQty = {0};
         final int[] outQty = {0};
         list.clear();
-
         refPath="DeptName/"+deptName+"/PltManagement/"+ consigneeName +"/"+ pltS+"/";
         txtSearch.setText("기간: "+yearMonth+"\n"+"화주명: "+consigneeName+"\n"+"팔렛트 규격: "+pltS+"     입,출고 세부내역");
 
@@ -522,9 +522,11 @@ Button btnDateSearch;
                                         .show();
                                 break;
                             case 3:
-                                dialogPalletTrans("","");
+                                dialogPalletTrans(list.get(position).getRefPath(),list.get(position).getKeyValue());
                                 break;
                             case 4:
+                                int oldOutQty=list.get(position).getOutQty();
+
                                 datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
                                     @Override
                                     public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -550,14 +552,32 @@ Button btnDateSearch;
                                      .setPositiveButton("날짜확인", new DialogInterface.OnClickListener() {
                                          @Override
                                          public void onClick(DialogInterface dialog, int which) {
-                                             EditText editText=new EditText(ActivityPallet.this);
-                                             editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                             View view=getLayoutInflater().inflate(R.layout.dialog_pallet_addoutqty,null);
+                                             TextView txtOldOutQty=view.findViewById(R.id.dialog_pallet_addoutqty_oldValue);
+                                             TextView txtDate=view.findViewById(R.id.dialog_pallet_addoutqty_regDate);
+                                             txtDate.setText(dateResult[0]);
+                                             TextView txtBl=view.findViewById(R.id.dialog_pallet_addoutqty_txtBl);
+                                             txtBl.setText(list.get(position).getBl());
+                                             TextView txtDes=view.findViewById(R.id.dialog_pallet_addoutqty_txtDes);
+                                             txtDes.setText(list.get(position).getDes());
+                                             txtOldOutQty.setText(String.valueOf(oldOutQty));
+                                             EditText editNewQty=view.findViewById(R.id.dialog_pallet_addoutqty_editQty);
+                                             Button btnNewQty=view.findViewById(R.id.dialog_pallet_addoutqty_newBtn);
+                                             TextView txtTotalQty=view.findViewById(R.id.dialog_pallet_addoutqty_totalValue);
+                                             btnNewQty.setOnClickListener(new View.OnClickListener() {
+                                                 @Override
+                                                 public void onClick(View view) {
+                                                int newValue=Integer.parseInt(editNewQty.getText().toString());
+                                                txtTotalQty.setText(String.valueOf(oldOutQty+newValue));
+                                                 }
+                                             });
+
                                              builder.setTitle("추가사용 수량 등록창")
-                                                    .setView(editText)
+                                                    .setView(view)
                                                     .setPositiveButton("추가수량 등록", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            qty[0] = Integer.parseInt(editText.getText().toString());
+                                                            qty[0] = Integer.parseInt(txtTotalQty.getText().toString());
                                                             value.put("date",dateResult[0]);
                                                             value.put("outQty",qty[0]);
                                                             value.put("bl",list.get(position).getBl());
@@ -565,7 +585,6 @@ Button btnDateSearch;
                                                             value.put("inQty",0);
                                                             value.put("nickName",list.get(position).getNickName());
                                                             value.put("keyValue",list.get(position).getKeyValue());
-
 
                                                             DatabaseReference changedRef=database.getReference(refPath+
                                                                     "_추가사용"+dateResult[0]);
@@ -601,12 +620,13 @@ Button btnDateSearch;
                 .show();
     }
 
-    private void dialogPalletTrans(String monthOfIncargo,String putReference) {
+    private void dialogPalletTrans(String putRefPath,String putReference) {
+        Log.i("TestValue","PltS Value="+pltS);
         final String[] strIncargoMonth = new String[1];
         final String[] strIncargoYear=new String[1];
-        String strConsigneeName;
-        String strIncargoCount;
         final String[] strTransDate = new String[1];
+        final String[] transBl = new String[1];
+        final String[] transDes = new String[1];
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
         View view=getLayoutInflater().inflate(R.layout.dialog_pallet_datatransferview,null);
         Button btnIncargoDate=view.findViewById(R.id.dialog_pallet_datatransferview_btnIncargoDate);
@@ -662,14 +682,14 @@ Button btnDateSearch;
 
         FirebaseDatabase database=FirebaseDatabase.getInstance();
         DatabaseReference dataRef;
-        String year=strIncargoYear[0];
+        String year=txtYear.getText().toString();
         String refPath="DeptName/"+deptName+"/InCargo/"+strIncargoMonth[0]+"월/";
 
         Calendar calendar=Calendar.getInstance();
         ArrayList<Fine2IncargoList> incargoList=new ArrayList<>();
         ArrayList<String> blValueList=new ArrayList<>();
 
-            calendar.set(Integer.parseInt(year),(Integer.parseInt(strIncargoMonth[0]))-1,1);
+            calendar.set(Integer.parseInt(year),(Integer.parseInt(txtMonth.getText().toString()))-1,1);
             int monthOfLastDay=calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
             for(int j=1;j<=monthOfLastDay;j++){
                 String dateInDatabase=null;
@@ -678,7 +698,7 @@ Button btnDateSearch;
                 }else{
                     dateInDatabase=String.valueOf(j);
                 }
-                dataRef=database.getReference(refPath+year+"-"+strIncargoMonth[0]+"-"+dateInDatabase);
+                dataRef=database.getReference(refPath+year+"-"+txtMonth.getText().toString()+"-"+dateInDatabase);
                 ValueEventListener listener=new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -699,6 +719,8 @@ Button btnDateSearch;
                             @Override
                             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                                 txtDes.setText(incargoList.get(i).getDescription());
+                                transBl[0] =incargoList.get(i).getBl();
+                                transDes[0] =incargoList.get(i).getDescription();
                             }
 
                             @Override
@@ -732,7 +754,13 @@ Button btnDateSearch;
        btnIncargoCount.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
-          txtIncargoCount.setText(editIncargoCount.getText().toString());
+               if(editIncargoCount.getText().toString().equals("")){
+                   Toast.makeText(ActivityPallet.this,"재고 이관수량 등록확인 바랍니다.",Toast.LENGTH_SHORT).show();
+
+               }else{
+                   txtIncargoCount.setText(editIncargoCount.getText().toString());
+               }
+
            }
        });
        btnIncargoTransDate.setOnClickListener(new View.OnClickListener() {
@@ -763,8 +791,14 @@ Button btnDateSearch;
                         .setPositiveButton("이관일등록", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                txtTransDate.setText(strTransDate[0]);
-                                Toast.makeText(ActivityPallet.this,strTransDate[0]+" 으로 재고 이관일 등록",Toast.LENGTH_SHORT).show();
+                                if(strTransDate[0]==null){
+                                    txtTransDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+                                }else{
+                                    txtTransDate.setText(strTransDate[0]);
+                                }
+
+                                Toast.makeText(ActivityPallet.this,txtTransDate.getText().toString()+" 으로 재고 이관일 등록",
+                                        Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -781,7 +815,39 @@ Button btnDateSearch;
                 .setPositiveButton("재고이관등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        String transDate=txtTransDate.getText().toString();
+                        int outQty=Integer.parseInt(editIncargoCount.getText().toString());
+                        Map<String,Object> map=new HashMap<>();
+                        map.put("nickName",nickName);
+                        map.put("date",transDate);
+                        map.put("keyValue",putRefPath);
+                        map.put("bl",transBl[0]);
+                        map.put("des",transDes[0]+"이관");
+                        map.put("intQty",0);
+                        map.put("outQty",outQty);
 
+                        DatabaseReference tranOutPltReference,transInPltReference;
+                        tranOutPltReference=
+                                FirebaseDatabase.getInstance().getReference(putRefPath+"/"+nickName+"_"+transDate+"_"+outQty+
+                                        "장_재고이관 출고");
+                        tranOutPltReference.updateChildren(map);
+                        String inValueRef,inValueKeyPath;
+                        inValueRef="DeptName/"+deptName+"/PltManagement/"+"SPCGFS(시노로직스)/"+pltS+"/";
+                        inValueKeyPath=nickName+"_"+transDate+"_"+outQty+" 장_재고이관 입고";
+                        transInPltReference=FirebaseDatabase.getInstance().getReference(inValueRef+inValueKeyPath);
+                        Map<String,Object> inValue=new HashMap<>();
+                        inValue.put("nickName",nickName);
+                        inValue.put("date",transDate);
+                        inValue.put("keyValue",inValueKeyPath);
+                        inValue.put("bl",transBl[0]);
+                        inValue.put("des",transDes[0]+"이관");
+                        inValue.put("inQty",outQty);
+                        inValue.put("outQty",0);
+                        transInPltReference.updateChildren(inValue);
+
+                        Intent intent=new Intent(ActivityPallet.this,ActivityPallet.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        ActivityPallet.this.startActivity(intent);
                     }
                 })
                 .setNegativeButton("취소", new DialogInterface.OnClickListener() {
@@ -861,44 +927,47 @@ Button btnDateSearch;
 
     @Override
     public void clickConsignee(ActivityPalletResultAdapter.ListViewHolder holder, View v, int position) {
-        searchMonth();
-       AlertDialog.Builder builder=new AlertDialog.Builder(ActivityPallet.this);
-       builder.setTitle(resultLists.get(position).getConsigneeName()+"팔렛트 변경 등록")
-               .setMessage("사용등록:")
-               .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-
-                   }
-               })
-               .setNegativeButton("재고 이관", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-
-                   }
-               })
-               .setNeutralButton("취소", new DialogInterface.OnClickListener() {
-                   @Override
-                   public void onClick(DialogInterface dialogInterface, int i) {
-
-                   }
-               })
-               .show();
+//        searchMonth();
+//       AlertDialog.Builder builder=new AlertDialog.Builder(ActivityPallet.this);
+//       builder.setTitle(resultLists.get(position).getConsigneeName()+"팔렛트 변경 등록")
+//               .setMessage("사용등록:")
+//               .setPositiveButton("사용등록", new DialogInterface.OnClickListener() {
+//                   @Override
+//                   public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                   }
+//               })
+//               .setNegativeButton("재고 이관", new DialogInterface.OnClickListener() {
+//                   @Override
+//                   public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                   }
+//               })
+//               .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+//                   @Override
+//                   public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                   }
+//               })
+//               .show();
     }
 
     @Override
     public void clickKpp(ActivityPalletResultAdapter.ListViewHolder holder, View v, int position) {
-        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),"KPP");
+        pltS="KPP";
+        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),pltS);
     }
 
     @Override
     public void clickAj(ActivityPalletResultAdapter.ListViewHolder holder, View v, int position) {
-        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),"AJ");
+        pltS="AJ";
+        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),pltS);
     }
 
     @Override
     public void clickEtc(ActivityPalletResultAdapter.ListViewHolder holder, View v, int position) {
-        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),"ETC");
+        pltS="ETC";
+        getDatabase(yearMonth,resultLists.get(position).getConsigneeName(),pltS);
     }
 
 

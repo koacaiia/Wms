@@ -27,6 +27,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
         <activity
+            android:name=".ActivityLocationSearch"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityDetailIncargo"
+            android:exported="false" />
+        <activity
             android:name=".ActivityEquipNFacilityPutData"
             android:exported="true" />
         <activity

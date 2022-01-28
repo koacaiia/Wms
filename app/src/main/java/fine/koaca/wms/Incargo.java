@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -174,7 +173,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         itemLayout=findViewById(R.id.incargo_itemLayout);
         itemLayout.setVisibility(View.INVISIBLE);
-        btnPicCount=findViewById(R.id.incargo_picCount);
+        btnPicCount=findViewById(R.id.incargo_regReamrk);
         btnPicCount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -189,6 +188,24 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 }
                 publicMethod.putRemarkValue(listItems.get(0).getBl(),listItems.get(0).getDescription());
 //
+            }
+        });
+
+        btnPicCount.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+//                PublicMethod publicMethod=new PublicMethod(Incargo.this);
+                String keyValue=listItems.get(0).getKeyValue();
+                String date=listItems.get(0).getDate();
+                String month=date.substring(5,7)+"월";
+                String refPath="DeptName/"+deptName+"/InCargo/"+month+"/"+date+"/"+keyValue;
+
+                Intent intent=new Intent(Incargo.this,Location.class);
+                Fine2IncargoList setList=listItems.get(0);
+                intent.putExtra("list",setList);
+                intent.putExtra("refPath",refPath);
+                startActivity(intent);
+                return true;
             }
         });
         fltBtn_share.setOnLongClickListener(new View.OnLongClickListener() {
@@ -246,7 +263,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             }
         });
 
-        btnPicList=findViewById(R.id.incargo_picList);
+        btnPicList=findViewById(R.id.incargo_picCount);
         btnPicList.setVisibility(View.INVISIBLE);
         btnPicList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1467,10 +1484,39 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnIncargoCom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String consigneeName=listItems.get(0).getConsignee();
+                String des=listItems.get(0).getDescription();
+                String bl=listItems.get(0).getBl();
                 itemClickMap.put("working","창고반입");
                 itemClickReference.updateChildren(itemClickMap);
                 Toast.makeText(getApplicationContext(),itemClickTitle+"\n"+"창고반입 으로 서버 등록 되었습니다.",Toast.LENGTH_SHORT).show();
-                initIntent();
+                AlertDialog.Builder builder=new AlertDialog.Builder(Incargo.this);
+                builder.setTitle("로케이션 등록 확인창")
+                        .setMessage("화주명:"+consigneeName+"\n"+"품명:"+des+"\n"+"비엘:"+bl+"\n"+"화물에 대한 Location 등록을 진행할려면 하단 " +
+                                "Location 등록 버튼을 클릭 바랍니다.")
+                        .setPositiveButton("Location 등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                String keyValue=listItems.get(0).getKeyValue();
+                                String date=listItems.get(0).getDate();
+                                String month=date.substring(5,7)+"월";
+                                String refPath="DeptName/"+deptName+"/InCargo/"+month+"/"+date+"/"+keyValue;
+
+                                Intent intent=new Intent(Incargo.this,Location.class);
+                                Fine2IncargoList setList=listItems.get(0);
+                                intent.putExtra("list",setList);
+                                intent.putExtra("refPath",refPath);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("종료", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                initIntent();
+                            }
+                        })
+                        .show();
+
             }
         });
 

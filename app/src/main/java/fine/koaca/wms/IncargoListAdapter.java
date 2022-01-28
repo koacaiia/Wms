@@ -68,13 +68,17 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
 
         String workingStatus;
         workingStatus=list.get(position).getWorking();
+        String locationValue="";
+        if(!list.get(position).getLocation().equals("")){
+            locationValue="("+list.get(position).getLocation()+")";
+        }
 
         holder.working.setText(workingStatus);
         holder.date.setText(list.get(position).getDate());
         holder.consignee.setText(list.get(position).getConsignee());
         holder.container.setText(list.get(position).getContainer());
         holder.cargotype.setText(cargotype);
-        holder.remark.setText(list.get(position).getRemark());
+        holder.remark.setText(list.get(position).getRemark()+locationValue);
         holder.bl.setText(list.get(position).getBl());
         holder.des.setText(list.get(position).getDescription());
         holder.incargo.setText(list.get(position).getIncargo()+"(PLT)");

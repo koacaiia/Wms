@@ -283,7 +283,8 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
             consigneeName=getIntent().getStringExtra("consigneeName");
             pictureUpdate("Re");
-            publicMethod.getRemarkValue(getIntent().getStringExtra("refPath"));
+//            publicMethod.getRemarkValue(getIntent().getStringExtra("refPath"));
+            publicMethod.getRemarkValue(list.get(0).getManagementNo());
 
         }
 

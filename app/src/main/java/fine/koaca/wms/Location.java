@@ -12,7 +12,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Location extends AppCompatActivity  {
     ViewPager viewPager;
@@ -72,6 +77,8 @@ public class Location extends AppCompatActivity  {
     TextView location_description;
     TextView location_itemcount;
     Fine2IncargoList setList;
+    Button btnLocationReg;
+    String refPath;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -84,6 +91,8 @@ public class Location extends AppCompatActivity  {
 
         Intent intent=getIntent();
         setList= (Fine2IncargoList) intent.getSerializableExtra("list");
+        refPath=intent.getStringExtra("refPath");
+        Log.i("TestValue","refPath Value="+refPath);
 
         location_bl=findViewById(R.id.location_bl);
         location_bl.setText(setList.getBl());
@@ -105,100 +114,183 @@ public class Location extends AppCompatActivity  {
         viewPager.setAdapter(pagerAdapter);
 
         chk_a_a1=v_locationA.findViewById(R.id.a1);
+        chk_a_a1.setOnCheckedChangeListener(listener);
         chk_a_a2=v_locationA.findViewById(R.id.a2);
+        chk_a_a2.setOnCheckedChangeListener(listener);
         chk_a_a3=v_locationA.findViewById(R.id.a3);
+        chk_a_a3.setOnCheckedChangeListener(listener);
         chk_a_a4=v_locationA.findViewById(R.id.a4);
+        chk_a_a4.setOnCheckedChangeListener(listener);
         chk_a_ab1=v_locationA.findViewById(R.id.ab1);
+        chk_a_ab1.setOnCheckedChangeListener(listener);
         chk_a_ab2=v_locationA.findViewById(R.id.ab2);
+        chk_a_ab2.setOnCheckedChangeListener(listener);
         chk_a_ab3=v_locationA.findViewById(R.id.ab3);
+        chk_a_ab3.setOnCheckedChangeListener(listener);
         chk_a_ab4=v_locationA.findViewById(R.id.ab4);
+        chk_a_ab4.setOnCheckedChangeListener(listener);
         chk_a_b1=v_locationA.findViewById(R.id.b1);
+        chk_a_b1.setOnCheckedChangeListener(listener);
         chk_a_b2=v_locationA.findViewById(R.id.b2);
+        chk_a_b2.setOnCheckedChangeListener(listener);
         chk_a_b3=v_locationA.findViewById(R.id.b3);
+        chk_a_b3.setOnCheckedChangeListener(listener);
         chk_a_b4=v_locationA.findViewById(R.id.b4);
+        chk_a_b4.setOnCheckedChangeListener(listener);
         chk_a_c1=v_locationA.findViewById(R.id.c1);
+        chk_a_c1.setOnCheckedChangeListener(listener);
         chk_a_c2=v_locationA.findViewById(R.id.c2);
+        chk_a_c2.setOnCheckedChangeListener(listener);
         chk_a_c3=v_locationA.findViewById(R.id.c3);
+        chk_a_c3.setOnCheckedChangeListener(listener);
         chk_a_c4=v_locationA.findViewById(R.id.c4);
+        chk_a_c4.setOnCheckedChangeListener(listener);
         chk_a_d1=v_locationA.findViewById(R.id.d1);
+        chk_a_d1.setOnCheckedChangeListener(listener);
         chk_a_d2=v_locationA.findViewById(R.id.d2);
+        chk_a_d2.setOnCheckedChangeListener(listener);
         chk_a_d3=v_locationA.findViewById(R.id.d3);
+        chk_a_d3.setOnCheckedChangeListener(listener);
         chk_a_d4=v_locationA.findViewById(R.id.d4);
+        chk_a_d4.setOnCheckedChangeListener(listener);
         chk_a_cd1=v_locationA.findViewById(R.id.cd1);
+        chk_a_cd1.setOnCheckedChangeListener(listener);
         chk_a_cd2=v_locationA.findViewById(R.id.cd2);
+        chk_a_cd2.setOnCheckedChangeListener(listener);
         chk_a_cd3=v_locationA.findViewById(R.id.cd3);
+        chk_a_cd3.setOnCheckedChangeListener(listener);
         chk_a_cd4=v_locationA.findViewById(R.id.cd4);
+        chk_a_cd4.setOnCheckedChangeListener(listener);
         chk_a_e1=v_locationA.findViewById(R.id.e1);
+        chk_a_e1.setOnCheckedChangeListener(listener);
         chk_a_e2=v_locationA.findViewById(R.id.e2);
+        chk_a_e2.setOnCheckedChangeListener(listener);
         chk_a_e3=v_locationA.findViewById(R.id.e3);
+        chk_a_e3.setOnCheckedChangeListener(listener);
         chk_a_e4=v_locationA.findViewById(R.id.e4);
+        chk_a_e4.setOnCheckedChangeListener(listener);
         chk_a_ef1=v_locationA.findViewById(R.id.ef1);
+        chk_a_ef1.setOnCheckedChangeListener(listener);
         chk_a_ef2=v_locationA.findViewById(R.id.ef2);
+        chk_a_ef2.setOnCheckedChangeListener(listener);
         chk_a_ef3=v_locationA.findViewById(R.id.ef3);
+        chk_a_ef3.setOnCheckedChangeListener(listener);
         chk_a_ef4=v_locationA.findViewById(R.id.ef4);
+        chk_a_ef4.setOnCheckedChangeListener(listener);
         chk_a_f1=v_locationA.findViewById(R.id.f1);
+        chk_a_f1.setOnCheckedChangeListener(listener);
         chk_a_f2=v_locationA.findViewById(R.id.f2);
+        chk_a_f2.setOnCheckedChangeListener(listener);
         chk_a_f3=v_locationA.findViewById(R.id.f3);
+        chk_a_f3.setOnCheckedChangeListener(listener);
         chk_a_f4=v_locationA.findViewById(R.id.f4);
+        chk_a_f4.setOnCheckedChangeListener(listener);
 
 
         chk_b_a1=v_locationB.findViewById(R.id.b_a1);
+        chk_b_a1.setOnCheckedChangeListener(listener);
         chk_b_a2=v_locationB.findViewById(R.id.b_a2);
+        chk_b_a2.setOnCheckedChangeListener(listener);
         chk_b_a3=v_locationB.findViewById(R.id.b_a3);
+        chk_b_a3.setOnCheckedChangeListener(listener);
         chk_b_a4=v_locationB.findViewById(R.id.b_a4);
+        chk_b_a4.setOnCheckedChangeListener(listener);
         chk_b_ab1=v_locationB.findViewById(R.id.b_ab1);
+        chk_b_ab1.setOnCheckedChangeListener(listener);
         chk_b_ab3=v_locationB.findViewById(R.id.b_ab3);
+        chk_b_ab3.setOnCheckedChangeListener(listener);
         chk_b_ab4=v_locationB.findViewById(R.id.b_ab4);
+        chk_b_ab4.setOnCheckedChangeListener(listener);
         chk_b_b1=v_locationB.findViewById(R.id.b_b1);
+        chk_b_b1.setOnCheckedChangeListener(listener);
         chk_b_b3=v_locationB.findViewById(R.id.b_b3);
+        chk_b_b3.setOnCheckedChangeListener(listener);
         chk_b_b4=v_locationB.findViewById(R.id.b_b4);
+        chk_b_b4.setOnCheckedChangeListener(listener);
         chk_b_c1=v_locationB.findViewById(R.id.b_c1);
+        chk_b_c1.setOnCheckedChangeListener(listener);
         chk_b_c3=v_locationB.findViewById(R.id.b_c3);
+        chk_b_c3.setOnCheckedChangeListener(listener);
         chk_b_c4=v_locationB.findViewById(R.id.b_c4);
+        chk_b_c4.setOnCheckedChangeListener(listener);
         chk_b_d1=v_locationB.findViewById(R.id.b_d1);
+        chk_b_d1.setOnCheckedChangeListener(listener);
         chk_b_d3=v_locationB.findViewById(R.id.b_d3);
+        chk_b_d3.setOnCheckedChangeListener(listener);
         chk_b_d4=v_locationB.findViewById(R.id.b_d4);
+        chk_b_d4.setOnCheckedChangeListener(listener);
         chk_b_cd1=v_locationB.findViewById(R.id.b_cd1);
+        chk_b_cd1.setOnCheckedChangeListener(listener);
         chk_b_cd3=v_locationB.findViewById(R.id.b_cd3);
+        chk_b_cd3.setOnCheckedChangeListener(listener);
         chk_b_cd4=v_locationB.findViewById(R.id.b_cd4);
+        chk_b_cd4.setOnCheckedChangeListener(listener);
         chk_b_e1=v_locationB.findViewById(R.id.b_e1);
+        chk_b_e1.setOnCheckedChangeListener(listener);
         chk_b_e3=v_locationB.findViewById(R.id.b_e3);
+        chk_b_e3.setOnCheckedChangeListener(listener);
         chk_b_e4=v_locationB.findViewById(R.id.b_e4);
+        chk_b_e4.setOnCheckedChangeListener(listener);
         chk_b_ef1=v_locationB.findViewById(R.id.b_ef1);
+        chk_b_ef1.setOnCheckedChangeListener(listener);
         chk_b_ef3=v_locationB.findViewById(R.id.b_ef3);
+        chk_b_ef3.setOnCheckedChangeListener(listener);
         chk_b_ef4=v_locationB.findViewById(R.id.b_ef4);
+        chk_b_ef4.setOnCheckedChangeListener(listener);
         chk_b_f1=v_locationB.findViewById(R.id.b_f1);
+        chk_b_f1.setOnCheckedChangeListener(listener);
         chk_b_f3=v_locationB.findViewById(R.id.b_f3);
+        chk_b_f3.setOnCheckedChangeListener(listener);
         chk_b_f4=v_locationB.findViewById(R.id.b_f4);
+        chk_b_f4.setOnCheckedChangeListener(listener);
 
 
         chk_c_a1=v_locationC.findViewById(R.id.c_a1);
+        chk_c_a1.setOnCheckedChangeListener(listener);
         chk_c_a2=v_locationC.findViewById(R.id.c_a2);
+        chk_c_a2.setOnCheckedChangeListener(listener);
         chk_c_a3=v_locationC.findViewById(R.id.c_a3);
+        chk_c_a3.setOnCheckedChangeListener(listener);
         chk_c_b1=v_locationC.findViewById(R.id.c_b1);
+        chk_c_b1.setOnCheckedChangeListener(listener);
         chk_c_b2=v_locationC.findViewById(R.id.c_b2);
+        chk_c_b2.setOnCheckedChangeListener(listener);
         chk_c_b3=v_locationC.findViewById(R.id.c_b3);
+        chk_c_b3.setOnCheckedChangeListener(listener);
 
 
         chk_d_a1=v_locationD.findViewById(R.id.d_a1);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_a2=v_locationD.findViewById(R.id.d_a2);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_a3=v_locationD.findViewById(R.id.d_a3);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_a4=v_locationD.findViewById(R.id.d_a4);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_b1=v_locationD.findViewById(R.id.d_b1);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_b2=v_locationD.findViewById(R.id.d_b2);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_b3=v_locationD.findViewById(R.id.d_b3);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_b4=v_locationD.findViewById(R.id.d_b4);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_c1=v_locationD.findViewById(R.id.d_c1);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_c2=v_locationD.findViewById(R.id.d_c2);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_c3=v_locationD.findViewById(R.id.d_c3);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_c4=v_locationD.findViewById(R.id.d_c4);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_d1=v_locationD.findViewById(R.id.d_d1);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_d2=v_locationD.findViewById(R.id.d_d2);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_d3=v_locationD.findViewById(R.id.d_d3);
+        chk_d_a1.setOnCheckedChangeListener(listener);
         chk_d_d4=v_locationD.findViewById(R.id.d_d4);
-
-
-
+        chk_d_a1.setOnCheckedChangeListener(listener);
 
 //        Button btn_locationReg=findViewById(R.id.btn_locationReg);
 //        btn_locationReg.setOnClickListener(new View.OnClickListener() {
@@ -246,32 +338,48 @@ public class Location extends AppCompatActivity  {
                 return true;
             }
         });
+        btnLocationReg=findViewById(R.id.location_btnRef);
 
-        spinner_rack=findViewById(R.id.spinner_rack);
-        ArrayAdapter<Integer> rackAdapter=new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item,
-                Location.this.rackCount);
-        rackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner_rack.setAdapter(rackAdapter);
-        spinner_rack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        btnLocationReg.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                str_rackCount=Integer.toString(rackCount[position]);
-                spinner_rack.setTag(str_rackCount);
-                String toastMessage;
-                if(str_rackCount.equals("0")){
-                    toastMessage="평치 적재";
-                }else{
-                    toastMessage=str_rackCount+"_단 랙 적재";
-                }
-
-                Toast.makeText(Location.this, toastMessage, Toast.LENGTH_SHORT).show();
-                filterChkBox();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View view) {
+                FirebaseDatabase database=FirebaseDatabase.getInstance();
+                DatabaseReference locationRef=database.getReference(refPath);
+                Map<String,Object> locationValue=new HashMap<>();
+                locationValue.put("location",textView_location.getText().toString());
+                locationRef.updateChildren(locationValue);
+                Intent locationIntent=new Intent(Location.this,ActivityLocationSearch.class);
+                locationIntent.putExtra("consigneeValue",setList.getConsignee());
+                locationIntent.putExtra("blValue",setList.getBl().substring(setList.getBl().length()-4));
+                startActivity(locationIntent);
             }
         });
+//
+//        spinner_rack=findViewById(R.id.spinner_rack);
+//        ArrayAdapter<Integer> rackAdapter=new ArrayAdapter<Integer>(this,android.R.layout.simple_spinner_item,
+//                Location.this.rackCount);
+//        rackAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner_rack.setAdapter(rackAdapter);
+//        spinner_rack.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                str_rackCount=Integer.toString(rackCount[position]);
+//                spinner_rack.setTag(str_rackCount);
+//                String toastMessage;
+//                if(str_rackCount.equals("0")){
+//                    toastMessage="평치 적재";
+//                }else{
+//                    toastMessage=str_rackCount+"_단 랙 적재";
+//                }
+//
+//                Toast.makeText(Location.this, toastMessage, Toast.LENGTH_SHORT).show();
+//                filterChkBox();
+//            }
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
 
     }
@@ -367,6 +475,42 @@ public class Location extends AppCompatActivity  {
 
 
     }
+
+        CheckBox.OnCheckedChangeListener listener= new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                String location=compoundButton.getText().toString();
+                if(b){
+
+                  AlertDialog.Builder builder=new AlertDialog.Builder(Location.this);
+                  ArrayList<String> stackCount=new ArrayList<>();
+                  stackCount.add("1단");
+                  stackCount.add("2단");
+                  stackCount.add("3단");
+                  stackCount.add("4단");
+                  stackCount.add("5단");
+
+                  String[] stackList=stackCount.toArray(new String[stackCount.size()]);
+                  builder.setTitle(location+"에 대한 적재단수 확인창")
+                          .setSingleChoiceItems(stackList, 0, new DialogInterface.OnClickListener() {
+                              @Override
+                              public void onClick(DialogInterface dialogInterface, int i) {
+                                  dialogInterface.dismiss();
+                                  String stackLocation=location+"_"+stackCount.get(i);
+                                  if(textView_location.getText().toString().equals("")){
+                                      textView_location.setText(stackLocation);
+                                  }else{
+                                      textView_location.append("|"+stackLocation);
+                                  }
+                              }
+                          }).show();
+
+                    }
+
+            }
+        };
+
+
 
 
 }

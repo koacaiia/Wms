@@ -13,15 +13,21 @@ import java.util.ArrayList;
 public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityEquipFacilityAdapter.ListViewHolder>{
     ArrayList<ActivityEquipFacilityList> list;
     ActivityEquipFacilityAdapterClicked itemClicked;
+    ActivityEquipFacilityAdapterLongClicked longClicked;
 
     public interface ActivityEquipFacilityAdapterClicked{
         void itemClick(ActivityEquipFacilityAdapter.ListViewHolder listViewHolder,View v,int position);
     }
+    public interface ActivityEquipFacilityAdapterLongClicked{
+        void longClick(ActivityEquipFacilityAdapter.ListViewHolder listViewHolder,View v,int position);
+    }
 
     public ActivityEquipFacilityAdapter(ArrayList<ActivityEquipFacilityList> list,
-                                        ActivityEquipFacilityAdapterClicked itemClicked) {
+                                        ActivityEquipFacilityAdapterClicked itemClicked,
+                                        ActivityEquipFacilityAdapterLongClicked longClicked) {
         this.list = list;
         this.itemClicked=itemClicked;
+        this.longClicked=longClicked;
     }
 
     @NonNull
@@ -89,6 +95,13 @@ public class ActivityEquipFacilityAdapter extends RecyclerView.Adapter<ActivityE
                 }
             }
             );
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    longClicked.longClick(ListViewHolder.this,view,getAdapterPosition());
+                    return true;
+                }
+            });
         }
     }
 }

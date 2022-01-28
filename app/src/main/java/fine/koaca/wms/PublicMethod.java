@@ -428,6 +428,20 @@ public class PublicMethod {
             }
         });
 
+        Button btnLocation=view.findViewById(R.id.dialog_select_intent_btnLocation);
+        btnLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent=new Intent(activity,ActivityLocationSearch.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                activity.startActivity(intent);
+
+//
+
+              }
+        });
+
         builder.setView(view);
 
         AlertDialog dialog=builder.create();
@@ -827,34 +841,52 @@ public class PublicMethod {
                 .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
+
+                        if(pltEdit.getText().toString().equals("0")){
+                            Toast.makeText(activity,"팔렛트 수량 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        else{
+                            pltQty[0] =Integer.parseInt(pltEdit.getText().toString());
+                        }
 
                         SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
                         String deptName=sharedPreferences.getString("deptName",null);
                         String upLoadKeyValue=nickName+"_"+ pltDate[0] +"_"+pltS[0]+pltQty[0]+"장_"+inOut[0];
-                        DatabaseReference pltRef;
+                        DatabaseReference pltRef = null;
                         Map<String,Object> value=new HashMap<>();
                         value.put("nickName",nickName);
                         value.put("date", pltDate[0]);
                         value.put("keyValue",bl+"_"+des+"_"+upLoadKeyValue);
                         value.put("bl",bl);
                         value.put("des",des);
-                        switch(inOut[0]){
-                            case "In":
-                                pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
-                                        "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+upLoadKeyValue);
-                                value.put("inQty",pltQty[0]);
-                                value.put("outQty",0);
-                                break;
-                            case "Out":
-                                pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
-                                        "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+bl+"_"+des+"_"+upLoadKeyValue);
-                                value.put("inQty",0);
-                                value.put("outQty",pltQty[0]);
-                                break;
-                            default:
-                                throw new IllegalStateException("Unexpected value: " + inOut[0]);
+
+                        if(pltS[0]==null){
+                            Toast.makeText(activity,"팔렛트 규격 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+                            return;
                         }
+                        if(inOut[0]==null){
+                            Toast.makeText(activity,"입고,사용 처 가시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+                            return;
+                        }else{
+                            switch(inOut[0]){
+                                case "In":
+                                    pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                            "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+upLoadKeyValue);
+                                    value.put("inQty",pltQty[0]);
+                                    value.put("outQty",0);
+                                    break;
+                                case "Out":
+                                    pltRef=FirebaseDatabase.getInstance().getReference("DeptName/"+deptName+
+                                            "/PltManagement/"+consigneeName+"/"+pltS[0]+"/"+bl+"_"+des+"_"+upLoadKeyValue);
+                                    value.put("inQty",0);
+                                    value.put("outQty",pltQty[0]);
+                                    break;
+                                default:
+                                    throw new IllegalStateException("Unexpected value: " + inOut[0]);
+                            }
+                        }
+
                         pltRef.updateChildren(value);
 
                         upLoadPictures(nickName,consigneeName,"Pallet",upLoadKeyValue,deptName);
@@ -875,7 +907,6 @@ public class PublicMethod {
     }
     public ArrayList<String> getConsigneeList(){
         SharedPreferences preferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
-
         String consigneeStr=preferences.getString("consigneeList",null);
         ArrayList<String> consigneeList=new ArrayList<String>();
         if(consigneeStr !=null){
@@ -884,6 +915,7 @@ public class PublicMethod {
                 for(int i=0;i<jsonArray.length();i++){
                     String consigneeName=jsonArray.optString(i);
                     consigneeList.add(consigneeName);
+                    Log.i("TestValue","consignee Value="+consigneeName);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1309,6 +1341,55 @@ public void searchIncargoData(String key,String value){
 
             }
         });
+
+
+}
+
+public void LocationReg(String refPath){
+//        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+//       ArrayList<String> locationArr=new ArrayList<>();
+//       locationArr.add("A동");
+//       locationArr.add("B동");
+//       locationArr.add("C동");
+//       locationArr.add("D동");
+//
+//       String[] locationList=locationArr.toArray(new String[locationArr.size()]);
+//       builder.setTitle("LOCATION 등록 창")
+//               .setSingleChoiceItems(locationList, 0, new DialogInterface.OnClickListener() {
+//                   @Override
+//                   public void onClick(DialogInterface dialogInterface, int i) {
+//                       String location = null;
+//                       switch(i){
+//                           case 0: case 2: case 5:
+//                               location=locationList[i];
+//                                Intent intent=new Intent(activity,LocationA.class);
+//                                activity.startActivity(intent);
+//
+//                               Toast.makeText(activity,locationList[i]+" 로케이션 등록",Toast.LENGTH_SHORT).show();
+//                               break;
+//                           case 1: case 3: case 4:
+//                               dialogInterface.dismiss();
+//                               Toast.makeText(activity,locationList[i]+" 로케이션 등록",Toast.LENGTH_SHORT).show();
+//                               break;
+////                           case 3:
+////                               Toast.makeText(activity,locationList[i]+" 로케이션 등록",Toast.LENGTH_SHORT).show();
+////                               break;
+////
+////                           case 4:
+////                               Toast.makeText(activity,locationList[i]+" 로케이션 등록",Toast.LENGTH_SHORT).show();
+////                               break;
+//
+//                       }
+//                       FirebaseDatabase database=FirebaseDatabase.getInstance();
+//                       DatabaseReference remarkRef=database.getReference(refPath);
+//                       Map<String,Object> locationValue=new HashMap<>();
+//                       locationValue.put("location",location);
+//                       remarkRef.updateChildren(locationValue);
+//                   }
+//               })
+//               .show();
+                Intent intent=new Intent(activity,Location.class);
+                activity.startActivity(intent);
 
 
 }

@@ -25,18 +25,15 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:textStyle="bold|italic"
-            tools:ignore="NestedWeights" />
-
-        <EditText
-            android:id="@+id/dialog_putworkingstaff_editstaffcount"
+            android:text="등록일 변경"
+            android:textStyle="bold|italic"/>
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:ems="10"
             android:gravity="center"
-            android:hint="출근인원 입력" />
+            android:textStyle="bold|italic"
+            android:id="@+id/dialog_putworkingstaff_txtDate"/>
 
     </LinearLayout>
 
@@ -45,6 +42,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="horizontal">
+
 
         <Button
             android:id="@+id/dialog_putworkingstaff_btnfinestaff"
@@ -53,8 +51,21 @@
             android:layout_margin="5dp"
             android:layout_weight="1"
             android:text="부서원 출근등록" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:id="@+id/dialog_putworkingstaff_txtFinestaff"
+            android:textStyle="bold|italic"/>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
 
-        <Button
+            <Button
             android:id="@+id/dialog_putworkingstaff_btnfinewomenstaff"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -62,56 +73,51 @@
             android:layout_weight="1"
             android:text="화인주부사원 출근등록"
             android:textSize="10sp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textStyle="bold|italic"
+                android:layout_weight="1"
+                android:id="@+id/dialog_putworkingstaff_txtFineWomenStaff"/>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/dialog_putworkingstaff_spinneroutsourcing"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:layout_weight="1" />
 
         <Button
-            android:id="@+id/dialog_putworkingstaff_btnoutsourcingmale"
+            android:id="@+id/dialog_putworkingstaff_btnOutsourcing"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
             android:layout_weight="1"
-            android:text="남자"
+            android:layout_margin="5dp"
+            android:text="외부용역 등록"
             android:textSize="14sp" />
 
-        <Button
-            android:id="@+id/dialog_putworkingstaff_btnoutsourcingfemale"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:layout_weight="1"
-            android:text="여자" />
-    </LinearLayout>
+            android:layout_weight="1">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/dialog_putworkingstaff_txtscroll"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textColor="#F60606"
-                android:textStyle="bold|italic" />
-        </LinearLayout>
-    </ScrollView>
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/dialog_putworkingstaff_txtscroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#F60606"
+                    android:textStyle="bold|italic" />
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+
 </LinearLayout>

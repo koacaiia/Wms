@@ -440,7 +440,6 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
         Button btnDate=view.findViewById(R.id.dialog_putworkingstaff_btnDate);
         btnDate.setText(date);
-        EditText editStaffCount=view.findViewById(R.id.dialog_putworkingstaff_editstaffcount);
         TextView textView=view.findViewById(R.id.dialog_putworkingstaff_txtscroll);
 
         btnDate.setOnClickListener(new View.OnClickListener() {
@@ -488,121 +487,121 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
 
 
-        Spinner spOutsourcingValue=view.findViewById(R.id.dialog_putworkingstaff_spinneroutsourcing);
-        databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ArrayList<String> outsourcingValueList=new ArrayList<>();
-                for(DataSnapshot data:snapshot.getChildren()){
-
-                    outsourcingValueList.add(data.getKey());
-                }
-                outsourcingValueList.add(0,"");
-                ArrayAdapter<String> spOutsourcingAdapter=new ArrayAdapter<String>(ActivityWorkingStaff.this,
-                        android.R.layout.simple_spinner_dropdown_item,outsourcingValueList);
-                spOutsourcingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spOutsourcingValue.setAdapter(spOutsourcingAdapter);
-                spOutsourcingValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        outsourcingValue=outsourcingValueList.get(position);
-                        if(!outsourcingValue.equals("")){
-                            Toast.makeText(ActivityWorkingStaff.this,outsourcingValue+" 선텍",Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        Button btnFineStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinestaff);
-        btnFineStaff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editStaffCount.getText().toString().equals("")){
-                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                double count= Double.parseDouble(editStaffCount.getText().toString());
-                editStaffCount.setText("");
-                if(textView.getText().toString().equals("")){
-                    textView.setText(deptName+" 출근인원:"+count+"명으로 서버 등록");
-                }else{
-                    textView.append("\n"+deptName+" 출근인원:"+count+"명으로 서버 등록");
-                }
-               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
-
-
-            }
-        });
-        Button btnFineWomenStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinewomenstaff);
-        btnFineWomenStaff.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editStaffCount.getText().toString().equals("")){
-                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                double count= Double.parseDouble(editStaffCount.getText().toString());
-                putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
-                if(textView.getText().toString().equals("")){
-                    textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
-                }else{
-                    textView.append("\n"+"화인주부사원 출근인원:"+count+"명으로 서버 등록");
-                }
-                editStaffCount.setText("");
-            }
-        });
-        Button btnOutsourcingMale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingmale);
-        btnOutsourcingMale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editStaffCount.getText().toString().equals("")){
-                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                double count= Double.parseDouble(editStaffCount.getText().toString());
-                if(outsourcingValue==null||outsourcingValue.equals("")){
-                    Toast.makeText(ActivityWorkingStaff.this,"아웃소싱업체 공란 입니다.확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                putDialogRegStaff("M_"+outsourcingValue, btnDate.getText().toString(),count);
-                if(textView.getText().toString().equals("")){
-                    textView.setText(outsourcingValue+"(남):"+count+"명으로 서버 등록");
-                }else{
-                    textView.append("\n"+outsourcingValue+"(남):"+count+"명으로 서버 등록");
-                }
-                editStaffCount.setText("");
-            }
-        });
-        Button btnOutsourcingFemale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingfemale);
-        btnOutsourcingFemale.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editStaffCount.getText().toString().equals("")){
-                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                double count= Double.parseDouble(editStaffCount.getText().toString());
-                putDialogRegStaff("FE_"+outsourcingValue, btnDate.getText().toString(),count);
-                if(textView.getText().toString().equals("")){
-                    textView.setText(outsourcingValue+"(여):"+count+"명으로 서버 등록");
-                }else{
-                    textView.append("\n"+outsourcingValue+"(여):"+count+"명으로 서버 등록");
-                }
-                editStaffCount.setText("");
-            }
-        });
+//        Spinner spOutsourcingValue=view.findViewById(R.id.dialog_putworkingstaff_spinneroutsourcing);
+//        databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue");
+//        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                ArrayList<String> outsourcingValueList=new ArrayList<>();
+//                for(DataSnapshot data:snapshot.getChildren()){
+//
+//                    outsourcingValueList.add(data.getKey());
+//                }
+//                outsourcingValueList.add(0,"");
+//                ArrayAdapter<String> spOutsourcingAdapter=new ArrayAdapter<String>(ActivityWorkingStaff.this,
+//                        android.R.layout.simple_spinner_dropdown_item,outsourcingValueList);
+//                spOutsourcingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                spOutsourcingValue.setAdapter(spOutsourcingAdapter);
+//                spOutsourcingValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                    @Override
+//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                        outsourcingValue=outsourcingValueList.get(position);
+//                        if(!outsourcingValue.equals("")){
+//                            Toast.makeText(ActivityWorkingStaff.this,outsourcingValue+" 선텍",Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onNothingSelected(AdapterView<?> parent) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//        Button btnFineStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinestaff);
+//        btnFineStaff.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(editStaffCount.getText().toString().equals("")){
+//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                double count= Double.parseDouble(editStaffCount.getText().toString());
+//                editStaffCount.setText("");
+//                if(textView.getText().toString().equals("")){
+//                    textView.setText(deptName+" 출근인원:"+count+"명으로 서버 등록");
+//                }else{
+//                    textView.append("\n"+deptName+" 출근인원:"+count+"명으로 서버 등록");
+//                }
+//               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
+//
+//
+//            }
+//        });
+//        Button btnFineWomenStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinewomenstaff);
+//        btnFineWomenStaff.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(editStaffCount.getText().toString().equals("")){
+//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                double count= Double.parseDouble(editStaffCount.getText().toString());
+//                putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
+//                if(textView.getText().toString().equals("")){
+//                    textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
+//                }else{
+//                    textView.append("\n"+"화인주부사원 출근인원:"+count+"명으로 서버 등록");
+//                }
+//                editStaffCount.setText("");
+//            }
+//        });
+//        Button btnOutsourcingMale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingmale);
+//        btnOutsourcingMale.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(editStaffCount.getText().toString().equals("")){
+//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                double count= Double.parseDouble(editStaffCount.getText().toString());
+//                if(outsourcingValue==null||outsourcingValue.equals("")){
+//                    Toast.makeText(ActivityWorkingStaff.this,"아웃소싱업체 공란 입니다.확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                putDialogRegStaff("M_"+outsourcingValue, btnDate.getText().toString(),count);
+//                if(textView.getText().toString().equals("")){
+//                    textView.setText(outsourcingValue+"(남):"+count+"명으로 서버 등록");
+//                }else{
+//                    textView.append("\n"+outsourcingValue+"(남):"+count+"명으로 서버 등록");
+//                }
+//                editStaffCount.setText("");
+//            }
+//        });
+//        Button btnOutsourcingFemale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingfemale);
+//        btnOutsourcingFemale.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(editStaffCount.getText().toString().equals("")){
+//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//                double count= Double.parseDouble(editStaffCount.getText().toString());
+//                putDialogRegStaff("FE_"+outsourcingValue, btnDate.getText().toString(),count);
+//                if(textView.getText().toString().equals("")){
+//                    textView.setText(outsourcingValue+"(여):"+count+"명으로 서버 등록");
+//                }else{
+//                    textView.append("\n"+outsourcingValue+"(여):"+count+"명으로 서버 등록");
+//                }
+//                editStaffCount.setText("");
+//            }
+//        });
         builder.setTitle("출근 인원 등록창")
                 .setView(view)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
