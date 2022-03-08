@@ -67,7 +67,7 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
         GridLayoutManager manager = new GridLayoutManager(this, 3);
         imageRecyclerView.setLayoutManager(manager);
         PublicMethod pictures = new PublicMethod(this);
-        imageViewLists = pictures.getPictureLists("Re");
+        imageViewLists = pictures.getPictureLists("Re",date);
         iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
         imageRecyclerView.setAdapter(iAdapter);
 

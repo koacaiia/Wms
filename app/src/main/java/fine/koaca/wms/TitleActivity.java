@@ -132,13 +132,38 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             return;
         }
 
+
         database = FirebaseDatabase.getInstance();
+
 
         deptName = sharedPref.getString("deptName", null);
         nickName = sharedPref.getString("nickName", null);
         imageViewListCount=sharedPref.getString("imageViewListCount","3");
         refMonth=dateToday.substring(5,7);
 
+        if(sharedPref.getString("consigneeList",null)==null){
+            DatabaseReference conRef=database.getReference("DeptName/"+deptName+"/BaseRef");
+            conRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot data:snapshot.getChildren()){
+                        if(data.getKey().equals("consigneeRef")){
+                            String consigneeValue= (String) data.getValue();
+                            editor = sharedPref.edit();
+                            editor.putString("consigneeList",consigneeValue);
+                            editor.apply();
+                        }
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
         btnTitle = findViewById(R.id.activity_title_btn);
 
         btnTitle.setText(dateToday + "일  입,출고 현황 (화면초기화)");
@@ -453,24 +478,41 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         TextView txtFineStaffWomen=view.findViewById(R.id.dialog_title_finewomen);
         TextView txtOutsourcingMale=view.findViewById(R.id.dialog_title_outsourcingmen);
         TextView txtOutsourcingFemale=view.findViewById(R.id.dialog_title_outsourcingwomen);
+        TextView txtOutsourcingEquip=view.findViewById(R.id.dialog_title_outsourcingEquip);
 
-        DatabaseReference databaseReferenceStaff=database.getReference("DeptName/"+deptName+"/WorkingStaff");
+        DatabaseReference databaseReferenceStaff=database.getReference("DeptName/"+deptName+"/WorkingStaffCheck/");
         ValueEventListener listenerStaff=new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                double fineStaff = 0,fineStaffWomen = 0,outsourcingMale = 0,outsourcingFemale = 0;
+                double fineStaff = 0,fineStaffWomen = 0,outsourcingMale = 0,outsourcingFemale = 0,outsourcingEquip=0;
                 for(DataSnapshot data:snapshot.getChildren()){
-                    ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    fineStaff=fineStaff+Double.parseDouble(mList.getFineStaff());
-                    fineStaffWomen=fineStaffWomen+Double.parseDouble(mList.getFineWomenStaff());
-                    outsourcingMale=outsourcingMale+Double.parseDouble(mList.getOutsourcingMale());
-                    outsourcingFemale=outsourcingFemale+Double.parseDouble(mList.getOutsourcingFemale());
-                }
+                    if(data.getKey().contains(dateToday)){
+                        ListOutSourcingValue mList=data.getValue(ListOutSourcingValue.class);
+
+                            switch(mList.getGender()){
+                                case "Staff":
+                                    fineStaff=fineStaff+mList.getCount();
+                                    break;
+                                case "WomenStaff":
+                                    fineStaffWomen=fineStaffWomen+mList.getCount();
+                                    break;
+                                case "남자":
+                                    outsourcingMale=outsourcingMale+mList.getCount();
+                                    break;
+                                case "여자":
+                                    outsourcingFemale=outsourcingFemale+mList.getCount();
+                                    break;
+                                case "장비운행":
+                                    outsourcingEquip=outsourcingEquip+mList.getCount();
+                            }
+                        }
+                    }
                 txtFineStaff.setText(fineStaff+" 명");
                 txtFineStaffWomen.setText(fineStaffWomen+" 명");
                 txtOutsourcingMale.setText(outsourcingMale+" 명");
                 txtOutsourcingFemale.setText(outsourcingFemale+" 명");
-            }
+                txtOutsourcingEquip.setText(outsourcingEquip+" 명");
+                }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -479,6 +521,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         };
         Query sortByDateStaff=databaseReferenceStaff.orderByChild("date").equalTo(dateToday);
         sortByDateStaff.addListenerForSingleValueEvent(listenerStaff);
+
+
 
         titleBuilder.setView(view);
 

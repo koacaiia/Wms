@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="외부용역 인원등록 창"
+        android:textStyle="bold|italic"
+        android:layout_weight="1"
+        android:gravity="center"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dialog_putworkingstaff_outsourcing_spinner"
+            android:layout_weight="1"/>
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dialog_putworkingstaff_outsourcing_spoutsourcingName"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:id="@+id/dialog_putworkingstaff_outsourcing_editCount"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:hint="출근인원"
+            android:inputType="number" />
+
+    </LinearLayout>
+
+
+
+        <Button
+            android:id="@+id/dialog_putworkingstaff_outsourcing_btnReg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
+            android:text="등록" />
+
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_putworkingstaff_outsourcing_txtscroll"
+                android:gravity="center"
+                android:textStyle="bold|italic"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

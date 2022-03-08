@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 
 public class ActivityWorkingStaffAdapter extends RecyclerView.Adapter<ActivityWorkingStaffAdapter.ListViewHolder>{
-    ArrayList<ActivityWorkingStaffList> list;
-    public ActivityWorkingStaffAdapter(ArrayList<ActivityWorkingStaffList> list) {
+    ArrayList<ListOutSourcingValue> list;
+    public ActivityWorkingStaffAdapter(ArrayList<ListOutSourcingValue> list) {
         this.list=list;
     }
 
@@ -26,9 +26,9 @@ public class ActivityWorkingStaffAdapter extends RecyclerView.Adapter<ActivityWo
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         holder.date.setText(list.get(position).getDate());
-        holder.name.setText(list.get(position).getOutsourcingValue());
-        holder.male.setText(list.get(position).getOutsourcingMale());
-        holder.feMale.setText(list.get(position).getOutsourcingFemale());
+        holder.name.setText(list.get(position).getName());
+        holder.male.setText(list.get(position).getGender());
+        holder.feMale.setText(String.valueOf(list.get(position).getCount()));
 
     }
 

@@ -556,14 +556,32 @@
                             android:layout_weight="1"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/textView17"
+                            <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="협력업체 출근인원"
-                                android:textStyle="italic|bold" />
+                                android:orientation="horizontal">
+
+                                <TextView
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="외부용역(장비)"
+                                    android:textStyle="italic|bold" />
+
+                                <TextView
+                                    android:id="@+id/dialog_title_outsourcingEquip"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:text="출근인원"
+                                    android:textStyle="italic|bold" />
+
+
+                            </LinearLayout>
 
                             <LinearLayout
                                 android:layout_width="match_parent"

@@ -144,7 +144,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     LinearLayout itemLayout;
     Button btnConIn,btnDevCom,btnInsCom,btnIncargoCom,btnNewIncargo,btnRegPallet,btnPicList,btnPicCount;
     String itemClickTitle;
-    int imageViewListCount;
+
+    RecyclerView imageRecyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,10 +165,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         nickName = publicMethod.getUserInformation().get("nickName");
 
         dateToday = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-
+//        dateToday="2022-02-17";
         day_start = dateToday;
         day_end = dateToday;
 
+        imageRecyclerView=findViewById(R.id.incargo_recyclerView_image);
+        imageRecyclerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("TestValue","imageRecyclerView Clicked Checked=");
+            }
+        });
 
         fltBtn_share = findViewById(R.id.incargo_floatBtn_share);
         fltBtn_share.setVisibility(View.INVISIBLE);
@@ -194,7 +203,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnPicCount.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-//                PublicMethod publicMethod=new PublicMethod(Incargo.this);
                 String keyValue=listItems.get(0).getKeyValue();
                 String date=listItems.get(0).getDate();
                 String month=date.substring(5,7)+"월";
@@ -230,17 +238,17 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                                 ani.setRepeatCount(Animation.INFINITE);
                                 switch(i){
                                     case 0:
-                                        pickedUpItemClick("Ori");
+                                        pickedUpItemClick("Ori",dateToday);
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
                                         break;
                                     case 1:
-                                        pickedUpItemClick("All");
+                                        pickedUpItemClick("All",dateToday);
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
                                         break;
                                     case 2:
-                                        pickedUpItemClick("Re");
+                                        pickedUpItemClick("Re",dateToday);
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
 
@@ -264,15 +272,58 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         });
 
         btnPicList=findViewById(R.id.incargo_picCount);
-        btnPicList.setVisibility(View.INVISIBLE);
+
         btnPicList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                publicMethod.imageViewListCount();
+              AlertDialog.Builder dateDialog=new AlertDialog.Builder(Incargo.this);
+              DatePicker datePicker=new DatePicker(Incargo.this);
+                final String[] datePicturePic = {new SimpleDateFormat("yyyy-MM-dd").format(new Date())};
+              datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                  @Override
+                  public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                   String month,day;
+                   if((i1+1)<10){
+                       month="0"+(i1+1);
+                   }else{
+                       month=String.valueOf(i1+1);
+                      }
+                   if(i2<10){
+                       day="0"+i2;
+                   }else{
+                       day=String.valueOf(i2);
+                      }
+                   datePicturePic[0] =i+"-"+month+"-"+day;
+                   Toast.makeText(Incargo.this,datePicturePic[0]+" 검색일 지정",Toast.LENGTH_SHORT).show();
+                  }
+              });
+              dateDialog.setTitle("사진 검색일 설정창")
+                      .setView(datePicker)
+                      .setPositiveButton("검색", new DialogInterface.OnClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialogInterface, int i) {
+                             pickedUpItemClick("Re",datePicturePic[0]);
+                          }
+                      })
+                      .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                          @Override
+                          public void onClick(DialogInterface dialogInterface, int i) {
+
+                          }
+                      })
+                      .show();
             }
         });
 
-        btnPicCount.setVisibility(View.INVISIBLE);
+       btnPicList.setOnLongClickListener(new View.OnLongClickListener() {
+           @Override
+           public boolean onLongClick(View view) {
+               publicMethod.imageViewListCount();;
+               return true;
+           }
+       });
+
+
 
         btnConIn=findViewById(R.id.incargo_btnConIn);
         btnDevCom=findViewById(R.id.incargo_btnDevCom);
@@ -297,6 +348,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         recyclerView.setAdapter(adapter);
         if(getIntent().getStringExtra("refPath")==null){
             getFirebaseData(day_start, day_end, "sort", "ALL");
+
         }else{
             String date=getIntent().getStringExtra("date");
             String keyValue=getIntent().getStringExtra("refPath");
@@ -429,6 +481,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
             }
         });
+
+
 
     }
 
@@ -1359,6 +1413,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+
         String consigneeNameValue=listItems.get(pos).getConsignee();
         keyValue=listItems.get(pos).getKeyValue();
         String containerValue=listItems.get(pos).getContainer();
@@ -1366,6 +1421,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         String dateValue=listItems.get(pos).getDate();
         initLayout(consigneeNameValue,keyValue,containerValue,blValue,dateValue);
         publicMethod.getRemarkValue(blValue);
+
 
 
     }
@@ -1562,8 +1618,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 initIntent();
             }
         });
-        pickedUpItemClick("Re");
 
+        pickedUpItemClick("Re",dateToday);
     }
 
     private void selectedItemGetDatabase(String date, String keyValue) {
@@ -1737,11 +1793,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     }
 
-    public void pickedUpItemClick(String sort) {
-        if(btnPicList.getVisibility()==View.INVISIBLE){
-            btnPicList.setVisibility(View.VISIBLE);
-            btnPicCount.setVisibility(View.VISIBLE);
-        }
+    @SuppressLint("NotifyDataSetChanged")
+    public void pickedUpItemClick(String sort, String date) {
+
         switch(sort){
             case "Re":
                 btnPicList.setText("서버전송용 조정 사진");
@@ -1754,26 +1808,24 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 break;
 
         }
-        RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
+
         int imageViewListCount;
         SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
         imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
         GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
 
-        imageRecyclerView.setLayoutManager(manager);
-        PublicMethod pictures = new PublicMethod(this);
-        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
-            imageViewLists=pictures.getPictureLists(sort);
-        }else{
-            itemPictureList(sort);
-        }
-
-
-        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
-        imageRecyclerView.setAdapter(iAdapter);
-        iAdapter.notifyDataSetChanged();
-//        dialog.dismiss();
-
+//        imageRecyclerView.setLayoutManager(manager);
+//        PublicMethod pictures = new PublicMethod(this);
+//        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
+//            imageViewLists=pictures.getPictureLists(sort,date);
+//        }else{
+//            itemPictureList(sort);
+//        }
+//
+//
+//        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
+//        imageRecyclerView.setAdapter(iAdapter);
+//        iAdapter.notifyDataSetChanged();
     }
 
     public void initIntent() {

@@ -140,7 +140,51 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         btnPicList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder datePickDialog=new AlertDialog.Builder(OutCargoActivity.this);
+                DatePicker datePicker=new DatePicker(OutCargoActivity.this);
+                final String[] date = {new SimpleDateFormat("yyyy-MM-dd").format(new Date())};
+                datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+                    @Override
+                    public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+                        String month,day;
+                        if((i1+1)<10){
+                            month="0"+(i1+1);
+                        }else{
+                            month=String.valueOf(i1);
+                        }
+                        if(i2<10){
+                            day="0"+i2;
+                        }else{
+                            day=String.valueOf(i2);
+                        }
+                        date[0] =i+"-"+month+"-"+day;
+                        Toast.makeText(OutCargoActivity.this,date[0]+" 선택 되었습니다.",Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                datePickDialog.setTitle("날짜 검색 설정창")
+                        .setView(datePicker)
+                        .setPositiveButton("검색", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                pictureUpdate("Re",date[0]);
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        btnPicList.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
                 publicMethod.imageViewListCount();
+                return true;
             }
         });
         btnPicCount=findViewById(R.id.outCargo_picCount);
@@ -234,19 +278,19 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                                 ani.setRepeatCount(Animation.INFINITE);
                                 switch(i){
                                     case 0:
-                                        pictureUpdate("Ori");
+                                        pictureUpdate("Ori",dateToday);
                                         btnPicList.setText("업무원본사진");
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
                                         break;
                                     case 1:
-                                        pictureUpdate("All");
+                                        pictureUpdate("All",dateToday);
                                         btnPicList.setText("디바이스 전체 사진");
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
                                         break;
                                     case 2:
-                                        pictureUpdate("Re");
+                                        pictureUpdate("Re",dateToday);
                                         btnPicList.setText("서버전송용 조정사진");
                                         btnPicCount.setText("전송사진을 선택 하세요");
                                         btnPicCount.startAnimation(ani);
@@ -282,7 +326,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         }else{
             list=(ArrayList<OutCargoList>)getIntent().getSerializableExtra("listOut");
             consigneeName=getIntent().getStringExtra("consigneeName");
-            pictureUpdate("Re");
+            pictureUpdate("Re",dateToday);
 //            publicMethod.getRemarkValue(getIntent().getStringExtra("refPath"));
             publicMethod.getRemarkValue(list.get(0).getManagementNo());
 
@@ -343,7 +387,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                 consigneeName+"_"+list.get(position).getDescription()+list.get(position).getTotalQty();
         listPosition=position;
         getOutcargoData(refPath);
-        pictureUpdate("Re");
+        pictureUpdate("Re",dateToday);
         PublicMethod publicMethod=new PublicMethod(this);
 
 
@@ -434,7 +478,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
                         break;
                     case 1:
                         updateValue("완");
-                        pictureUpdate("Re");
+                        pictureUpdate("Re",dateToday);
                         break;
                     case 2:
                         updateValue("미");
@@ -580,7 +624,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     }
 
 
-    private void pictureUpdate(String sort) {
+    private void pictureUpdate(String sort,String date) {
         if(fltBtn.getVisibility()==View.INVISIBLE){
             fltBtn.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.VISIBLE);
@@ -595,7 +639,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         imageRecyclerView.setLayoutManager(manager);
 
         PublicMethod getImageLists=new PublicMethod(this);
-        imageViewLists=getImageLists.getPictureLists(sort);
+        imageViewLists=getImageLists.getPictureLists(sort,date);
 
         iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
         imageRecyclerView.setAdapter(iAdapter);

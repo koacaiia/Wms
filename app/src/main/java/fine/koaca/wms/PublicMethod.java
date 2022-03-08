@@ -128,7 +128,7 @@ public class PublicMethod {
 
 
     }
-    public ArrayList<String> getPictureLists(String sort){
+    public ArrayList<String> getPictureLists(String sort,String date){
         ArrayList<String> imageViewLists=new ArrayList<>();
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};
@@ -139,15 +139,15 @@ public class PublicMethod {
             File file=null;
             switch(sort){
                 case "Re":
-                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입," +
-                        "출고/Resize");
+                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/" +
+                        date+"/Resize");
                     break;
                 case "All":
                     file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));
                     break;
                 case "Ori":
-                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입," +
-                            "출고/Ori");
+                    file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/" +
+                            date+"/Ori");
                     break;
             }
             String strFile=String.valueOf(file);
@@ -320,9 +320,12 @@ public class PublicMethod {
     SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
     String nickName=sharedPreferences.getString("nickName",null);
     String deptName=sharedPreferences.getString("deptName",null);
+    String listImageViewCount=sharedPreferences.getString("imageViewListCount","3");
+
 
     userInformation.put("nickName",nickName);
     userInformation.put("deptName",deptName);
+    userInformation.put("imageViewListCount",listImageViewCount);
 
     return userInformation;
     }
@@ -1390,7 +1393,6 @@ public void LocationReg(String refPath){
 //               .show();
                 Intent intent=new Intent(activity,Location.class);
                 activity.startActivity(intent);
-
-
 }
+
 }

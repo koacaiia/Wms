@@ -58,8 +58,6 @@ public class ImageViewActivityAdapter extends RecyclerView.Adapter<ImageViewActi
         }else{
             holder.itemView.setBackgroundColor(Color.BLACK);
         }
-
-
     }
 
     @Override

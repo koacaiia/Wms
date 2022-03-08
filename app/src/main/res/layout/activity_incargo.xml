@@ -168,9 +168,11 @@
                 </androidx.cardview.widget.CardView>
 
                 <LinearLayout
+                    android:id="@+id/incargo_linearLayoutRe"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="0.5"
+                    android:clickable="true"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -207,8 +209,7 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/incargo_recyclerView_image"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                       >
+                        android:layout_height="wrap_content">
 
                     </androidx.recyclerview.widget.RecyclerView>
 

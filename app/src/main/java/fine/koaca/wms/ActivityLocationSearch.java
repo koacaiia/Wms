@@ -48,7 +48,7 @@ public class ActivityLocationSearch extends AppCompatActivity implements Incargo
         PublicMethod publicMethod=new PublicMethod(this);
         deptName=publicMethod.getUserInformation().get("deptName");
 
-        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
                 String consigneeList=sharedPreferences.getString("consigneeList",null);
                 ArrayList<String> consigneeArr=publicMethod.extractChar(consigneeList,',');
 
@@ -167,9 +167,7 @@ public class ActivityLocationSearch extends AppCompatActivity implements Incargo
                                     if(blValue.contains(bl)){
                                         list.add(data);
                                     }
-
                                 }
-
                             }
                             adapter.notifyDataSetChanged();
                         }

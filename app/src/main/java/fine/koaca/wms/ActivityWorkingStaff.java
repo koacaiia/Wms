@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,23 +41,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
 public class ActivityWorkingStaff extends AppCompatActivity {
     TextView textViewTitle;
     RecyclerView recyclerView;
     RecyclerView recyclerViewResult;
     FirebaseDatabase database;
     DatabaseReference databaseReference;
-    ArrayList<ActivityWorkingStaffList> list;
-    ArrayList<ActivityWorkingStaffList> listResult;
+    ArrayList<ListOutSourcingValue> list;
+    ArrayList<ListOutSourcingValue> listResult;
     ActivityWorkingStaffAdapter adapter;
     ActivityWorkingStaffAdapter adapterResult;
     PublicMethod publicMethod;
     String nickName,deptName,toDay;
 
     Button btnRegStaff;
-    String outsourcingValue;
     String dateToDay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,16 +120,13 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         Spinner spConsigneeName=view.findViewById(R.id.dialog_date_select_spinnername);
 
         ArrayList<String> consigneeListArr=new ArrayList<>();
-        databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaff");
+        databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue/");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot data:snapshot.getChildren()){
-                    ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    assert mList != null;
-                    if(!mList.getOutsourcingValue().equals("") && !consigneeListArr.contains(mList.getOutsourcingValue())){
-                        consigneeListArr.add(mList.getOutsourcingValue());
-                    }
+                   consigneeListArr.add(data.getKey());
+
                 }
                 ArrayAdapter<String> consigneeAdapter=
                         new ArrayAdapter<String>(ActivityWorkingStaff.this,android.R.layout.simple_spinner_dropdown_item,
@@ -208,6 +203,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         btnWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar=Calendar.getInstance();
                 calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
                 startDay[0]=date.format(calendar.getTime());
                 calendar.add(Calendar.DATE,5);
@@ -222,6 +218,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         btnTomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar=Calendar.getInstance();
                 calendar.add(Calendar.DATE,1);
                 startDay[0]=date.format(calendar.getTime());
                 endDay[0]=date.format(calendar.getTime());
@@ -234,6 +231,7 @@ public class ActivityWorkingStaff extends AppCompatActivity {
         btnBeforeWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Calendar calendar=Calendar.getInstance();
                 calendar.add(Calendar.DATE,-7);
                 calendar.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
                 startDay[0]=date.format(calendar.getTime());
@@ -358,68 +356,64 @@ public class ActivityWorkingStaff extends AppCompatActivity {
     }
 
     private void getDataSortByDate(String consigneeName, String startDay, String endDay) {
-        String trStartDay,trEndDay,trDate;
-        trStartDay=startDay.replace("-","");
-        trEndDay=endDay.replace("-","");
+        String trStartDay, trEndDay, trDate;
+        trStartDay = startDay.replace("-", "");
+        trEndDay = endDay.replace("-", "");
         list.clear();
         listResult.clear();
-        databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaff");
-        ValueEventListener listener=new ValueEventListener() {
+        databaseReference = database.getReference("DeptName/" + deptName + "/WorkingStaffCheck");
+        ValueEventListener listener = new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                double fineStaff=0,fineWomenStaff=0,outsourcingMale=0,outsourcingFemale=0;
-                ArrayList<String> consigneeListArr=new ArrayList<>();
-                for(DataSnapshot data:snapshot.getChildren()){
-                    ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    fineStaff=fineStaff+Double.parseDouble(mList.getFineStaff());
-                    fineWomenStaff=fineWomenStaff+Double.parseDouble(mList.getFineWomenStaff());
-                    outsourcingMale=outsourcingMale+Double.parseDouble(mList.getOutsourcingMale());
-                    outsourcingFemale=outsourcingFemale+Double.parseDouble(mList.getOutsourcingFemale());
+                double fineStaff = 0, fineWomenStaff = 0,outMale=0,outFemale=0,outEquip=0;
+                for (DataSnapshot data : snapshot.getChildren()) {
 
-                    if(!mList.getOutsourcingValue().equals("")){
-                        ActivityWorkingStaffList mList1=new ActivityWorkingStaffList(mList.getDate(),"","",
-                                String.valueOf(mList.getOutsourcingMale()),String.valueOf(mList.getOutsourcingFemale()),
-                                mList.getOutsourcingValue());
-                        list.add(mList1);
-                        if(!consigneeListArr.contains(mList.getOutsourcingValue())){
-                            consigneeListArr.add(mList.getOutsourcingValue());
-                            Log.i("TestValue","consigneeListArr size::::"+consigneeListArr.size());
-                        }
+                    ListOutSourcingValue mList = data.getValue(ListOutSourcingValue.class);
+                    assert mList != null;
+                    String outValue=mList.getGender();
+                    String outName=mList.getName();
+                    if(outName.equals(consigneeName)){
+                        switch(outValue){
+                            case "남자":
+                                outMale=outMale+mList.getCount();
+                                break;
+                            case "여자":
+                                outFemale=outFemale+mList.getCount();
+                                break;
+                            case "장비운행":
+                                outEquip=outEquip+mList.getCount();
+                                break;
+                            }
+                        list.add(mList);
+                    }
+                    switch(outValue){
+
+
+                        case "Staff":
+                            fineStaff=fineStaff+mList.getCount();
+                            break;
+                        case "WomenStaff":
+                            fineWomenStaff=fineWomenStaff+mList.getCount();
+                            break;
+
                     }
 
-                }
-                int listSize=list.size();
-                int consigneeListSize= consigneeListArr.size();
-                for(int i=0;i<consigneeListSize;i++) {
-                    double outMale=0,outFemale=0;
-                    for (int j = 0; j < listSize; j++) {
-                        if (consigneeListArr.get(i).equals(list.get(j).getOutsourcingValue())) {
-                            outMale=outMale+Double.parseDouble(list.get(j).getOutsourcingMale());
-                            outFemale=outFemale+Double.parseDouble(list.get(j).getOutsourcingFemale());
-                        }
-                    }
-                    ActivityWorkingStaffList mList2=new ActivityWorkingStaffList(startDay+"/"+endDay,"","",
-                            String.valueOf(outMale),String.valueOf(outFemale),
-                            consigneeListArr.get(i));
-                    listResult.add(mList2);
-                }
 
-                adapter.notifyDataSetChanged();
-                adapterResult.notifyDataSetChanged();
+                }
+                textViewTitle.setText(startDay+"~"+endDay+" 출근현황("+consigneeName+")");
+                TextView txtOutsourcingMale = findViewById(R.id.activityworkingstaff_outsourcingmen);
+                txtOutsourcingMale.setText("총:" + outMale + " 명");
+                TextView txtOutsourcingFemale = findViewById(R.id.activityworkingstaff_outsourcingwmen);
+                txtOutsourcingFemale.setText("총:" + outFemale + " 명");
+                TextView txtOutsourcingEquip = findViewById(R.id.activityworkingstaff_outsourcingEquip);
+                txtOutsourcingEquip.setText("총:" + outEquip + " 명");
                 TextView txtFineStaff=findViewById(R.id.activityworkingstaff_finestaff);
                 txtFineStaff.setText("총:"+fineStaff+" 명");
-                TextView txtFineWomenStaff=findViewById(R.id.activityworkingstaff_finewomen);
-                txtFineWomenStaff.setText("총:"+fineWomenStaff+" 명");
-                TextView txtOutsourcingMale=findViewById(R.id.activityworkingstaff_outsourcingmen);
-                txtOutsourcingMale.setText("총:"+outsourcingMale+" 명");
-                TextView txtOutsourcingFemale=findViewById(R.id.activityworkingstaff_outsourcingwmen);
-                txtOutsourcingFemale.setText("총:"+outsourcingFemale+" 명");
+                TextView txtFineWStaff=findViewById(R.id.activityworkingstaff_finewomen);
+                txtFineWStaff.setText("총:"+fineWomenStaff+"명 ");
 
-//                ActivityWorkingStaffList mList=new ActivityWorkingStaffList(startDay+"/"+endDay,String.valueOf(fineStaff),
-//                        String.valueOf(fineWomenStaff),String.valueOf(outsourcingMale),String.valueOf(outsourcingFemale),
-//                        consigneeName);
-
+                adapter.notifyDataSetChanged();
 
             }
 
@@ -428,8 +422,62 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
             }
         };
-        Query sortByDate=databaseReference.orderByChild("date").startAt(startDay).endAt(endDay);
+        Query sortByDate = databaseReference.orderByChild("date").startAt(startDay).endAt(endDay);
         sortByDate.addListenerForSingleValueEvent(listener);
+
+
+        ValueEventListener outsourcingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    String outKey = data.getKey();
+
+                    if (outKey.contains("OutsourcingValue")) {
+                        DatabaseReference outRef=database.getReference("DeptName/" + deptName + "/WorkingStaff/" + outKey);
+                        outRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                double outsourcingMale = 0, outsourcingFemale = 0, outsourcingEquip = 0;
+                                for(DataSnapshot data:snapshot.getChildren()){
+                                    ListOutSourcingValue outList = data.getValue(ListOutSourcingValue.class);
+                                    String gender=outList.getGender();
+                                    if (gender.contains("남자")) {
+                                        outsourcingMale = outsourcingMale + outList.getCount();
+                                    }
+                                    if (gender.contains("여자")) {
+                                        outsourcingFemale = outsourcingFemale + outList.getCount();
+                                    }
+                                    if (gender.contains("장비")) {
+                                        outsourcingEquip = outsourcingEquip + outList.getCount();
+                                    }
+                                    listResult.add(outList);
+                                }
+
+                                adapterResult.notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+
+
+
+
+                    }
+
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        };
+        databaseReference.addListenerForSingleValueEvent(outsourcingListener);
     }
 
 
@@ -440,7 +488,16 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
         Button btnDate=view.findViewById(R.id.dialog_putworkingstaff_btnDate);
         btnDate.setText(date);
-        TextView textView=view.findViewById(R.id.dialog_putworkingstaff_txtscroll);
+        TextView txtDate=view.findViewById(R.id.dialog_putworkingstaff_txtDate);
+        txtDate.setText(dateToDay);
+        Button btnFineStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinestaff);
+        TextView txtFineStaff=view.findViewById(R.id.dialog_putworkingstaff_txtFinestaff);
+        txtFineStaff.setText(String.valueOf(5.0));
+        Button btnWfineStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinewomenstaff);
+        TextView txtWfineStaff=view.findViewById(R.id.dialog_putworkingstaff_txtFineWomenStaff);
+        txtWfineStaff.setText(String.valueOf(1.0));
+        Button btnOutSourcing=view.findViewById(R.id.dialog_putworkingstaff_btnOutsourcing);
+        TextView scrOutSourcingTitle=view.findViewById(R.id.dialog_putworkingstaff_txtscroll);
 
         btnDate.setOnClickListener(new View.OnClickListener() {
                                        @Override
@@ -467,8 +524,11 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                                                    .setPositiveButton("등록", new DialogInterface.OnClickListener() {
                                                                @Override
                                                                public void onClick(DialogInterface dialog, int which) {
+                                                                   if(date[0]==null){
+                                                                      date[0]= btnDate.getText().toString();
+                                                                   }
                                                                    btnDate.setText(date[0]);
-                                                                   textView.append(date[0]+" 로 날짜 등록");
+                                                                   txtDate.setText(date[0]);
                                                                }
                                                            }
                                                    )
@@ -483,131 +543,185 @@ public class ActivityWorkingStaff extends AppCompatActivity {
                                    }
         );
 
+        btnFineStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+           AlertDialog.Builder fineStaffDialog=new AlertDialog.Builder(ActivityWorkingStaff.this);
+           EditText editText=new EditText(ActivityWorkingStaff.this);
+           editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+           fineStaffDialog.setTitle("부서원출근 등록")
+                   .setView(editText)
+                   .setPositiveButton("출근등록", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int i) {
+                           double dFineStaff=Double.parseDouble(editText.getText().toString());
+                           txtFineStaff.setText(String.valueOf(dFineStaff));
+                       }
+                   })
+                   .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int i) {
+
+                       }
+                   })
+                   .show();
+            }
+        });
+
+        btnWfineStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder wFineStaff=new AlertDialog.Builder(ActivityWorkingStaff.this);
+                EditText editText=new EditText(ActivityWorkingStaff.this);
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                wFineStaff.setTitle("화인 소속 주부사원 출근등록")
+                        .setView(editText)
+                        .setPositiveButton("출근등록", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                double dWfineStaff=Double.parseDouble(editText.getText().toString());
+                                txtWfineStaff.setText(String.valueOf(dWfineStaff));
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        })
+                        .show();
+
+            }
+        });
+
+        btnOutSourcing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String[] outsourcingName = new String[1];
+                final String[] outsourcingGender = new String[1];
+                list.clear();
+           AlertDialog.Builder outSourcingBuilder=new AlertDialog.Builder(ActivityWorkingStaff.this);
+           View outsourcingView=getLayoutInflater().inflate(R.layout.dialog_putworkingstaff_outsourcing,null);
+           Spinner spOutsourcing=outsourcingView.findViewById(R.id.dialog_putworkingstaff_outsourcing_spinner);
+           Spinner spOutsourcingName=outsourcingView.findViewById(R.id.dialog_putworkingstaff_outsourcing_spoutsourcingName);
+           EditText editOutsourcingCount=outsourcingView.findViewById(R.id.dialog_putworkingstaff_outsourcing_editCount);
+           ArrayList<String> outsourcingGenderList=new ArrayList<>();
+           outsourcingGenderList.add("남자");
+           outsourcingGenderList.add("장비운행");
+           outsourcingGenderList.add("여자");
+           ArrayAdapter<String> spOutsourcingNameAdapter=new ArrayAdapter<>(ActivityWorkingStaff.this,
+                   android.R.layout.simple_spinner_dropdown_item,outsourcingGenderList);
+           spOutsourcingNameAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+           spOutsourcingName.setAdapter(spOutsourcingNameAdapter);
+           spOutsourcingName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+               @Override
+               public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                   outsourcingGender[0] =outsourcingGenderList.get(i);
+                   if(i==1){
+                       editOutsourcingCount.setText(String.valueOf(2));
+                   }
+               }
+
+               @Override
+               public void onNothingSelected(AdapterView<?> adapterView) {
+
+               }
+           });
+
+           TextView txtScroll=outsourcingView.findViewById(R.id.dialog_putworkingstaff_outsourcing_txtscroll);
+           Button btnReg=outsourcingView.findViewById(R.id.dialog_putworkingstaff_outsourcing_btnReg);
+           btnReg.setOnClickListener(new View.OnClickListener() {
+               @SuppressLint("SetTextI18n")
+               @Override
+               public void onClick(View view) {
+                   if(editOutsourcingCount.getText().toString().equals("")){
+                       Toast.makeText(ActivityWorkingStaff.this,"인원 등록 안되었습니다.다시 확인 바랍니다.",Toast.LENGTH_SHORT).show();
+                       return;
+                   }
+                   ListOutSourcingValue value=new ListOutSourcingValue(txtDate.getText().toString(),outsourcingName[0],
+                           outsourcingGender[0],
+                           Double.parseDouble(editOutsourcingCount.getText().toString()));
+                   list.add(value);
+                   txtScroll.setText(txtScroll.getText().toString()+outsourcingName[0]+"("+outsourcingGender[0]+")="+editOutsourcingCount.getText().toString()+
+                      "\n");
+               }
+           });
+
+
+           databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue");
+           databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+               @Override
+               public void onDataChange(@NonNull DataSnapshot snapshot) {
+                   ArrayList<String> outsourcingValueList=new ArrayList<>();
+                   for(DataSnapshot data:snapshot.getChildren()){
+                       outsourcingValueList.add(data.getKey());
+                       }
+                   ArrayAdapter<String> spOutsourcingAdapter=new ArrayAdapter<String>(ActivityWorkingStaff.this,
+                           android.R.layout.simple_spinner_dropdown_item,outsourcingValueList);
+                   spOutsourcingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                   spOutsourcing.setAdapter(spOutsourcingAdapter);
+                   spOutsourcing.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                       @Override
+                       public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                            outsourcingName[0] =outsourcingValueList.get(i);
+
+                       }
+
+                       @Override
+                       public void onNothingSelected(AdapterView<?> adapterView) {
+
+                       }
+                   });
+               }
+
+               @Override
+               public void onCancelled(@NonNull DatabaseError error) {
+
+               }
+           });
+           outSourcingBuilder.setView(outsourcingView)
+                   .setPositiveButton("등록", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int i) {
+                           scrOutSourcingTitle.setText(txtScroll.getText().toString());
+                       }
+                   })
+                   .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                       @Override
+                       public void onClick(DialogInterface dialogInterface, int i) {
+
+                       }
+                   })
+                   .show();
+
+            }
+        });
 
 
 
-
-//        Spinner spOutsourcingValue=view.findViewById(R.id.dialog_putworkingstaff_spinneroutsourcing);
-//        databaseReference=database.getReference("DeptName/"+deptName+"/OutSourcingValue");
-//        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                ArrayList<String> outsourcingValueList=new ArrayList<>();
-//                for(DataSnapshot data:snapshot.getChildren()){
-//
-//                    outsourcingValueList.add(data.getKey());
-//                }
-//                outsourcingValueList.add(0,"");
-//                ArrayAdapter<String> spOutsourcingAdapter=new ArrayAdapter<String>(ActivityWorkingStaff.this,
-//                        android.R.layout.simple_spinner_dropdown_item,outsourcingValueList);
-//                spOutsourcingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                spOutsourcingValue.setAdapter(spOutsourcingAdapter);
-//                spOutsourcingValue.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                    @Override
-//                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                        outsourcingValue=outsourcingValueList.get(position);
-//                        if(!outsourcingValue.equals("")){
-//                            Toast.makeText(ActivityWorkingStaff.this,outsourcingValue+" 선텍",Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//
-//                    @Override
-//                    public void onNothingSelected(AdapterView<?> parent) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//        Button btnFineStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinestaff);
-//        btnFineStaff.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(editStaffCount.getText().toString().equals("")){
-//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                double count= Double.parseDouble(editStaffCount.getText().toString());
-//                editStaffCount.setText("");
-//                if(textView.getText().toString().equals("")){
-//                    textView.setText(deptName+" 출근인원:"+count+"명으로 서버 등록");
-//                }else{
-//                    textView.append("\n"+deptName+" 출근인원:"+count+"명으로 서버 등록");
-//                }
-//               putDialogRegStaff("fineStaff", btnDate.getText().toString(),count);
-//
-//
-//            }
-//        });
-//        Button btnFineWomenStaff=view.findViewById(R.id.dialog_putworkingstaff_btnfinewomenstaff);
-//        btnFineWomenStaff.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(editStaffCount.getText().toString().equals("")){
-//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                double count= Double.parseDouble(editStaffCount.getText().toString());
-//                putDialogRegStaff("fineWomenStaff", btnDate.getText().toString(),count);
-//                if(textView.getText().toString().equals("")){
-//                    textView.setText("화인주부사원 출근인원:"+count+"명으로 서버 등록");
-//                }else{
-//                    textView.append("\n"+"화인주부사원 출근인원:"+count+"명으로 서버 등록");
-//                }
-//                editStaffCount.setText("");
-//            }
-//        });
-//        Button btnOutsourcingMale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingmale);
-//        btnOutsourcingMale.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(editStaffCount.getText().toString().equals("")){
-//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                double count= Double.parseDouble(editStaffCount.getText().toString());
-//                if(outsourcingValue==null||outsourcingValue.equals("")){
-//                    Toast.makeText(ActivityWorkingStaff.this,"아웃소싱업체 공란 입니다.확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                putDialogRegStaff("M_"+outsourcingValue, btnDate.getText().toString(),count);
-//                if(textView.getText().toString().equals("")){
-//                    textView.setText(outsourcingValue+"(남):"+count+"명으로 서버 등록");
-//                }else{
-//                    textView.append("\n"+outsourcingValue+"(남):"+count+"명으로 서버 등록");
-//                }
-//                editStaffCount.setText("");
-//            }
-//        });
-//        Button btnOutsourcingFemale=view.findViewById(R.id.dialog_putworkingstaff_btnoutsourcingfemale);
-//        btnOutsourcingFemale.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(editStaffCount.getText().toString().equals("")){
-//                    Toast.makeText(ActivityWorkingStaff.this,"출근인원 다시 확인후 진행 바랍니다.",Toast.LENGTH_SHORT).show();
-//                    return;
-//                }
-//                double count= Double.parseDouble(editStaffCount.getText().toString());
-//                putDialogRegStaff("FE_"+outsourcingValue, btnDate.getText().toString(),count);
-//                if(textView.getText().toString().equals("")){
-//                    textView.setText(outsourcingValue+"(여):"+count+"명으로 서버 등록");
-//                }else{
-//                    textView.append("\n"+outsourcingValue+"(여):"+count+"명으로 서버 등록");
-//                }
-//                editStaffCount.setText("");
-//            }
-//        });
         builder.setTitle("출근 인원 등록창")
                 .setView(view)
                 .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                            getDatabaseData(dateToDay);
+//                            getDatabaseData(dateToDay);
+
+                        double countFineStaff= Double.parseDouble(txtFineStaff.getText().toString());
+                        double countWfineStaff= Double.parseDouble(txtWfineStaff.getText().toString());
+                        ListOutSourcingValue value=new ListOutSourcingValue(txtDate.getText().toString(),"Fine",
+                                "Staff",countFineStaff);
+                        list.add(value);
+                        ListOutSourcingValue valueW=new ListOutSourcingValue(txtDate.getText().toString(),"Fine",
+                                "WomenStaff",countWfineStaff);
+                        list.add(valueW);
+
+                        putDialogRegStaff(txtDate.getText().toString());
+                    }
+                })
+                .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
                     }
                 })
 
@@ -615,29 +729,19 @@ public class ActivityWorkingStaff extends AppCompatActivity {
 
     }
 
-    private void putDialogRegStaff(String contents, String date, double count) {
+    private void putDialogRegStaff(String date) {
+        String outsourcingBasicPath="DeptName/"+deptName+"/WorkingStaffCheck/"+date;
 
-        databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaff/"+date+"_"+contents);
-        ActivityWorkingStaffList list=new ActivityWorkingStaffList(date,"0","0","0","0","");
-        databaseReference.setValue(list);
-        String strcount=String.valueOf(count);
-        Map<String,Object> value=new HashMap<>();
-        if(contents.equals("fineStaff")||contents.equals("fineWomenStaff")){
-        value.put(contents,strcount);
+        for(int i=0;i<list.size();i++){
+            String outsourcingName=list.get(i).getName();
+            String outsourcingGender=list.get(i).getGender();
+            double outsourcingCount=list.get(i).getCount();
+            DatabaseReference outsourcingRef=
+                    database.getReference(outsourcingBasicPath+"_"+outsourcingName+"_"+outsourcingGender);
+            ListOutSourcingValue listOutSourcingValue=new ListOutSourcingValue(date,outsourcingName,outsourcingGender,
+                    outsourcingCount);
+            outsourcingRef.setValue(listOutSourcingValue);
         }
-
-        if(contents.contains("M_")){
-            contents=contents.replace("M_","");
-            value.put("outsourcingMale",strcount);
-            value.put("outsourcingValue",contents);
-        }
-       if(contents.equals("FE_")){
-           contents=contents.replace("FE_","");
-           value.put("outsourcingFemale",strcount);
-           value.put("outsourcingValue",contents);
-       }
-       databaseReference.updateChildren(value);
-
    }
 
     @Override
@@ -701,38 +805,56 @@ public class ActivityWorkingStaff extends AppCompatActivity {
     }
 
     private void getDatabaseData(String dateToDay) {
-        databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaff/");
+        databaseReference=database.getReference("DeptName/"+deptName+"/WorkingStaffCheck/");
         ValueEventListener listener=new ValueEventListener() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                double intF=0;
-                double intWf=0;
+                double intF=0.0;
+                double intWf=0.0;
                 double intoF=0;
                 double intoM=0;
-                for(DataSnapshot data:snapshot.getChildren()){
-                    ActivityWorkingStaffList mList=data.getValue(ActivityWorkingStaffList.class);
-                    assert mList != null;
-                    if(mList.getDate().equals(dateToDay)){
-                       intF=intF+Double.parseDouble(mList.getFineStaff());
-                       intWf=intWf+Double.parseDouble(mList.getFineWomenStaff());
-                       intoF=intoF+Double.parseDouble(mList.getOutsourcingFemale());
-                       intoM=intoM+Double.parseDouble(mList.getOutsourcingMale());
-                        if(!mList.getOutsourcingValue().equals("")){
-                            list.add(mList);
-                        }
-                   }
-                   }
+                double intoE=0;
 
-                TextView txtFineStaff=findViewById(R.id.activityworkingstaff_finestaff);
-                txtFineStaff.setText(intF+"명");
-                TextView txtFineStaffWomen=findViewById(R.id.activityworkingstaff_finewomen);
-                txtFineStaffWomen.setText(intWf+"명");
+                for(DataSnapshot data:snapshot.getChildren()){
+                  if(data.getKey().contains(dateToDay)){
+                      ListOutSourcingValue mList=data.getValue(ListOutSourcingValue.class);
+                      assert mList != null;
+                      String keyValue=data.getKey();
+
+                      if(keyValue.contains("장비")){
+                          intoE=intoE+mList.getCount();
+                      }
+                      if(keyValue.contains("남자")){
+                          intoM=intoM+mList.getCount();
+                      }
+                      if(keyValue.contains("여자")){
+                          intoF=intoF+mList.getCount();
+                      }
+                      if(keyValue.contains("Fine_Staff")){
+                          intF=intF+mList.getCount();
+                      }
+                      if(keyValue.contains("Fine_WomenStaff")){
+                          intWf=intWf+mList.getCount();
+                      }
+                      list.add(mList);
+
+                  }
+
+
+                   }
                 TextView txtOutsourcingMale=findViewById(R.id.activityworkingstaff_outsourcingwmen);
                 txtOutsourcingMale.setText(intoF+"명");
                 TextView txtOutsourcingFemale=findViewById(R.id.activityworkingstaff_outsourcingmen);
                 txtOutsourcingFemale.setText(intoM+"명");
+                TextView txtOutsourcingEquip=findViewById(R.id.activityworkingstaff_outsourcingEquip);
+                txtOutsourcingEquip.setText(intoE+"명");
+                TextView txtFineStaff=findViewById(R.id.activityworkingstaff_finestaff);
+                txtFineStaff.setText(intF+"명");
+                TextView txtFineStaffWomen=findViewById(R.id.activityworkingstaff_finewomen);
+                txtFineStaffWomen.setText(intWf+"명");
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override

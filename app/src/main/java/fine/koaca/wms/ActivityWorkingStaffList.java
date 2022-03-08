@@ -2,32 +2,15 @@ package fine.koaca.wms;
 
 public class ActivityWorkingStaffList {
     String date;
-    String fineStaff;
-    String fineWomenStaff;
-    String outsourcingMale;
-    String outsourcingFemale;
-    String outsourcingValue;
-
-    public String getOutsourcingValue() {
-        return outsourcingValue;
-    }
-
-    public void setOutsourcingValue(String outsourcingValue) {
-        this.outsourcingValue = outsourcingValue;
-    }
-
+    double fineStaff;
+    double fineWomenStaff;
     public ActivityWorkingStaffList(){
 
     }
-
-    public ActivityWorkingStaffList(String date, String fineStaff, String fineWomenStaff, String outsourcingMale,
-                                    String outsourcingFemale,String outsourcingValue) {
+    public ActivityWorkingStaffList(String date, double fineStaff, double fineWomenStaff) {
         this.date = date;
         this.fineStaff = fineStaff;
         this.fineWomenStaff = fineWomenStaff;
-        this.outsourcingMale = outsourcingMale;
-        this.outsourcingFemale = outsourcingFemale;
-        this.outsourcingValue=outsourcingValue;
     }
 
     public String getDate() {
@@ -38,35 +21,19 @@ public class ActivityWorkingStaffList {
         this.date = date;
     }
 
-    public String getFineStaff() {
+    public double getFineStaff() {
         return fineStaff;
     }
 
-    public void setFineStaff(String fineStaff) {
+    public void setFineStaff(double fineStaff) {
         this.fineStaff = fineStaff;
     }
 
-    public String getFineWomenStaff() {
+    public double getFineWomenStaff() {
         return fineWomenStaff;
     }
 
-    public void setFineWomenStaff(String fineWomenStaff) {
+    public void setFineWomenStaff(double fineWomenStaff) {
         this.fineWomenStaff = fineWomenStaff;
-    }
-
-    public String getOutsourcingMale() {
-        return outsourcingMale;
-    }
-
-    public void setOutsourcingMale(String outsourcingMale) {
-        this.outsourcingMale = outsourcingMale;
-    }
-
-    public String getOutsourcingFemale() {
-        return outsourcingFemale;
-    }
-
-    public void setOutsourcingFemale(String outsourcingFemale) {
-        this.outsourcingFemale = outsourcingFemale;
     }
 }
