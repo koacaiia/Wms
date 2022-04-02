@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -125,9 +126,8 @@ public class PublicMethod {
                     }
                 })
                 .show();
-
-
     }
+
     public ArrayList<String> getPictureLists(String sort,String date){
         ArrayList<String> imageViewLists=new ArrayList<>();
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -157,6 +157,25 @@ public class PublicMethod {
         }
         cursor.close();
         return imageViewLists;
+    }
+
+    public ArrayList<String> updatedGetImageList(String sort,String date){
+    ArrayList<String> imageViewLists=new ArrayList<>();
+    Cursor cursor;
+    String[] projection={MediaStore.Images.Media._ID,MediaStore.Images.Media.DISPLAY_NAME};
+    String sortOrder=MediaStore.Images.Media._ID+" DESC";
+    cursor=activity.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,projection,null,null,sortOrder);
+    int idColumns=cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID);
+    int displayNameColumn=cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+    while(cursor.moveToNext()){
+        long id=cursor.getLong(idColumns);
+        String displayNameColumnIndex=cursor.getString(displayNameColumn);
+        Uri contentUri=Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,String.valueOf(id));
+        String strUri=String.valueOf(contentUri);
+        imageViewLists.add(strUri);
+    }
+    cursor.close();
+    return imageViewLists;
     }
 
     public void putNewDataUpdateAlarm(String nickName,String message, String consigneeName, String inOut,String deptName
@@ -1394,5 +1413,6 @@ public void LocationReg(String refPath){
                 Intent intent=new Intent(activity,Location.class);
                 activity.startActivity(intent);
 }
+
 
 }

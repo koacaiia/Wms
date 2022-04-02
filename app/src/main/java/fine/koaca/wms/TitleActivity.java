@@ -111,8 +111,8 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
 
 
 
-//        Intent intent=new Intent(this,WorkingMessageData.class);
-//        startActivity(intent);
+        Intent intent=new Intent(this,ActivityWeekSchedule.class);
+        startActivity(intent);
 
         /*LOG Test
         Display display=getWindowManager().getDefaultDisplay();

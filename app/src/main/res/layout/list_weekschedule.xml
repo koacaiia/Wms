@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <TextView
+        android:id="@+id/list_weekschedule_consigneeName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:text="화주명" />
+    <TextView
+        android:id="@+id/list_weekschedule_40ft"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:text="40FT" />
+    <TextView
+        android:id="@+id/list_weekschedule_20ft"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:text="20FT" />
+    <TextView
+        android:id="@+id/list_weekschedule_cargp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textStyle="bold|italic"
+        android:text="Cago" />
+</LinearLayout>

@@ -27,6 +27,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wms">
         <activity
+            android:name=".ActivityWeekSchedule"
+            android:exported="false" />
+        <activity
             android:name=".ActivityLocationSearch"
             android:exported="false" />
         <activity
