@@ -1,5 +1,6 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -12,13 +13,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.text.StringPrepParseException;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -28,13 +27,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -72,10 +69,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import javax.security.auth.Destroyable;
 
 public class PublicMethod {
     Activity activity;
@@ -408,24 +403,22 @@ public class PublicMethod {
             }
         });
 
-        Button btnAnnual=view.findViewById(R.id.dialog_select_intent_btnAnnual);
-        btnAnnual.setOnClickListener(new View.OnClickListener() {
+        Button workingStaff=view.findViewById(R.id.dialog_select_intent_workingStaff);
+        workingStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent=new Intent(activity,ActivityWorkingStaff.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                Toast.makeText(activity.getApplicationContext(),"길게누르면 연,월차,휴가 등록 창 으로 전황 됩니다",Toast.LENGTH_SHORT).show();
                 activity.startActivity(intent);
             }
         });
-
-        btnAnnual.setOnLongClickListener(new View.OnLongClickListener() {
+        Button btnAnnual=view.findViewById(R.id.dialog_select_intent_btnAnnual);
+        btnAnnual.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View view) {
+            public void onClick(View view) {
                 Intent intent=new Intent(activity,AnnualLeave.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
-                return true;
             }
         });
 
@@ -458,12 +451,17 @@ public class PublicMethod {
                 Intent intent=new Intent(activity,ActivityLocationSearch.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 activity.startActivity(intent);
-
-//
-
               }
         });
-
+         Button btnSchedule=view.findViewById(R.id.dialog_select_intent_btnSchedule);
+         btnSchedule.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+            Intent intent=new Intent(activity,ActivityWeekSchedule.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            activity.startActivity(intent);
+             }
+         });
         builder.setView(view);
 
         AlertDialog dialog=builder.create();
@@ -583,6 +581,9 @@ public class PublicMethod {
             }
         });
     }
+
+
+
 
     public interface SendResponsedListener{
         void onRequestStarted();
@@ -1415,4 +1416,70 @@ public void LocationReg(String refPath){
 }
 
 
+
+
+
+public Map<String,String> getStartDayEndDay(String strTerms){
+@SuppressLint("SimpleDateFormat") SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
+Calendar calendarE=Calendar.getInstance();
+Calendar calendarS=Calendar.getInstance();
+Map<String,String> dateMap=new HashMap<>();
+String startDay = null,endDay = null;
+switch(strTerms){
+    case "LastWeek":
+        calendarS.add(Calendar.DATE,-7);
+        calendarS.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+        calendarE.add(Calendar.DATE,-7);
+        calendarE.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+        break;
+    case "ThisWeek":
+        calendarS.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+        calendarE.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+        break;
+
+    case "NextWeek":
+        calendarS.add(Calendar.DATE,7);
+        calendarS.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
+        calendarE.add(Calendar.DATE,7);
+        calendarE.set(Calendar.DAY_OF_WEEK,Calendar.FRIDAY);
+        break;
+    case "LastMonth":
+        calendarS.add(Calendar.DATE,-30);
+        break;
+    case "ThisMonth":
+        calendarS.set(Calendar.DAY_OF_MONTH,calendarE.getActualMinimum(Calendar.DAY_OF_MONTH));
+        calendarE.set(Calendar.DAY_OF_MONTH,calendarS.getActualMaximum(Calendar.DAY_OF_MONTH));
+        break;
+    case "NextMonth":
+        calendarE.add(Calendar.DATE,30);
+        break;
+    case "ThisYear":
+        calendarS.set(Calendar.DAY_OF_YEAR,calendarE.getActualMinimum(Calendar.DAY_OF_YEAR));
+        calendarE.set(Calendar.DAY_OF_YEAR,calendarS.getActualMaximum(Calendar.DAY_OF_YEAR));
+        break;
+
+    case "Tomorrow":
+        calendarS.add(calendarS.DATE,1);
+        calendarE=calendarS;
+        break;
+}
+startDay=formatter.format(calendarS.getTime());
+endDay=formatter.format(calendarE.getTime());
+dateMap.put("startDay",startDay);
+dateMap.put("endDay",endDay);
+return dateMap;
+}
+    public Map<String,String> getStartDayEndDay(int intTerms){
+        Calendar calendar=Calendar.getInstance();
+        SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        calendar.add(Calendar.DATE,-intTerms);
+        String startDay=dateFormat.format(calendar.getTime());
+        calendar=Calendar.getInstance();
+        calendar.add(Calendar.DATE,intTerms);
+        String endDay=dateFormat.format(calendar.getTime());
+        Map<String,String> dateMap=new HashMap<>();
+        dateMap.put("startDay",startDay);
+        dateMap.put("endDay",endDay);
+        return dateMap;
+    }
 }

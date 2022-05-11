@@ -33,10 +33,7 @@ public class CalendarPick {
 
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-            Log.i("Date_now",nowDated);
             Calendar c=Calendar.getInstance();
-
-
             c.set(Calendar.DAY_OF_WEEK,Calendar.MONDAY);
             date_mon=formatter.format(c.getTime());
             incargo.day_start=formatter.format(c.getTime());

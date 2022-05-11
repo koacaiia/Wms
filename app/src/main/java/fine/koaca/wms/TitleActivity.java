@@ -109,11 +109,6 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_title);
 
-
-
-        Intent intent=new Intent(this,ActivityWeekSchedule.class);
-        startActivity(intent);
-
         /*LOG Test
         Display display=getWindowManager().getDefaultDisplay();
         int width=display.getWidth();

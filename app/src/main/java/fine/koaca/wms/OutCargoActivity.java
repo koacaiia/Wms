@@ -76,7 +76,7 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     PublicMethod publicMethod;
     int listPosition;
 
-    Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet,btnPicList,btnPicCount;
+    Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet,btnPicList,btnPicCount,btnInformation,btnCamera,btnReset;
     LinearLayout linearLayout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +100,19 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
             }
         });
-
+        btnInformation=findViewById(R.id.outcargo_mnf);
+        btnCamera=findViewById(R.id.outcargo_camera);
+        btnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("depotName", deptName);
+                intent.putExtra("nickName", nickName);
+                startActivity(intent);
+            }
+        });
+        btnReset=findViewById(R.id.outcargo_reset);
 
         btnRegExPic=findViewById(R.id.outCargo_btnRegExPic);
         btnRegExPic.setOnClickListener(new View.OnClickListener() {

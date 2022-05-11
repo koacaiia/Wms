@@ -88,16 +88,13 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     Button incargo_reset;
     Button incargo_mnf;
 
-
     TextView incargo_incargo;
     TextView incargo_contents_date;
     TextView incargo_contents_consignee;
 
-
     String day_start;
     String day_end;
     String dateToday;
-
     String deptName;
     String nickName;
     String bl = "";
@@ -112,7 +109,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     Button reg_Button_bl;
     EditText reg_edit_container;
     Button reg_Button_container;
-
 
     EditText reg_edit_remark;
     Button reg_Button_remark;
@@ -176,6 +172,11 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 Log.i("TestValue","imageRecyclerView Clicked Checked=");
             }
         });
+        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,3);
+        imageRecyclerView.setLayoutManager(gridLayoutManager);
+        imageViewLists=publicMethod.getPictureLists("Re",dateToday);
+        iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
+        imageRecyclerView.setAdapter(iAdapter);
 
         fltBtn_share = findViewById(R.id.incargo_floatBtn_share);
         fltBtn_share.setVisibility(View.INVISIBLE);
@@ -403,7 +404,6 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
 
         fltBtn_Capture = findViewById(R.id.incargo_camera);
-
         fltBtn_Capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1814,18 +1814,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
         GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
 
-//        imageRecyclerView.setLayoutManager(manager);
-//        PublicMethod pictures = new PublicMethod(this);
-//        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
-//            imageViewLists=pictures.getPictureLists(sort,date);
-//        }else{
-//            itemPictureList(sort);
-//        }
-//
-//
-//        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
-//        imageRecyclerView.setAdapter(iAdapter);
-//        iAdapter.notifyDataSetChanged();
+        imageRecyclerView.setLayoutManager(manager);
+        PublicMethod pictures = new PublicMethod(this);
+        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
+            imageViewLists=pictures.getPictureLists(sort,date);
+        }else{
+            itemPictureList(sort);
+        }
+
+
+        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
+        imageRecyclerView.setAdapter(iAdapter);
+        iAdapter.notifyDataSetChanged();
     }
 
     public void initIntent() {

@@ -26,7 +26,7 @@
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
 
-            android:text="근태,츨근" />
+            android:text="근태 관리" />
 
         <Button
             android:id="@+id/dialog_select_intent_btnMessage"
@@ -68,35 +68,6 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/dialog_select_intent_init"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginVertical="2dp"
-            android:layout_weight="1"
-            android:backgroundTint="#000000"
-            android:text="초기화면"
-            android:textColor="#FFFFFF" />
-
-        <Button
-            android:id="@+id/dialog_select_intent_btnCamera"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="5dp"
-            android:layout_marginVertical="2dp"
-            android:layout_weight="1"
-            android:backgroundTint="#000000"
-            android:text="카메라"
-            android:textColor="#FFFFFF" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-
-        <Button
             android:id="@+id/dialog_select_intent_btnPallet"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -121,6 +92,28 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/dialog_select_intent_btnSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:layout_weight="1"
+            android:text="일정 관리" />
+
+        <Button
+            android:id="@+id/dialog_select_intent_workingStaff"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:layout_weight="1"
+            android:text="출근인원 관리" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <Button
             android:id="@+id/dialog_select_intent_btnLocation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -130,13 +123,49 @@
             android:text="Location 검색" />
 
         <Button
+            android:id="@+id/dialog_select_intent_init"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:layout_weight="1"
+            android:backgroundTint="#1A3770"
+            android:text="초기화면"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
             android:id="@+id/dialog_select_intent_btnFinish"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="2dp"
             android:layout_weight="1"
-            android:backgroundTint="#000000"
+            android:backgroundTint="#FF0101"
             android:text="어플종료" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dialog_select_intent_btnCamera"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:layout_weight="1"
+            android:backgroundTint="#000000"
+            android:text="카메라"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 </LinearLayout>

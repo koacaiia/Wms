@@ -1,38 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_width="50dp"
+    android:layout_height="100dp"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/list_weekschedule_consigneeName"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:autoSizeMaxTextSize="15sp"
+        android:autoSizeMinTextSize="1sp"
+        android:autoSizeTextType="uniform"
+        android:autoText="true"
         android:gravity="center"
-        android:textStyle="bold|italic"
-        android:text="화주명" />
+        android:text="화주명"
+        android:textStyle="bold|italic" />
+
     <TextView
         android:id="@+id/list_weekschedule_40ft"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:textStyle="bold|italic"
-        android:text="40FT" />
+        android:text="40FT"
+        android:textStyle="bold|italic" />
+
     <TextView
         android:id="@+id/list_weekschedule_20ft"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:textStyle="bold|italic"
-        android:text="20FT" />
+        android:text="20FT"
+        android:textStyle="bold|italic" />
+
     <TextView
-        android:id="@+id/list_weekschedule_cargp"
+        android:id="@+id/list_weekschedule_cargo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:gravity="center"
-        android:textStyle="bold|italic"
-        android:text="Cago" />
+        android:text="Cago"
+        android:textStyle="bold|italic" />
 </LinearLayout>
