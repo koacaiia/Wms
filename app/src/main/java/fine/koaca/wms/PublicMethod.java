@@ -504,7 +504,9 @@ public class PublicMethod {
 
             @Override
             public void onRequestCompleted() {
-
+                Intent intent=new Intent(activity.getApplicationContext(),WorkingMessageData.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(intent);
             }
 
             @Override
@@ -525,6 +527,7 @@ public class PublicMethod {
                     @Override
                     public void onResponse(JSONObject response) {
                         sendResponsedListener.onRequestCompleted();
+
                     }},
 
                 new Response.ErrorListener(){

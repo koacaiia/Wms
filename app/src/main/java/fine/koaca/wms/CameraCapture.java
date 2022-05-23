@@ -114,7 +114,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
     FirebaseDatabase database;
     Activity activity;
-    @SuppressLint("SimpleDateFormat")
+    @SuppressLint({"SimpleDateFormat", "NotifyDataSetChanged"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,7 +173,7 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
         LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         recyclerView.setLayoutManager(layoutManager);
 
-        list=captureProcess.queryAllPictures();
+        list=captureProcess.queryAllPictures(dateToday);
         adapter=new ImageViewListAdapter(list);
         adapter.notifyDataSetChanged();
         recyclerView.setAdapter(adapter);

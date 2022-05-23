@@ -11,13 +11,12 @@ android {
         applicationId "fine.koaca.wms"
         minSdkVersion 29
         targetSdkVersion 30
-        versionCode 68
-        versionName "1.68"
+        versionCode 69
+        versionName "1.69"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-
                 cppFlags ""
             }
         }

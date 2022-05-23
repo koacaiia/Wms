@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -31,9 +30,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -46,10 +43,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import fine.koaca.MyApplication;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -102,6 +95,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
     public void captureProcess(String date_today) {
         Camera.PictureCallback callback = new Camera.PictureCallback() {
+            @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
                 OutputStream fos = null;
@@ -161,14 +155,14 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 camera.startPreview();
 
 
-                mainActivity.list=queryAllPictures();
+                mainActivity.list=queryAllPictures(date_today);
                 mainActivity.adapter.notifyDataSetChanged();
             }
         };
         camera.takePicture(null, null, callback);
 
         setmAutoFocus();
-
+        Toast.makeText(mainActivity,"사진 촬영 성공 했습니다.",Toast.LENGTH_SHORT).show();
     }
 
     private Bitmap rotate(Bitmap bitmap, int degree) {
@@ -280,7 +274,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     };
 
 
-    public ArrayList<ImageViewList> queryAllPictures(){
+    public ArrayList<ImageViewList> queryAllPictures(String dateToday){
 //        captureImageList=new ArrayList<ImageViewList>();
         captureImageList.clear();
         Uri uri =MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
@@ -292,7 +286,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
 
-            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/입,출고/Resize");
+            File file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/"+dateToday+"/Resize/");
             String strFile=String.valueOf(file);
 
             if(uriI.startsWith(strFile)){

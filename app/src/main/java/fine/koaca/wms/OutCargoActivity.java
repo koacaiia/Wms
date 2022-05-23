@@ -587,11 +587,10 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     }
 
     public void itemPictureList(String keyValue) {
-
         imageViewLists.clear();
         RecyclerView imageRecyclerView = findViewById(R.id.outCargo_recyclerView_image);
         SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
-        int imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount",null));
+        int imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
         GridLayoutManager manager=new GridLayoutManager(this,imageViewListCount);
              imageRecyclerView.setLayoutManager(manager);
         FirebaseStorage storage=FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");

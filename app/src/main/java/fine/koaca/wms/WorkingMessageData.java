@@ -225,7 +225,6 @@ public class WorkingMessageData extends AppCompatActivity implements Serializabl
                                 adapter.notifyDataSetChanged();
                             }
 
-
                             @Override
                             public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
