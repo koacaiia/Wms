@@ -13,6 +13,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -56,7 +60,7 @@ import java.util.Objects;
 
 public class OutCargoActivity extends AppCompatActivity implements OutCargoListAdapter.OutCargoListAdapterClickListener,
         OutCargoListAdapter.OutCargoListAdapterLongClickListener, ImageViewActivityAdapter.ImageViewClicked ,
-        Comparator<OutCargoList> {
+        Comparator<OutCargoList> , SensorEventListener {
     FirebaseDatabase database;
     RecyclerView recyclerView;
     ArrayList<OutCargoList> list;
@@ -78,12 +82,21 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
 
     Button btnRegExPic,btnUnReg,btnNewOutCargo,btnRegPallet,btnPicList,btnPicCount,btnInformation,btnCamera,btnReset;
     LinearLayout linearLayout;
+
+    SensorManager mSensorManager;
+    Sensor mAccelerometer;
+    private long mShakeTime;
+    private static final int SHAKE_SKIP_TIME = 500;
+    private static final float SHAKE_THERESHOLD_GRAVITY = 2.7F;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_out_cargo);
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         publicMethod=new PublicMethod(this);
         nickName=publicMethod.getUserInformation().get("nickName");
@@ -813,8 +826,6 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
     }
 
     public void sendMessage(String message){
-
-
         PublicMethod publicMethod=new PublicMethod(this);
         publicMethod.sendPushMessage(deptName,nickName,message,"CameraUpLoad");
     }
@@ -841,4 +852,47 @@ public class OutCargoActivity extends AppCompatActivity implements OutCargoListA
         return 0;
     }
 
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float axisX = event.values[0];
+            float axisY = event.values[1];
+            float axisZ = event.values[2];
+            float gravityX = axisX / SensorManager.GRAVITY_EARTH;
+            float gravityY = axisY / SensorManager.GRAVITY_EARTH;
+            float gravityZ = axisZ / SensorManager.GRAVITY_EARTH;
+
+            Float f = gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ;
+            double squaredD = Math.sqrt(f.doubleValue());
+            float gForce = (float) squaredD;
+            if (gForce > SHAKE_THERESHOLD_GRAVITY) {
+                long currentTime = System.currentTimeMillis();
+                if (mShakeTime + SHAKE_SKIP_TIME > currentTime) {
+                    return;
+                }
+                mShakeTime = currentTime;
+
+                Intent intent = new Intent(getApplicationContext(), CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
 }

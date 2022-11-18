@@ -128,9 +128,12 @@ public class PublicMethod {
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};
         Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
+        Log.i("Test_cursor_value:::",String.valueOf(cursor));
         int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        Log.i("TestValue_columnsIndex Value:::",String.valueOf(columnsDataIndex));
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
+            Log.i("TestValue_uriIndex",String.valueOf(uriI));
             File file=null;
             switch(sort){
                 case "Re":

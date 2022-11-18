@@ -55,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,6 +71,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         ImageViewActivityAdapter.ImageViewClicked, Comparator<Fine2IncargoList>,IncargoListAdapter.ItemConsigneeClickListener {
     ArrayList<Fine2IncargoList> listItems = new ArrayList<Fine2IncargoList>();
     ArrayList<Fine2IncargoList> listSortItems = new ArrayList<Fine2IncargoList>();
+    ArrayList<Fine2IncargoList> listIn = new ArrayList<>();
     ArrayList<String> consigneeArrayList = new ArrayList<String>();
     SparseBooleanArray selectedSortItems = new SparseBooleanArray(0);
     ArrayList<ExtractIncargoDataList> arrList = new ArrayList<ExtractIncargoDataList>();
@@ -344,11 +346,33 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         listItems = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
 
-
+        listIn =(ArrayList<Fine2IncargoList>)getIntent().getSerializableExtra("IncargoData");
         adapter = new IncargoListAdapter(listItems, this, this,this);
         recyclerView.setAdapter(adapter);
         if(getIntent().getStringExtra("refPath")==null){
-            getFirebaseData(day_start, day_end, "sort", "ALL");
+//            if (listIn != null){
+//                listIn =(ArrayList<Fine2IncargoList>)getIntent().getSerializableExtra("IncargoData");
+//                adapter = new IncargoListAdapter(listIn, this, this,this);
+//                recyclerView.setAdapter(adapter);
+//                sortDialog(day_start, day_end, listIn);
+//                String date;
+//                if (day_start.equals(day_end)) {
+//                    date = day_start;
+//                } else {
+//                    date = day_start + "~" + day_end;
+//            }
+//                incargo_contents_date.setText(date);
+//            }else{
+//                adapter = new IncargoListAdapter(listItems, this, this,this);
+                getFirebaseData(day_start, day_end, "sort", "ALL");
+//                recyclerView.setAdapter(adapter);
+
+//            }
+
+
+
+
+
 
         }else{
             String date=getIntent().getStringExtra("date");
@@ -537,7 +561,8 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                     return;
                 }
                 mShakeTime = currentTime;
-                Intent intent = new Intent(Incargo.this, Incargo.class);
+
+                Intent intent = new Intent(getApplicationContext(), CameraCapture.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -928,10 +953,16 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             for (int j = 0; j < listItems.size(); j++) {
                 getConsigneeName = listItems.get(j).getConsignee();
                 if (consigneeName1.equals(getConsigneeName)) {
-                    cont40 = cont40 + Integer.parseInt(listItems.get(j).getContainer40());
-                    cont20 = cont20 + Integer.parseInt(listItems.get(j).getContainer20());
-                    cargo = cargo + Integer.parseInt(listItems.get(j).getLclcargo());
-                    qty = qty + Integer.parseInt(listItems.get(j).getIncargo());
+                    try{
+                        cont40 = cont40 + Integer.parseInt(listItems.get(j).getContainer40());
+                        cont20 = cont20 + Integer.parseInt(listItems.get(j).getContainer20());
+                        cargo = cargo + Integer.parseInt(listItems.get(j).getLclcargo());
+                        qty = qty + Integer.parseInt(listItems.get(j).getIncargo());
+                    }catch(Exception e){
+                        Log.i("Exception Incargo KeyValue:::",listItems.get(j).getKeyValue());
+                    }
+
+
                 }
             }
             ExtractIncargoDataList list = new ExtractIncargoDataList(consigneeName1, String.valueOf(cont40), String.valueOf(cont20),
@@ -1048,8 +1079,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         searchDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sortCargoDateDialog();
                 dialog.dismiss();
+                sortCargoDateDialog();
+
             }
         });
         searchDetail.setOnLongClickListener(v -> {
@@ -1060,24 +1092,27 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnThisMonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFirebaseDataSortDate("ThisMonth");
                 dialog.dismiss();
+                getFirebaseDataSortDate("ThisMonth");
+
             }
         });
         Button btnNextWeek = view.findViewById(R.id.btnNextWeek);
         btnNextWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFirebaseDataSortDate("NextWeek");
                 dialog.dismiss();
+                getFirebaseDataSortDate("NextWeek");
+
             }
         });
         Button btnThisWeek = view.findViewById(R.id.btnThisWeek);
         btnThisWeek.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFirebaseDataSortDate("ThisWeek");
                 dialog.dismiss();
+                getFirebaseDataSortDate("ThisWeek");
+
             }
         });
 
@@ -1085,8 +1120,9 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnTomorrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getFirebaseDataSortDate("Tomorrow");
                 dialog.dismiss();
+                getFirebaseDataSortDate("Tomorrow");
+
             }
         });
 
@@ -1226,104 +1262,78 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         consigneeArrayList.clear();
         listItems.clear();
-        String year=new SimpleDateFormat("yyyy-").format(new Date());
+        String year1=new SimpleDateFormat("yyyy-").format(new Date());
+        SimpleDateFormat  dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date dt_start=null,dt_end=null;
+        try {
+            dt_start=dateFormat.parse(startDay);
+            dt_end = dateFormat.parse(endDay);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        long diffSec =(dt_end.getTime()-dt_start.getTime())/1000;
+        long diffDay = diffSec/(24*60*60);
+        Log.i("TestValue","Different Day Value:::"+diffDay);
+
         int startDayRe = Integer.parseInt(startDay.replace("-", ""));
         int endDayRe = Integer.parseInt(endDay.replace("-", ""));
-        for (int i = 1; i <= 12; i++) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(2022, i - 1, 1);
-            int monthOfLastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
-
-            for (int j = 1; j <= monthOfLastDay; j++) {
-                String date = null;
-                String month = null;
-                if (i  < 10) {
-                    month = "0" + i;
-                } else {
-                    month = String.valueOf(i);
-                }
-                if (j < 10) {
-                    date = "0" + j;
-                } else {
-                    date = String.valueOf(j);
-                }
-
-                DatabaseReference databaseReference =
-                        database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month + "월/" + year + month +
-                        "-" + date + "/");
-
-                String finalMonth = month;
-                String finalDate = date;
-
-                databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @SuppressLint("NotifyDataSetChanged")
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Map<String, Object> value = new HashMap<>();
-
-                        for (DataSnapshot data : snapshot.getChildren()) {
-                            String keyValue = data.getKey();
-                            if (keyValue.equals("null")) {
-                                Map<String, Object> nullValue = new HashMap<>();
-                                nullValue.put("null", null);
-                                DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +
-                                        "InCargo" + "/" + finalMonth + "월/" + year + finalMonth +
-                                        "-" + finalDate);
-                                databaseReference.updateChildren(nullValue);
-                            }
-                            if (!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+        String year_s = startDay.substring(0,4);
+        String month_s = startDay.substring(5,7);
+        String day_s = startDay.substring(8,10);
+        DatabaseReference databaseReference;
+        Calendar calS= Calendar.getInstance();
+        Calendar calE = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
+        for(int i=0;i<=diffDay;i++){
+            cal.setTime(dt_start);
+            cal.add(Calendar.DATE,i);
+            String date = dateFormat.format(cal.getTime());
+            Log.i("TestValue","Test Date Value::;"+date);
+            String year = date.substring(0,4);
+            String month = date.substring(5,7);
+            String day = date.substring(8,10);
+            databaseReference = database.getReference("DeptName/"+deptName+"/InCargo/"+month+"월/"+date+"/");
+            int finalI = i;
+            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot data: snapshot.getChildren()){
+                        if(!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")){
+                            try {
                                 Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
-                                if (mList.getKeyValue() == null) {
-                                    value.put("keyValue", keyValue);
-                                    DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +
-                                            "InCargo" + "/" + finalMonth + "월/" + year + finalMonth +
-                                            "-" + finalDate + "/" + keyValue);
-                                    databaseReference.updateChildren(value);
-                                }
-
-                                if(mList.getDate()==null){
-                                    Log.i("TestValue","Get date Value npe="+mList.getKeyValue());
-                                }
-                                    int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
-
-                                if (!consigneeArrayList.contains(mList.getConsignee())) {
-                                    consigneeArrayList.add(mList.getConsignee());
-                                }
-                                if (dayReList >= startDayRe && dayReList <= endDayRe) {
-                                    switch (sortKey) {
-                                        case "all":
-                                            if (consigneeName.equals("ALL")) {
+                                switch(sortKey){
+                                    case("all"):
+                                        if(consigneeName.equals("ALL")){
+                                            listItems.add(mList);
+                                        }else{
+                                            if(consigneeName.equals(mList.getConsignee())){
+                                                listItems.add(mList);
+                                            }
+                                        }
+                                        break;
+                                    case("sort"):
+                                        if(!mList.getContainer20().equals("0")||!mList.getContainer40().equals("0")||!mList.getLclcargo().equals("0")){
+                                            if(consigneeName.equals("ALL")){
                                                 listItems.add(mList);
                                             }else{
                                                 if(consigneeName.equals(mList.getConsignee())){
                                                     listItems.add(mList);
                                                 }
                                             }
-                                            break;
-                                        case "sort":
-                                            if (!mList.getContainer20().equals("0") || !mList.getContainer40().equals("0") || !mList.getLclcargo().equals("0")) {
-                                                if (consigneeName.equals("ALL")) {
-
-                                                    listItems.add(mList);
-                                                } else {
-                                                    if (consigneeName.equals(mList.getConsignee())) {
-                                                        listItems.add(mList);
-                                                    }
-                                                }
-                                            }
-                                    }
+                                        }
 
                                 }
 
+
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), "Server Data Occured Error .Please Check Server Data", Toast.LENGTH_SHORT).show();
                             }
-
-
                         }
-                        if (finalMonth.equals("12") && finalDate.equals("31")) {
-
+                        if (finalI ==diffDay){
                             adapter.notifyDataSetChanged();
                             sortDialog(startDay, endDay, listItems);
-                            String date;
+                            String date=null;
                             if (startDay.equals(endDay)) {
                                 date = startDay;
                             } else {
@@ -1333,15 +1343,196 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                         }
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
 
 
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
         }
+//        if (startDay.equals(endDay)){
+//            Log.i("TestValue","Trans Method Successed");
+////            databaseReference =
+////                    database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month_s + "월/" +startDay + "/");
+////            databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+////                @SuppressLint("NotifyDataSetChanged")
+////                @Override
+////                public void onDataChange(@NonNull DataSnapshot snapshot) {
+////                    for (DataSnapshot data : snapshot.getChildren()) {
+////                        if (!data.getKey().equals("json 등록시 덥어쓰기 바랍니다")) {
+////                            try {
+////                            Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
+////                            switch(sortKey){
+////                                case("all"):
+////                                    if(consigneeName.equals("ALL")){
+////                                        listItems.add(mList);
+////                                    }else{
+////                                        if(consigneeName.equals(mList.getConsignee())){
+////                                            listItems.add(mList);
+////                                        }
+////                                    }
+////                                    break;
+////                                case("sort"):
+////                                    if(!mList.getContainer20().equals("0")||!mList.getContainer40().equals("0")||!mList.getLclcargo().equals("0")){
+////                                        if(consigneeName.equals("ALL")){
+////                                            listItems.add(mList);
+////                                        }else{
+////                                            if(consigneeName.equals(mList.getConsignee())){
+////                                                listItems.add(mList);
+////                                            }
+////                                        }
+////                                    }
+////
+////                            }
+////
+////
+////                            } catch (Exception e) {
+////                                Toast.makeText(getApplicationContext(), "Server Data Occured Error .Please Check Server Data", Toast.LENGTH_SHORT).show();
+////                            }
+////
+////                        }
+////                    }
+////
+////                    adapter.notifyDataSetChanged();
+////                    sortDialog(startDay, endDay, listItems);
+////                    String date=null;
+////                    if (startDay.equals(endDay)) {
+////                        date = startDay;
+////                    } else {
+////                        date = startDay + "~" + endDay;
+////                    }
+////                    incargo_contents_date.setText(date);
+////                }
+////                @Override
+////                public void onCancelled(@NonNull DatabaseError error) {
+////
+////                }
+////            });
+//
+//        }else {
+//            for (int i = 1; i <= 12; i++) {
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.set(2022, i - 1, 1);
+//                int monthOfLastDay = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+//
+//                for (int j = 1; j <= monthOfLastDay; j++) {
+//                    String date = null;
+//                    String month = null;
+//                    if (i < 10) {
+//                        month = "0" + i;
+//                    } else {
+//                        month = String.valueOf(i);
+//                    }
+//                    if (j < 10) {
+//                        date = "0" + j;
+//                    } else {
+//                        date = String.valueOf(j);
+//                    }
+//
+//                    databaseReference =
+//                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + month + "월/" + year1 + month +
+//                                    "-" + date + "/");
+//
+//                    String finalMonth = month;
+//                    String finalDate = date;
+//
+//                    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @SuppressLint("NotifyDataSetChanged")
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                            Map<String, Object> value = new HashMap<>();
+//
+//                            for (DataSnapshot data : snapshot.getChildren()) {
+//                                String keyValue = data.getKey();
+//                                if (keyValue.equals("null")) {
+//                                    Map<String, Object> nullValue = new HashMap<>();
+//                                    nullValue.put("null", null);
+//                                    DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +
+//                                            "InCargo" + "/" + finalMonth + "월/" + year1 + finalMonth +
+//                                            "-" + finalDate);
+//                                    databaseReference.updateChildren(nullValue);
+//                                }
+//                                if (!keyValue.equals("json 등록시 덥어쓰기 바랍니다")) {
+//                                    try {
+//                                        Fine2IncargoList mList = data.getValue(Fine2IncargoList.class);
+//                                        Log.i("TestValue", "Key Value:::" + mList.getKeyValue());
+//                                        if (mList.getKeyValue() == null) {
+//                                            value.put("keyValue", keyValue);
+//                                            DatabaseReference databaseReference = database.getReference("DeptName/" + deptName + "/" +
+//                                                    "InCargo" + "/" + finalMonth + "월/" + year1 + finalMonth +
+//                                                    "-" + finalDate + "/" + keyValue);
+//                                            databaseReference.updateChildren(value);
+//                                        }
+//
+//                                        if (mList.getDate() == null) {
+//                                            Log.i("TestValue", "Get date Value npe=" + mList.getKeyValue());
+//                                        }
+//                                        int dayReList = Integer.parseInt(mList.getDate().replace("-", ""));
+//
+//                                        if (!consigneeArrayList.contains(mList.getConsignee())) {
+//                                            consigneeArrayList.add(mList.getConsignee());
+//                                        }
+//                                        if (dayReList >= startDayRe && dayReList <= endDayRe) {
+//                                            switch (sortKey) {
+//                                                case "all":
+//                                                    if (consigneeName.equals("ALL")) {
+//                                                        listItems.add(mList);
+//                                                    } else {
+//                                                        if (consigneeName.equals(mList.getConsignee())) {
+//                                                            listItems.add(mList);
+//                                                        }
+//                                                    }
+//                                                    break;
+//                                                case "sort":
+//                                                    if (!mList.getContainer20().equals("0") || !mList.getContainer40().equals("0") || !mList.getLclcargo().equals("0")) {
+//                                                        if (consigneeName.equals("ALL")) {
+//
+//                                                            listItems.add(mList);
+//                                                        } else {
+//                                                            if (consigneeName.equals(mList.getConsignee())) {
+//                                                                listItems.add(mList);
+//                                                            }
+//                                                        }
+//                                                    }
+//                                            }
+//
+//                                        }
+//
+//                                    } catch (Exception e) {
+//                                        Log.i("TestValue", "Exception Value Occured");
+//                                    }
+//                                }
+//
+//
+//                            }
+//                            if (finalMonth.equals("12") && finalDate.equals("31")) {
+//
+//                                adapter.notifyDataSetChanged();
+//                                sortDialog(startDay, endDay, listItems);
+//                                String date;
+//                                if (startDay.equals(endDay)) {
+//                                    date = startDay;
+//                                } else {
+//                                    date = startDay + "~" + endDay;
+//                                }
+//                                incargo_contents_date.setText(date);
+//                            }
+//
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//
+//                        }
+//                    });
+//                }
+//
+//
+//            }
+//        }
 
     }
 
@@ -1413,14 +1604,19 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     @Override
     public void onItemClick(IncargoListAdapter.ListViewHolder listViewHolder, View v, int pos) {
+            if(listIn!=null){
+                listItems =listIn;
+            }
+            String consigneeNameValue=listItems.get(pos).getConsignee();
+            keyValue=listItems.get(pos).getKeyValue();
+            String containerValue=listItems.get(pos).getContainer();
+            String blValue=listItems.get(pos).getBl();
+            String dateValue=listItems.get(pos).getDate();
+            initLayout(consigneeNameValue,keyValue,containerValue,blValue,dateValue);
+            publicMethod.getRemarkValue(blValue);
 
-        String consigneeNameValue=listItems.get(pos).getConsignee();
-        keyValue=listItems.get(pos).getKeyValue();
-        String containerValue=listItems.get(pos).getContainer();
-        String blValue=listItems.get(pos).getBl();
-        String dateValue=listItems.get(pos).getDate();
-        initLayout(consigneeNameValue,keyValue,containerValue,blValue,dateValue);
-        publicMethod.getRemarkValue(blValue);
+
+
 
 
 

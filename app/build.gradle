@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "fine.koaca.wms"
-        minSdkVersion 29
+        minSdkVersion 28
         targetSdkVersion 30
         versionCode 70
         versionName "1.70"
@@ -32,6 +32,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'fine.koaca.wms'
 }
 
 dependencies {

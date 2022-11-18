@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PushFcmProgress {
-
     RequestQueue requestQueue;
 
     public PushFcmProgress(RequestQueue requestQueue) {

@@ -543,6 +543,7 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
             public void onClick(View view) {
                 dialog.dismiss();
                 Intent intent=new Intent(getApplicationContext(),Incargo.class);
+                intent.putExtra("IncargoData",listIn);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             }
@@ -613,7 +614,9 @@ public class TitleActivity extends AppCompatActivity implements OutCargoListAdap
                 }
                 mShakeTime = currentTime;
 
-                initIntent();
+                Intent intent = new Intent(getApplicationContext(), CameraCapture.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
             }
         }
 
