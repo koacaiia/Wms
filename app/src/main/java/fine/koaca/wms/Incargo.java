@@ -1242,7 +1242,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 //                .show();
         AlertDialog dialog = sortDialog.create();
         dialog.show();
-        ;
+
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -3,17 +3,24 @@ package fine.koaca.wms;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentRe#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentRe extends Fragment {
+public class FragmentRe extends Fragment implements ImageViewActivityAdapter.ImageViewClicked{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,7 +66,24 @@ public class FragmentRe extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        View view= getLayoutInflater().inflate(R.layout.fragment_re,null);
+        RecyclerView recyclerView = view.findViewById(R.id.fragmentRe_recyclerView);
+        GridLayoutManager manager = new GridLayoutManager(getActivity(),3);
+        recyclerView.setLayoutManager(manager);
+        PublicMethod pictures = new PublicMethod(getActivity());
+        String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        ArrayList<String> list = pictures.getPictureLists("Re",date);
+        ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(list,this);
+        recyclerView.setAdapter(iAdapter);
+        iAdapter.notifyDataSetChanged();
 
-        return inflater.inflate(R.layout.fragment_re, container, false);
+
+        return view;
+    }
+
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        Log.i("TestValue ImageViewClicked","Clicked");
+
     }
 }

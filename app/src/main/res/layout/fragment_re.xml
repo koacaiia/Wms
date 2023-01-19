@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:gravity="center"
+android:orientation="vertical"
+tools:context=".FragmentRe">
+
+
+<TextView
+    android:id="@+id/textView4"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".FragmentRe">
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:text="Resize"
+    android:textStyle="bold|italic" />
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Re
-"/>
+<androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/fragmentRe_recyclerView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
 
-</FrameLayout>
+</LinearLayout>
