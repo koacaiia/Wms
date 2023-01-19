@@ -122,7 +122,7 @@ public class IncargoListAdapter extends RecyclerView.Adapter<IncargoListAdapter.
             this.remark=itemView.findViewById(R.id.incargo_remark);
             this.bl=itemView.findViewById(R.id.incargo_bl);
             this.des=itemView.findViewById(R.id.incargo_des);
-            this.incargo=itemView.findViewById(R.id.incargo_incargo);
+            this.incargo=itemView.findViewById(R.id.incargo_incargoQty);
 
             consignee.setOnClickListener(new View.OnClickListener() {
                 @Override

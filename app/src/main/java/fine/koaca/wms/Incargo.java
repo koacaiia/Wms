@@ -88,7 +88,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     Button incargo_reset;
     Button incargo_mnf;
 
-    TextView incargo_incargo;
+    TextView incargo_contents_incargo;
     TextView incargo_contents_date;
     TextView incargo_contents_consignee;
 
@@ -143,6 +143,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
     RecyclerView imageRecyclerView;
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -334,7 +335,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 
         btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
         checkWeekend();
-        incargo_incargo = findViewById(R.id.incargo_incargo);
+        incargo_contents_incargo = findViewById(R.id.incargo_incargoQty);
         incargo_contents_date = findViewById(R.id.incargo_contents_date);
         incargo_contents_consignee = findViewById(R.id.incargo_contents_consignee);
         incargo_mnf = findViewById(R.id.incargo_mnf);

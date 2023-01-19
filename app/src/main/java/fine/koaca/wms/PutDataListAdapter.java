@@ -123,7 +123,7 @@ public class PutDataListAdapter extends RecyclerView.Adapter<PutDataListAdapter.
             this.remark=itemView.findViewById(R.id.incargo_remark);
             this.bl=itemView.findViewById(R.id.incargo_bl);
             this.des=itemView.findViewById(R.id.incargo_des);
-            this.incargo=itemView.findViewById(R.id.incargo_incargo);
+            this.incargo=itemView.findViewById(R.id.incargo_incargoQty);
             this.cardView=itemView.findViewById(R.id.background);
             this.lL=itemView.findViewById(R.id.re_back);
 

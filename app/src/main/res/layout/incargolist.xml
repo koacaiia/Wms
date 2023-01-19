@@ -102,7 +102,7 @@
                                     android:textStyle="bold|italic" />
 
                                 <TextView
-                                    android:id="@+id/incargo_incargo"
+                                    android:id="@+id/incargo_incargoQty"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_weight="0.85"
