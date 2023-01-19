@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -142,6 +143,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String itemClickTitle;
 
     RecyclerView imageRecyclerView;
+    Button btnG_re,btnG_Ori,btnG_All;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -273,58 +275,58 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             }
         });
 
-        btnPicList=findViewById(R.id.incargo_picCount);
-
-        btnPicList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-              AlertDialog.Builder dateDialog=new AlertDialog.Builder(Incargo.this);
-              DatePicker datePicker=new DatePicker(Incargo.this);
-                final String[] datePicturePic = {new SimpleDateFormat("yyyy-MM-dd").format(new Date())};
-              datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
-                  @Override
-                  public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
-                   String month,day;
-                   if((i1+1)<10){
-                       month="0"+(i1+1);
-                   }else{
-                       month=String.valueOf(i1+1);
-                      }
-                   if(i2<10){
-                       day="0"+i2;
-                   }else{
-                       day=String.valueOf(i2);
-                      }
-                   datePicturePic[0] =i+"-"+month+"-"+day;
-                   Toast.makeText(Incargo.this,datePicturePic[0]+" 검색일 지정",Toast.LENGTH_SHORT).show();
-                  }
-              });
-              dateDialog.setTitle("사진 검색일 설정창")
-                      .setView(datePicker)
-                      .setPositiveButton("검색", new DialogInterface.OnClickListener() {
-                          @Override
-                          public void onClick(DialogInterface dialogInterface, int i) {
-                             pickedUpItemClick("Re",datePicturePic[0]);
-                          }
-                      })
-                      .setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                          @Override
-                          public void onClick(DialogInterface dialogInterface, int i) {
-
-                          }
-                      })
-                      .show();
-            }
-        });
-
-       btnPicList.setOnLongClickListener(new View.OnLongClickListener() {
-           @Override
-           public boolean onLongClick(View view) {
-               publicMethod.imageViewListCount();;
-               return true;
-           }
-       });
-
+//        btnPicList=findViewById(R.id.incargo_picCount);
+//
+//        btnPicList.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//              AlertDialog.Builder dateDialog=new AlertDialog.Builder(Incargo.this);
+//              DatePicker datePicker=new DatePicker(Incargo.this);
+//                final String[] datePicturePic = {new SimpleDateFormat("yyyy-MM-dd").format(new Date())};
+//              datePicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
+//                  @Override
+//                  public void onDateChanged(DatePicker datePicker, int i, int i1, int i2) {
+//                   String month,day;
+//                   if((i1+1)<10){
+//                       month="0"+(i1+1);
+//                   }else{
+//                       month=String.valueOf(i1+1);
+//                      }
+//                   if(i2<10){
+//                       day="0"+i2;
+//                   }else{
+//                       day=String.valueOf(i2);
+//                      }
+//                   datePicturePic[0] =i+"-"+month+"-"+day;
+//                   Toast.makeText(Incargo.this,datePicturePic[0]+" 검색일 지정",Toast.LENGTH_SHORT).show();
+//                  }
+//              });
+//              dateDialog.setTitle("사진 검색일 설정창")
+//                      .setView(datePicker)
+//                      .setPositiveButton("검색", new DialogInterface.OnClickListener() {
+//                          @Override
+//                          public void onClick(DialogInterface dialogInterface, int i) {
+//                             pickedUpItemClick("Re",datePicturePic[0]);
+//                          }
+//                      })
+//                      .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                          @Override
+//                          public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                          }
+//                      })
+//                      .show();
+//            }
+//        });
+//
+//       btnPicList.setOnLongClickListener(new View.OnLongClickListener() {
+//           @Override
+//           public boolean onLongClick(View view) {
+//               publicMethod.imageViewListCount();;
+//               return true;
+//           }
+//       });
+//
 
 
         btnConIn=findViewById(R.id.incargo_btnConIn);
@@ -333,7 +335,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         btnIncargoCom=findViewById(R.id.incargo_btnIncargoCom);
         btnRegPallet=findViewById(R.id.incargo_btnRegPallet);
 
-        btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
+//        btnNewIncargo=findViewById(R.id.incargo_btnNewIncargo);
         checkWeekend();
         incargo_contents_incargo = findViewById(R.id.incargo_incargoQty);
         incargo_contents_date = findViewById(R.id.incargo_contents_date);
@@ -484,6 +486,36 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         });
 
 
+        btnG_re = findViewById(R.id.btnGalleryRe);
+        btnG_re.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentRe fragmentRe = new FragmentRe();
+                transaction.replace(R.id.incargo_fragment,fragmentRe);
+                transaction.commit();
+            }
+        });
+        btnG_Ori = findViewById(R.id.btnGalleryOri);
+        btnG_Ori.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentOri fragmentOri = new FragmentOri();
+                transaction.replace(R.id.incargo_fragment,fragmentOri);
+                transaction.commit();
+            }
+        });
+
+        btnG_All = findViewById(R.id.btnGalleryAll);
+        btnG_All.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentAll fragmentAll = new FragmentAll();
+                transaction.replace(R.id.incargo_fragment,fragmentAll);
+                transaction.commit();
+            }
+        });
 
     }
 
@@ -508,6 +540,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             calendar.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
             day_end = simpleDateFormat.format(calendar.getTime());
         }
+
 
     }
 
@@ -1611,14 +1644,14 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
             }
         });
 
-        btnNewIncargo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + " 신규 등록", consigneeNameValue,
-                        "InCargo", deptName);
-                initIntent();
-            }
-        });
+//        btnNewIncargo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                publicMethod.putNewDataUpdateAlarm(nickName, itemClickTitle + " 신규 등록", consigneeNameValue,
+//                        "InCargo", deptName);
+//                initIntent();
+//            }
+//        });
 
         pickedUpItemClick("Re",dateToday);
     }
@@ -1797,18 +1830,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     @SuppressLint("NotifyDataSetChanged")
     public void pickedUpItemClick(String sort, String date) {
 
-        switch(sort){
-            case "Re":
-                btnPicList.setText("서버전송용 조정 사진");
-                break;
-            case "All":
-                btnPicList.setText("갤러리 전체사진");
-                break;
-            case "Ori":
-                btnPicList.setText("업무용 원본사진");
-                break;
-
-        }
+//        switch(sort){
+//            case "Re":
+//                btnPicList.setText("서버전송용 조정 사진");
+//                break;
+//            case "All":
+//                btnPicList.setText("갤러리 전체사진");
+//                break;
+//            case "Ori":
+//                btnPicList.setText("업무용 원본사진");
+//                break;
+//
+//        }
 
         int imageViewListCount;
         SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);

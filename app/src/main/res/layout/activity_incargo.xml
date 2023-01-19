@@ -86,8 +86,7 @@
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
-
+                    android:layout_height="120dp"
                     app:cardCornerRadius="10dp"
                     app:cardElevation="5dp"
                     app:cardUseCompatPadding="true">
@@ -164,6 +163,38 @@
                                 android:text="창고반입 완료+Location 등록"
                                 android:textStyle="italic|bold" />
                         </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+                            <Button
+                                android:id="@+id/incargo_btnRegPallet"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="5dp"
+                                android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
+                                android:gravity="center|fill_vertical"
+                                android:text="검수완료+반입요청 "
+                                android:textStyle="italic|bold" />
+
+                            <Button
+                                android:id="@+id/incargo_regReamrk"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginHorizontal="5dp"
+                                android:layout_weight="1"
+                                android:autoSizeMaxTextSize="14sp"
+                                android:autoSizeMinTextSize="6sp"
+                                android:autoSizeTextType="uniform"
+                                android:gravity="center|fill_vertical"
+                                android:text="입고특이사항등록"
+                                android:textStyle="italic|bold" />
+
+                        </LinearLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -174,37 +205,36 @@
                     android:layout_weight="0.5"
                     android:clickable="true"
                     android:orientation="vertical">
-
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-
+                        android:layout_height="40dp"
                         android:orientation="horizontal">
-
                         <Button
-                            android:id="@+id/incargo_picCount"
+                            android:id="@+id/btnGalleryRe"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginHorizontal="10dp"
-                            android:layout_weight="1"
-                            android:autoSizeTextType="uniform"
-                            android:backgroundTint="#32395E"
-                            android:gravity="center"
-                            android:text="TextView"
-                            android:textStyle="bold|italic" />
-
+                            android:text="오늘사진"
+                            android:layout_weight="1"/>
                         <Button
-                            android:id="@+id/incargo_regReamrk"
+                            android:id="@+id/btnGalleryOri"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:layout_marginHorizontal="10dp"
-                            android:layout_weight="1"
-                            android:autoSizeTextType="uniform"
-                            android:backgroundTint="#32395E"
-                            android:gravity="center"
-                            android:text="입고 특이사항 등록"
-                            android:textStyle="bold|italic" />
+                            android:text="원본사진"
+                            android:layout_weight="1"/>
+                        <Button
+                            android:id="@+id/btnGalleryAll"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="갤러리 전체"
+                            android:layout_weight="1"/>
                     </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id = "@+id/incargo_fragment"
+                    />
+
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/incargo_recyclerView_image"
@@ -217,43 +247,7 @@
                 </LinearLayout>
 
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
 
-                    app:cardCornerRadius="5dp"
-                    app:cardElevation="2dp"
-                    app:cardUseCompatPadding="true">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-
-                        android:orientation="horizontal">
-
-                        <Button
-                            android:id="@+id/incargo_btnNewIncargo"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:autoSizeTextType="uniform"
-                            android:layout_marginHorizontal="5dp"
-                            android:layout_weight="1"
-                            android:backgroundTint="#32395E"
-                            android:text="신규화물정보 알림"
-                            android:textStyle="bold|italic" />
-
-                        <Button
-                            android:id="@+id/incargo_btnRegPallet"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:autoSizeTextType="uniform"
-                            android:layout_marginHorizontal="5dp"
-                            android:layout_weight="1"
-                            android:backgroundTint="#32395E"
-                            android:text="팔렛트 등록"
-                            android:textStyle="italic|bold" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
 
 
             </LinearLayout>
