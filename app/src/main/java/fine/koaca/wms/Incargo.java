@@ -427,59 +427,60 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String consigneeName=listItems.get(0).getConsignee();
-                publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
-                if(sharedValue.equals("Pallet")){
-                                String bl = listItems.get(0).getBl();
-                                String des = listItems.get(0).getDescription();
-                                String consigneeNameP=listItems.get(0).getConsignee();
-                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
-                                builder.setTitle("팔렛트 등록 확인창")
-                                        .setMessage("사용등록:" +"\n" + consigneeNameP+"_"+bl+"_"+"_"+des+"\n"+"화물의 팔렛트 사용등록" + "\n" +"신규 입고등록: 화주,재고 확인후 팔렛트 신규입고 등록")
-
-                                        .setPositiveButton("사용 등록", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-//                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
-                                                    getPalletStock(consigneeName,bl,des);
-                                            }
-                                        })
-
-                                        .setNeutralButton("신규 입고등록", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                manualPltReg();
-
-                                            }
-                                        })
-                                        .show();
-
-                }else{
-
-                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
-                            deptName);
-                    String date = listItems.get(0).getDate();
-                    String workingProcess;
-                    if(listItems.get(0).getWorking().equals("") ){
-                        workingProcess="컨테이너 진입";
-                    }else{
-                        workingProcess=listItems.get(0).getWorking();
-                    }
-                    Map<String, Object> putValue = new HashMap<>();
-                    putValue.put("working", workingProcess);
-                    databaseReference =
-                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
-                                    "/" + keyValue);
-                    databaseReference.updateChildren(putValue);
-                    imageViewListsSelected.clear();
-
-                    Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
-                    if(keyValue==null){
-                        keyValue=getIntent().getStringExtra("refPath");
-                    }
-
-                    itemPictureList(keyValue);
-                }
+                Log.i("TestValue","Fragment Data Value:::"+imageViewListsSelected.size());
+//                String consigneeName=listItems.get(0).getConsignee();
+//                publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
+//                if(sharedValue.equals("Pallet")){
+//                                String bl = listItems.get(0).getBl();
+//                                String des = listItems.get(0).getDescription();
+//                                String consigneeNameP=listItems.get(0).getConsignee();
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+//                                builder.setTitle("팔렛트 등록 확인창")
+//                                        .setMessage("사용등록:" +"\n" + consigneeNameP+"_"+bl+"_"+"_"+des+"\n"+"화물의 팔렛트 사용등록" + "\n" +"신규 입고등록: 화주,재고 확인후 팔렛트 신규입고 등록")
+//
+//                                        .setPositiveButton("사용 등록", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+////                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
+//                                                    getPalletStock(consigneeName,bl,des);
+//                                            }
+//                                        })
+//
+//                                        .setNeutralButton("신규 입고등록", new DialogInterface.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(DialogInterface dialog, int which) {
+//                                                manualPltReg();
+//
+//                                            }
+//                                        })
+//                                        .show();
+//
+//                }else{
+//
+//                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
+//                            deptName);
+//                    String date = listItems.get(0).getDate();
+//                    String workingProcess;
+//                    if(listItems.get(0).getWorking().equals("") ){
+//                        workingProcess="컨테이너 진입";
+//                    }else{
+//                        workingProcess=listItems.get(0).getWorking();
+//                    }
+//                    Map<String, Object> putValue = new HashMap<>();
+//                    putValue.put("working", workingProcess);
+//                    databaseReference =
+//                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
+//                                    "/" + keyValue);
+//                    databaseReference.updateChildren(putValue);
+//                    imageViewListsSelected.clear();
+//
+//                    Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
+//                    if(keyValue==null){
+//                        keyValue=getIntent().getStringExtra("refPath");
+//                    }
+//
+//                    itemPictureList(keyValue);
+//                }
 
 
             }

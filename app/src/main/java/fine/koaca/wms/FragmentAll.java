@@ -7,9 +7,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +29,11 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    SparseBooleanArray selectedList = new SparseBooleanArray(0);
+    ArrayList<String> selectImage = new ArrayList<String>();
+    ArrayList<String> selectedImages = new ArrayList<String>();
+    ArrayList<String> list;
+    Button btnSend;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,15 +81,34 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
         recycler.setLayoutManager(manager);
         PublicMethod pictures= new PublicMethod(getActivity());
         String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        ArrayList<String> list = pictures.getPictureLists("All",date);
+        list = pictures.getPictureLists("All",date);
         ImageViewActivityAdapter adapter= new ImageViewActivityAdapter(list,this);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
+        btnSend = view.findViewById(R.id.btnFragmentAll);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PublicMethod publicMethod= new PublicMethod(getActivity(),selectImage);
+//                publicMethod.upLoadPictures("Ysk",)
+            }
+        });
         return view;
     }
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        if(selectedList.get(position,true)){
+            selectedList.put(position,false);
+            selectImage.add(list.get(position));
+        }else{
+            selectedList.put(position,true);
+            selectImage.remove(list.get(position) );
+        }
+        Toast.makeText(getActivity(),"Selected Images Count::"+selectImage.size(),Toast.LENGTH_SHORT).show();
+        if(getActivity()!=null){
+            ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+        }
 
-    }
+         }
 }
