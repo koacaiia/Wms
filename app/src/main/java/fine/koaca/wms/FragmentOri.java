@@ -3,17 +3,23 @@ package fine.koaca.wms;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentOri#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentOri extends Fragment {
+public class FragmentOri extends Fragment implements ImageViewActivityAdapter.ImageViewClicked {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -59,6 +65,22 @@ public class FragmentOri extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_ori, container, false);
+        View view =getLayoutInflater().inflate(R.layout.fragment_ori,null);
+        RecyclerView recyclerView=view.findViewById(R.id.fragmentOri_recyclerView);
+        GridLayoutManager manager=new GridLayoutManager(getActivity(),3);
+        recyclerView.setLayoutManager(manager);
+        PublicMethod picture=new PublicMethod(getActivity());
+        String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        ArrayList<String> list= picture.getPictureLists("Ori",date);
+        ImageViewActivityAdapter iAdapter= new ImageViewActivityAdapter(list,this);
+        recyclerView.setAdapter(iAdapter);
+        iAdapter.notifyDataSetChanged();
+
+        return view;
+    }
+
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+
     }
 }

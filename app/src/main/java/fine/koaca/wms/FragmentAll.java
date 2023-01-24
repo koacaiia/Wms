@@ -1,19 +1,26 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link FragmentAll#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentAll extends Fragment {
+public class FragmentAll extends Fragment implements ImageViewActivityAdapter.ImageViewClicked {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,10 +62,26 @@ public class FragmentAll extends Fragment {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_all, container, false);
+        View view= getLayoutInflater().inflate(R.layout.fragment_all,null);
+        RecyclerView recycler=view.findViewById(R.id.fragmentAll_recyclerView);
+        GridLayoutManager manager=new GridLayoutManager(getActivity(),3);
+        recycler.setLayoutManager(manager);
+        PublicMethod pictures= new PublicMethod(getActivity());
+        String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        ArrayList<String> list = pictures.getPictureLists("All",date);
+        ImageViewActivityAdapter adapter= new ImageViewActivityAdapter(list,this);
+        recycler.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
+        return view;
+    }
+
+    @Override
+    public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+
     }
 }
