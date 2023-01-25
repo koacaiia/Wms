@@ -33,7 +33,7 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
     ArrayList<String> selectImage = new ArrayList<String>();
     ArrayList<String> selectedImages = new ArrayList<String>();
     ArrayList<String> list;
-    Button btnSend;
+//    Button btnSend;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,14 +85,15 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
         ImageViewActivityAdapter adapter= new ImageViewActivityAdapter(list,this);
         recycler.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        btnSend = view.findViewById(R.id.btnFragmentAll);
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PublicMethod publicMethod= new PublicMethod(getActivity(),selectImage);
-//                publicMethod.upLoadPictures("Ysk",)
-            }
-        });
+//        btnSend = view.findViewById(R.id.btnFragmentAll);
+//        btnSend.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                PublicMethod publicMethod= new PublicMethod(getActivity(),selectImage);
+////                publicMethod.upLoadPictures("Ysk",)
+//            }
+//
+//        });
         return view;
     }
 

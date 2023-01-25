@@ -3,18 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
     android:orientation="vertical"
-    tools:context=".FragmentAll">
+    tools:context=".FragmentSaved">
     <TextView
-        android:id="@+id/btnFragmentAllTxt"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:id="@+id/btnFragmentSaved"
         android:gravity="center"
-        android:text="Gallery 전체사진"
+        android:text="서버 저장사진"
         android:textStyle="bold|italic"/>
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fragmentAll_recyclerView"
+        android:id="@+id/fragmentSaved_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

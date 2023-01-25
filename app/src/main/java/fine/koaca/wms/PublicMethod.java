@@ -124,6 +124,7 @@ public class PublicMethod {
     }
 
     public ArrayList<String> getPictureLists(String sort,String date){
+        Log.i("getPicture Method","Load Sort"+sort);
         ArrayList<String> imageViewLists=new ArrayList<>();
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};

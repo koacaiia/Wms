@@ -205,35 +205,52 @@
                     android:layout_weight="0.5"
                     android:clickable="true"
                     android:orientation="vertical">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:orientation="horizontal">
-                        <Button
-                            android:id="@+id/btnGalleryRe"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="오늘사진"
-                            android:layout_weight="1"/>
-                        <Button
-                            android:id="@+id/btnGalleryOri"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="원본사진"
-                            android:layout_weight="1"/>
-                        <Button
-                            android:id="@+id/btnGalleryAll"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:text="갤러리 전체"
-                            android:layout_weight="1"/>
-                    </LinearLayout>
+<!--                    <LinearLayout-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="40dp"-->
+<!--                        android:orientation="horizontal">-->
+
+<!--                        <Button-->
+<!--                            android:id="@+id/btnGalleryRe"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_marginHorizontal="3sp"-->
+<!--                            android:layout_marginVertical="2sp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:text="오늘사진" />-->
+
+<!--                        <Button-->
+<!--                            android:id="@+id/btnGalleryOri"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_marginHorizontal="3sp"-->
+<!--                            android:layout_marginVertical="2sp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:text="원본사진" />-->
+
+<!--                        <Button-->
+<!--                            android:id="@+id/btnGalleryAll"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_marginHorizontal="3sp"-->
+<!--                            android:layout_marginVertical="2sp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:text="갤러리 전체" />-->
+
+<!--                        <Button-->
+<!--                            android:id="@+id/btnGallerServer"-->
+<!--                            android:layout_width="match_parent"-->
+<!--                            android:layout_height="match_parent"-->
+<!--                            android:layout_marginHorizontal="3sp"-->
+<!--                            android:layout_marginVertical="2sp"-->
+<!--                            android:layout_weight="1"-->
+<!--                            android:text="서버저장 사진" />-->
+<!--                    </LinearLayout>-->
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:id = "@+id/incargo_fragment"
-                    />
+                    android:id = "@+id/incargo_fragment"/>
 
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -242,19 +259,9 @@
                         android:layout_height="wrap_content">
 
                     </androidx.recyclerview.widget.RecyclerView>
-
-
-                </LinearLayout>
-
-
-
-
-
+                </LinearLayout>\
             </LinearLayout>
-
-
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

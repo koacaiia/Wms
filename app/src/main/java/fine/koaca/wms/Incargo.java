@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -143,7 +144,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     String itemClickTitle;
 
     RecyclerView imageRecyclerView;
-    Button btnG_re,btnG_Ori,btnG_All;
+    Button btnG_Re,btnG_Ori,btnG_All,btnG_Saved;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -168,18 +169,18 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         day_start = dateToday;
         day_end = dateToday;
 
-        imageRecyclerView=findViewById(R.id.incargo_recyclerView_image);
-        imageRecyclerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("TestValue","imageRecyclerView Clicked Checked=");
-            }
-        });
-        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,3);
-        imageRecyclerView.setLayoutManager(gridLayoutManager);
-        imageViewLists=publicMethod.getPictureLists("Re",dateToday);
-        iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
-        imageRecyclerView.setAdapter(iAdapter);
+//        imageRecyclerView=findViewById(R.id.incargo_recyclerView_image);
+//        imageRecyclerView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.i("TestValue","imageRecyclerView Clicked Checked=");
+//            }
+//        });
+//        GridLayoutManager gridLayoutManager=new GridLayoutManager(this,3);
+//        imageRecyclerView.setLayoutManager(gridLayoutManager);
+//        imageViewLists=publicMethod.getPictureLists("Re",dateToday);
+//        iAdapter=new ImageViewActivityAdapter(imageViewLists,this);
+//        imageRecyclerView.setAdapter(iAdapter);
 
         fltBtn_share = findViewById(R.id.incargo_floatBtn_share);
         fltBtn_share.setVisibility(View.INVISIBLE);
@@ -427,68 +428,68 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
         fltBtn_share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("TestValue","Fragment Data Value:::"+imageViewListsSelected.size());
-//                String consigneeName=listItems.get(0).getConsignee();
-//                publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
-//                if(sharedValue.equals("Pallet")){
-//                                String bl = listItems.get(0).getBl();
-//                                String des = listItems.get(0).getDescription();
-//                                String consigneeNameP=listItems.get(0).getConsignee();
-//                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
-//                                builder.setTitle("팔렛트 등록 확인창")
-//                                        .setMessage("사용등록:" +"\n" + consigneeNameP+"_"+bl+"_"+"_"+des+"\n"+"화물의 팔렛트 사용등록" + "\n" +"신규 입고등록: 화주,재고 확인후 팔렛트 신규입고 등록")
-//
-//                                        .setPositiveButton("사용 등록", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-////                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
-//                                                    getPalletStock(consigneeName,bl,des);
-//                                            }
-//                                        })
-//
-//                                        .setNeutralButton("신규 입고등록", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialog, int which) {
-//                                                manualPltReg();
-//
-//                                            }
-//                                        })
-//                                        .show();
-//
-//                }else{
-//
-//                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
-//                            deptName);
-//                    String date = listItems.get(0).getDate();
-//                    String workingProcess;
-//                    if(listItems.get(0).getWorking().equals("") ){
-//                        workingProcess="컨테이너 진입";
-//                    }else{
-//                        workingProcess=listItems.get(0).getWorking();
-//                    }
-//                    Map<String, Object> putValue = new HashMap<>();
-//                    putValue.put("working", workingProcess);
-//                    databaseReference =
-//                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
-//                                    "/" + keyValue);
-//                    databaseReference.updateChildren(putValue);
-//                    imageViewListsSelected.clear();
-//
-//                    Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
-//                    if(keyValue==null){
-//                        keyValue=getIntent().getStringExtra("refPath");
-//                    }
-//
-//                    itemPictureList(keyValue);
-//                }
+//                Log.i("TestValue","Fragment Data Value:::"+imageViewListsSelected.size());
+                String consigneeName=listItems.get(0).getConsignee();
+                publicMethod = new PublicMethod(Incargo.this, imageViewListsSelected);
+                if(sharedValue.equals("Pallet")){
+                                String bl = listItems.get(0).getBl();
+                                String des = listItems.get(0).getDescription();
+                                String consigneeNameP=listItems.get(0).getConsignee();
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Incargo.this);
+                                builder.setTitle("팔렛트 등록 확인창")
+                                        .setMessage("사용등록:" +"\n" + consigneeNameP+"_"+bl+"_"+"_"+des+"\n"+"화물의 팔렛트 사용등록" + "\n" +"신규 입고등록: 화주,재고 확인후 팔렛트 신규입고 등록")
+
+                                        .setPositiveButton("사용 등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+//                                                publicMethod.pltReg(consigneeName, keyValue, nickName, 0, bl, des);
+                                                    getPalletStock(consigneeName,bl,des);
+                                            }
+                                        })
+
+                                        .setNeutralButton("신규 입고등록", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                manualPltReg();
+
+                                            }
+                                        })
+                                        .show();
+
+                }else{
+
+                    publicMethod.upLoadPictures(nickName, consigneeName, "InCargo", listItems.get(0).getKeyValue(),
+                            deptName);
+                    String date = listItems.get(0).getDate();
+                    String workingProcess;
+                    if(listItems.get(0).getWorking().equals("") ){
+                        workingProcess="컨테이너 진입";
+                    }else{
+                        workingProcess=listItems.get(0).getWorking();
+                    }
+                    Map<String, Object> putValue = new HashMap<>();
+                    putValue.put("working", workingProcess);
+                    databaseReference =
+                            database.getReference("DeptName/" + deptName + "/" + "InCargo" + "/" + date.substring(5, 7) + "월/" + date +
+                                    "/" + keyValue);
+                    databaseReference.updateChildren(putValue);
+                    imageViewListsSelected.clear();
+
+                    Toast.makeText(getApplicationContext(), "컨테이너 진입으로 작업현황 등록 됩니다.변경사항 있으면 추후 수정 바랍니다.", Toast.LENGTH_SHORT).show();
+                    if(keyValue==null){
+                        keyValue=getIntent().getStringExtra("refPath");
+                    }
+
+                    itemPictureList(keyValue);
+                }
 
 
             }
         });
 
 
-        btnG_re = findViewById(R.id.btnGalleryRe);
-        btnG_re.setOnClickListener(new View.OnClickListener() {
+        btnG_Re = findViewById(R.id.btnGalleryRe);
+        btnG_Re.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 FragmentRe fragmentRe = new FragmentRe();
@@ -515,6 +516,16 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
                 FragmentAll fragmentAll = new FragmentAll();
                 transaction.replace(R.id.incargo_fragment,fragmentAll);
                 transaction.commit();
+            }
+        });
+        btnG_Saved= findViewById(R.id.btnGallerServer);
+        btnG_Saved.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(keyValue==null){
+                    keyValue= getIntent().getStringExtra("refPath");
+                }
+                itemPictureList(keyValue);
             }
         });
 
@@ -1844,23 +1855,23 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 //
 //        }
 
-        int imageViewListCount;
-        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
-        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
-        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
-
-        imageRecyclerView.setLayoutManager(manager);
-        PublicMethod pictures = new PublicMethod(this);
-        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
-            imageViewLists=pictures.getPictureLists(sort,date);
-        }else{
-            itemPictureList(sort);
-        }
-
-
-        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
-        imageRecyclerView.setAdapter(iAdapter);
-        iAdapter.notifyDataSetChanged();
+//        int imageViewListCount;
+//        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+//        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
+//        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
+//
+//        imageRecyclerView.setLayoutManager(manager);
+//        PublicMethod pictures = new PublicMethod(this);
+//        if(sort.equals("Re")||sort.equals("All")||sort.equals("Ori")){
+//            imageViewLists=pictures.getPictureLists(sort,date);
+//        }else{
+//            itemPictureList(sort);
+//        }
+//
+//
+//        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
+//        imageRecyclerView.setAdapter(iAdapter);
+//        iAdapter.notifyDataSetChanged();
     }
 
     public void initIntent() {
@@ -1890,61 +1901,69 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
     }
 
     public void itemPictureList(String keyValue) {
-        if(btnPicList.getVisibility()==View.INVISIBLE){
-            btnPicList.setVisibility(View.VISIBLE);
-            btnPicCount.setVisibility(View.VISIBLE);
-        }
-        btnPicList.setText("서버 저장된 사진 검색");
-        btnPicCount.setText("디바이스 저장 원하면 사진 클릭");
-        btnPicCount.setTextColor(Color.RED);
-        Animation ani=new AlphaAnimation(0.0f,1.0f);
-        ani.setRepeatCount(Animation.INFINITE);
-        ani.setRepeatMode(Animation.REVERSE);
-        ani.setDuration(1000);
-        btnPicCount.startAnimation(ani);
-        imageViewLists.clear();
-        RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
-        int imageViewListCount;
-
-        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
-        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
-        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
-        imageRecyclerView.setLayoutManager(manager);
-        FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
-        StorageReference storageReference =
-                storage.getReference("images/" + deptName + "/" + keyValue.substring(0, 10) + "/InCargo/" + keyValue);
-        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
-            @SuppressLint("NotifyDataSetChanged")
-            @Override
-            public void onSuccess(ListResult listResult) {
-
-                for (StorageReference item : listResult.getItems()) {
-                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            imageViewLists.add(uri.toString());
-                            ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(imageViewLists, Incargo.this);
-                            if (imageViewLists.size() == listResult.getItems().size()) {
-                                imageRecyclerView.setAdapter(iAdapter);
-                                iAdapter.notifyDataSetChanged();
-                            }
-                            iAdapter.clickListener = new ImageViewActivityAdapter.ImageViewClicked() {
-                                @Override
-                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-                                    PublicMethod publicMethod = new PublicMethod(Incargo.this);
-                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
-                                }
-                            };
-
-                        }
-
-                    });
-
-                }
-
-            }
-        });
+        FragmentManager manager= getSupportFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+        Bundle bundle= new Bundle();
+        bundle.putString("keyValue",keyValue);
+        FragmentSaved fragmentSaved=new FragmentSaved();
+        fragmentSaved.setArguments(bundle);
+        transaction.replace(R.id.incargo_fragment,fragmentSaved);
+        transaction.commit();
+//        if(btnPicList.getVisibility()==View.INVISIBLE){
+//            btnPicList.setVisibility(View.VISIBLE);
+//            btnPicCount.setVisibility(View.VISIBLE);
+//        }
+//        btnPicList.setText("서버 저장된 사진 검색");
+//        btnPicCount.setText("디바이스 저장 원하면 사진 클릭");
+//        btnPicCount.setTextColor(Color.RED);
+//        Animation ani=new AlphaAnimation(0.0f,1.0f);
+//        ani.setRepeatCount(Animation.INFINITE);
+//        ani.setRepeatMode(Animation.REVERSE);
+//        ani.setDuration(1000);
+//        btnPicCount.startAnimation(ani);
+//        imageViewLists.clear();
+//        RecyclerView imageRecyclerView = findViewById(R.id.incargo_recyclerView_image);
+//        int imageViewListCount;
+//
+//        SharedPreferences sharedPreferences=getSharedPreferences("Dept_Name", Context.MODE_PRIVATE);
+//        imageViewListCount=Integer.parseInt(sharedPreferences.getString("imageViewListCount","3"));
+//        GridLayoutManager manager = new GridLayoutManager(this, imageViewListCount);
+//        imageRecyclerView.setLayoutManager(manager);
+//        FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+//        StorageReference storageReference =
+//                storage.getReference("images/" + deptName + "/" + keyValue.substring(0, 10) + "/InCargo/" + keyValue);
+//        storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+//            @SuppressLint("NotifyDataSetChanged")
+//            @Override
+//            public void onSuccess(ListResult listResult) {
+//
+//                for (StorageReference item : listResult.getItems()) {
+//                    item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//
+//                            imageViewLists.add(uri.toString());
+//                            ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(imageViewLists, Incargo.this);
+//                            if (imageViewLists.size() == listResult.getItems().size()) {
+//                                imageRecyclerView.setAdapter(iAdapter);
+//                                iAdapter.notifyDataSetChanged();
+//                            }
+//                            iAdapter.clickListener = new ImageViewActivityAdapter.ImageViewClicked() {
+//                                @Override
+//                                public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+//                                    PublicMethod publicMethod = new PublicMethod(Incargo.this);
+//                                    publicMethod.adapterPictureSavedMethod(imageViewLists.get(position));
+//                                }
+//                            };
+//
+//                        }
+//
+//                    });
+//
+//                }
+//
+//            }
+//        });
 
     }
 
