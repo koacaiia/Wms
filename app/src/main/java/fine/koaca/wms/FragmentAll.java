@@ -30,8 +30,7 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     SparseBooleanArray selectedList = new SparseBooleanArray(0);
-    ArrayList<String> selectImage = new ArrayList<String>();
-    ArrayList<String> selectedImages = new ArrayList<String>();
+    ArrayList<String> selectImage;
     ArrayList<String> list;
 //    Button btnSend;
 
@@ -75,7 +74,7 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= getLayoutInflater().inflate(R.layout.fragment_all,null);
+        View view= getLayoutInflater().inflate(R.layout.fragment_all,container,false);
         RecyclerView recycler=view.findViewById(R.id.fragmentAll_recyclerView);
         GridLayoutManager manager=new GridLayoutManager(getActivity(),3);
         recycler.setLayoutManager(manager);
@@ -99,6 +98,9 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
+        if(getActivity()!=null){
+            selectImage=((Incargo)getActivity()).imageViewListsSelected;
+        }
         if(selectedList.get(position,true)){
             selectedList.put(position,false);
             selectImage.add(list.get(position));

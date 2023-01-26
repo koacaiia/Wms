@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,6 +33,9 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    ArrayList<String> list;
+    ArrayList<String> selectImage;
+    SparseBooleanArray selectedList= new SparseBooleanArray(0);
 
     public FragmentRe() {
         // Required empty public constructor
@@ -66,13 +72,17 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= getLayoutInflater().inflate(R.layout.fragment_re,null);
+
+        View view= getLayoutInflater().inflate(R.layout.fragment_re,container,false);
+        //        ProgressBar progressBar = view.findViewById(R.id.fragmentRe_ProgressBar);
         RecyclerView recyclerView = view.findViewById(R.id.fragmentRe_recyclerView);
+//        progressBar.setVisibility(View.VISIBLE);
         GridLayoutManager manager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(manager);
         PublicMethod pictures = new PublicMethod(getActivity());
         String date=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        ArrayList<String> list = pictures.getPictureLists("Re",date);
+        list = pictures.getPictureLists("Re",date);
+//        progressBar.setVisibility(View.INVISIBLE);
         ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(list,this);
         recyclerView.setAdapter(iAdapter);
         iAdapter.notifyDataSetChanged();
@@ -83,7 +93,20 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-        Log.i("TestValue ImageViewClicked","Clicked");
+        if(getActivity()!=null){
+        selectImage= ((Incargo)getActivity()).imageViewListsSelected;}
+        if(selectedList.get(position,true)){
+            selectedList.put(position,false);
+            selectImage.add(list.get(position));
+        }else{
+            selectedList.put(position,true);
+            selectImage.remove(list.get(position));
+        }
+        Toast.makeText(getActivity(),"Selected Images Count::"+selectImage.size(),Toast.LENGTH_SHORT).show();
+        if(getActivity()!=null){
+            ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+        }
+
 
     }
 }

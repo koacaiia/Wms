@@ -3,6 +3,7 @@ package fine.koaca.wms;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -125,18 +126,24 @@ public class PublicMethod {
 
     public ArrayList<String> getPictureLists(String sort,String date){
         Log.i("getPicture Method","Load Sort"+sort);
+        Toast.makeText(activity,"Device Storage 접근중....",Toast.LENGTH_SHORT).show();
         ArrayList<String> imageViewLists=new ArrayList<>();
         Uri uri= MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection={MediaStore.MediaColumns.DATA};
         Cursor cursor=activity.getContentResolver().query(uri,projection,null,null,MediaStore.MediaColumns.DATE_ADDED+" desc");
+
         int columnsDataIndex=cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
         while(cursor.moveToNext()){
             String uriI=cursor.getString(columnsDataIndex);
             File file=null;
+            String storRe=null;
             switch(sort){
                 case "Re":
                     file=new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)+"/Fine/" +
                         date+"/Resize");
+//                    file=new File(activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)+"/Fine/" +
+//                            date+"/Resize");
+
                     break;
                 case "All":
                     file=new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)));

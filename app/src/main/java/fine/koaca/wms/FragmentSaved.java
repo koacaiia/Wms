@@ -35,7 +35,7 @@ public class FragmentSaved extends Fragment implements ImageViewActivityAdapter.
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    ArrayList<String> imageSelects=new ArrayList<>();
+    ArrayList<String> imageSelects;
 
     public FragmentSaved() {
         // Required empty public constructor
@@ -76,14 +76,20 @@ public class FragmentSaved extends Fragment implements ImageViewActivityAdapter.
         String deptName=publicMethod.getUserInformation().get("deptName");
         String nickName = publicMethod.getUserInformation().get("nickName");
         String listImageViewCount = publicMethod.getUserInformation().get("imageViewListCount");
-        String keyValue= this.getArguments().getString("keyValue");
+        String keyValue = null;
+        if(getActivity()!=null){
+            keyValue= ((Incargo)getActivity()).keyValue;
+        }
+        imageSelects= new ArrayList<>();
         View view= getLayoutInflater().inflate(R.layout.fragment_saved,null);
         RecyclerView recyclerView= view.findViewById(R.id.fragmentSaved_recyclerView);
         GridLayoutManager manager= new GridLayoutManager(getActivity(),Integer.parseInt(listImageViewCount));
         recyclerView.setLayoutManager(manager);
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://fine-bondedwarehouse.appspot.com");
+        assert keyValue != null;
         StorageReference storageReference =
                 storage.getReference("images/" + deptName + "/" + keyValue.substring(0, 10) + "/InCargo/" + keyValue);
+        String finalKeyValue = keyValue;
         storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @SuppressLint("NotifyDataSetChanged")
             @Override
@@ -93,8 +99,9 @@ public class FragmentSaved extends Fragment implements ImageViewActivityAdapter.
                     item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-
                             imageSelects.add(uri.toString());
+                            Log.i("Fragment Saved Value::",
+                                    "keyValue::"+ finalKeyValue +"imageSelectList Size::"+imageSelects.size());
                             ImageViewActivityAdapter iAdapter = new ImageViewActivityAdapter(imageSelects, FragmentSaved.this);
                             if (imageSelects.size() == listResult.getItems().size()) {
                                 recyclerView.setAdapter(iAdapter);

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FragmentInit">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/fragmentInit_btnConIn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="화물 보세구역내 진입 등록 "
+                    android:textStyle="bold|italic" />
+
+                <Button
+                    android:id="@+id/fragmentInit_btnDevCom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="입고작업 완료 +컨테이너 회수 요청"
+                    android:textStyle="bold|italic" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/fragmentInit_btnInsCom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="검수완료+반입요청 "
+                    android:textStyle="italic|bold" />
+
+                <Button
+                    android:id="@+id/fragmentInit_btnIncargoCom"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="창고반입 완료+Location 등록"
+                    android:textStyle="italic|bold" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/fragmentInit_btnRegPallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="팔렛트 등록
+"
+                    android:textStyle="italic|bold" />
+
+                <Button
+                    android:id="@+id/fragmentInit_regRemark"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    android:autoSizeMaxTextSize="14sp"
+                    android:autoSizeMinTextSize="6sp"
+                    android:autoSizeTextType="uniform"
+                    android:gravity="center|fill_vertical"
+                    android:text="입고특이사항등록"
+                    android:textStyle="italic|bold" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:src="?attr/actionModeCloseDrawable" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="화살표 방향으로 화면을 스와이프(밀면) \n 수정사진,원본사진,전체사진,서버등록 \n 사진 순으로 검색 가능 합니다."
+        android:textSize="20sp"
+        android:textStyle="bold|italic" />
+
+</LinearLayout>

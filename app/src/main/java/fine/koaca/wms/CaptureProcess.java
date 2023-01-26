@@ -117,6 +117,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 //                windowDegree = new WindowDegree(mainActivity);
 //                int degree = windowDegree.getDegree();
 //                bitmap = rotate(bitmap, degree);
+//                String storagePath=activity.getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath();
                 contentResolver = mainActivity.getContentResolver();
                 contentValues = new ContentValues();
                 contentValues.put(MediaStore.Images.Media.DISPLAY_NAME, System.currentTimeMillis() + ".jpg");
