@@ -211,7 +211,7 @@ public class Incargo extends AppCompatActivity implements Serializable , SensorE
 //                picItemList.add("업무 원본사진");
 //                picItemList.add("갤러리 전체 사진");
 //                picItemList.add("서버 전송용 조정사진");
-//                picItemList.add("서버 저장된 사진 검색");
+//                picItemList.add("서버 저장된 사진 검색")<;
 //
 //                String[] picItemListArr=picItemList.toArray(new String[picItemList.size()]);
 //                builder.setTitle("사진 저장소 선택창")

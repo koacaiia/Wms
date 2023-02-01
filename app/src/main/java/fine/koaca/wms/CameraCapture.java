@@ -1,5 +1,7 @@
 package fine.koaca.wms;
 
+import static java.lang.Math.abs;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -14,11 +16,18 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -30,6 +39,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,7 +77,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CameraCapture extends AppCompatActivity implements CameraCaptureInAdapter.CameraCaptureInAdapterClick, CameraCaptureOutAdapter.CameraCaptureOutAdapterClick {
+public class CameraCapture extends AppCompatActivity implements CameraCaptureInAdapter.CameraCaptureInAdapterClick,
+        CameraCaptureOutAdapter.CameraCaptureOutAdapterClick, SensorEventListener {
     SurfaceView surfaceView;
     SurfaceHolder surfaceHolder;
     String [] permission_list={Manifest.permission.CAMERA,
@@ -114,27 +125,136 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
     FirebaseDatabase database;
     Activity activity;
+    ScaleGestureDetector mScaleGestureDetector;
+    float mScaleFactor = 1.0f;
+    SeekBar seekBar;
+
+    double touch_interval_X = 0;
+    double touch_interval_Y = 0;
+    int zoom_in_count = 0;
+    int zoom_out_count = 0;
+    int touch_zoom = 0;
+    ImageView imageViewCaptured;
+
+    SensorManager mSensorManager;
+    Sensor mAccelerometer;
+    private long mShakeTime;
+    private static final int SHAKE_SKIP_TIME = 500;
+    private static final float SHAKE_THERESHOLD_GRAVITY = 2.7F;
+    String captureImageSelect;
+    LinearLayout imageViewLayout;
     @SuppressLint({"SimpleDateFormat", "NotifyDataSetChanged"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_capture);
         requestPermissions(permission_list,0);
         intentGetItems();
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         database=FirebaseDatabase.getInstance();
 
         activity=this;
+        seekBar = findViewById(R.id.camera_seekBar);
 
         PublicMethod publicMethod=new PublicMethod(this);
         nickName=publicMethod.getUserInformation().get("nickName");
         deptName=publicMethod.getUserInformation().get("deptName");
+        recyclerView=findViewById(R.id.captureImageList);
+        imageViewLayout = findViewById(R.id.imageViewLayout);
+        imageViewLayout.setVisibility(View.INVISIBLE);
+        captureProcess=new CaptureProcess(this,adapter);
+        if(publicMethod.getUserInformation().get("captureImageSelect") == null){
+            captureImageSelectMethod();
+
+        }else{
+            captureImageSelect = publicMethod.getUserInformation().get("captureImageSelect"); if(captureImageSelect.equals("View")){
+                recyclerView.setVisibility(View.INVISIBLE);
+                imageViewCaptured = findViewById(R.id.imageViewCaptured);
+                imageViewCaptured.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        imageViewLayout.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }else{
+                LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+                recyclerView.setLayoutManager(layoutManager);
+
+                list=captureProcess.queryAllPictures(dateToday);
+                adapter=new ImageViewListAdapter(list);
+                adapter.notifyDataSetChanged();
+                recyclerView.setAdapter(adapter);
+                adapter.onListItemSelected(new OnListItemSelectedInterface() {
+                    @Override
+                    public void onItemClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
+                        String uriString=list.get(position).getUriName();
+                        if(imageListSelected.get(position, false)){
+                            imageListSelected.delete(position);
+                            upLoadUriString.remove(uriString);
+                        }else{
+                            imageListSelected.put(position,true);
+                            upLoadUriString.add(uriString);
+                        }
+                        if(upLoadUriString.size()>7){
+                            AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
+                            builder.setTitle("!사진전송 주의사항")
+                                    .setMessage("한번에 전송할수 있는 사진은 최대 7장 입니다.")
+                                    .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Toast.makeText(getApplicationContext(),"사진을 다신 선택 하기 바랍니다.",Toast.LENGTH_SHORT).show();
+                                            adapter.clearSelectedItem();
+                                        }
+                                    }).show();
+                        }
+                        btnPicText.setText(upLoadUriString.size()+" 개의 사진이 선택 되었습니다."+"\n"+"해당 버튼길게 누르면 메세지창으로 넘어 갑니다."+"\n"+
+                                "사진 리스트 길게 누르면 공유선택으로 전환 됩니다.");
+                        btnPicText.setTextSize(12);
+                    }
+                });
+                adapter.onListItemLongSelectedInterface(new OnListItemLongSelectedInterface() {
+                    @Override
+                    public void onLongClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
+                        dialogOutCamera();
+                    }
+                });
+
+            }
+
+        }
 
 
         dateToday=new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
-
         btnPicText=findViewById(R.id.camera_textView_piccount);
-        captureProcess=new CaptureProcess(this,adapter);
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Camera.Parameters params = captureProcess.camera.getParameters();
+                int Zoom = progress*(params.getMaxZoom()/10);
+                Log.i("Zoom Value",String.valueOf(params)+"getMaxZoom:"+params.getMaxZoom()+"Progress Value:"+progress+
+                        "getMinZoom:");
+                if(params.getMaxZoom() <Zoom){
+                    Zoom = params.getMaxZoom();
+                }
+                params.setZoom(Zoom);
+                captureProcess.setCameraZoom(Zoom);
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         camera_date=findViewById(R.id.camera_textView_date);
         camera_date.setText(intent_camera_date);
@@ -152,73 +272,30 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             @Override
             public void onClick(View v) {
 
-                captureProcess.captureProcess(dateToday);
+                captureProcess.camera.autoFocus(new Camera.AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        Toast.makeText(getApplicationContext(), "초점 다시 정렬 합니다.", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
             }
         });
 
-        surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-//                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
-//                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                startActivity(intent);
-
-                captureProcess.setmAutoFocus();
-                return true;
-            }
-        });
-
-
-        recyclerView=findViewById(R.id.captureImageList);
-        LinearLayoutManager layoutManager=new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        list=captureProcess.queryAllPictures(dateToday);
-        adapter=new ImageViewListAdapter(list);
-        adapter.notifyDataSetChanged();
-        recyclerView.setAdapter(adapter);
-
-        adapter.onListItemSelected(new OnListItemSelectedInterface() {
-            @Override
-            public void onItemClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
-
-                String uriString=list.get(position).getUriName();
+//        surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+////                Intent intent=new Intent(CameraCapture.this,CameraCapture.class);
+////                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+////                startActivity(intent);
+//
+//                captureProcess.setmAutoFocus();
+//                return true;
+//            }
+//        });
 
 
-                if(imageListSelected.get(position, false)){
-                    imageListSelected.delete(position);
-                    upLoadUriString.remove(uriString);
 
-                }else{
-                    imageListSelected.put(position,true);
-                    upLoadUriString.add(uriString);
-
-                }
-
-                if(upLoadUriString.size()>7){
-                    AlertDialog.Builder builder=new AlertDialog.Builder(CameraCapture.this);
-                    builder.setTitle("!사진전송 주의사항")
-                            .setMessage("한번에 전송할수 있는 사진은 최대 7장 입니다.")
-                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                   Toast.makeText(getApplicationContext(),"사진을 다신 선택 하기 바랍니다.",Toast.LENGTH_SHORT).show();
-                                    adapter.clearSelectedItem();
-                                }
-                            }).show();
-                }
-
-                btnPicText.setText(upLoadUriString.size()+" 개의 사진이 선택 되었습니다."+"\n"+"해당 버튼길게 누르면 메세지창으로 넘어 갑니다."+"\n"+
-                        "사진 리스트 길게 누르면 공유선택으로 전환 됩니다.");
-               btnPicText.setTextSize(12);
-            }
-        });
-        adapter.onListItemLongSelectedInterface(new OnListItemLongSelectedInterface() {
-            @Override
-            public void onLongClick(ImageViewListAdapter.ListViewHolder holder, View view, int position) {
-                dialogOutCamera();
-            }
-        });
 
         if(requestQueue==null){
             requestQueue= Volley.newRequestQueue(getApplicationContext());
@@ -237,11 +314,71 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             public boolean onLongClick(View v) {
 //                Intent intent=new Intent(CameraCapture.this, WorkingMessageData.class);
 //                startActivity(intent);
-                getStorageUri();
+//                getStorageUri();
+//
+                captureImageSelectMethod();
                 return true;
             }
         });
+        mScaleGestureDetector = new ScaleGestureDetector(this, new ScaleGestureDetector.OnScaleGestureListener() {
+            @Override
+            public boolean onScale(ScaleGestureDetector detector) {
+                mScaleFactor *=detector.getScaleFactor();
+                mScaleFactor = Math.max(0.1f,Math.min(mScaleFactor,10.0f));
+                surfaceView.setScaleX(mScaleFactor);
+                surfaceView.setScaleY(mScaleFactor);
+                return false;
+            }
 
+            @Override
+            public boolean onScaleBegin(ScaleGestureDetector detector) {
+                return false;
+            }
+
+            @Override
+            public void onScaleEnd(ScaleGestureDetector detector) {
+
+            }
+        });
+
+
+    }
+
+    private void captureImageSelectMethod() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("사진 보기 선택창")
+                .setMessage("카메라에 촬영된 사진을 보는 방법을 선택 합니다."+"\n"+"List 방식:카메라 촬영시 랙이나 버벅임이 없는경우는 당일 촬영된 사진을 순차적으로 보여 줍니다."+"\n"+
+                        "View 방식:카메라 이용시 랙이나 일부 버벅임이 확인되는 경우 촬영된 사진 한장만 보여 집니다. ")
+                .setPositiveButton("List", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putString("captureImageSelect","List");
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(),"List 방식으로 사진 확인 합니다.",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(CameraCapture.this,CameraCapture.class);
+                    startActivity(intent);
+                    }
+                })
+                .setNegativeButton("View", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putString("captureImageSelect","View");
+                        editor.apply();
+                        Toast.makeText(getApplicationContext(),"View 방식으로 사진 확인 합니가.",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(CameraCapture.this,CameraCapture.class);
+                        startActivity(intent);
+                    }
+                })
+                .setNeutralButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .show();
     }
 
 
@@ -272,7 +409,6 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
 
         dialog=builder.create();
         Button btnInit=view.findViewById(R.id.capture_adapter_btnInit);
-
         btnInit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -488,5 +624,104 @@ public class CameraCapture extends AppCompatActivity implements CameraCaptureInA
             public void onSuccess(ListResult listResult) {
             }
         });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+//        switch(event.getAction() & MotionEvent.ACTION_MASK) {
+//            case MotionEvent.ACTION_DOWN://싱글 터치
+//                captureProcess.camera.autoFocus(new Camera.AutoFocusCallback() {
+//                    @Override
+//                    public void onAutoFocus(boolean success, Camera camera) {
+//                        Toast.makeText(getApplicationContext(), "초점 다시 정렬 합니다.", Toast.LENGTH_SHORT).show();
+//
+//                    }
+//                });
+//                break;
+//            case MotionEvent.ACTION_MOVE://터치후 이동시
+//                if (event.getPointerCount() == 2) {
+//                    Camera.Parameters params = captureProcess.camera.getParameters();
+//                    double now_interval_X = (double) abs(event.getX(0) - event.getX(1));
+//                    double now_interval_Y = (double) abs(event.getY(0) - event.getY(1));
+//                    if (touch_interval_X < now_interval_X && touch_interval_Y < now_interval_Y) {
+//                        zoom_in_count++;
+//                        if (zoom_in_count > 5) {
+//                            zoom_in_count = 0;
+//                            touch_zoom += 5;
+//                            seekBar.setProgress(touch_zoom / 9);
+//                            if (params.getMaxZoom() < touch_zoom) {
+//                                touch_zoom = params.getMaxZoom();
+//                            }
+//                            captureProcess.setCameraZoom(touch_zoom);
+//                        }
+//                    }
+//                    if (touch_interval_X > now_interval_X && touch_interval_Y > now_interval_Y) {
+//                        zoom_out_count++;
+//                        if (zoom_out_count > 5) {
+//                            zoom_out_count = 0;
+//                            touch_zoom -= 5;
+//                            seekBar.setProgress(touch_zoom / 9);
+//                            if (0 > touch_zoom) {
+//                                touch_zoom = 0;
+//                            }
+//                            params.setZoom(touch_zoom);
+//                            captureProcess.setCameraZoom(touch_zoom);
+//                        }
+//                    }
+//                    touch_interval_X = (double) abs(event.getX(0) - event.getX(1));
+//                    touch_interval_Y = (double) abs(event.getY(0) - event.getY(1));
+//                }
+//
+//            break;
+//            case MotionEvent.ACTION_POINTER_DOWN:
+//                Toast.makeText(getApplicationContext(),"다시 터치 바랍니다.",Toast.LENGTH_SHORT).show();
+//                break;
+//            case MotionEvent.ACTION_UP:
+//                break;
+//        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float axisX = event.values[0];
+            float axisY = event.values[1];
+            float axisZ = event.values[2];
+
+            float gravityX = axisX / SensorManager.GRAVITY_EARTH;
+            float gravityY = axisY / SensorManager.GRAVITY_EARTH;
+            float gravityZ = axisZ / SensorManager.GRAVITY_EARTH;
+
+            Float f = gravityX * gravityX + gravityY * gravityY + gravityZ * gravityZ;
+            double squaredD = Math.sqrt(f.doubleValue());
+            float gForce = (float) squaredD;
+            if (gForce > SHAKE_THERESHOLD_GRAVITY) {
+                long currentTime = System.currentTimeMillis();
+                if (mShakeTime + SHAKE_SKIP_TIME > currentTime) {
+                    return;
+                }
+                mShakeTime = currentTime;
+
+                imageViewLayout.setVisibility(View.INVISIBLE);
+            }
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
     }
 }

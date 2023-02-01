@@ -1,5 +1,6 @@
 package fine.koaca.wms;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +36,7 @@ public class FragmentOri extends Fragment implements ImageViewActivityAdapter.Im
     ArrayList<String> list;
     ArrayList<String> selectImage;
     SparseBooleanArray selectedList= new SparseBooleanArray(0);
+    TextView textView;
 
     public FragmentOri() {
         // Required empty public constructor
@@ -71,6 +74,7 @@ public class FragmentOri extends Fragment implements ImageViewActivityAdapter.Im
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =getLayoutInflater().inflate(R.layout.fragment_ori,container,false);
+        textView = view.findViewById(R.id.fragmentOri_txtView);
         RecyclerView recyclerView=view.findViewById(R.id.fragmentOri_recyclerView);
         GridLayoutManager manager=new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(manager);
@@ -86,8 +90,15 @@ public class FragmentOri extends Fragment implements ImageViewActivityAdapter.Im
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-        if(getActivity()!=null){
-            selectImage= ((Incargo)getActivity()).imageViewListsSelected;}
+        String activityName=getActivity().getLocalClassName();
+        switch(activityName){
+            case "Incargo":
+                selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                break;
+            case "ActivityEquipNFacilityPutData":
+                selectImage= ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists;
+                break;
+        }
         if(selectedList.get(position,true)){
             selectedList.put(position,false);
             selectImage.add(list.get(position));
@@ -95,9 +106,16 @@ public class FragmentOri extends Fragment implements ImageViewActivityAdapter.Im
             selectedList.put(position,true);
             selectImage.remove(list.get(position));
         }
-        Toast.makeText(getActivity(),"Selected Images Count::"+selectImage.size(),Toast.LENGTH_SHORT).show();
-        if(getActivity()!=null){
-            ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+        textView.setText(selectImage.size()+"장의 사진이 선택 되었습니다.");
+        textView.setTextColor(Color.RED);
+        switch(activityName){
+            case "Incargo":selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+                break;
+            case "ActivityEquipNFacilityPutData":
+
+                ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists=selectImage;
+                break;
         }
     }
 }

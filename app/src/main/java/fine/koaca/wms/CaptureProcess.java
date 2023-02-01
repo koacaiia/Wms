@@ -22,6 +22,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -59,6 +61,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     ArrayList<String> uriString=new ArrayList<String>();
     Activity activity;
     Incargo inCargoActivity=new Incargo();
+    Camera.Parameters params;
+    ArrayList<String> capturedImages;
 
 
     public CaptureProcess(CameraCapture mainActivity,ImageViewListAdapter adapter) {
@@ -73,10 +77,13 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     public CaptureProcess(Incargo inCargoActivity) {
         this.inCargoActivity=inCargoActivity;
     }
+    public void setCameraZoom(int updateZoom){
+        params = camera.getParameters();
+        params.setZoom(updateZoom);
+        camera.setParameters(params);
+        setmAutoFocus();
 
-
-
-
+    }
     public void preViewProcess() {
         mainActivity.surfaceHolder.addCallback(this);
         mainActivity.surfaceHolder.setType(mainActivity.surfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -84,6 +91,9 @@ public class CaptureProcess implements SurfaceHolder.Callback {
         windowDegree = new WindowDegree(mainActivity);
         int degree = windowDegree.getDegree();
         camera.setDisplayOrientation(degree);
+//        params = camera.getParameters();
+//        params.setZoom(1);
+//        camera.setParameters(params);
 
         try {
             camera.setPreviewDisplay(mainActivity.surfaceHolder);
@@ -91,6 +101,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
             e.printStackTrace();
         }
         camera.startPreview();
+        setmAutoFocus();
     }
 
     public void captureProcess(String date_today) {
@@ -139,6 +150,14 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                 bitmap.compress(Bitmap.CompressFormat.JPEG,30,fosRe);
 
+//                try{
+//                    Thread.sleep(2000);
+//
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                mainActivity.imageViewCaptured.setVisibility(View.INVISIBLE);
+
 
                 try {
                     assert fos != null;
@@ -155,9 +174,16 @@ public class CaptureProcess implements SurfaceHolder.Callback {
 
                 camera.startPreview();
 
+                PublicMethod publicMethod = new PublicMethod(mainActivity);
+                if(Objects.equals(publicMethod.getUserInformation().get("captureImageSelect"), "List")){
+                    Log.i("getUserCaptureImageSelect Value",publicMethod.getUserInformation().get("captureImageSelect"));
+                    mainActivity.list=queryAllPictures(date_today);
+                    mainActivity.adapter.notifyDataSetChanged();
+                }else{
+                    mainActivity.imageViewLayout.setVisibility(View.VISIBLE);
+                    mainActivity.imageViewCaptured.setImageBitmap(bitmap);
+                }
 
-                mainActivity.list=queryAllPictures(date_today);
-                mainActivity.adapter.notifyDataSetChanged();
             }
         };
         camera.takePicture(null, null, callback);
@@ -302,6 +328,7 @@ public class CaptureProcess implements SurfaceHolder.Callback {
     }
 
 
+
     public void failedUpLoad(String nick, String consigneeName, String inoutCargo, int arSize, int size, String context){
 
 
@@ -382,8 +409,8 @@ public class CaptureProcess implements SurfaceHolder.Callback {
                     }
                 })
                 .show();
-
     }
+
 }
 
 

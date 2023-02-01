@@ -1,5 +1,7 @@
 package fine.koaca.wms;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +39,7 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
     ArrayList<String> list;
     ArrayList<String> selectImage;
     SparseBooleanArray selectedList= new SparseBooleanArray(0);
+    TextView textViewRe;
 
     public FragmentRe() {
         // Required empty public constructor
@@ -68,6 +72,7 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,6 +81,7 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
         View view= getLayoutInflater().inflate(R.layout.fragment_re,container,false);
         //        ProgressBar progressBar = view.findViewById(R.id.fragmentRe_ProgressBar);
         RecyclerView recyclerView = view.findViewById(R.id.fragmentRe_recyclerView);
+        textViewRe = view.findViewById(R.id.fragmentRe_txtView);
 //        progressBar.setVisibility(View.VISIBLE);
         GridLayoutManager manager = new GridLayoutManager(getActivity(),3);
         recyclerView.setLayoutManager(manager);
@@ -87,14 +93,22 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
         recyclerView.setAdapter(iAdapter);
         iAdapter.notifyDataSetChanged();
 
-
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-        if(getActivity()!=null){
-        selectImage= ((Incargo)getActivity()).imageViewListsSelected;}
+        String activityName=getActivity().getLocalClassName();
+        switch(activityName){
+            case "Incargo":
+                selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                break;
+            case "ActivityEquipNFacilityPutData":
+                selectImage= ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists;
+                break;
+        }
+
         if(selectedList.get(position,true)){
             selectedList.put(position,false);
             selectImage.add(list.get(position));
@@ -102,10 +116,19 @@ public class FragmentRe extends Fragment implements ImageViewActivityAdapter.Ima
             selectedList.put(position,true);
             selectImage.remove(list.get(position));
         }
-        Toast.makeText(getActivity(),"Selected Images Count::"+selectImage.size(),Toast.LENGTH_SHORT).show();
-        if(getActivity()!=null){
-            ((Incargo)getActivity()).imageViewListsSelected=selectImage;
-        }
+        textViewRe.setText(selectImage.size()+"장의 사진이 선택 되었습니다.");
+        textViewRe.setTextColor(Color.RED);
+
+
+            switch(activityName){
+                case "Incargo":selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                    ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+                    break;
+                case "ActivityEquipNFacilityPutData":
+
+                        ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists=selectImage;
+                        break;
+                                }
 
 
     }

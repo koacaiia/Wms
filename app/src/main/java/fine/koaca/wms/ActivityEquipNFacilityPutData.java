@@ -3,8 +3,10 @@ package fine.koaca.wms;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -50,6 +52,7 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
     ArrayList<String> contentsList = new ArrayList<>();
     ArrayList<String> selectedImageViewLists=new ArrayList<>();
     SparseBooleanArray clickedList=new SparseBooleanArray(0);
+    ViewPager2 pager2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,21 +65,32 @@ public class ActivityEquipNFacilityPutData extends AppCompatActivity implements 
         date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
         refPath = "DeptName/" + deptName + "/EquipNFacility/";
 
+        pager2 = findViewById(R.id.activityEquipNFacility_viewPager2);
+        ArrayList<Fragment> fragmentList= new ArrayList<>();
+        fragmentList.add(new FragmentRe());
+        fragmentList.add(new FragmentOri());
+        fragmentList.add(new FragmentAll());
+        ViewPager2Adapter adapter = new ViewPager2Adapter(this,fragmentList);
+        pager2.setAdapter(adapter);
+        pager2.setOrientation(ViewPager2.ORIENTATION_HORIZONTAL);
 
-        imageRecyclerView = findViewById(R.id.activity_equip_facility_recyclerimageview);
-        GridLayoutManager manager = new GridLayoutManager(this, 3);
-        imageRecyclerView.setLayoutManager(manager);
-        PublicMethod pictures = new PublicMethod(this);
-        imageViewLists = pictures.getPictureLists("Re",date);
-        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
-        imageRecyclerView.setAdapter(iAdapter);
+
+//        imageRecyclerView = findViewById(R.id.activity_equip_facility_recyclerimageview);
+//        GridLayoutManager manager = new GridLayoutManager(this, 3);
+//        imageRecyclerView.setLayoutManager(manager);
+//        PublicMethod pictures = new PublicMethod(this);
+//        imageViewLists = pictures.getPictureLists("Re",date);
+//        iAdapter = new ImageViewActivityAdapter(imageViewLists, this);
+//        imageRecyclerView.setAdapter(iAdapter);
 
         txtName = findViewById(R.id.activity_equip_facility_txtName);
         txtDate = findViewById(R.id.activity_equip_facility_txtDate);
+        txtDate.setText(date);
         txtContent = findViewById(R.id.activity_equip_facility_txtContent);
 
         spName = findViewById(R.id.activity_equip_facility_spname);
         spContents = findViewById(R.id.activity_equip_facility_spcontents);
+        spContents.setPrompt("길게 누르면 신규등록 등록 가능");
         getSpinnerAdapter();
         spName.setOnLongClickListener(new View.OnLongClickListener() {
             @Override

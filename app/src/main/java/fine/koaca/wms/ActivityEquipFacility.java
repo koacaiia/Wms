@@ -79,7 +79,6 @@ Button btnSearch,btnRegAndSearch;
         historyAdapter=new ActivityEquipFacilityAdapter(list,this,this);
         recyclerViewHistory.setAdapter(historyAdapter);
 
-
         btnRegAndSearch=findViewById(R.id.activity_equip_facility_btnActivityReg);
         btnRegAndSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,17 +89,21 @@ Button btnSearch,btnRegAndSearch;
 
             }
         });
-        btnRegAndSearch.setOnLongClickListener(new View.OnLongClickListener() {
-                                                   @Override
-                                                   public boolean onLongClick(View v) {
-                                                       searchData();
-                                                       return true;
-                                                   }
-                                               }
-        );
-
-
-
+//        btnRegAndSearch.setOnLongClickListener(new View.OnLongClickListener() {
+//              @Override
+//              public boolean onLongClick(View v) {
+//
+//                 return true;
+//                }
+//              }
+//        );
+        btnSearch = findViewById(R.id.activity_equip_facility_btnActivitySearch);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchData();
+            }
+        });
 
     }
 

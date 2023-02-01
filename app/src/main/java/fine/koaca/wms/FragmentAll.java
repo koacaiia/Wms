@@ -1,6 +1,7 @@
 package fine.koaca.wms;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
     SparseBooleanArray selectedList = new SparseBooleanArray(0);
     ArrayList<String> selectImage;
     ArrayList<String> list;
+    TextView textView;
 //    Button btnSend;
 
     // TODO: Rename and change types of parameters
@@ -75,6 +78,7 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view= getLayoutInflater().inflate(R.layout.fragment_all,container,false);
+        textView = view.findViewById(R.id.fragmentAll_txtView);
         RecyclerView recycler=view.findViewById(R.id.fragmentAll_recyclerView);
         GridLayoutManager manager=new GridLayoutManager(getActivity(),3);
         recycler.setLayoutManager(manager);
@@ -98,8 +102,14 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
 
     @Override
     public void imageViewClicked(ImageViewActivityAdapter.ListView listView, View v, int position) {
-        if(getActivity()!=null){
-            selectImage=((Incargo)getActivity()).imageViewListsSelected;
+        String activityName=getActivity().getLocalClassName();
+        switch(activityName){
+            case "Incargo":
+                selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                break;
+            case "ActivityEquipNFacilityPutData":
+                selectImage= ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists;
+                break;
         }
         if(selectedList.get(position,true)){
             selectedList.put(position,false);
@@ -108,9 +118,16 @@ public class FragmentAll extends Fragment implements ImageViewActivityAdapter.Im
             selectedList.put(position,true);
             selectImage.remove(list.get(position) );
         }
-        Toast.makeText(getActivity(),"Selected Images Count::"+selectImage.size(),Toast.LENGTH_SHORT).show();
-        if(getActivity()!=null){
-            ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+        textView.setText(selectImage.size()+"장의 사진이 선택 되었습니다.");
+        textView.setTextColor(Color.RED);
+        switch(activityName){
+            case "Incargo":selectImage= ((Incargo)getActivity()).imageViewListsSelected;
+                ((Incargo)getActivity()).imageViewListsSelected=selectImage;
+                break;
+            case "ActivityEquipNFacilityPutData":
+
+                ((ActivityEquipNFacilityPutData)getActivity()).selectedImageViewLists=selectImage;
+                break;
         }
 
          }

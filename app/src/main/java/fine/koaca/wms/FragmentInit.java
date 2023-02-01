@@ -72,6 +72,7 @@ public class FragmentInit extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View view= getLayoutInflater().inflate(R.layout.fragment_init,container,false);
         PublicMethod publicMethod = new PublicMethod(getActivity());
         String deptName=publicMethod.getUserInformation().get("deptName");

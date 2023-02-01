@@ -19,14 +19,18 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -215,6 +219,20 @@ public class PublicMethod {
     }
 
     public void upLoadPictures(String nickName,String consigneeName,String inoutCargo,String keyValue,String deptName){
+        AlertDialog.Builder builder =new AlertDialog.Builder(activity);
+        View view = LayoutInflater.from(activity).inflate(R.layout.dialog_progressbar,null);
+        ProgressBar progressBar = view.findViewById(R.id.dialogprogressBar);
+        progressBar.setIndeterminate(false);
+        TextView txtView= view.findViewById(R.id.dialogprogressBa_txt);
+        Animation ani=new AlphaAnimation(0.0f,1.0f);
+        ani.setRepeatMode(Animation.REVERSE);
+        ani.setDuration(1000);
+        ani.setRepeatCount(Animation.INFINITE);
+        txtView.startAnimation(ani);
+
+        builder.setView(view);
+        AlertDialog ad = builder.create();
+        ad.show();
 
         ArrayList<String> uriList=new ArrayList<>();
         int listSize=list.size();
@@ -253,6 +271,7 @@ public class PublicMethod {
 
                 }
             });
+            int finalI1 = i;
             storageReference.putFile(uriValue)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -262,7 +281,7 @@ public class PublicMethod {
                                public void onSuccess(Uri uri) {
                                    uriList.add(String.valueOf(uri));
                                    WorkingMessageList messageList=new WorkingMessageList();
-
+                                   txtView.setText("서버 데이터 전송 중 입니다...("+listSize+ "중 "+(finalI1 +1)+"번째.)");
                                    if((uriList.size())==listSize){
                                        messageList.setConsignee(consigneeName);
                                        messageList.setNickName(nickName);
@@ -324,7 +343,7 @@ public class PublicMethod {
                                        DatabaseReference databaseReference=
                                                database.getReference("DeptName/"+deptName +"/WorkingMessage/"+nickName+"_"+dateNtime   );
                                        databaseReference.setValue(messageList);
-
+                                       ad.dismiss();
                                        sendPushMessage(deptName,nickName,consigneeName+"_"+inoutCargo+"_ 사진 업로드","CameraUpLoad");
 
                                    }
@@ -342,12 +361,14 @@ public class PublicMethod {
     SharedPreferences sharedPreferences=activity.getSharedPreferences("Dept_Name",Context.MODE_PRIVATE);
     String nickName=sharedPreferences.getString("nickName",null);
     String deptName=sharedPreferences.getString("deptName",null);
+    String captureImageSelect = sharedPreferences.getString("captureImageSelect",null);
     String listImageViewCount=sharedPreferences.getString("imageViewListCount","3");
 
 
     userInformation.put("nickName",nickName);
     userInformation.put("deptName",deptName);
     userInformation.put("imageViewListCount",listImageViewCount);
+    userInformation.put("captureImageSelect",captureImageSelect);
 
     return userInformation;
     }
